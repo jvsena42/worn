@@ -956,7 +956,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "layout-grid",
+                          "iconFontName": "shirt",
                           "iconFontFamily": "lucide",
                           "fill": "#F5F0EB"
                         },
@@ -1026,7 +1026,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "search",
+                          "iconFontName": "puzzle",
                           "iconFontFamily": "lucide",
                           "fill": "#7D776F"
                         },
@@ -1061,7 +1061,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "camera",
+                          "iconFontName": "scan",
                           "iconFontFamily": "lucide",
                           "fill": "#7D776F"
                         },
@@ -1977,7 +1977,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "layout-grid",
+                          "iconFontName": "shirt",
                           "iconFontFamily": "lucide",
                           "fill": "#7D776F"
                         },
@@ -2048,7 +2048,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "search",
+                          "iconFontName": "puzzle",
                           "iconFontFamily": "lucide",
                           "fill": "#7D776F"
                         },
@@ -2083,7 +2083,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "camera",
+                          "iconFontName": "scan",
                           "iconFontFamily": "lucide",
                           "fill": "#7D776F"
                         },
@@ -5229,7 +5229,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "layout-grid",
+                          "iconFontName": "shirt",
                           "iconFontFamily": "lucide",
                           "fill": "#7D776F"
                         },
@@ -5300,7 +5300,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "search",
+                          "iconFontName": "puzzle",
                           "iconFontFamily": "lucide",
                           "fill": "#7D776F"
                         },
@@ -5335,7 +5335,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "camera",
+                          "iconFontName": "scan",
                           "iconFontFamily": "lucide",
                           "fill": "#7D776F"
                         },
@@ -5345,6 +5345,41 @@
                           "name": "Label",
                           "fill": "#7D776F",
                           "content": "TRY IT",
+                          "fontFamily": "Inter",
+                          "fontSize": 10,
+                          "fontWeight": "600",
+                          "letterSpacing": 0.5
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "aeEpM",
+                      "name": "SettingsTab",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "cornerRadius": 26,
+                      "layout": "vertical",
+                      "gap": 4,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "AQMvG",
+                          "name": "si",
+                          "width": 18,
+                          "height": 18,
+                          "iconFontName": "settings",
+                          "iconFontFamily": "lucide",
+                          "fill": "#7D776F"
+                        },
+                        {
+                          "type": "text",
+                          "id": "xAumd",
+                          "name": "sl",
+                          "fill": "#7D776F",
+                          "content": "SETTINGS",
                           "fontFamily": "Inter",
                           "fontSize": 10,
                           "fontWeight": "600",
@@ -7321,7 +7356,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "layout-grid",
+                          "iconFontName": "shirt",
                           "iconFontFamily": "lucide",
                           "fill": "$bg-page"
                         },
@@ -7391,7 +7426,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "search",
+                          "iconFontName": "puzzle",
                           "iconFontFamily": "lucide",
                           "fill": "$text-secondary"
                         },
@@ -7426,7 +7461,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "camera",
+                          "iconFontName": "scan",
                           "iconFontFamily": "lucide",
                           "fill": "$text-secondary"
                         },
@@ -8355,7 +8390,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "layout-grid",
+                          "iconFontName": "shirt",
                           "iconFontFamily": "lucide",
                           "fill": "$text-secondary"
                         },
@@ -8426,7 +8461,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "search",
+                          "iconFontName": "puzzle",
                           "iconFontFamily": "lucide",
                           "fill": "$text-secondary"
                         },
@@ -8461,7 +8496,7 @@
                           "name": "Icon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "camera",
+                          "iconFontName": "scan",
                           "iconFontFamily": "lucide",
                           "fill": "$text-secondary"
                         },
@@ -11572,7 +11607,7 @@
                           "name": "wIcon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "layout-grid",
+                          "iconFontName": "shirt",
                           "iconFontFamily": "lucide",
                           "fill": "$text-secondary"
                         },
@@ -11642,7 +11677,7 @@
                           "name": "gIcon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "search",
+                          "iconFontName": "puzzle",
                           "iconFontFamily": "lucide",
                           "fill": "$text-secondary"
                         },
@@ -11677,7 +11712,7 @@
                           "name": "tIcon",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "camera",
+                          "iconFontName": "scan",
                           "iconFontFamily": "lucide",
                           "fill": "$text-secondary"
                         },
@@ -12320,7 +12355,7 @@
                           "name": "ti1",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "layout-grid",
+                          "iconFontName": "shirt",
                           "iconFontFamily": "lucide",
                           "fill": "$text-secondary"
                         },
@@ -12390,7 +12425,7 @@
                           "name": "ti3",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "search",
+                          "iconFontName": "puzzle",
                           "iconFontFamily": "lucide",
                           "fill": "$text-secondary"
                         },
@@ -12425,7 +12460,7 @@
                           "name": "ti4",
                           "width": 18,
                           "height": 18,
-                          "iconFontName": "camera",
+                          "iconFontName": "scan",
                           "iconFontFamily": "lucide",
                           "fill": "$text-secondary"
                         },
