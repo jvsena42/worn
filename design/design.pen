@@ -12523,6 +12523,1918 @@
           "fontWeight": "600"
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "tmF98",
+      "x": 0,
+      "y": 5780,
+      "name": "Gaps AI Empty",
+      "width": 402,
+      "height": 874,
+      "fill": "$bg-page",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "EM6OL",
+          "name": "Status Bar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "cgEKz",
+              "name": "tm1",
+              "fill": "#2C2924",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "Cy1PR",
+              "name": "icons",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "yAwQC",
+                  "name": "sig1",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "#2C2924"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "WNrXm",
+                  "name": "wif1",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "#2C2924"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "dSd65",
+                  "name": "bat1",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "#2C2924"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "XOmdE",
+          "name": "Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            0,
+            24,
+            24,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "227pj",
+              "name": "Header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "tavTt",
+                  "name": "ttl1",
+                  "fill": "$text-primary",
+                  "content": "What's missing",
+                  "fontFamily": "Fraunces",
+                  "fontSize": 28,
+                  "fontWeight": "500",
+                  "letterSpacing": -0.8
+                },
+                {
+                  "type": "text",
+                  "id": "yfUE7",
+                  "name": "sub1",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Items that would expand your combinations most",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "D0dl2",
+              "name": "Empty State",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "yMd9B",
+                  "name": "emptyCircle",
+                  "width": 130,
+                  "height": 130,
+                  "fill": "$bg-card",
+                  "cornerRadius": 65,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "effect": [
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#6B7B8E15",
+                      "blur": 30
+                    },
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#00000008",
+                      "offset": {
+                        "x": 0,
+                        "y": 2
+                      },
+                      "blur": 8
+                    }
+                  ],
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "xzlhW",
+                      "name": "botIcon",
+                      "width": 52,
+                      "height": 52,
+                      "iconFontName": "bot",
+                      "iconFontFamily": "lucide",
+                      "fill": "$accent-indigo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "fyG9j",
+                  "name": "emTitle",
+                  "fill": "$text-primary",
+                  "content": "AI analysis needed",
+                  "textAlign": "center",
+                  "fontFamily": "Fraunces",
+                  "fontSize": 24,
+                  "fontWeight": "500",
+                  "letterSpacing": -0.5
+                },
+                {
+                  "type": "text",
+                  "id": "Vm2dM",
+                  "name": "emDesc",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": 280,
+                  "content": "Connect your Claude API key in Settings to get personalized gap recommendations.",
+                  "lineHeight": 1.5,
+                  "textAlign": "center",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "LtlOI",
+                  "name": "CTA",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 90,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "$accent-indigo",
+                        "position": 0
+                      },
+                      {
+                        "color": "$accent-indigo-end",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "cornerRadius": 28,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#6B7B8E25",
+                    "offset": {
+                      "x": 0,
+                      "y": 6
+                    },
+                    "blur": 20
+                  },
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    40
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "0UEQd",
+                      "name": "ctaText",
+                      "fill": "#FFFFFF",
+                      "content": "Connect Claude AI",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "x1YiU",
+          "name": "Tab Bar",
+          "width": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            12,
+            21,
+            21,
+            21
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "YPhoi",
+              "name": "Pill",
+              "width": "fill_container",
+              "height": 62,
+              "fill": "#EDE8E1",
+              "cornerRadius": 36,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "#E0D9D0"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000008",
+                "offset": {
+                  "x": 0,
+                  "y": -2
+                },
+                "blur": 12
+              },
+              "padding": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "2I2Iv",
+                  "name": "WardrobeTab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "XkKUI",
+                      "name": "ti1",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "shirt",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A09A92"
+                    },
+                    {
+                      "type": "text",
+                      "id": "aYT0P",
+                      "name": "tl1",
+                      "fill": "#A09A92",
+                      "content": "WARDROBE",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "SQQqm",
+                  "name": "OutfitsTab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "YpA8r",
+                      "name": "ti2",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "layers",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A09A92"
+                    },
+                    {
+                      "type": "text",
+                      "id": "MvsGM",
+                      "name": "tl2",
+                      "fill": "#A09A92",
+                      "content": "OUTFITS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "DiCfI",
+                  "name": "GapsTab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#7A9468",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "TSPsn",
+                      "name": "ti3",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "puzzle",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F5F0EB"
+                    },
+                    {
+                      "type": "text",
+                      "id": "EqbO9",
+                      "name": "tl3",
+                      "fill": "#FFFFFF",
+                      "content": "GAPS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "600",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "r4A9y",
+                  "name": "TryItTab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "HQ0bT",
+                      "name": "ti4",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "scan",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A09A92"
+                    },
+                    {
+                      "type": "text",
+                      "id": "H8yGM",
+                      "name": "tl4",
+                      "fill": "#A09A92",
+                      "content": "TRY IT",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "QWjYb",
+                  "name": "SettingsTab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "4b4Mz",
+                      "name": "ti5",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "settings",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A09A92"
+                    },
+                    {
+                      "type": "text",
+                      "id": "codvw",
+                      "name": "tl5",
+                      "fill": "#A09A92",
+                      "content": "SETTINGS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "DjABk",
+      "x": 502,
+      "y": 5780,
+      "name": "Try It AI Empty",
+      "width": 402,
+      "height": 874,
+      "fill": "$bg-page",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "iA5gR",
+          "name": "Status Bar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            0,
+            24
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "79Mes",
+              "name": "tm2",
+              "fill": "#2C2924",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "blNqH",
+              "name": "icons",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "h3PAB",
+                  "name": "sig2",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "#2C2924"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "1tvbJ",
+                  "name": "wif2",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "#2C2924"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "L2tWm",
+                  "name": "bat2",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "#2C2924"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "vYNZ9",
+          "name": "Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            0,
+            24,
+            24,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "XM6Dl",
+              "name": "Header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "cmyHw",
+                  "name": "ttl2",
+                  "fill": "$text-primary",
+                  "content": "Would it fit your wardrobe?",
+                  "fontFamily": "Fraunces",
+                  "fontSize": 28,
+                  "fontWeight": "500",
+                  "letterSpacing": -0.8
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "BcFbY",
+              "name": "Empty State",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "AJ9by",
+                  "name": "emptyCircle",
+                  "width": 130,
+                  "height": 130,
+                  "fill": "$bg-card",
+                  "cornerRadius": 65,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "effect": [
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#6B7B8E15",
+                      "blur": 30
+                    },
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#00000008",
+                      "offset": {
+                        "x": 0,
+                        "y": 2
+                      },
+                      "blur": 8
+                    }
+                  ],
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "FeHZq",
+                      "name": "botIcon2",
+                      "width": 52,
+                      "height": 52,
+                      "iconFontName": "bot",
+                      "iconFontFamily": "lucide",
+                      "fill": "$accent-indigo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "djNJI",
+                  "name": "emTitle2",
+                  "fill": "$text-primary",
+                  "content": "AI powered analysis",
+                  "textAlign": "center",
+                  "fontFamily": "Fraunces",
+                  "fontSize": 24,
+                  "fontWeight": "500",
+                  "letterSpacing": -0.5
+                },
+                {
+                  "type": "text",
+                  "id": "BdtMm",
+                  "name": "emDesc2",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": 280,
+                  "content": "Connect your Claude API key in Settings to analyze items against your wardrobe.",
+                  "lineHeight": 1.5,
+                  "textAlign": "center",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "KLpHz",
+                  "name": "CTA",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 90,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "$accent-indigo",
+                        "position": 0
+                      },
+                      {
+                        "color": "$accent-indigo-end",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "cornerRadius": 28,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#6B7B8E25",
+                    "offset": {
+                      "x": 0,
+                      "y": 6
+                    },
+                    "blur": 20
+                  },
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    40
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qa8ZI",
+                      "name": "ctaText2",
+                      "fill": "#FFFFFF",
+                      "content": "Connect Claude AI",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "JxebZ",
+          "name": "Tab Bar",
+          "width": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            12,
+            21,
+            21,
+            21
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "WEzp9",
+              "name": "Pill",
+              "width": "fill_container",
+              "height": 62,
+              "fill": "#EDE8E1",
+              "cornerRadius": 36,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "#E0D9D0"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000008",
+                "offset": {
+                  "x": 0,
+                  "y": -2
+                },
+                "blur": 12
+              },
+              "padding": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Ymt7B",
+                  "name": "WardrobeTab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "UqzFQ",
+                      "name": "t2i1",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "shirt",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A09A92"
+                    },
+                    {
+                      "type": "text",
+                      "id": "JSwLa",
+                      "name": "t2l1",
+                      "fill": "#A09A92",
+                      "content": "WARDROBE",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "u7TLx",
+                  "name": "OutfitsTab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "DTDMM",
+                      "name": "t2i2",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "layers",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A09A92"
+                    },
+                    {
+                      "type": "text",
+                      "id": "KtXPW",
+                      "name": "t2l2",
+                      "fill": "#A09A92",
+                      "content": "OUTFITS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "7Ywi4",
+                  "name": "GapsTab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "sRw2a",
+                      "name": "t2i3",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "puzzle",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A09A92"
+                    },
+                    {
+                      "type": "text",
+                      "id": "GeYNH",
+                      "name": "t2l3",
+                      "fill": "#A09A92",
+                      "content": "GAPS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "g2pjM",
+                  "name": "TryItTab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#6B7B8E",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "QO02B",
+                      "name": "t2i4",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "scan",
+                      "iconFontFamily": "lucide",
+                      "fill": "#F5F0EB"
+                    },
+                    {
+                      "type": "text",
+                      "id": "nfs7x",
+                      "name": "t2l4",
+                      "fill": "#FFFFFF",
+                      "content": "TRY IT",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "600",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "50nAB",
+                  "name": "SettingsTab",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "AtnZp",
+                      "name": "t2i5",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "settings",
+                      "iconFontFamily": "lucide",
+                      "fill": "#A09A92"
+                    },
+                    {
+                      "type": "text",
+                      "id": "qolXx",
+                      "name": "t2l5",
+                      "fill": "#A09A92",
+                      "content": "SETTINGS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "oRu81",
+      "x": 1004,
+      "y": 5780,
+      "name": "Tablet - Gaps AI Empty",
+      "width": 834,
+      "height": 1194,
+      "fill": "$bg-page",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "mwKE6",
+          "name": "Status Bar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            0,
+            32
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "cYrXF",
+              "name": "time1",
+              "fill": "$text-primary",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "JCBdV",
+              "name": "Icons",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "fc5Pi",
+                  "name": "sig1",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "SWYNX",
+                  "name": "wifi1",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "ZlroO",
+                  "name": "bat1",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Nf6j8",
+          "name": "Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            0,
+            32,
+            24,
+            32
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "Hq7MM",
+              "name": "Header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "3wU5m",
+                  "name": "title1",
+                  "fill": "$text-primary",
+                  "content": "What's missing",
+                  "fontFamily": "Fraunces",
+                  "fontSize": 32,
+                  "fontWeight": "500",
+                  "letterSpacing": -0.8
+                },
+                {
+                  "type": "text",
+                  "id": "hQdT9",
+                  "name": "sub1",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Items that would expand your combinations most",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 15,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "jlIRT",
+              "name": "Empty State",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ug78V",
+                  "name": "Circle",
+                  "width": 150,
+                  "height": 150,
+                  "fill": "$bg-card",
+                  "cornerRadius": 75,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "effect": [
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#6B7B8E15",
+                      "blur": 30
+                    },
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#00000008",
+                      "offset": {
+                        "x": 0,
+                        "y": 2
+                      },
+                      "blur": 8
+                    }
+                  ],
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "zX6KV",
+                      "name": "botIcon1",
+                      "width": 52,
+                      "height": 52,
+                      "iconFontName": "bot",
+                      "iconFontFamily": "lucide",
+                      "fill": "$accent-indigo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "BpXRQ",
+                  "name": "emTitle1",
+                  "fill": "$text-primary",
+                  "content": "AI analysis needed",
+                  "textAlign": "center",
+                  "fontFamily": "Fraunces",
+                  "fontSize": 26,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "UTiP3",
+                  "name": "emDesc1",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": 380,
+                  "content": "Connect your Claude API key in Settings to get personalized gap recommendations.",
+                  "lineHeight": 1.5,
+                  "textAlign": "center",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "mn8Rt",
+                  "name": "CTA",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 90,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "$accent-indigo",
+                        "position": 0
+                      },
+                      {
+                        "color": "$accent-indigo-end",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "cornerRadius": 28,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#6B7B8E25",
+                    "offset": {
+                      "x": 0,
+                      "y": 6
+                    },
+                    "blur": 20
+                  },
+                  "padding": [
+                    14,
+                    40
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "5W1D5",
+                      "name": "ctaText1",
+                      "fill": "$text-on-color",
+                      "content": "Connect Claude AI",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "USSmT",
+          "name": "Tab Bar",
+          "width": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            12,
+            32,
+            21,
+            32
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "VoDUF",
+              "name": "Pill",
+              "width": 480,
+              "height": 62,
+              "fill": "$bg-elevated",
+              "cornerRadius": 36,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border-subtle"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000008",
+                "offset": {
+                  "x": 0,
+                  "y": -2
+                },
+                "blur": 12
+              },
+              "padding": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "gpog8",
+                  "name": "Tab Wardrobe",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "tTrEc",
+                      "name": "ti1",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "shirt",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "mp4ha",
+                      "name": "tl1",
+                      "fill": "$text-tertiary",
+                      "content": "WARDROBE",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "PsbQD",
+                  "name": "Tab Outfits",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "oyST0",
+                      "name": "ti2",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "layers",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "19abt",
+                      "name": "tl2",
+                      "fill": "$text-tertiary",
+                      "content": "OUTFITS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "EY3Hx",
+                  "name": "Tab Gaps Active",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$accent-green",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "zLVUz",
+                      "name": "ti3",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "puzzle",
+                      "iconFontFamily": "lucide",
+                      "fill": "$bg-page"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Fm7pS",
+                      "name": "tl3",
+                      "fill": "$text-on-color",
+                      "content": "GAPS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "600",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "e10hj",
+                  "name": "Tab Try It",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "RwJiQ",
+                      "name": "ti4",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "scan",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "aXBHQ",
+                      "name": "tl4",
+                      "fill": "$text-tertiary",
+                      "content": "TRY IT",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "K4SAH",
+                  "name": "Tab Settings",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "ZZLwy",
+                      "name": "ti5",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "settings",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jGPPu",
+                      "name": "tl5",
+                      "fill": "$text-tertiary",
+                      "content": "SETTINGS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "tlDLN",
+      "x": 1938,
+      "y": 5780,
+      "name": "Tablet - Try It AI Empty",
+      "width": 834,
+      "height": 1194,
+      "fill": "$bg-page",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "qJEAp",
+          "name": "Status Bar",
+          "width": "fill_container",
+          "height": 62,
+          "padding": [
+            0,
+            32
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "SoJ5i",
+              "name": "time2",
+              "fill": "$text-primary",
+              "content": "9:41",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "uCCBS",
+              "name": "Icons",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "FZIvm",
+                  "name": "sig2",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "signal",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "ofOux",
+                  "name": "wifi2",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "wifi",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                },
+                {
+                  "type": "icon_font",
+                  "id": "THDuF",
+                  "name": "bat2",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "battery-full",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-primary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "jrcxD",
+          "name": "Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            0,
+            32,
+            24,
+            32
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "eK9ZP",
+              "name": "Header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "J2SvR",
+                  "name": "title2",
+                  "fill": "$text-primary",
+                  "content": "Would it fit your wardrobe?",
+                  "fontFamily": "Fraunces",
+                  "fontSize": 32,
+                  "fontWeight": "500",
+                  "letterSpacing": -0.8
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ga1Lc",
+              "name": "Empty State",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "YVLMf",
+                  "name": "Circle",
+                  "width": 150,
+                  "height": 150,
+                  "fill": "$bg-card",
+                  "cornerRadius": 75,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "effect": [
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#6B7B8E15",
+                      "blur": 30
+                    },
+                    {
+                      "type": "shadow",
+                      "shadowType": "outer",
+                      "color": "#00000008",
+                      "offset": {
+                        "x": 0,
+                        "y": 2
+                      },
+                      "blur": 8
+                    }
+                  ],
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "oqqq7",
+                      "name": "botIcon2",
+                      "width": 52,
+                      "height": 52,
+                      "iconFontName": "bot",
+                      "iconFontFamily": "lucide",
+                      "fill": "$accent-indigo"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "9m4yk",
+                  "name": "emTitle2",
+                  "fill": "$text-primary",
+                  "content": "AI powered analysis",
+                  "textAlign": "center",
+                  "fontFamily": "Fraunces",
+                  "fontSize": 26,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "hkY4a",
+                  "name": "emDesc2",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": 380,
+                  "content": "Connect your Claude API key in Settings to analyze items against your wardrobe.",
+                  "lineHeight": 1.5,
+                  "textAlign": "center",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "urYIQ",
+                  "name": "CTA",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 90,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "$accent-indigo",
+                        "position": 0
+                      },
+                      {
+                        "color": "$accent-indigo-end",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "cornerRadius": 28,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#6B7B8E25",
+                    "offset": {
+                      "x": 0,
+                      "y": 6
+                    },
+                    "blur": 20
+                  },
+                  "padding": [
+                    14,
+                    40
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Gz43a",
+                      "name": "ctaText2",
+                      "fill": "$text-on-color",
+                      "content": "Connect Claude AI",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "vH53p",
+          "name": "Tab Bar",
+          "width": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            12,
+            32,
+            21,
+            32
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "CRMqi",
+              "name": "Pill",
+              "width": 480,
+              "height": 62,
+              "fill": "$bg-elevated",
+              "cornerRadius": 36,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$border-subtle"
+              },
+              "effect": {
+                "type": "shadow",
+                "shadowType": "outer",
+                "color": "#00000008",
+                "offset": {
+                  "x": 0,
+                  "y": -2
+                },
+                "blur": 12
+              },
+              "padding": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "h22Hs",
+                  "name": "Tab Wardrobe",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "QVkVi",
+                      "name": "t2i1",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "shirt",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "BbITF",
+                      "name": "t2l1",
+                      "fill": "$text-tertiary",
+                      "content": "WARDROBE",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tpSUu",
+                  "name": "Tab Outfits",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "r3BRe",
+                      "name": "t2i2",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "layers",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "PBINY",
+                      "name": "t2l2",
+                      "fill": "$text-tertiary",
+                      "content": "OUTFITS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "aJbBk",
+                  "name": "Tab Gaps",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "wh9tR",
+                      "name": "t2i3",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "puzzle",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "VgaZ7",
+                      "name": "t2l3",
+                      "fill": "$text-tertiary",
+                      "content": "GAPS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LHHNe",
+                  "name": "Tab Try It Active",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$accent-indigo",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "M7AMS",
+                      "name": "t2i4",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "scan",
+                      "iconFontFamily": "lucide",
+                      "fill": "$bg-page"
+                    },
+                    {
+                      "type": "text",
+                      "id": "gIf18",
+                      "name": "t2l4",
+                      "fill": "$text-on-color",
+                      "content": "TRY IT",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "600",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "13myf",
+                  "name": "Tab Settings",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "cornerRadius": 26,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "3fi3H",
+                      "name": "t2i5",
+                      "width": 18,
+                      "height": 18,
+                      "iconFontName": "settings",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "lqJaG",
+                      "name": "t2l5",
+                      "fill": "$text-tertiary",
+                      "content": "SETTINGS",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "variables": {
