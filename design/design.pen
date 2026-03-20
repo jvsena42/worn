@@ -7313,20 +7313,21 @@
               "type": "frame",
               "id": "u2C8U",
               "name": "tb1",
-              "width": 834,
+              "width": "fill_container",
               "layout": "vertical",
               "padding": [
                 12,
+                32,
                 21,
-                21,
-                21
+                32
               ],
+              "alignItems": "center",
               "children": [
                 {
                   "type": "frame",
                   "id": "7ZwWm",
                   "name": "Pill",
-                  "width": "fill_container",
+                  "width": 480,
                   "height": 62,
                   "fill": "$bg-elevated",
                   "cornerRadius": 36,
@@ -7335,7 +7336,18 @@
                     "thickness": 1,
                     "fill": "$border-subtle"
                   },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000008",
+                    "offset": {
+                      "x": 0,
+                      "y": -2
+                    },
+                    "blur": 12
+                  },
                   "padding": 4,
+                  "alignItems": "center",
                   "children": [
                     {
                       "type": "frame",
@@ -8346,21 +8358,22 @@
               "type": "frame",
               "id": "beqVL",
               "name": "tb2",
-              "width": 834,
+              "width": "fill_container",
               "fill": "#00000000",
               "layout": "vertical",
               "padding": [
                 12,
+                32,
                 21,
-                21,
-                21
+                32
               ],
+              "alignItems": "center",
               "children": [
                 {
                   "type": "frame",
                   "id": "raOqm",
                   "name": "Pill",
-                  "width": "fill_container",
+                  "width": 480,
                   "height": 62,
                   "fill": "$bg-elevated",
                   "cornerRadius": 36,
@@ -8369,7 +8382,18 @@
                     "thickness": 1,
                     "fill": "$border-subtle"
                   },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000008",
+                    "offset": {
+                      "x": 0,
+                      "y": -2
+                    },
+                    "blur": 12
+                  },
                   "padding": 4,
+                  "alignItems": "center",
                   "children": [
                     {
                       "type": "frame",
@@ -12312,13 +12336,13 @@
               "type": "frame",
               "id": "7YIL2",
               "name": "TabBar",
-              "width": 834,
+              "width": "fill_container",
               "layout": "vertical",
               "padding": [
                 12,
+                32,
                 21,
-                21,
-                21
+                32
               ],
               "alignItems": "center",
               "children": [
