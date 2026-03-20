@@ -31,16 +31,26 @@
               "x": 0,
               "descendants": {
                 "8jKsD": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 24,
+                  "y": 22
+                },
+                "i76sq": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 318,
+                  "y": 23
                 },
                 "tD8ka": {
                   "fill": "#2C2924"
                 },
                 "OSgoo": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 22
                 },
                 "Ap1TM": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 44
                 }
               }
             },
@@ -1153,16 +1163,26 @@
               "x": 0,
               "descendants": {
                 "8jKsD": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 24,
+                  "y": 22
+                },
+                "i76sq": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 318,
+                  "y": 23
                 },
                 "tD8ka": {
                   "fill": "#2C2924"
                 },
                 "OSgoo": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 22
                 },
                 "Ap1TM": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 44
                 }
               }
             },
@@ -2283,7 +2303,8 @@
                           "fill": "#7D776F",
                           "content": "Would pair with 12 of your items",
                           "fontFamily": "DM Sans",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -2387,7 +2408,8 @@
                           "fill": "#7D776F",
                           "content": "Would pair with 9 of your items",
                           "fontFamily": "DM Sans",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -2512,7 +2534,8 @@
                           "fill": "#7D776F",
                           "content": "Would pair with 15 of your items",
                           "fontFamily": "DM Sans",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -2616,7 +2639,8 @@
                           "fill": "#7D776F",
                           "content": "Would pair with 11 of your items",
                           "fontFamily": "DM Sans",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -2741,7 +2765,8 @@
                           "fill": "#7D776F",
                           "content": "Would pair with 8 of your items",
                           "fontFamily": "DM Sans",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -2866,7 +2891,8 @@
                           "fill": "#7D776F",
                           "content": "Would pair with 18 of your items",
                           "fontFamily": "DM Sans",
-                          "fontSize": 13
+                          "fontSize": 13,
+                          "fontWeight": "normal"
                         }
                       ]
                     },
@@ -3528,7 +3554,8 @@
                       "fill": "#2C2924",
                       "content": "Neutral layering piece",
                       "fontFamily": "DM Sans",
-                      "fontSize": 14
+                      "fontSize": 14,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3555,7 +3582,8 @@
                       "fill": "#2C2924",
                       "content": "Transitional outerwear",
                       "fontFamily": "DM Sans",
-                      "fontSize": 14
+                      "fontSize": 14,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -4354,16 +4382,26 @@
               "x": 0,
               "descendants": {
                 "8jKsD": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 24,
+                  "y": 22
+                },
+                "i76sq": {
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "x": 318,
+                  "y": 23
                 },
                 "tD8ka": {
                   "fill": "#2C2924"
                 },
                 "OSgoo": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 22
                 },
                 "Ap1TM": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 44
                 }
               }
             },
@@ -5300,7 +5338,8 @@
                   "lineHeight": 1.5,
                   "textAlign": "center",
                   "fontFamily": "DM Sans",
-                  "fontSize": 15
+                  "fontSize": 15,
+                  "fontWeight": "normal"
                 },
                 {
                   "type": "frame",
@@ -5762,7 +5801,8 @@
                   "lineHeight": 1.5,
                   "textAlign": "center",
                   "fontFamily": "DM Sans",
-                  "fontSize": 15
+                  "fontSize": 15,
+                  "fontWeight": "normal"
                 }
               ]
             }
@@ -6053,19 +6093,26 @@
               "descendants": {
                 "8jKsD": {
                   "fill": "#2C2924",
-                  "fontFamily": "SF Pro"
+                  "fontFamily": "SF Pro",
+                  "x": 24,
+                  "y": 21
                 },
                 "i76sq": {
-                  "x": 750
+                  "x": 750,
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "y": 23
                 },
                 "tD8ka": {
                   "fill": "#2C2924"
                 },
                 "OSgoo": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 22
                 },
                 "Ap1TM": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 44
                 }
               }
             },
@@ -7093,8 +7140,8 @@
         {
           "type": "frame",
           "id": "BtnUP",
-          "x": 660,
-          "y": 1080,
+          "x": 658,
+          "y": 1008,
           "name": "FAB",
           "fill": "$accent-green",
           "cornerRadius": 30,
@@ -7167,19 +7214,26 @@
               "x": 0,
               "descendants": {
                 "8jKsD": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 24,
+                  "y": 22
                 },
                 "i76sq": {
-                  "x": 750
+                  "x": 750,
+                  "width": "fit_content",
+                  "height": "fit_content",
+                  "y": 23
                 },
                 "tD8ka": {
                   "fill": "#2C2924"
                 },
                 "OSgoo": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 22
                 },
                 "Ap1TM": {
-                  "fill": "#2C2924"
+                  "fill": "#2C2924",
+                  "x": 44
                 }
               }
             },
@@ -10035,7 +10089,8 @@
                   "content": "Create your first look by combining items from your wardrobe",
                   "textAlign": "center",
                   "fontFamily": "DM Sans",
-                  "fontSize": 16
+                  "fontSize": 16,
+                  "fontWeight": "normal"
                 },
                 {
                   "type": "frame",
@@ -10496,7 +10551,8 @@
                   "content": "We couldn't find any gaps.\nYou have great coverage across categories.",
                   "textAlign": "center",
                   "fontFamily": "DM Sans",
-                  "fontSize": 16
+                  "fontSize": 16,
+                  "fontWeight": "normal"
                 }
               ]
             }
