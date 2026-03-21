@@ -1,0 +1,41 @@
+import kotlin.String;
+import kotlin.collections.List;
+
+CREATE TABLE clothingItem (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    colors TEXT AS List<String> NOT NULL DEFAULT '',
+    seasons TEXT AS List<String> NOT NULL DEFAULT '',
+    tags TEXT AS List<String> NOT NULL DEFAULT '',
+    description TEXT,
+    photoPath TEXT NOT NULL,
+    createdAt INTEGER NOT NULL
+);
+
+getAll:
+SELECT * FROM clothingItem ORDER BY createdAt DESC;
+
+getById:
+SELECT * FROM clothingItem WHERE id = ?;
+
+getByCategory:
+SELECT * FROM clothingItem WHERE category = ?
+ORDER BY createdAt DESC;
+
+search:
+SELECT * FROM clothingItem
+WHERE name LIKE :query OR description LIKE :query
+ORDER BY createdAt DESC;
+
+insert:
+INSERT INTO clothingItem(id, name, category, colors, seasons, tags, description, photoPath, createdAt)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+update:
+UPDATE clothingItem
+SET name = ?, category = ?, colors = ?, seasons = ?, tags = ?, description = ?, photoPath = ?
+WHERE id = ?;
+
+delete:
+DELETE FROM clothingItem WHERE id = ?;
