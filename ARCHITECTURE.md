@@ -20,7 +20,7 @@ No Use Cases layer. Business logic lives directly in the Repository implementati
 User Action
     │
     ▼
-Intent (sealed class)
+Intent (sealed interface)
     │
     ▼
 ViewModel  ──► Repository Interface
@@ -239,13 +239,13 @@ class WardrobeViewModel(
 
 ## 6. Security
 
-| Concern | Solution |
-|---|---|
-| API key at rest | Android: `EncryptedSharedPreferences` · iOS: Keychain |
-| API key in transit | HTTPS only (Ktor) |
+| Concern | Solution                                              |
+|---|-------------------------------------------------------|
+| API key at rest | Android: `Keystore` · iOS: Keychain                   |
+| API key in transit | HTTPS only (Ktor)                                     |
 | Photo data | App-private internal storage — no external app access |
 | No key in logs | `SecretStore` never exposes raw key to logging layers |
-| No key in source | User-provided at runtime |
+| No key in source | User-provided at runtime                              |
 
 ---
 
@@ -314,7 +314,6 @@ class WardrobeRepositoryTest {
 | `kotlinx-serialization` | JSON parsing |
 | `SQLDelight` | Local clothing metadata DB (multiplatform) |
 | `Koin` | Dependency injection (multiplatform) |
-| `androidx.security` | EncryptedSharedPreferences (Android only) |
 | `kotlin-test` | Unit testing in commonTest |
 
 ---
