@@ -1,0 +1,16 @@
+CREATE TABLE outfitItem (
+    outfitId TEXT NOT NULL,
+    itemId TEXT NOT NULL,
+    PRIMARY KEY (outfitId, itemId),
+    FOREIGN KEY (outfitId) REFERENCES outfit(id) ON DELETE CASCADE,
+    FOREIGN KEY (itemId) REFERENCES clothingItem(id) ON DELETE CASCADE
+);
+
+getItemIdsForOutfit:
+SELECT itemId FROM outfitItem WHERE outfitId = ?;
+
+insertItem:
+INSERT OR IGNORE INTO outfitItem(outfitId, itemId) VALUES (?, ?);
+
+deleteAllForOutfit:
+DELETE FROM outfitItem WHERE outfitId = ?;

@@ -59,6 +59,7 @@ Requires JDK 17+ (SQLDelight 2.0.2 requirement). iOS builds require Xcode — op
 - `WardrobeRepositoryImpl` orchestrates AI + storage + DB in one testable place
 - Photos are stored in app-private internal storage via expect/actual `PhotoFileStorage`
 - SQLDelight schemas go in `shared/src/commonMain/sqldelight/`; generated DB package is `com.github.worn.data.source.local.db`
+- Repository implementations wrap all async work (DB, file I/O, network) in `withContext(dispatcher)` — the `CoroutineContext` is injected via constructor (dependency inversion), never hardcoded. Callers never switch dispatchers. Platform data sources do NOT handle dispatching themselves.
 
 ## Dependencies
 

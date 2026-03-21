@@ -1,0 +1,20 @@
+CREATE TABLE outfit (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    createdAt INTEGER NOT NULL
+);
+
+getAll:
+SELECT * FROM outfit ORDER BY createdAt DESC;
+
+getById:
+SELECT * FROM outfit WHERE id = ?;
+
+insert:
+INSERT INTO outfit(id, name, createdAt) VALUES (?, ?, ?);
+
+update:
+UPDATE outfit SET name = ? WHERE id = ?;
+
+delete:
+DELETE FROM outfit WHERE id = ?;
