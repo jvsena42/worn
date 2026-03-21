@@ -31,10 +31,10 @@ jobs:
         run: ./gradlew detekt
 
       - name: Build shared module
-        run: ./gradlew :shared:compileKotlinAndroid
+        run: ./gradlew :shared:compileAndroidMain
 
       - name: Run shared tests
-        run: ./gradlew :shared:testDebugUnitTest
+        run: ./gradlew :shared:allTests
 
       - name: Build Android debug APK
         run: ./gradlew :composeApp:assembleDebug

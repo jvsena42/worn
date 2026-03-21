@@ -13,13 +13,13 @@ Worn is a Kotlin Multiplatform wardrobe manager app for Android and iOS. Users c
 ./gradlew :composeApp:assembleDebug
 
 # Build shared module
-./gradlew :shared:compileKotlinAndroid
+./gradlew :shared:compileAndroidMain
 
 # Run all shared tests
 ./gradlew :shared:allTests
 
 # Run a single test class
-./gradlew :shared:testDebugUnitTest --tests "com.github.worn.repository.WardrobeRepositoryTest"
+./gradlew :shared:allTests --tests "com.github.worn.repository.WardrobeRepositoryTest"
 
 # Check dependency resolution
 ./gradlew :shared:dependencies
