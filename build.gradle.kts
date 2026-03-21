@@ -9,4 +9,16 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.kotlinSerialization) apply false
     alias(libs.plugins.sqldelight) apply false
+    alias(libs.plugins.detekt)
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom("$rootDir/detekt.yml")
+    source.setFrom(
+        "shared/src/commonMain/kotlin",
+        "shared/src/androidMain/kotlin",
+        "shared/src/iosMain/kotlin",
+        "composeApp/src/androidMain/kotlin"
+    )
 }

@@ -1,0 +1,17 @@
+naming:
+  FunctionNaming:
+    # Allow PascalCase for Composable functions
+    functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
+  MatchingDeclarationName:
+    # expect/actual files use Platform.android.kt / Platform.ios.kt naming
+    active: false
+
+style:
+  MagicNumber:
+    active: false
+  WildcardImport:
+    active: false
+  MaxLineLength:
+    maxLineLength: 120
+  NewLineAtEndOfFile:
+    active: true
