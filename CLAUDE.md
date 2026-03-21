@@ -72,6 +72,8 @@ When adding or upgrading dependencies, always search the web for the latest stab
 
 This is a learning project — when explaining code or suggesting changes, always highlight relevant KMP best practices (e.g., expect/actual patterns, source set hierarchy, shared vs platform-specific code decisions, multiplatform testing strategies).
 
+After completing all changes in a plan, always run `./gradlew detekt` and fix any reported issues before considering the work done.
+
 Reference these for version compatibility and best practices:
 - https://developer.android.com/kotlin/multiplatform
 - https://kotlinlang.org/docs/multiplatform/multiplatform-compatibility-guide.html#kotlin-2-0-0-and-later
