@@ -66,6 +66,10 @@ Managed via `gradle/libs.versions.toml`. Key libraries: Kotlin 2.3.0, Compose Mu
 
 AGP 9.1.0 — shared module uses `com.android.kotlin.multiplatform.library` plugin (not the legacy `com.android.library`).
 
+## Design
+
+The project design file is at `design/design.pen`. Access it exclusively via the pencil MCP tools — do not use Read or Grep on `.pen` files.
+
 ## Guidelines
 
 When adding or upgrading dependencies, always search the web for the latest stable versions of KMP-compatible libraries and follow current Kotlin Multiplatform best practices (API patterns, source set conventions, expect/actual usage). Do not assume the versions listed in `libs.versions.toml` are up to date.
