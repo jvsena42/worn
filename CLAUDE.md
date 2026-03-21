@@ -60,6 +60,7 @@ Requires JDK 17+ (SQLDelight 2.0.2 requirement). iOS builds require Xcode — op
 - Photos are stored in app-private internal storage via expect/actual `PhotoFileStorage`
 - SQLDelight schemas go in `shared/src/commonMain/sqldelight/`; generated DB package is `com.github.worn.data.source.local.db`
 - Repository implementations wrap all async work (DB, file I/O, network) in `withContext(dispatcher)` — the `CoroutineContext` is injected via constructor (dependency inversion), never hardcoded. Callers never switch dispatchers. Platform data sources do NOT handle dispatching themselves.
+- Use DataStore for key-value storage instead of SharedPreferences. Only bypass DataStore when platform-level encryption is required (e.g., Android Keystore + raw file).
 
 ## Dependencies
 
