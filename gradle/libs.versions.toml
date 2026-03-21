@@ -4,7 +4,6 @@ android-compileSdk = "36"
 android-minSdk = "29"
 android-targetSdk = "36"
 androidx-activity = "1.12.2"
-androidx-security = "1.1.0"
 androidx-appcompat = "1.7.1"
 androidx-core = "1.17.0"
 androidx-espresso = "3.7.0"
@@ -56,7 +55,6 @@ sqldelight-android = { module = "app.cash.sqldelight:android-driver", version.re
 sqldelight-native = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
-androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "androidx-security" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
