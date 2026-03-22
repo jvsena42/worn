@@ -36,6 +36,22 @@ class WardrobeViewModelWrapper: ObservableObject {
         viewModel.onIntent(intent: WardrobeIntent.LoadItems())
     }
 
+    func addItem(imageData: Data, name: String, category: Category, colors: [String], seasons: [Season]) {
+        let bytes = [UInt8](imageData)
+        let kotlinBytes = KotlinByteArray(size: Int32(bytes.count))
+        for (index, byte) in bytes.enumerated() {
+            kotlinBytes.set(index: Int32(index), value: Int8(bitPattern: byte))
+        }
+        let intent = WardrobeIntent.AddItem(
+            imageBytes: kotlinBytes,
+            name: name,
+            category: category,
+            colors: colors,
+            seasons: seasons
+        )
+        viewModel.onIntent(intent: intent)
+    }
+
     deinit {
         cancellable?.cancel()
     }

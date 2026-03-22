@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
+import com.github.worn.domain.model.Season
 import com.github.worn.domain.repository.WardrobeRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -17,17 +18,26 @@ import kotlinx.coroutines.launch
 sealed interface WardrobeIntent {
     data object LoadItems : WardrobeIntent
     data class FilterByCategory(val category: Category?) : WardrobeIntent
+    data class AddItem(
+        val imageBytes: ByteArray,
+        val name: String,
+        val category: Category,
+        val colors: List<String>,
+        val seasons: List<Season>,
+    ) : WardrobeIntent
 }
 
 data class WardrobeState(
     val items: List<ClothingItem> = emptyList(),
     val isLoading: Boolean = false,
+    val isSaving: Boolean = false,
     val activeCategory: Category? = null,
     val error: String? = null,
 )
 
 sealed interface WardrobeEffect {
     data class ShowError(val message: String) : WardrobeEffect
+    data object ItemAdded : WardrobeEffect
 }
 
 class WardrobeViewModel(
@@ -48,6 +58,7 @@ class WardrobeViewModel(
         when (intent) {
             is WardrobeIntent.LoadItems -> loadItems()
             is WardrobeIntent.FilterByCategory -> filterByCategory(intent.category)
+            is WardrobeIntent.AddItem -> addItem(intent)
         }
     }
 
@@ -70,5 +81,25 @@ class WardrobeViewModel(
     private fun filterByCategory(category: Category?) {
         _state.update { it.copy(activeCategory = category) }
         loadItems()
+    }
+
+    private fun addItem(intent: WardrobeIntent.AddItem) {
+        viewModelScope.launch {
+            _state.update { it.copy(isSaving = true) }
+            repository.addItem(
+                imageBytes = intent.imageBytes,
+                name = intent.name,
+                category = intent.category,
+                colors = intent.colors,
+                seasons = intent.seasons,
+            ).onSuccess {
+                _state.update { it.copy(isSaving = false) }
+                _effects.send(WardrobeEffect.ItemAdded)
+                loadItems()
+            }.onFailure { error ->
+                _state.update { it.copy(isSaving = false) }
+                _effects.send(WardrobeEffect.ShowError(error.message ?: "Failed to save"))
+            }
+        }
     }
 }

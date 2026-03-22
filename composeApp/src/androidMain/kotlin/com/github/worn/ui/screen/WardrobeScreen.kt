@@ -21,7 +21,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -32,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
+import com.github.worn.presentation.viewmodel.WardrobeEffect
 import com.github.worn.presentation.viewmodel.WardrobeIntent
 import com.github.worn.presentation.viewmodel.WardrobeState
 import com.github.worn.presentation.viewmodel.WardrobeViewModel
@@ -53,6 +58,16 @@ fun WardrobeScreen(
     viewModel: WardrobeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    var showAddSheet by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                is WardrobeEffect.ItemAdded -> showAddSheet = false
+                is WardrobeEffect.ShowError -> { /* handled elsewhere */ }
+            }
+        }
+    }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val isCompact = maxWidth < COMPACT_BREAKPOINT
@@ -60,6 +75,19 @@ fun WardrobeScreen(
             state = state,
             isCompact = isCompact,
             onCategorySelected = { viewModel.onIntent(WardrobeIntent.FilterByCategory(it)) },
+            onAddItemClick = { showAddSheet = true },
+        )
+    }
+
+    if (showAddSheet) {
+        AddItemSheet(
+            isSaving = state.isSaving,
+            onSave = { imageBytes, name, category, colors, seasons ->
+                viewModel.onIntent(
+                    WardrobeIntent.AddItem(imageBytes, name, category, colors, seasons),
+                )
+            },
+            onDismiss = { showAddSheet = false },
         )
     }
 }
@@ -69,13 +97,14 @@ private fun WardrobeScaffold(
     state: WardrobeState,
     isCompact: Boolean,
     onCategorySelected: (Category?) -> Unit,
+    onAddItemClick: () -> Unit = {},
 ) {
     val contentPadding = if (isCompact) 24.dp else 32.dp
     val sectionGap = if (isCompact) 24.dp else 28.dp
 
     Scaffold(
         containerColor = WornColors.BgPage,
-        floatingActionButton = { AddItemFab(onClick = { }) },
+        floatingActionButton = { AddItemFab(onClick = onAddItemClick) },
         bottomBar = {
             WornBottomBar(
                 activeTab = Tab.WARDROBE,

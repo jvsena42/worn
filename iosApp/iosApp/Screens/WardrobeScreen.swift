@@ -4,13 +4,30 @@ import Shared
 struct WardrobeScreen: View {
     @StateObject private var viewModel = WardrobeViewModelWrapper()
     @Environment(\.horizontalSizeClass) var sizeClass
+    @State private var showAddSheet = false
 
     var body: some View {
         WardrobeContent(
             state: viewModel.state,
             isCompact: sizeClass == .compact,
-            onCategorySelected: { viewModel.filterByCategory($0) }
+            onCategorySelected: { viewModel.filterByCategory($0) },
+            onAddItemClick: { showAddSheet = true }
         )
+        .sheet(isPresented: $showAddSheet) {
+            AddItemSheet(
+                isSaving: viewModel.state.isSaving,
+                onSave: { data, name, category, colors, seasons in
+                    viewModel.addItem(
+                        imageData: data,
+                        name: name,
+                        category: category,
+                        colors: colors,
+                        seasons: seasons
+                    )
+                },
+                onDismiss: { showAddSheet = false }
+            )
+        }
     }
 }
 
@@ -18,6 +35,7 @@ struct WardrobeContent: View {
     let state: WardrobeState
     var isCompact: Bool = true
     var onCategorySelected: (Category?) -> Void = { _ in }
+    var onAddItemClick: () -> Void = {}
 
     private var contentPadding: CGFloat { isCompact ? 24 : 32 }
     private var gridGap: CGFloat { isCompact ? 12 : 16 }
@@ -94,7 +112,7 @@ struct WardrobeContent: View {
     }
 
     private var addItemFab: some View {
-        Button(action: { }) {
+        Button(action: onAddItemClick) {
             HStack(spacing: 8) {
                 Image(systemName: "plus")
                     .font(.system(size: 15, weight: .semibold))
