@@ -3,7 +3,6 @@ package com.github.worn.ui.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,7 +36,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.ui.text.font.FontWeight
+import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -57,7 +58,6 @@ import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 
-private val COMPACT_BREAKPOINT = 600.dp
 private val GRID_MIN_CELL_WIDTH = 160.dp
 private val GRID_GAP_COMPACT = 12.dp
 private val GRID_GAP_EXPANDED = 16.dp
@@ -78,18 +78,18 @@ fun WardrobeScreen(viewModel: WardrobeViewModel = koinViewModel()) {
         }
     }
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val isCompact = maxWidth < COMPACT_BREAKPOINT
-        WardrobeScaffold(
-            state = state,
-            isCompact = isCompact,
-            onCategorySelected = { viewModel.onIntent(WardrobeIntent.FilterByCategory(it)) },
-            onAddItemClick = { showAddSheet = true },
-            onToggleSelection = { viewModel.onIntent(WardrobeIntent.ToggleSelection(it)) },
-            onClearSelection = { viewModel.onIntent(WardrobeIntent.ClearSelection) },
-            onDeleteSelected = { viewModel.onIntent(WardrobeIntent.DeleteSelected) },
-        )
-    }
+    val windowInfo = currentWindowAdaptiveInfo()
+    val isCompact = windowInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
+
+    WardrobeScaffold(
+        state = state,
+        isCompact = isCompact,
+        onCategorySelected = { viewModel.onIntent(WardrobeIntent.FilterByCategory(it)) },
+        onAddItemClick = { showAddSheet = true },
+        onToggleSelection = { viewModel.onIntent(WardrobeIntent.ToggleSelection(it)) },
+        onClearSelection = { viewModel.onIntent(WardrobeIntent.ClearSelection) },
+        onDeleteSelected = { viewModel.onIntent(WardrobeIntent.DeleteSelected) },
+    )
 
     if (showAddSheet) {
         AddItemSheet(
