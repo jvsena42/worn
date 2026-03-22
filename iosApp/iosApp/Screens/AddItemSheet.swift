@@ -155,20 +155,22 @@ struct AddItemSheet: View {
             HStack(spacing: 12) {
                 ForEach(colorPalette, id: \.name) { item in
                     let isSelected = selectedColors.contains(item.name)
-                    Circle()
-                        .fill(item.color)
-                        .frame(width: 28, height: 28)
-                        .overlay(
-                            Circle()
-                                .stroke(isSelected ? WornColors.accentGreen : Color.clear, lineWidth: 2)
-                        )
-                        .onTapGesture {
-                            if isSelected {
-                                selectedColors.remove(item.name)
-                            } else {
-                                selectedColors.insert(item.name)
-                            }
+                    Button {
+                        if isSelected {
+                            selectedColors.remove(item.name)
+                        } else {
+                            selectedColors.insert(item.name)
                         }
+                    } label: {
+                        Circle()
+                            .fill(item.color)
+                            .frame(width: 28, height: 28)
+                            .overlay(
+                                Circle()
+                                    .stroke(isSelected ? WornColors.accentGreen : Color.clear, lineWidth: 2)
+                            )
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }

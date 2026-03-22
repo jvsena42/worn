@@ -3,14 +3,15 @@ package com.github.worn.ui.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,8 @@ import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -175,17 +178,13 @@ fun ColorSection(selectedColors: Set<String>, onToggle: (String) -> Unit) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             addItemColorPalette.forEach { (name, color) ->
                 val isSelected = name in selectedColors
-                Box(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                        .then(
-                            if (isSelected) Modifier.border(2.dp, WornColors.AccentGreen, CircleShape)
-                            else Modifier,
-                        )
-                        .clickable { onToggle(name) },
-                )
+                Surface(
+                    onClick = { onToggle(name) },
+                    shape = CircleShape,
+                    color = color,
+                    border = if (isSelected) BorderStroke(2.dp, WornColors.AccentGreen) else null,
+                    modifier = Modifier.size(28.dp),
+                ) {}
             }
         }
     }
@@ -221,21 +220,30 @@ fun SeasonSection(selectedSeasons: Set<Season>, onToggle: (Season) -> Unit) {
 fun SaveButton(enabled: Boolean, isSaving: Boolean, onClick: () -> Unit) {
     val gradient = Brush.verticalGradient(listOf(Color(0xFF8FA47D), Color(0xFF6B7F5E)))
     val disabledGradient = Brush.verticalGradient(listOf(Color(0xFFB5AFA8), Color(0xFFA09A92)))
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(52.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(if (enabled) gradient else disabledGradient)
-            .clickable(enabled = enabled, onClick = onClick),
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
+        ),
+        contentPadding = PaddingValues(),
+        modifier = Modifier.fillMaxWidth().height(52.dp),
     ) {
-        Text(
-            text = if (isSaving) "Saving…" else "Save to wardrobe",
-            color = Color.White,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(if (enabled) gradient else disabledGradient),
+        ) {
+            Text(
+                text = if (isSaving) "Saving…" else "Save to wardrobe",
+                color = Color.White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
     }
 }
 
