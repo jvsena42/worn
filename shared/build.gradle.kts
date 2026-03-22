@@ -16,6 +16,9 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
+
+        withHostTestBuilder {
+        }
     }
 
     listOf(
@@ -44,6 +47,10 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.turbine)
+        }
+        getByName("androidHostTest").dependencies {
+            implementation(libs.mockk)
         }
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
