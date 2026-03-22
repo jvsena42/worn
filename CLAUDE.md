@@ -61,6 +61,11 @@ Requires JDK 17+ (SQLDelight 2.0.2 requirement). iOS builds require Xcode — op
 - SQLDelight schemas go in `shared/src/commonMain/sqldelight/`; generated DB package is `com.github.worn.data.source.local.db`
 - Repository implementations wrap all async work (DB, file I/O, network) in `withContext(dispatcher)` — the `CoroutineContext` is injected via constructor (dependency inversion), never hardcoded. Callers never switch dispatchers. Platform data sources do NOT handle dispatching themselves.
 - Use DataStore for key-value storage instead of SharedPreferences. Only bypass DataStore when platform-level encryption is required (e.g., Android Keystore + raw file).
+- Prefer `runCatching` with `.onSuccess`/`.onFailure`/`.getOrNull` over `try/catch` blocks whenever possible. Only use `try/catch` when `runCatching` genuinely doesn't fit (e.g., needing `finally`, catching specific exception types differently).
+- Repository interfaces expose `kotlin.Result<T>` — implementations wrap logic in `runCatching`. ViewModels consume `Result` directly (`.onSuccess`/`.onFailure`), never using `try/catch` or `runCatching` themselves.
+- Always add previews to screens: on Android, include `@Preview` for phone and tablet (portrait) with `showSystemUi = true`; on iOS, include SwiftUI `#Preview` for iPhone and iPad (portrait).
+- Use native/framework components (e.g., Material3 `Button`, `FilledTonalButton`, `ElevatedButton`) instead of building custom equivalents from `Box`/`clickable`. Only go custom when the framework component genuinely cannot match the design.
+- Always update both Android (Compose) and iOS (SwiftUI) when making UI changes. Every screen, component, or visual behavior change must be applied to both platforms in the same task.
 
 ## Dependencies
 
