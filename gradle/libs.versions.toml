@@ -22,6 +22,8 @@ coil = "3.4.0"
 composeMaterial3Adaptive = "1.2.0-alpha04"
 detekt = "2.0.0-alpha.2"
 sqldelight = "2.0.2"
+turbine = "1.2.1"
+mockk = "1.14.9"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -62,6 +64,8 @@ koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", ver
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 compose-material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "composeMaterial3Adaptive" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
