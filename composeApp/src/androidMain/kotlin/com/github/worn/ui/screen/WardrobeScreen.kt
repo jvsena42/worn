@@ -25,10 +25,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.worn.domain.model.Category
+import com.github.worn.domain.model.ClothingItem
 import com.github.worn.presentation.viewmodel.WardrobeIntent
 import com.github.worn.presentation.viewmodel.WardrobeState
 import com.github.worn.presentation.viewmodel.WardrobeViewModel
@@ -37,6 +40,7 @@ import com.github.worn.ui.components.ClothingCard
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornBottomBar
 import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 
 private val COMPACT_BREAKPOINT = 600.dp
@@ -64,7 +68,7 @@ fun WardrobeScreen(
 private fun WardrobeScaffold(
     state: WardrobeState,
     isCompact: Boolean,
-    onCategorySelected: (com.github.worn.domain.model.Category?) -> Unit,
+    onCategorySelected: (Category?) -> Unit,
 ) {
     val contentPadding = if (isCompact) 24.dp else 32.dp
     val sectionGap = if (isCompact) 24.dp else 28.dp
@@ -157,6 +161,39 @@ private fun AddItemFab(onClick: () -> Unit) {
             text = "Add item",
             fontWeight = FontWeight.SemiBold,
             fontSize = 15.sp,
+        )
+    }
+}
+
+private val previewItems = listOf(
+    ClothingItem("1", "Black T-Shirt", Category.TOP, listOf("black"), photoPath = "", createdAt = 0),
+    ClothingItem("2", "Navy Jeans", Category.BOTTOM, listOf("navy"), photoPath = "", createdAt = 0),
+    ClothingItem("3", "White Sneakers", Category.SHOES, listOf("white"), photoPath = "", createdAt = 0),
+    ClothingItem("4", "Olive Jacket", Category.OUTERWEAR, listOf("olive"), photoPath = "", createdAt = 0),
+    ClothingItem("5", "Grey Hoodie", Category.TOP, listOf("grey"), photoPath = "", createdAt = 0),
+    ClothingItem("6", "Chinos", Category.BOTTOM, listOf("khaki"), photoPath = "", createdAt = 0),
+)
+
+@Preview(showSystemUi = true, device = "id:pixel_8")
+@Composable
+private fun WardrobeScreenPhonePreview() {
+    WornTheme {
+        WardrobeScaffold(
+            state = WardrobeState(items = previewItems),
+            isCompact = true,
+            onCategorySelected = {},
+        )
+    }
+}
+
+@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@Composable
+private fun WardrobeScreenTabletPreview() {
+    WornTheme {
+        WardrobeScaffold(
+            state = WardrobeState(items = previewItems),
+            isCompact = false,
+            onCategorySelected = {},
         )
     }
 }

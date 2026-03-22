@@ -63,6 +63,7 @@ Requires JDK 17+ (SQLDelight 2.0.2 requirement). iOS builds require Xcode — op
 - Use DataStore for key-value storage instead of SharedPreferences. Only bypass DataStore when platform-level encryption is required (e.g., Android Keystore + raw file).
 - Prefer `runCatching` with `.onSuccess`/`.onFailure`/`.getOrNull` over `try/catch` blocks whenever possible. Only use `try/catch` when `runCatching` genuinely doesn't fit (e.g., needing `finally`, catching specific exception types differently).
 - Repository interfaces expose `kotlin.Result<T>` — implementations wrap logic in `runCatching`. ViewModels consume `Result` directly (`.onSuccess`/`.onFailure`), never using `try/catch` or `runCatching` themselves.
+- Always add previews to screens: on Android, include `@Preview` for phone and tablet (portrait) with `showSystemUi = true`; on iOS, include SwiftUI `#Preview` for iPhone and iPad (portrait).
 
 ## Dependencies
 
