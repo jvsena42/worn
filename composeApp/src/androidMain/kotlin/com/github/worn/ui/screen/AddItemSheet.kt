@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.Season
 import com.github.worn.ui.components.AiBadge
+import com.github.worn.ui.components.AiLockedSheet
 import com.github.worn.ui.components.CategoryDropdown
 import com.github.worn.ui.components.ColorSection
 import com.github.worn.ui.components.ItemNameField
@@ -61,6 +62,7 @@ import java.io.ByteArrayOutputStream
 @Composable
 fun AddItemSheet(
     isSaving: Boolean,
+    hasApiKey: Boolean,
     onSave: (
         imageBytes: ByteArray, name: String, category: Category,
         colors: List<String>, seasons: List<Season>,
@@ -76,7 +78,7 @@ fun AddItemSheet(
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
         dragHandle = { SheetHandle() },
     ) {
-        AddItemForm(isSaving = isSaving, onSave = onSave)
+        AddItemForm(isSaving = isSaving, hasApiKey = hasApiKey, onSave = onSave)
     }
 }
 
@@ -99,6 +101,7 @@ private fun SheetHandle() {
 @Composable
 internal fun AddItemForm(
     isSaving: Boolean = false,
+    hasApiKey: Boolean = false,
     onSave: (ByteArray, String, Category, List<String>, List<Season>) -> Unit =
         { _, _, _, _, _ -> },
 ) {
@@ -109,6 +112,7 @@ internal fun AddItemForm(
     var selectedColors by remember { mutableStateOf(setOf<String>()) }
     var selectedSeasons by remember { mutableStateOf(setOf<Season>()) }
     var showSourceChooser by remember { mutableStateOf(false) }
+    var showAiLockedSheet by remember { mutableStateOf(false) }
 
     PhotoSourceChooser(
         show = showSourceChooser,
@@ -118,6 +122,10 @@ internal fun AddItemForm(
             photoBitmap = bitmap
         },
     )
+
+    if (showAiLockedSheet) {
+        AiLockedSheet(onDismiss = { showAiLockedSheet = false })
+    }
 
     AddItemFormContent(
         photoBitmap = photoBitmap,
@@ -132,6 +140,7 @@ internal fun AddItemForm(
         isSaving = isSaving,
         canSave = photoBytes != null && name.isNotBlank() && selectedCategory != null,
         onPhotoClick = { showSourceChooser = true },
+        onAiBadgeClick = { if (!hasApiKey) showAiLockedSheet = true },
         onSave = {
             val bytes = photoBytes ?: return@AddItemFormContent
             val cat = selectedCategory ?: return@AddItemFormContent
@@ -208,6 +217,7 @@ private fun AddItemFormContent(
     isSaving: Boolean,
     canSave: Boolean,
     onPhotoClick: () -> Unit,
+    onAiBadgeClick: () -> Unit,
     onSave: () -> Unit,
 ) {
     Column(
@@ -225,7 +235,7 @@ private fun AddItemFormContent(
             letterSpacing = (-0.5).sp,
         )
         PhotoUploadZone(bitmap = photoBitmap, onClick = onPhotoClick)
-        AiBadge()
+        AiBadge(onClick = onAiBadgeClick)
         ItemNameField(value = name, onValueChange = onNameChange)
         CategoryDropdown(selected = selectedCategory, onSelected = onCategorySelected)
         ColorSection(selectedColors = selectedColors, onToggle = onColorToggle)

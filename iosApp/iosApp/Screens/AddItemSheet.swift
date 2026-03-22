@@ -4,6 +4,7 @@ import Shared
 
 struct AddItemSheet: View {
     let isSaving: Bool
+    let hasApiKey: Bool
     let onSave: (Data, String, Category, [String], [Season]) -> Void
     let onDismiss: () -> Void
 
@@ -17,6 +18,7 @@ struct AddItemSheet: View {
     @State private var showSourceChooser = false
     @State private var showPhotoPicker = false
     @State private var showCamera = false
+    @State private var showAiLockedSheet = false
 
     private let colorPalette: [(name: String, color: Color)] = [
         ("Cream", Color(hex: "EDE8E1")),
@@ -115,18 +117,27 @@ struct AddItemSheet: View {
     }
 
     private var aiBadge: some View {
-        HStack(spacing: 6) {
-            Text("✦")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.white)
-            Text("Auto-tag with AI")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.white)
+        Button {
+            if !hasApiKey { showAiLockedSheet = true }
+        } label: {
+            HStack(spacing: 6) {
+                Text("✦")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.white)
+                Text("Auto-tag with AI")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.white)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Color(hex: "6B7B8E"))
+            .clipShape(Capsule())
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .background(Color(hex: "6B7B8E"))
-        .clipShape(Capsule())
+        .buttonStyle(.plain)
+        .sheet(isPresented: $showAiLockedSheet) {
+            AiLockedSheet(onDismiss: { showAiLockedSheet = false })
+                .presentationDetents([.medium])
+        }
     }
 
     private var nameField: some View {
@@ -287,10 +298,10 @@ struct AddItemSheet: View {
 }
 
 #Preview("iPhone") {
-    AddItemSheet(isSaving: false, onSave: { _, _, _, _, _ in }, onDismiss: {})
+    AddItemSheet(isSaving: false, hasApiKey: false, onSave: { _, _, _, _, _ in }, onDismiss: {})
 }
 
 #Preview("iPad Portrait") {
-    AddItemSheet(isSaving: false, onSave: { _, _, _, _, _ in }, onDismiss: {})
+    AddItemSheet(isSaving: false, hasApiKey: false, onSave: { _, _, _, _, _ in }, onDismiss: {})
         .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

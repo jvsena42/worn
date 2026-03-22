@@ -19,6 +19,7 @@ struct WardrobeScreen: View {
         .sheet(isPresented: $showAddSheet) {
             AddItemSheet(
                 isSaving: viewModel.state.isSaving,
+                hasApiKey: viewModel.state.hasApiKey,
                 onSave: { data, name, category, colors, seasons in
                     viewModel.addItem(
                         imageData: data, name: name, category: category,

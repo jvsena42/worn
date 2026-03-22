@@ -6,6 +6,7 @@ import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Season
 import com.github.worn.domain.repository.WardrobeRepository
+import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +38,7 @@ data class WardrobeState(
     val isDeleting: Boolean = false,
     val selectedIds: Set<String> = emptySet(),
     val activeCategory: Category? = null,
+    val hasApiKey: Boolean = false,
     val error: String? = null,
 )
 
@@ -48,6 +50,7 @@ sealed interface WardrobeEffect {
 
 class WardrobeViewModel(
     private val repository: WardrobeRepository,
+    private val secretStore: SecretStore,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(WardrobeState())
@@ -57,7 +60,12 @@ class WardrobeViewModel(
     val effects: Flow<WardrobeEffect> = _effects.receiveAsFlow()
 
     init {
+        refreshApiKeyState()
         onIntent(WardrobeIntent.LoadItems)
+    }
+
+    private fun refreshApiKeyState() {
+        _state.update { it.copy(hasApiKey = secretStore.getApiKey() != null) }
     }
 
     fun onIntent(intent: WardrobeIntent) {

@@ -94,6 +94,7 @@ fun WardrobeScreen(viewModel: WardrobeViewModel = koinViewModel()) {
     if (showAddSheet) {
         AddItemSheet(
             isSaving = state.isSaving,
+            hasApiKey = state.hasApiKey,
             onSave = { imageBytes, name, category, colors, seasons ->
                 viewModel.onIntent(
                     WardrobeIntent.AddItem(imageBytes, name, category, colors, seasons),

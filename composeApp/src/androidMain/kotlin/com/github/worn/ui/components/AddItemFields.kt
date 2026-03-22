@@ -103,8 +103,12 @@ fun PhotoUploadZone(bitmap: ImageBitmap?, onClick: () -> Unit) {
 }
 
 @Composable
-fun AiBadge() {
-    Surface(shape = RoundedCornerShape(28.dp), color = Color(0xFF6B7B8E)) {
+fun AiBadge(onClick: () -> Unit = {}) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(28.dp),
+        color = Color(0xFF6B7B8E),
+    ) {
         Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)) {
             Text("✦ ", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
             Text("Auto-tag with AI", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
