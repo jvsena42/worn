@@ -14,6 +14,9 @@ struct AddItemSheet: View {
     @State private var selectedCategory: Category?
     @State private var selectedColors: Set<String> = []
     @State private var selectedSeasons: Set<Season> = []
+    @State private var showSourceChooser = false
+    @State private var showPhotoPicker = false
+    @State private var showCamera = false
 
     private let colorPalette: [(name: String, color: Color)] = [
         ("Cream", Color(hex: "EDE8E1")),
@@ -53,11 +56,35 @@ struct AddItemSheet: View {
                     Button("Cancel", action: onDismiss)
                 }
             }
+            .confirmationDialog("Add photo", isPresented: $showSourceChooser) {
+                Button("Take Photo") { showCamera = true }
+                Button("Choose from Library") { showPhotoPicker = true }
+                Button("Cancel", role: .cancel) {}
+            }
+            .photosPicker(isPresented: $showPhotoPicker, selection: $selectedPhotoItem, matching: .images)
+            .fullScreenCover(isPresented: $showCamera) {
+                CameraView(
+                    onImageCaptured: { image in
+                        photoImage = image
+                        photoData = image.jpegData(compressionQuality: 0.9)
+                    },
+                    onDismiss: { showCamera = false }
+                )
+                .ignoresSafeArea()
+            }
+            .onChange(of: selectedPhotoItem) { _, newItem in
+                Task {
+                    if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                        photoData = data
+                        photoImage = UIImage(data: data)
+                    }
+                }
+            }
         }
     }
 
     private var photoUploadZone: some View {
-        PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+        Button { showSourceChooser = true } label: {
             ZStack {
                 if let image = photoImage {
                     Image(uiImage: image)
@@ -84,14 +111,7 @@ struct AddItemSheet: View {
                     .stroke(WornColors.borderStrong, lineWidth: 1.5)
             )
         }
-        .onChange(of: selectedPhotoItem) { _, newItem in
-            Task {
-                if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                    photoData = data
-                    photoImage = UIImage(data: data)
-                }
-            }
-        }
+        .buttonStyle(.plain)
     }
 
     private var aiBadge: some View {
@@ -162,13 +182,20 @@ struct AddItemSheet: View {
                             selectedColors.insert(item.name)
                         }
                     } label: {
-                        Circle()
-                            .fill(item.color)
-                            .frame(width: 28, height: 28)
-                            .overlay(
-                                Circle()
-                                    .stroke(isSelected ? WornColors.accentGreen : Color.clear, lineWidth: 2)
-                            )
+                        ZStack {
+                            Circle()
+                                .fill(item.color)
+                                .frame(width: 28, height: 28)
+                                .overlay(
+                                    Circle()
+                                        .stroke(isSelected ? WornColors.accentGreen : Color.clear, lineWidth: 2)
+                                )
+                            if isSelected {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundColor(item.color.isBright ? .black : .white)
+                            }
+                        }
                     }
                     .buttonStyle(.plain)
                 }
@@ -213,18 +240,7 @@ struct AddItemSheet: View {
     private var saveButton: some View {
         Button {
             guard let data = photoData, let cat = selectedCategory else { return }
-            let bytes = [UInt8](data)
-            let kotlinByteArray = KotlinByteArray(size: Int32(bytes.count))
-            for (index, byte) in bytes.enumerated() {
-                kotlinByteArray.set(index: Int32(index), value: Int8(bitPattern: byte))
-            }
-            onSave(
-                data,
-                name,
-                cat,
-                Array(selectedColors),
-                Array(selectedSeasons)
-            )
+            onSave(data, name, cat, Array(selectedColors), Array(selectedSeasons))
         } label: {
             Text(isSaving ? "Saving…" : "Save to wardrobe")
                 .font(.system(size: 16, weight: .semibold))
@@ -248,22 +264,13 @@ struct AddItemSheet: View {
 
     private var categoryOptions: [(Category, String)] {
         [
-            (.top, "Tops"),
-            (.bottom, "Bottoms"),
-            (.dress, "Dresses"),
-            (.outerwear, "Outerwear"),
-            (.shoes, "Shoes"),
-            (.accessory, "Accessories"),
+            (.top, "Tops"), (.bottom, "Bottoms"), (.dress, "Dresses"),
+            (.outerwear, "Outerwear"), (.shoes, "Shoes"), (.accessory, "Accessories"),
         ]
     }
 
     private var seasonOptions: [(Season, String)] {
-        [
-            (.spring, "Spring"),
-            (.summer, "Summer"),
-            (.fall, "Fall"),
-            (.winter, "Winter"),
-        ]
+        [(.spring, "Spring"), (.summer, "Summer"), (.fall, "Fall"), (.winter, "Winter")]
     }
 
     private func displayName(for category: Category) -> String {

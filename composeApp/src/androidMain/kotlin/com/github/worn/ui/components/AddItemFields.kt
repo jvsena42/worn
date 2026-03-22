@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.DropdownMenu
@@ -184,10 +186,26 @@ fun ColorSection(selectedColors: Set<String>, onToggle: (String) -> Unit) {
                     color = color,
                     border = if (isSelected) BorderStroke(2.dp, WornColors.AccentGreen) else null,
                     modifier = Modifier.size(28.dp),
-                ) {}
+                ) {
+                    if (isSelected) {
+                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Selected",
+                                tint = contrastColor(color),
+                                modifier = Modifier.size(14.dp),
+                            )
+                        }
+                    }
+                }
             }
         }
     }
+}
+
+private fun contrastColor(background: Color): Color {
+    val brightness = background.red * 0.299f + background.green * 0.587f + background.blue * 0.114f
+    return if (brightness > 0.5f) Color.Black else Color.White
 }
 
 @Composable

@@ -25,4 +25,11 @@ extension Color {
             blue: Double(rgb & 0xFF) / 255
         )
     }
+
+    var isBright: Bool {
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0
+        UIColor(self).getRed(&r, green: &g, blue: &b, alpha: nil)
+        let brightness = r * 0.299 + g * 0.587 + b * 0.114
+        return brightness > 0.5
+    }
 }
