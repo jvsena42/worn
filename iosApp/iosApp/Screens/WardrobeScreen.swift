@@ -136,7 +136,7 @@ struct WardrobeContent: View {
 
     private var gridSection: some View {
         Group {
-            if state.isLoading {
+            if state.isLoading && state.items.isEmpty {
                 HStack {
                     Spacer()
                     ProgressView().tint(WornColors.accentGreen)
@@ -155,6 +155,7 @@ struct WardrobeContent: View {
                             isSelected: state.selectedIds.contains(item.id),
                             isSelectionMode: isSelectionMode
                         )
+                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
                         .onTapGesture {
                             if isSelectionMode { onToggleSelection(item.id) }
                         }
@@ -163,6 +164,7 @@ struct WardrobeContent: View {
                         }
                     }
                 }
+                .animation(.easeInOut(duration: 0.3), value: state.items.map(\.id))
             }
         }
     }

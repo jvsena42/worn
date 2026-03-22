@@ -234,7 +234,7 @@ private fun WardrobeContent(
     val photoHeight: Dp = if (isCompact) 171.dp else 200.dp
     val isSelectionMode = state.selectedIds.isNotEmpty()
 
-    if (state.isLoading) {
+    if (state.isLoading && state.items.isEmpty()) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator(color = WornColors.AccentGreen)
         }
@@ -255,6 +255,7 @@ private fun WardrobeContent(
                     onClick = {
                         if (isSelectionMode) onToggleSelection(item.id)
                     },
+                    modifier = Modifier.animateItem(),
                 )
             }
         }

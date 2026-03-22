@@ -131,12 +131,18 @@ class WardrobeViewModel(
         val ids = _state.value.selectedIds.toList()
         if (ids.isEmpty()) return
         viewModelScope.launch {
-            _state.update { it.copy(isDeleting = true) }
+            _state.update { state ->
+                state.copy(
+                    isDeleting = true,
+                    items = state.items.filterNot { it.id in ids },
+                    selectedIds = emptySet(),
+                )
+            }
             var failed = false
             for (id in ids) {
                 repository.deleteItem(id).onFailure { failed = true }
             }
-            _state.update { it.copy(isDeleting = false, selectedIds = emptySet()) }
+            _state.update { it.copy(isDeleting = false) }
             if (failed) {
                 _effects.send(WardrobeEffect.ShowError("Some items could not be deleted"))
             } else {

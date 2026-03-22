@@ -18,7 +18,9 @@ class WardrobeViewModelWrapper: ObservableObject {
         cancellable = adapter.subscribe { [weak self] newState in
             guard let newState = newState as? WardrobeState else { return }
             DispatchQueue.main.async {
-                self?.state = newState
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    self?.state = newState
+                }
             }
         }
     }
