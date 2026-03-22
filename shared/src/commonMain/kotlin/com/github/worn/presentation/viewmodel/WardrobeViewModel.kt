@@ -25,12 +25,17 @@ sealed interface WardrobeIntent {
         val colors: List<String>,
         val seasons: List<Season>,
     ) : WardrobeIntent
+    data class ToggleSelection(val itemId: String) : WardrobeIntent
+    data object ClearSelection : WardrobeIntent
+    data object DeleteSelected : WardrobeIntent
 }
 
 data class WardrobeState(
     val items: List<ClothingItem> = emptyList(),
     val isLoading: Boolean = false,
     val isSaving: Boolean = false,
+    val isDeleting: Boolean = false,
+    val selectedIds: Set<String> = emptySet(),
     val activeCategory: Category? = null,
     val error: String? = null,
 )
@@ -38,6 +43,7 @@ data class WardrobeState(
 sealed interface WardrobeEffect {
     data class ShowError(val message: String) : WardrobeEffect
     data object ItemAdded : WardrobeEffect
+    data object ItemsDeleted : WardrobeEffect
 }
 
 class WardrobeViewModel(
@@ -59,6 +65,9 @@ class WardrobeViewModel(
             is WardrobeIntent.LoadItems -> loadItems()
             is WardrobeIntent.FilterByCategory -> filterByCategory(intent.category)
             is WardrobeIntent.AddItem -> addItem(intent)
+            is WardrobeIntent.ToggleSelection -> toggleSelection(intent.itemId)
+            is WardrobeIntent.ClearSelection -> clearSelection()
+            is WardrobeIntent.DeleteSelected -> deleteSelected()
         }
     }
 
@@ -100,6 +109,40 @@ class WardrobeViewModel(
                 _state.update { it.copy(isSaving = false) }
                 _effects.send(WardrobeEffect.ShowError(error.message ?: "Failed to save"))
             }
+        }
+    }
+
+    private fun toggleSelection(itemId: String) {
+        _state.update { state ->
+            val updated = if (itemId in state.selectedIds) {
+                state.selectedIds - itemId
+            } else {
+                state.selectedIds + itemId
+            }
+            state.copy(selectedIds = updated)
+        }
+    }
+
+    private fun clearSelection() {
+        _state.update { it.copy(selectedIds = emptySet()) }
+    }
+
+    private fun deleteSelected() {
+        val ids = _state.value.selectedIds.toList()
+        if (ids.isEmpty()) return
+        viewModelScope.launch {
+            _state.update { it.copy(isDeleting = true) }
+            var failed = false
+            for (id in ids) {
+                repository.deleteItem(id).onFailure { failed = true }
+            }
+            _state.update { it.copy(isDeleting = false, selectedIds = emptySet()) }
+            if (failed) {
+                _effects.send(WardrobeEffect.ShowError("Some items could not be deleted"))
+            } else {
+                _effects.send(WardrobeEffect.ItemsDeleted)
+            }
+            loadItems()
         }
     }
 }

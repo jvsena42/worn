@@ -52,6 +52,18 @@ class WardrobeViewModelWrapper: ObservableObject {
         viewModel.onIntent(intent: intent)
     }
 
+    func toggleSelection(_ itemId: String) {
+        viewModel.onIntent(intent: WardrobeIntent.ToggleSelection(itemId: itemId))
+    }
+
+    func clearSelection() {
+        viewModel.onIntent(intent: WardrobeIntent.ClearSelection())
+    }
+
+    func deleteSelected() {
+        viewModel.onIntent(intent: WardrobeIntent.DeleteSelected())
+    }
+
     deinit {
         cancellable?.cancel()
     }

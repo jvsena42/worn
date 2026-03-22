@@ -1,19 +1,22 @@
 package com.github.worn.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Checkroom
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -35,52 +38,94 @@ import com.github.worn.ui.theme.WornColors
 import java.io.File
 
 private val photoShape = RoundedCornerShape(16.dp)
+private val selectionShape = RoundedCornerShape(14.dp)
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ClothingCard(
     item: ClothingItem,
     photoHeight: Dp = 171.dp,
+    isSelected: Boolean = false,
+    isSelectionMode: Boolean = false,
+    onLongPress: () -> Unit = {},
+    onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.combinedClickable(
+            onClick = onClick,
+            onLongClick = onLongPress,
+        ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        PhotoArea(item = item, height = photoHeight)
+        PhotoArea(
+            item = item,
+            height = photoHeight,
+            isSelected = isSelected,
+            isSelectionMode = isSelectionMode,
+        )
         ItemInfo(item = item)
     }
 }
 
 @Composable
-private fun PhotoArea(item: ClothingItem, height: Dp) {
-    Surface(
-        shape = photoShape,
-        color = WornColors.BgCard,
-        border = BorderStroke(1.dp, WornColors.BorderSubtle),
-        shadowElevation = 4.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(height),
-    ) {
-        if (item.photoPath.isNotEmpty() && File(item.photoPath).exists()) {
-            AsyncImage(
-                model = File(item.photoPath),
-                contentDescription = item.name,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(photoShape),
+private fun PhotoArea(
+    item: ClothingItem,
+    height: Dp,
+    isSelected: Boolean,
+    isSelectionMode: Boolean,
+) {
+    Box(modifier = Modifier.fillMaxWidth().height(height)) {
+        Surface(
+            shape = photoShape,
+            color = WornColors.BgCard,
+            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            shadowElevation = 4.dp,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            if (item.photoPath.isNotEmpty() && File(item.photoPath).exists()) {
+                AsyncImage(
+                    model = File(item.photoPath),
+                    contentDescription = item.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize().clip(photoShape),
+                )
+            } else {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Icon(
+                        imageVector = Icons.Outlined.Checkroom,
+                        contentDescription = null,
+                        tint = WornColors.IconMuted,
+                        modifier = Modifier.size(32.dp),
+                    )
+                }
+            }
+        }
+
+        if (isSelectionMode) {
+            SelectionIndicator(
+                isSelected = isSelected,
+                modifier = Modifier.padding(8.dp),
             )
-        } else {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize(),
-            ) {
+        }
+    }
+}
+
+@Composable
+private fun SelectionIndicator(isSelected: Boolean, modifier: Modifier = Modifier) {
+    Surface(
+        shape = selectionShape,
+        color = if (isSelected) WornColors.AccentGreen else WornColors.BgCard,
+        border = if (isSelected) null else BorderStroke(1.5.dp, WornColors.BorderSubtle),
+        modifier = modifier.size(28.dp),
+    ) {
+        if (isSelected) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 Icon(
-                    imageVector = Icons.Outlined.Checkroom,
-                    contentDescription = null,
-                    tint = WornColors.IconMuted,
-                    modifier = Modifier.size(32.dp),
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Selected",
+                    tint = Color.White,
+                    modifier = Modifier.size(16.dp),
                 )
             }
         }
