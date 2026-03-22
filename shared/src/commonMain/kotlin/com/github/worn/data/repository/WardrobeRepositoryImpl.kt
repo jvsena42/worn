@@ -24,24 +24,32 @@ class WardrobeRepositoryImpl(
     private val dispatcher: CoroutineContext,
 ) : WardrobeRepository {
 
-    override suspend fun getAll(): List<ClothingItem> = withContext(dispatcher) {
-        db.clothingItemQueries.getAll().executeAsList().map { it.toDomain() }
-    }
-
-    override suspend fun getById(id: String): ClothingItem? = withContext(dispatcher) {
-        db.clothingItemQueries.getById(id).executeAsOneOrNull()?.toDomain()
-    }
-
-    override suspend fun getByCategory(category: Category): List<ClothingItem> =
+    override suspend fun getAll(): Result<List<ClothingItem>> = runCatching {
         withContext(dispatcher) {
-            db.clothingItemQueries.getByCategory(category.name).executeAsList().map { it.toDomain() }
+            db.clothingItemQueries.getAll().executeAsList().map { it.toDomain() }
+        }
+    }
+
+    override suspend fun getById(id: String): Result<ClothingItem?> = runCatching {
+        withContext(dispatcher) {
+            db.clothingItemQueries.getById(id).executeAsOneOrNull()?.toDomain()
+        }
+    }
+
+    override suspend fun getByCategory(category: Category): Result<List<ClothingItem>> =
+        runCatching {
+            withContext(dispatcher) {
+                db.clothingItemQueries.getByCategory(category.name).executeAsList()
+                    .map { it.toDomain() }
+            }
         }
 
-    override suspend fun search(query: String): List<ClothingItem> =
+    override suspend fun search(query: String): Result<List<ClothingItem>> = runCatching {
         withContext(dispatcher) {
             val pattern = "%$query%"
             db.clothingItemQueries.search(pattern).executeAsList().map { it.toDomain() }
         }
+    }
 
     override suspend fun addItem(
         imageBytes: ByteArray,
@@ -49,38 +57,40 @@ class WardrobeRepositoryImpl(
         category: Category,
         colors: List<String>,
         seasons: List<Season>,
-    ): ClothingItem = withContext(dispatcher) {
-        val id = Uuid.random().toString()
-        val fileName = "$id.jpg"
-        val photoPath = fileStorage.write(fileName, imageBytes)
-        val createdAt = Clock.System.now().toEpochMilliseconds()
+    ): Result<ClothingItem> = runCatching {
+        withContext(dispatcher) {
+            val id = Uuid.random().toString()
+            val fileName = "$id.jpg"
+            val photoPath = fileStorage.write(fileName, imageBytes)
+            val createdAt = Clock.System.now().toEpochMilliseconds()
 
-        db.clothingItemQueries.insert(
-            id = id,
-            name = name,
-            category = category.name,
-            colors = colors,
-            seasons = seasons.map { it.name },
-            tags = emptyList(),
-            description = null,
-            photoPath = photoPath,
-            createdAt = createdAt,
-        )
+            db.clothingItemQueries.insert(
+                id = id,
+                name = name,
+                category = category.name,
+                colors = colors,
+                seasons = seasons.map { it.name },
+                tags = emptyList(),
+                description = null,
+                photoPath = photoPath,
+                createdAt = createdAt,
+            )
 
-        ClothingItem(
-            id = id,
-            name = name,
-            category = category,
-            colors = colors,
-            seasons = seasons,
-            photoPath = photoPath,
-            createdAt = createdAt,
-        )
+            ClothingItem(
+                id = id,
+                name = name,
+                category = category,
+                colors = colors,
+                seasons = seasons,
+                photoPath = photoPath,
+                createdAt = createdAt,
+            )
+        }
     }
 
-    override suspend fun analyzeAndTag(itemId: String): ClothingItem =
+    override suspend fun analyzeAndTag(itemId: String): Result<ClothingItem> = runCatching {
         withContext(dispatcher) {
-            val item = getById(itemId) ?: error("Item not found: $itemId")
+            val item = findById(itemId) ?: error("Item not found: $itemId")
             val imageBytes = fileStorage.read(item.photoPath)
             val analysis = aiClient.analyzeImage(imageBytes)
 
@@ -105,8 +115,9 @@ class WardrobeRepositoryImpl(
 
             updated
         }
+    }
 
-    override suspend fun updateItem(item: ClothingItem): ClothingItem =
+    override suspend fun updateItem(item: ClothingItem): Result<ClothingItem> = runCatching {
         withContext(dispatcher) {
             db.clothingItemQueries.update(
                 name = item.name,
@@ -120,24 +131,34 @@ class WardrobeRepositoryImpl(
             )
             item
         }
-
-    override suspend fun deleteItem(id: String): Unit = withContext(dispatcher) {
-        val item = getById(id) ?: return@withContext
-        fileStorage.delete(item.photoPath)
-        db.clothingItemQueries.delete(id)
     }
 
-    override suspend fun getGapRecommendations(): List<GapRecommendation> =
+    override suspend fun deleteItem(id: String): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            val item = findById(id) ?: return@withContext
+            fileStorage.delete(item.photoPath)
+            db.clothingItemQueries.delete(id)
+        }
+    }
+
+    override suspend fun getGapRecommendations(): Result<List<GapRecommendation>> = runCatching {
         withContext(dispatcher) {
             val items = db.clothingItemQueries.getAll().executeAsList().map { it.toDomain() }
             aiClient.getGapRecommendations(items)
         }
+    }
 
-    override suspend fun analyzeProspectiveItem(imageBytes: ByteArray): TryItResult =
-        withContext(dispatcher) {
-            val items = db.clothingItemQueries.getAll().executeAsList().map { it.toDomain() }
-            aiClient.analyzeProspectiveItem(imageBytes, items)
+    override suspend fun analyzeProspectiveItem(imageBytes: ByteArray): Result<TryItResult> =
+        runCatching {
+            withContext(dispatcher) {
+                val items = db.clothingItemQueries.getAll().executeAsList().map { it.toDomain() }
+                aiClient.analyzeProspectiveItem(imageBytes, items)
+            }
         }
+
+    private suspend fun findById(id: String): ClothingItem? = withContext(dispatcher) {
+        db.clothingItemQueries.getById(id).executeAsOneOrNull()?.toDomain()
+    }
 }
 
 private fun DbClothingItem.toDomain(): ClothingItem = ClothingItem(
