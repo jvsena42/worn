@@ -152,29 +152,65 @@ struct AddItemSheet: View {
             )
     }
 
+    @State private var categoryExpanded = false
+
     private var categoryField: some View {
-        Menu {
-            ForEach(categoryOptions, id: \.0) { category, label in
-                Button(label) { selectedCategory = category }
+        VStack(spacing: 0) {
+            Button { withAnimation { categoryExpanded.toggle() } } label: {
+                HStack(spacing: 12) {
+                    if let cat = selectedCategory {
+                        Image(systemName: iconName(for: cat))
+                            .font(.system(size: 16))
+                            .foregroundColor(WornColors.textSecondary)
+                            .frame(width: 20, height: 20)
+                    }
+                    Text(selectedCategory.map { displayName(for: $0) } ?? "Category")
+                        .font(.system(size: 15))
+                        .foregroundColor(selectedCategory != nil ? WornColors.textPrimary : WornColors.iconMuted)
+                    Spacer()
+                    Image(systemName: categoryExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 14))
+                        .foregroundColor(WornColors.iconMuted)
+                }
+                .padding(16)
             }
-        } label: {
-            HStack {
-                Text(selectedCategory.map { displayName(for: $0) } ?? "Category")
-                    .font(.system(size: 15))
-                    .foregroundColor(selectedCategory != nil ? WornColors.textPrimary : WornColors.iconMuted)
-                Spacer()
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 14))
-                    .foregroundColor(WornColors.iconMuted)
+            .buttonStyle(.plain)
+
+            if categoryExpanded {
+                Divider().overlay(WornColors.borderSubtle)
+                ForEach(Array(categoryOptions.enumerated()), id: \.offset) { index, item in
+                    let (category, label) = item
+                    Button {
+                        selectedCategory = category
+                        withAnimation { categoryExpanded = false }
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: iconName(for: category))
+                                .font(.system(size: 16))
+                                .foregroundColor(WornColors.textSecondary)
+                                .frame(width: 20, height: 20)
+                            Text(label)
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(WornColors.textPrimary)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                    }
+                    .buttonStyle(.plain)
+
+                    if index < categoryOptions.count - 1 {
+                        Divider().overlay(WornColors.borderSubtle.opacity(0.5))
+                    }
+                }
             }
-            .padding(16)
-            .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(WornColors.borderSubtle, lineWidth: 1)
-            )
         }
+        .background(WornColors.bgCard)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(WornColors.borderSubtle, lineWidth: 1)
+        )
     }
 
     private var colorSection: some View {
@@ -282,6 +318,18 @@ struct AddItemSheet: View {
 
     private var seasonOptions: [(Season, String)] {
         [(.spring, "Spring"), (.summer, "Summer"), (.fall, "Fall"), (.winter, "Winter")]
+    }
+
+    private func iconName(for category: Category) -> String {
+        switch category {
+        case .top: return "tshirt"
+        case .bottom: return "ruler"
+        case .dress: return "figure.dress.line.vertical.figure"
+        case .outerwear: return "wind"
+        case .shoes: return "shoe"
+        case .accessory: return "eyeglasses"
+        default: return "questionmark"
+        }
     }
 
     private func displayName(for category: Category) -> String {
