@@ -136,8 +136,12 @@ class WardrobeRepositoryImpl(
     override suspend fun deleteItem(id: String): Result<Unit> = runCatching {
         withContext(dispatcher) {
             val item = findById(id) ?: return@withContext
+            val affectedOutfitIds = db.outfitItemQueries.getOutfitIdsForItem(id).executeAsList()
+            db.transaction {
+                affectedOutfitIds.forEach { outfitId -> db.outfitQueries.delete(outfitId) }
+                db.clothingItemQueries.delete(id)
+            }
             fileStorage.delete(item.photoPath)
-            db.clothingItemQueries.delete(id)
         }
     }
 

@@ -1,15 +1,19 @@
+@file:Suppress("TooManyFunctions")
+
 package com.github.worn.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,15 +23,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
+import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -44,9 +49,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.Season
 import com.github.worn.ui.theme.WornColors
@@ -136,41 +143,89 @@ fun ItemNameField(value: String, onValueChange: (String) -> Unit) {
 @Composable
 fun CategoryDropdown(selected: Category?, onSelected: (Category) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    Box {
-        Surface(
-            onClick = { expanded = true },
-            shape = RoundedCornerShape(12.dp),
-            color = WornColors.BgCard,
-            border = BorderStroke(1.dp, WornColors.BorderSubtle),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(16.dp),
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = WornColors.BgCard,
+        border = BorderStroke(1.dp, WornColors.BorderSubtle),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column {
+            Surface(
+                onClick = { expanded = !expanded },
+                color = Color.Transparent,
             ) {
-                Text(
-                    text = selected?.displayName() ?: "Category",
-                    color = if (selected != null) WornColors.TextPrimary else WornColors.IconMuted,
-                    fontSize = 15.sp,
-                    modifier = Modifier.weight(1f),
-                )
-                Icon(
-                    imageVector = Icons.Outlined.KeyboardArrowDown,
-                    contentDescription = null,
-                    tint = WornColors.IconMuted,
-                    modifier = Modifier.size(18.dp),
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                ) {
+                    if (selected != null) {
+                        Icon(
+                            painter = painterResource(selected.iconRes()),
+                            contentDescription = null,
+                            tint = WornColors.TextSecondary,
+                            modifier = Modifier.size(20.dp),
+                        )
+                        Spacer(Modifier.size(12.dp))
+                    }
+                    Text(
+                        text = selected?.displayName() ?: "Category",
+                        color = if (selected != null) WornColors.TextPrimary else WornColors.IconMuted,
+                        fontSize = 15.sp,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Icon(
+                        imageVector = if (expanded) Icons.Outlined.KeyboardArrowUp
+                        else Icons.Outlined.KeyboardArrowDown,
+                        contentDescription = null,
+                        tint = WornColors.IconMuted,
+                        modifier = Modifier.size(18.dp),
+                    )
+                }
+            }
+            AnimatedVisibility(
+                visible = expanded,
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+            ) {
+                CategoryOptionList(onSelected = {
+                    onSelected(it)
+                    expanded = false
+                })
             }
         }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            Category.entries.forEach { category ->
-                DropdownMenuItem(
-                    text = { Text(category.displayName()) },
-                    onClick = {
-                        onSelected(category)
-                        expanded = false
-                    },
-                )
+    }
+}
+
+@Composable
+private fun CategoryOptionList(onSelected: (Category) -> Unit) {
+    Column {
+        HorizontalDivider(color = WornColors.BorderSubtle)
+        Category.entries.forEach { category ->
+            Surface(
+                onClick = { onSelected(category) },
+                color = Color.Transparent,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(category.iconRes()),
+                        contentDescription = null,
+                        tint = WornColors.TextSecondary,
+                        modifier = Modifier.size(20.dp),
+                    )
+                    Spacer(Modifier.size(12.dp))
+                    Text(
+                        text = category.displayName(),
+                        color = WornColors.TextPrimary,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
+            }
+            if (category != Category.entries.last()) {
+                HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
             }
         }
     }
@@ -267,6 +322,16 @@ fun SaveButton(enabled: Boolean, isSaving: Boolean, onClick: () -> Unit) {
             )
         }
     }
+}
+
+@DrawableRes
+internal fun Category.iconRes(): Int = when (this) {
+    Category.TOP -> R.drawable.ic_shirt
+    Category.BOTTOM -> R.drawable.ic_rectangle_horizontal
+    Category.DRESS -> R.drawable.ic_dress
+    Category.OUTERWEAR -> R.drawable.ic_wind
+    Category.SHOES -> R.drawable.ic_footprints
+    Category.ACCESSORY -> R.drawable.ic_glasses
 }
 
 private fun Category.displayName(): String = when (this) {

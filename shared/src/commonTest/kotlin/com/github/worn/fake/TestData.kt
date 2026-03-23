@@ -2,6 +2,7 @@ package com.github.worn.fake
 
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
+import com.github.worn.domain.model.Outfit
 import com.github.worn.domain.model.Season
 
 fun clothingItem(
@@ -23,5 +24,17 @@ fun clothingItem(
     tags = tags,
     description = description,
     photoPath = photoPath,
+    createdAt = createdAt,
+)
+
+fun outfit(
+    id: String = "outfit-1",
+    name: String = "Casual Friday",
+    itemIds: List<String> = listOf("item-1", "item-2"),
+    createdAt: Long = 1_000_000L,
+): Outfit = Outfit(
+    id = id,
+    name = name,
+    itemIds = itemIds,
     createdAt = createdAt,
 )
