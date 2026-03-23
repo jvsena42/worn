@@ -121,6 +121,7 @@ class WardrobeViewModelTest {
 
         assertEquals(Category.TOP, vm.state.value.activeCategory)
         assertEquals(listOf(top), vm.state.value.items)
+        assertEquals(2, vm.state.value.totalItemCount)
     }
 
     @Test
@@ -135,6 +136,20 @@ class WardrobeViewModelTest {
 
         assertNull(vm.state.value.activeCategory)
         assertEquals(listOf(top, bottom), vm.state.value.items)
+        assertEquals(2, vm.state.value.totalItemCount)
+    }
+
+    @Test
+    fun `FilterByCategory to empty category keeps totalItemCount`() {
+        val top = clothingItem(id = "1", category = Category.TOP)
+        repository.items.add(top)
+
+        val vm = createViewModel()
+        vm.onIntent(WardrobeIntent.FilterByCategory(Category.SHOES))
+
+        assertEquals(Category.SHOES, vm.state.value.activeCategory)
+        assertTrue(vm.state.value.items.isEmpty())
+        assertEquals(1, vm.state.value.totalItemCount)
     }
 
     // endregion

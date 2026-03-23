@@ -40,6 +40,7 @@ data class WardrobeState(
     val activeCategory: Category? = null,
     val hasApiKey: Boolean = false,
     val error: String? = null,
+    val totalItemCount: Int = 0,
 )
 
 sealed interface WardrobeEffect {
@@ -82,12 +83,18 @@ class WardrobeViewModel(
     private fun loadItems() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
-            val result = when (val cat = _state.value.activeCategory) {
+            val cat = _state.value.activeCategory
+            val result = when (cat) {
                 null -> repository.getAll()
                 else -> repository.getByCategory(cat)
             }
             result.onSuccess { items ->
-                _state.update { it.copy(items = items, isLoading = false) }
+                val totalCount = if (cat == null) {
+                    items.size
+                } else {
+                    repository.getAll().getOrNull()?.size ?: items.size
+                }
+                _state.update { it.copy(items = items, isLoading = false, totalItemCount = totalCount) }
             }.onFailure { error ->
                 _state.update { it.copy(isLoading = false, error = error.message) }
                 _effects.send(WardrobeEffect.ShowError(error.message ?: "Unknown error"))

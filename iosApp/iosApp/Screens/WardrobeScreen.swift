@@ -73,7 +73,8 @@ struct WardrobeContent: View {
         }
     }
 
-    private var isEmpty: Bool { !state.isLoading && state.items.isEmpty }
+    private var isWardrobeEmpty: Bool { !state.isLoading && state.totalItemCount == 0 }
+    private var isCategoryEmpty: Bool { !state.isLoading && state.items.isEmpty && state.totalItemCount > 0 }
 
     private var scrollContent: some View {
         ScrollView {
@@ -83,7 +84,7 @@ struct WardrobeContent: View {
                 } else {
                     normalHeader
                 }
-                if isEmpty {
+                if isWardrobeEmpty {
                     emptyState
                         .frame(maxWidth: .infinity)
                 } else {
@@ -91,7 +92,12 @@ struct WardrobeContent: View {
                         activeCategory: state.activeCategory,
                         onCategorySelected: onCategorySelected
                     )
-                    gridSection
+                    if isCategoryEmpty {
+                        categoryEmptyState
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        gridSection
+                    }
                 }
             }
             .padding(.horizontal, contentPadding)
@@ -101,7 +107,7 @@ struct WardrobeContent: View {
 
     private var normalHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
-            if state.items.isEmpty {
+            if state.totalItemCount == 0 {
                 Text("Your wardrobe")
                     .font(.system(size: 22, weight: .semibold))
                     .tracking(-0.5)
@@ -112,7 +118,7 @@ struct WardrobeContent: View {
                     .tracking(-0.8)
                     .foregroundColor(WornColors.textPrimary)
 
-                Text("Your capsule wardrobe · \(state.items.count) items")
+                Text("Your capsule wardrobe · \(state.totalItemCount) items")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(WornColors.textSecondary)
             }
@@ -181,6 +187,22 @@ struct WardrobeContent: View {
                 }
                 .animation(.easeInOut(duration: 0.3), value: state.items.map(\.id))
             }
+        }
+    }
+
+    private var categoryEmptyState: some View {
+        VStack(spacing: 16) {
+            Spacer().frame(height: 60)
+
+            Image(systemName: "tshirt")
+                .font(.system(size: 36, weight: .regular))
+                .foregroundColor(WornColors.textSecondary.opacity(0.5))
+
+            Text("No items in this category")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(WornColors.textSecondary)
+
+            Spacer()
         }
     }
 
@@ -269,28 +291,28 @@ private let previewItems: [ClothingItem] = [
 
 #Preview("iPhone") {
     WardrobeContent(
-        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil),
+        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: true
     )
 }
 
 #Preview("iPhone - Selection") {
     WardrobeContent(
-        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(["1", "3"]), activeCategory: nil, error: nil),
+        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(["1", "3"]), activeCategory: nil, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: true
     )
 }
 
 #Preview("iPhone - Empty") {
     WardrobeContent(
-        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil),
+        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil, totalItemCount: 0),
         isCompact: true
     )
 }
 
 #Preview("iPad Portrait") {
     WardrobeContent(
-        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil),
+        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: false
     )
     .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
@@ -298,7 +320,22 @@ private let previewItems: [ClothingItem] = [
 
 #Preview("iPad - Empty") {
     WardrobeContent(
-        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil),
+        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil, totalItemCount: 0),
+        isCompact: false
+    )
+    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
+}
+
+#Preview("iPhone - Empty Category") {
+    WardrobeContent(
+        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: .top, error: nil, totalItemCount: Int32(previewItems.count)),
+        isCompact: true
+    )
+}
+
+#Preview("iPad - Empty Category") {
+    WardrobeContent(
+        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: .top, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: false
     )
     .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
