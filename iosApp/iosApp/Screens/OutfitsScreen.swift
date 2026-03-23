@@ -172,6 +172,7 @@ struct OutfitsContent: View {
             ForEach(state.outfits, id: \.id) { outfit in
                 OutfitCardView(
                     outfit: outfit,
+                    itemCategories: state.itemCategories,
                     isSelected: state.selectedIds.contains(outfit.id),
                     isSelectionMode: isSelectionMode
                 )
@@ -244,48 +245,107 @@ struct OutfitsContent: View {
     }
 }
 
+private let outfitBadgeColors: [Color] = [
+    Color(hex: "6B7B8E"),
+    Color(hex: "A87560"),
+    Color(hex: "7A9468"),
+]
+
 private struct OutfitCardView: View {
     let outfit: Outfit
+    var itemCategories: [String: Category] = [:]
     var isSelected: Bool = false
     var isSelectionMode: Bool = false
+
+    private var badgeColor: Color {
+        let index = abs(outfit.id.hashValue) % outfitBadgeColors.count
+        return outfitBadgeColors[index]
+    }
 
     var body: some View {
         HStack(spacing: 12) {
             if isSelectionMode {
                 selectionIndicator
             }
-            VStack(alignment: .leading, spacing: 4) {
-                Text(outfit.name)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(WornColors.textPrimary)
-                HStack(spacing: 8) {
-                    Text("\(outfit.itemIds.count) item\(outfit.itemIds.count != 1 ? "s" : "")")
-                        .font(.system(size: 13))
-                        .foregroundColor(WornColors.textSecondary)
-                    Text("·")
-                        .font(.system(size: 13))
-                        .foregroundColor(WornColors.textMuted)
-                    Text(formatDate(outfit.createdAt))
-                        .font(.system(size: 13))
-                        .foregroundColor(WornColors.textMuted)
-                }
+            VStack(spacing: 12) {
+                thumbnailRow
+                bottomRow
             }
-            Spacer()
-            Image(systemName: "chevron.right")
-                .font(.system(size: 14))
-                .foregroundColor(WornColors.textMuted)
         }
-        .padding(16)
+        .padding(20)
+        .frame(height: 170)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 20)
                 .stroke(
                     isSelected ? WornColors.accentGreen : WornColors.borderSubtle,
                     lineWidth: 1
                 )
         )
-        .shadow(color: .black.opacity(0.04), radius: 4, x: 0, y: 2)
+        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+    }
+
+    private var thumbnailRow: some View {
+        HStack(spacing: 8) {
+            let displayIds = Array(outfit.itemIds.prefix(4))
+            ForEach(displayIds, id: \.self) { itemId in
+                itemThumbnail(for: itemCategories[itemId])
+            }
+            Spacer()
+            itemCountBadge
+        }
+    }
+
+    private func itemThumbnail(for category: Category?) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(WornColors.bgElevated)
+                .frame(width: 40, height: 40)
+            Image(systemName: iconName(for: category))
+                .font(.system(size: 16))
+                .foregroundColor(WornColors.iconMuted)
+        }
+    }
+
+    private func iconName(for category: Category?) -> String {
+        switch category {
+        case .top: return "tshirt"
+        case .bottom: return "tshirt"
+        case .dress: return "tshirt"
+        case .outerwear: return "tshirt"
+        case .shoes: return "shoe"
+        case .accessory: return "diamond"
+        default: return "tshirt"
+        }
+    }
+
+    private var itemCountBadge: some View {
+        Text("\(outfit.itemIds.count) items")
+            .font(.system(size: 11, weight: .semibold))
+            .foregroundColor(.white)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .background(badgeColor)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+
+    private var bottomRow: some View {
+        HStack(alignment: .bottom) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(outfit.name)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(WornColors.textPrimary)
+                Text(formatDate(outfit.createdAt))
+                    .font(.system(size: 12))
+                    .foregroundColor(WornColors.textSecondary)
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14))
+                .foregroundColor(WornColors.iconMuted)
+        }
     }
 
     private var selectionIndicator: some View {
@@ -324,28 +384,28 @@ private let previewOutfits: [Outfit] = [
 
 #Preview("iPhone") {
     OutfitsContent(
-        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
+        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: true
     )
 }
 
 #Preview("iPhone - Selection") {
     OutfitsContent(
-        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(["1", "3"]), error: nil, clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
+        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(["1", "3"]), error: nil, itemCategories: [:], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: true
     )
 }
 
 #Preview("iPhone - Empty") {
     OutfitsContent(
-        state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
+        state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: true
     )
 }
 
 #Preview("iPad Portrait") {
     OutfitsContent(
-        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
+        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: false
     )
     .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
@@ -353,7 +413,7 @@ private let previewOutfits: [Outfit] = [
 
 #Preview("iPad - Empty") {
     OutfitsContent(
-        state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
+        state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: false
     )
     .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))

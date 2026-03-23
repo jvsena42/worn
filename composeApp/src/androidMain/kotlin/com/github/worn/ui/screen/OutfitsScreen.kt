@@ -263,6 +263,7 @@ private fun OutfitsContent(
         items(state.outfits, key = { it.id }) { outfit ->
             OutfitCard(
                 outfit = outfit,
+                itemCategories = state.itemCategories,
                 isSelected = outfit.id in state.selectedIds,
                 isSelectionMode = isSelectionMode,
                 onLongPress = { onToggleSelection(outfit.id) },

@@ -33,6 +33,7 @@ data class OutfitState(
     val isDeleting: Boolean = false,
     val selectedIds: Set<String> = emptySet(),
     val error: String? = null,
+    val itemCategories: Map<String, Category> = emptyMap(),
     val clothingItems: List<ClothingItem> = emptyList(),
     val selectedItemIds: Set<String> = emptySet(),
     val activeItemCategory: Category? = null,
@@ -59,6 +60,16 @@ class OutfitViewModel(
 
     init {
         onIntent(OutfitIntent.LoadOutfits)
+        loadItemCategories()
+    }
+
+    private fun loadItemCategories() {
+        viewModelScope.launch {
+            wardrobeRepository.getAll().onSuccess { items ->
+                val categories = items.associate { it.id to it.category }
+                _state.update { it.copy(itemCategories = categories) }
+            }
+        }
     }
 
     fun onIntent(intent: OutfitIntent) {
