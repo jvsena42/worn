@@ -325,7 +325,7 @@ fun SaveButton(enabled: Boolean, isSaving: Boolean, onClick: () -> Unit) {
 }
 
 @DrawableRes
-private fun Category.iconRes(): Int = when (this) {
+internal fun Category.iconRes(): Int = when (this) {
     Category.TOP -> R.drawable.ic_shirt
     Category.BOTTOM -> R.drawable.ic_rectangle_horizontal
     Category.DRESS -> R.drawable.ic_dress

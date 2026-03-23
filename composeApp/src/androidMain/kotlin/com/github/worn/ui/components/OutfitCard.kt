@@ -17,8 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.outlined.Checkroom
-import androidx.compose.material.icons.outlined.Diamond
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -117,27 +114,14 @@ private fun ItemThumbnail(category: Category?) {
         modifier = Modifier.size(40.dp),
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            when (category) {
-                Category.TOP -> Icon(
-                    painter = painterResource(id = R.drawable.ic_shirt),
-                    contentDescription = null,
-                    tint = WornColors.IconMuted,
-                    modifier = Modifier.size(20.dp),
-                )
-                else -> Icon(
-                    imageVector = category.toIcon(),
-                    contentDescription = null,
-                    tint = WornColors.IconMuted,
-                    modifier = Modifier.size(20.dp),
-                )
-            }
+            Icon(
+                painter = painterResource(id = (category ?: Category.TOP).iconRes()),
+                contentDescription = null,
+                tint = WornColors.IconMuted,
+                modifier = Modifier.size(20.dp),
+            )
         }
     }
-}
-
-private fun Category?.toIcon(): ImageVector = when (this) {
-    Category.ACCESSORY -> Icons.Outlined.Diamond
-    else -> Icons.Outlined.Checkroom
 }
 
 @Composable

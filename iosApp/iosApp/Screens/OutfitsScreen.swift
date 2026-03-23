@@ -315,11 +315,11 @@ private struct OutfitCardView: View {
     private func iconName(for category: Category?) -> String {
         switch category {
         case .top: return "tshirt"
-        case .bottom: return "tshirt"
-        case .dress: return "tshirt"
-        case .outerwear: return "tshirt"
+        case .bottom: return "ruler"
+        case .dress: return "figure.dress.line.vertical.figure"
+        case .outerwear: return "wind"
         case .shoes: return "shoe"
-        case .accessory: return "diamond"
+        case .accessory: return "eyeglasses"
         default: return "tshirt"
         }
     }
