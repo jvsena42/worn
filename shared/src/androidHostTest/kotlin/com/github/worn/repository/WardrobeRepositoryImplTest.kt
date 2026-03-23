@@ -1,9 +1,12 @@
 package com.github.worn.repository
 
 import app.cash.sqldelight.Query
+import app.cash.sqldelight.TransactionWithoutReturn
 import com.github.worn.data.repository.WardrobeRepositoryImpl
 import com.github.worn.data.source.local.PhotoFileStorage
 import com.github.worn.data.source.local.db.ClothingItemQueries
+import com.github.worn.data.source.local.db.OutfitItemQueries
+import com.github.worn.data.source.local.db.OutfitQueries
 import com.github.worn.data.source.local.db.WardrobeDatabase
 import com.github.worn.data.source.remote.ClaudeApiClient
 import com.github.worn.domain.model.AiAnalysisResult
@@ -32,6 +35,8 @@ class WardrobeRepositoryImplTest {
     private val testDispatcher = UnconfinedTestDispatcher()
     private val db = mockk<WardrobeDatabase>()
     private val queries = mockk<ClothingItemQueries>(relaxed = true)
+    private val outfitItemQueries = mockk<OutfitItemQueries>(relaxed = true)
+    private val outfitQueries = mockk<OutfitQueries>(relaxed = true)
     private val fileStorage = mockk<PhotoFileStorage>()
     private val aiClient = mockk<ClaudeApiClient>()
 
@@ -52,6 +57,13 @@ class WardrobeRepositoryImplTest {
     @BeforeTest
     fun setup() {
         every { db.clothingItemQueries } returns queries
+        every { db.outfitItemQueries } returns outfitItemQueries
+        every { db.outfitQueries } returns outfitQueries
+        every { db.transaction(any(), any<TransactionWithoutReturn.() -> Unit>()) } answers {
+            val body = arg<TransactionWithoutReturn.() -> Unit>(1)
+            val tx = mockk<TransactionWithoutReturn>(relaxed = true)
+            body(tx)
+        }
         repository = WardrobeRepositoryImpl(db, fileStorage, aiClient, testDispatcher)
     }
 
@@ -250,17 +262,21 @@ class WardrobeRepositoryImplTest {
     // region deleteItem
 
     @Test
-    fun `deleteItem removes photo and DB record`() = runTest {
+    fun `deleteItem removes photo and DB record and affected outfits`() = runTest {
         val query = mockk<Query<DbClothingItem>>()
         every { queries.getById("item-1") } returns query
         every { query.executeAsOneOrNull() } returns dbItem
+        val outfitIdsQuery = mockk<Query<String>>()
+        every { outfitItemQueries.getOutfitIdsForItem("item-1") } returns outfitIdsQuery
+        every { outfitIdsQuery.executeAsList() } returns listOf("outfit-1")
         coEvery { fileStorage.delete("/photos/item-1.jpg") } returns Unit
 
         val result = repository.deleteItem("item-1")
 
         assertTrue(result.isSuccess)
-        coVerify { fileStorage.delete("/photos/item-1.jpg") }
+        verify { outfitQueries.delete("outfit-1") }
         verify { queries.delete("item-1") }
+        coVerify { fileStorage.delete("/photos/item-1.jpg") }
     }
 
     @Test

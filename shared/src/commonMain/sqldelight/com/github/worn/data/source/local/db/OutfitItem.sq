@@ -9,6 +9,9 @@ CREATE TABLE outfitItem (
 getItemIdsForOutfit:
 SELECT itemId FROM outfitItem WHERE outfitId = ?;
 
+getOutfitIdsForItem:
+SELECT outfitId FROM outfitItem WHERE itemId = ?;
+
 insertItem:
 INSERT OR IGNORE INTO outfitItem(outfitId, itemId) VALUES (?, ?);
 

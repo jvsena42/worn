@@ -72,6 +72,7 @@ fun OutfitsScreen(
     var showCreateSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        viewModel.onIntent(OutfitIntent.LoadOutfits)
         viewModel.effects.collect { effect ->
             when (effect) {
                 is OutfitEffect.OutfitsDeleted -> {}

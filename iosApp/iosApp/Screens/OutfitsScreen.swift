@@ -38,6 +38,9 @@ struct OutfitsScreen: View {
                 viewModel.outfitCreated = false
             }
         }
+        .onAppear {
+            viewModel.loadOutfits()
+        }
     }
 }
 
