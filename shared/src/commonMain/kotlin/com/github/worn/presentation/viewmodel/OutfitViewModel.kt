@@ -2,8 +2,11 @@ package com.github.worn.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.worn.domain.model.Category
+import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
 import com.github.worn.domain.repository.OutfitRepository
+import com.github.worn.domain.repository.WardrobeRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,9 +18,13 @@ import kotlinx.coroutines.launch
 
 sealed interface OutfitIntent {
     data object LoadOutfits : OutfitIntent
+    data object LoadClothingItems : OutfitIntent
+    data class FilterItemsByCategory(val category: Category?) : OutfitIntent
+    data class ToggleItemSelection(val itemId: String) : OutfitIntent
     data class ToggleSelection(val outfitId: String) : OutfitIntent
     data object ClearSelection : OutfitIntent
     data object DeleteSelected : OutfitIntent
+    data class CreateOutfit(val name: String) : OutfitIntent
 }
 
 data class OutfitState(
@@ -26,15 +33,22 @@ data class OutfitState(
     val isDeleting: Boolean = false,
     val selectedIds: Set<String> = emptySet(),
     val error: String? = null,
+    val clothingItems: List<ClothingItem> = emptyList(),
+    val selectedItemIds: Set<String> = emptySet(),
+    val activeItemCategory: Category? = null,
+    val isSaving: Boolean = false,
+    val isLoadingItems: Boolean = false,
 )
 
 sealed interface OutfitEffect {
     data class ShowError(val message: String) : OutfitEffect
     data object OutfitsDeleted : OutfitEffect
+    data object OutfitCreated : OutfitEffect
 }
 
 class OutfitViewModel(
     private val repository: OutfitRepository,
+    private val wardrobeRepository: WardrobeRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(OutfitState())
@@ -50,9 +64,13 @@ class OutfitViewModel(
     fun onIntent(intent: OutfitIntent) {
         when (intent) {
             is OutfitIntent.LoadOutfits -> loadOutfits()
+            is OutfitIntent.LoadClothingItems -> loadClothingItems()
+            is OutfitIntent.FilterItemsByCategory -> filterItemsByCategory(intent.category)
+            is OutfitIntent.ToggleItemSelection -> toggleItemSelection(intent.itemId)
             is OutfitIntent.ToggleSelection -> toggleSelection(intent.outfitId)
             is OutfitIntent.ClearSelection -> clearSelection()
             is OutfitIntent.DeleteSelected -> deleteSelected()
+            is OutfitIntent.CreateOutfit -> createOutfit(intent.name)
         }
     }
 
@@ -70,6 +88,38 @@ class OutfitViewModel(
         }
     }
 
+    private fun loadClothingItems() {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoadingItems = true) }
+            val result = when (val cat = _state.value.activeItemCategory) {
+                null -> wardrobeRepository.getAll()
+                else -> wardrobeRepository.getByCategory(cat)
+            }
+            result.onSuccess { items ->
+                _state.update { it.copy(clothingItems = items, isLoadingItems = false) }
+            }.onFailure { error ->
+                _state.update { it.copy(isLoadingItems = false) }
+                _effects.send(OutfitEffect.ShowError(error.message ?: "Failed to load items"))
+            }
+        }
+    }
+
+    private fun filterItemsByCategory(category: Category?) {
+        _state.update { it.copy(activeItemCategory = category) }
+        loadClothingItems()
+    }
+
+    private fun toggleItemSelection(itemId: String) {
+        _state.update { state ->
+            val updated = if (itemId in state.selectedItemIds) {
+                state.selectedItemIds - itemId
+            } else {
+                state.selectedItemIds + itemId
+            }
+            state.copy(selectedItemIds = updated)
+        }
+    }
+
     private fun toggleSelection(outfitId: String) {
         _state.update { state ->
             val updated = if (outfitId in state.selectedIds) {
@@ -83,6 +133,26 @@ class OutfitViewModel(
 
     private fun clearSelection() {
         _state.update { it.copy(selectedIds = emptySet()) }
+    }
+
+    private fun createOutfit(name: String) {
+        val itemIds = _state.value.selectedItemIds.toList()
+        if (name.isBlank() || itemIds.isEmpty()) return
+        viewModelScope.launch {
+            _state.update { it.copy(isSaving = true) }
+            repository.createOutfit(name = name, itemIds = itemIds)
+                .onSuccess {
+                    _state.update {
+                        it.copy(isSaving = false, selectedItemIds = emptySet(), activeItemCategory = null)
+                    }
+                    _effects.send(OutfitEffect.OutfitCreated)
+                    loadOutfits()
+                }
+                .onFailure { error ->
+                    _state.update { it.copy(isSaving = false) }
+                    _effects.send(OutfitEffect.ShowError(error.message ?: "Failed to create outfit"))
+                }
+        }
     }
 
     private fun deleteSelected() {

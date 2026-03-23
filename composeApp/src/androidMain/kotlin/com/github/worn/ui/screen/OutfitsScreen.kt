@@ -69,13 +69,21 @@ fun OutfitsScreen(
     viewModel: OutfitViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    var showCreateSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is OutfitEffect.OutfitsDeleted -> {}
+                is OutfitEffect.OutfitCreated -> showCreateSheet = false
                 is OutfitEffect.ShowError -> {}
             }
+        }
+    }
+
+    LaunchedEffect(showCreateSheet) {
+        if (showCreateSheet) {
+            viewModel.onIntent(OutfitIntent.LoadClothingItems)
         }
     }
 
@@ -85,17 +93,32 @@ fun OutfitsScreen(
     OutfitsScaffold(
         state = state,
         isCompact = isCompact,
+        onCreateClick = { showCreateSheet = true },
         onToggleSelection = { viewModel.onIntent(OutfitIntent.ToggleSelection(it)) },
         onClearSelection = { viewModel.onIntent(OutfitIntent.ClearSelection) },
         onDeleteSelected = { viewModel.onIntent(OutfitIntent.DeleteSelected) },
         onTabSelected = onTabSelected,
     )
+
+    if (showCreateSheet) {
+        CreateOutfitSheet(
+            clothingItems = state.clothingItems,
+            selectedItemIds = state.selectedItemIds,
+            activeCategory = state.activeItemCategory,
+            isSaving = state.isSaving,
+            onCategorySelected = { viewModel.onIntent(OutfitIntent.FilterItemsByCategory(it)) },
+            onToggleItem = { viewModel.onIntent(OutfitIntent.ToggleItemSelection(it)) },
+            onSave = { name -> viewModel.onIntent(OutfitIntent.CreateOutfit(name)) },
+            onDismiss = { showCreateSheet = false },
+        )
+    }
 }
 
 @Composable
 private fun OutfitsScaffold(
     state: OutfitState,
     isCompact: Boolean,
+    onCreateClick: () -> Unit = {},
     onToggleSelection: (String) -> Unit = {},
     onClearSelection: () -> Unit = {},
     onDeleteSelected: () -> Unit = {},
@@ -127,10 +150,10 @@ private fun OutfitsScaffold(
                     onDelete = { showDeleteDialog = true },
                 )
             } else {
-                OutfitsHeader(outfitCount = state.outfits.size)
+                OutfitsHeader(outfitCount = state.outfits.size, onCreateClick = onCreateClick)
             }
             if (isEmpty) {
-                EmptyState()
+                EmptyState(onCreateClick = onCreateClick)
             } else if (state.isLoading && state.outfits.isEmpty()) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     CircularProgressIndicator(color = WornColors.AccentGreen)
@@ -154,15 +177,32 @@ private fun OutfitsScaffold(
 }
 
 @Composable
-private fun OutfitsHeader(outfitCount: Int) {
+private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
     Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        text = "Your outfits",
-        color = WornColors.TextPrimary,
-        fontSize = if (outfitCount == 0) 22.sp else 28.sp,
-        fontWeight = FontWeight.SemiBold,
-        letterSpacing = (-0.5).sp,
-    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "Your outfits",
+            color = WornColors.TextPrimary,
+            fontSize = if (outfitCount == 0) 22.sp else 28.sp,
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = (-0.5).sp,
+        )
+        if (outfitCount > 0) {
+            Button(
+                onClick = onCreateClick,
+                colors = ButtonDefaults.buttonColors(containerColor = WornColors.AccentGreen),
+                shape = RoundedCornerShape(20.dp),
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null, Modifier.size(16.dp))
+                Spacer(Modifier.width(4.dp))
+                Text("Create", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+            }
+        }
+    }
     if (outfitCount > 0) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
@@ -240,7 +280,7 @@ private val CtaShape = RoundedCornerShape(28.dp)
 private val CtaGradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, AccentGreenEnd))
 
 @Composable
-private fun EmptyState() {
+private fun EmptyState(onCreateClick: () -> Unit = {}) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -280,6 +320,7 @@ private fun EmptyState() {
         Row(
             modifier = Modifier
                 .shadow(elevation = 10.dp, shape = CtaShape)
+                .clickable(onClick = onCreateClick)
                 .background(brush = CtaGradient, shape = CtaShape)
                 .padding(horizontal = 36.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,

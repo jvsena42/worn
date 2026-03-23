@@ -5,22 +5,46 @@ struct OutfitsScreen: View {
     @StateObject private var viewModel = OutfitViewModelWrapper()
     @Environment(\.horizontalSizeClass) var sizeClass
     var onTabSelected: (WornTab) -> Void = { _ in }
+    @State private var showCreateSheet = false
 
     var body: some View {
         OutfitsContent(
             state: viewModel.state,
             isCompact: sizeClass == .compact,
+            onCreateClick: {
+                viewModel.loadClothingItems()
+                showCreateSheet = true
+            },
             onToggleSelection: { viewModel.toggleSelection($0) },
             onClearSelection: { viewModel.clearSelection() },
             onDeleteSelected: { viewModel.deleteSelected() },
             onTabSelected: onTabSelected
         )
+        .sheet(isPresented: $showCreateSheet) {
+            CreateOutfitSheet(
+                clothingItems: viewModel.state.clothingItems,
+                selectedItemIds: viewModel.state.selectedItemIds,
+                activeCategory: viewModel.state.activeItemCategory,
+                isSaving: viewModel.state.isSaving,
+                onCategorySelected: { viewModel.filterItemsByCategory($0) },
+                onToggleItem: { viewModel.toggleItemSelection($0) },
+                onSave: { name in viewModel.createOutfit(name: name) },
+                onDismiss: { showCreateSheet = false }
+            )
+        }
+        .onChange(of: viewModel.outfitCreated) { _, created in
+            if created {
+                showCreateSheet = false
+                viewModel.outfitCreated = false
+            }
+        }
     }
 }
 
 struct OutfitsContent: View {
     let state: OutfitState
     var isCompact: Bool = true
+    var onCreateClick: () -> Void = {}
     var onToggleSelection: (String) -> Void = { _ in }
     var onClearSelection: () -> Void = {}
     var onDeleteSelected: () -> Void = {}
@@ -82,10 +106,28 @@ struct OutfitsContent: View {
 
     private var normalHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Your outfits")
-                .font(.system(size: state.outfits.isEmpty ? 22 : 28, weight: .semibold))
-                .tracking(-0.5)
-                .foregroundColor(WornColors.textPrimary)
+            HStack {
+                Text("Your outfits")
+                    .font(.system(size: state.outfits.isEmpty ? 22 : 28, weight: .semibold))
+                    .tracking(-0.5)
+                    .foregroundColor(WornColors.textPrimary)
+                Spacer()
+                if !state.outfits.isEmpty {
+                    Button(action: onCreateClick) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 12, weight: .semibold))
+                            Text("Create")
+                                .font(.system(size: 14, weight: .semibold))
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(WornColors.accentGreen)
+                        .clipShape(Capsule())
+                    }
+                }
+            }
 
             if !state.outfits.isEmpty {
                 Text("\(state.outfits.count) saved combination\(state.outfits.count != 1 ? "s" : "")")
@@ -175,25 +217,27 @@ struct OutfitsContent: View {
                 .multilineTextAlignment(.center)
                 .foregroundColor(WornColors.textSecondary)
 
-            HStack(spacing: 8) {
-                Image(systemName: "plus")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundColor(WornColors.bgPage)
-                Text("Create your first outfit")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(WornColors.textOnColor)
-            }
-            .padding(.horizontal, 36)
-            .padding(.vertical, 16)
-            .background(
-                LinearGradient(
-                    colors: [WornColors.accentGreen, Color(hex: "6B8A58")],
-                    startPoint: .top,
-                    endPoint: .bottom
+            Button(action: onCreateClick) {
+                HStack(spacing: 8) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(WornColors.bgPage)
+                    Text("Create your first outfit")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(WornColors.textOnColor)
+                }
+                .padding(.horizontal, 36)
+                .padding(.vertical, 16)
+                .background(
+                    LinearGradient(
+                        colors: [WornColors.accentGreen, Color(hex: "6B8A58")],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
                 )
-            )
-            .clipShape(Capsule())
-            .shadow(color: Color(hex: "6B7B8E").opacity(0.15), radius: 10, x: 0, y: 6)
+                .clipShape(Capsule())
+                .shadow(color: Color(hex: "6B7B8E").opacity(0.15), radius: 10, x: 0, y: 6)
+            }
 
             Spacer()
         }
@@ -280,28 +324,28 @@ private let previewOutfits: [Outfit] = [
 
 #Preview("iPhone") {
     OutfitsContent(
-        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil),
+        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: true
     )
 }
 
 #Preview("iPhone - Selection") {
     OutfitsContent(
-        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(["1", "3"]), error: nil),
+        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(["1", "3"]), error: nil, clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: true
     )
 }
 
 #Preview("iPhone - Empty") {
     OutfitsContent(
-        state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil),
+        state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: true
     )
 }
 
 #Preview("iPad Portrait") {
     OutfitsContent(
-        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil),
+        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: false
     )
     .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
@@ -309,7 +353,7 @@ private let previewOutfits: [Outfit] = [
 
 #Preview("iPad - Empty") {
     OutfitsContent(
-        state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil),
+        state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: false
     )
     .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))

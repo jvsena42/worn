@@ -9,6 +9,7 @@ class FakeOutfitRepository : OutfitRepository {
     val outfits = mutableListOf<Outfit>()
 
     var getAllError: Throwable? = null
+    var createOutfitError: Throwable? = null
     var deleteOutfitError: Throwable? = null
 
     val deletedIds = mutableListOf<String>()
@@ -20,6 +21,7 @@ class FakeOutfitRepository : OutfitRepository {
         Result.success(outfits.find { it.id == id })
 
     override suspend fun createOutfit(name: String, itemIds: List<String>): Result<Outfit> {
+        createOutfitError?.let { return Result.failure(it) }
         val outfit = Outfit(
             id = "fake-${outfits.size + 1}",
             name = name,
