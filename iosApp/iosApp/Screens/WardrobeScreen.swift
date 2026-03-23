@@ -5,6 +5,7 @@ struct WardrobeScreen: View {
     @StateObject private var viewModel = WardrobeViewModelWrapper()
     @Environment(\.horizontalSizeClass) var sizeClass
     @State private var showAddSheet = false
+    var onTabSelected: (WornTab) -> Void = { _ in }
 
     var body: some View {
         WardrobeContent(
@@ -14,7 +15,8 @@ struct WardrobeScreen: View {
             onAddItemClick: { showAddSheet = true },
             onToggleSelection: { viewModel.toggleSelection($0) },
             onClearSelection: { viewModel.clearSelection() },
-            onDeleteSelected: { viewModel.deleteSelected() }
+            onDeleteSelected: { viewModel.deleteSelected() },
+            onTabSelected: onTabSelected
         )
         .sheet(isPresented: $showAddSheet) {
             AddItemSheet(
@@ -40,6 +42,7 @@ struct WardrobeContent: View {
     var onToggleSelection: (String) -> Void = { _ in }
     var onClearSelection: () -> Void = {}
     var onDeleteSelected: () -> Void = {}
+    var onTabSelected: (WornTab) -> Void = { _ in }
 
     private var contentPadding: CGFloat { isCompact ? 24 : 32 }
     private var gridGap: CGFloat { isCompact ? 12 : 16 }
@@ -54,7 +57,7 @@ struct WardrobeContent: View {
             VStack(spacing: 0) {
                 scrollContent
                 WornBottomBar(
-                    activeTab: .wardrobe, onTabSelected: { _ in }, isCompact: isCompact
+                    activeTab: .wardrobe, onTabSelected: onTabSelected, isCompact: isCompact
                 )
             }
 
