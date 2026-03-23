@@ -143,7 +143,8 @@ private fun WardrobeScaffold(
             WornBottomBar(activeTab = Tab.WARDROBE, onTabSelected = onTabSelected, isCompact = isCompact)
         },
     ) { paddingValues ->
-        val isEmpty = !state.isLoading && state.items.isEmpty()
+        val isWardrobeEmpty = !state.isLoading && state.totalItemCount == 0
+        val isCategoryEmpty = !state.isLoading && state.items.isEmpty() && state.totalItemCount > 0
 
         Column(
             modifier = Modifier
@@ -158,9 +159,9 @@ private fun WardrobeScaffold(
                     onDelete = { showDeleteDialog = true },
                 )
             } else {
-                WardrobeHeader(itemCount = state.items.size)
+                WardrobeHeader(itemCount = state.totalItemCount)
             }
-            if (isEmpty) {
+            if (isWardrobeEmpty) {
                 EmptyState(onAddItemClick = onAddItemClick)
             } else {
                 Spacer(modifier = Modifier.height(sectionGap))
@@ -169,11 +170,15 @@ private fun WardrobeScaffold(
                     onCategorySelected = onCategorySelected,
                 )
                 Spacer(modifier = Modifier.height(sectionGap))
-                WardrobeContent(
-                    state = state,
-                    isCompact = isCompact,
-                    onToggleSelection = onToggleSelection,
-                )
+                if (isCategoryEmpty) {
+                    CategoryEmptyState()
+                } else {
+                    WardrobeContent(
+                        state = state,
+                        isCompact = isCompact,
+                        onToggleSelection = onToggleSelection,
+                    )
+                }
             }
         }
     }
@@ -283,6 +288,29 @@ private fun WardrobeContent(
 private val AccentGreenEnd = Color(0xFF6B8A58)
 private val CtaShape = RoundedCornerShape(28.dp)
 private val CtaGradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, AccentGreenEnd))
+
+@Composable
+private fun CategoryEmptyState() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_shirt),
+            contentDescription = null,
+            modifier = Modifier.size(48.dp),
+            tint = WornColors.TextSecondary.copy(alpha = 0.5f),
+        )
+        Spacer(Modifier.height(16.dp))
+        Text(
+            "No items in this category",
+            color = WornColors.TextSecondary,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+        )
+    }
+}
 
 @Composable
 private fun EmptyState(onAddItemClick: () -> Unit) {
@@ -408,7 +436,7 @@ private val previewItems = listOf(
 private fun WardrobeScreenPhonePreview() {
     WornTheme {
         WardrobeScaffold(
-            state = WardrobeState(items = previewItems),
+            state = WardrobeState(items = previewItems, totalItemCount = previewItems.size),
             isCompact = true,
             onCategorySelected = {},
         )
@@ -420,7 +448,11 @@ private fun WardrobeScreenPhonePreview() {
 private fun WardrobeSelectModePreview() {
     WornTheme {
         WardrobeScaffold(
-            state = WardrobeState(items = previewItems, selectedIds = setOf("1", "3")),
+            state = WardrobeState(
+                items = previewItems,
+                selectedIds = setOf("1", "3"),
+                totalItemCount = previewItems.size,
+            ),
             isCompact = true,
             onCategorySelected = {},
         )
@@ -444,7 +476,7 @@ private fun WardrobeEmptyPhonePreview() {
 private fun WardrobeScreenTabletPreview() {
     WornTheme {
         WardrobeScaffold(
-            state = WardrobeState(items = previewItems),
+            state = WardrobeState(items = previewItems, totalItemCount = previewItems.size),
             isCompact = false,
             onCategorySelected = {},
         )
@@ -457,6 +489,36 @@ private fun WardrobeEmptyTabletPreview() {
     WornTheme {
         WardrobeScaffold(
             state = WardrobeState(),
+            isCompact = false,
+            onCategorySelected = {},
+        )
+    }
+}
+
+@Preview(showSystemUi = true, device = "id:pixel_8")
+@Composable
+private fun WardrobeEmptyCategoryPhonePreview() {
+    WornTheme {
+        WardrobeScaffold(
+            state = WardrobeState(
+                activeCategory = Category.TOP,
+                totalItemCount = previewItems.size,
+            ),
+            isCompact = true,
+            onCategorySelected = {},
+        )
+    }
+}
+
+@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@Composable
+private fun WardrobeEmptyCategoryTabletPreview() {
+    WornTheme {
+        WardrobeScaffold(
+            state = WardrobeState(
+                activeCategory = Category.TOP,
+                totalItemCount = previewItems.size,
+            ),
             isCompact = false,
             onCategorySelected = {},
         )
