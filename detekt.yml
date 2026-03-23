@@ -10,6 +10,9 @@ complexity:
   TooManyFunctions:
     # Preview composables inflate count but are not real logic
     ignoreAnnotatedFunctions: ['Preview']
+  LongParameterList:
+    # Composable functions pass many state + callback params with defaults
+    ignoreDefaultParameters: true
 
 style:
   MagicNumber:
@@ -20,3 +23,6 @@ style:
     maxLineLength: 120
   NewLineAtEndOfFile:
     active: true
+  UnusedParameter:
+    # Compose convention: accept `modifier: Modifier = Modifier` even if unused
+    allowedNames: 'modifier'
