@@ -1,5 +1,7 @@
 package com.github.worn.ui.screen
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,10 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -35,15 +39,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.presentation.viewmodel.WardrobeEffect
@@ -129,6 +138,8 @@ private fun WardrobeScaffold(
             WornBottomBar(activeTab = Tab.WARDROBE, onTabSelected = {}, isCompact = isCompact)
         },
     ) { paddingValues ->
+        val isEmpty = !state.isLoading && state.items.isEmpty()
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -144,50 +155,51 @@ private fun WardrobeScaffold(
             } else {
                 WardrobeHeader(itemCount = state.items.size)
             }
-            Spacer(modifier = Modifier.height(sectionGap))
-            CategoryFilterChips(
-                activeCategory = state.activeCategory,
-                onCategorySelected = onCategorySelected,
-            )
-            Spacer(modifier = Modifier.height(sectionGap))
-            WardrobeContent(
-                state = state,
-                isCompact = isCompact,
-                onToggleSelection = onToggleSelection,
-            )
+            if (isEmpty) {
+                EmptyState(onAddItemClick = onAddItemClick)
+            } else {
+                Spacer(modifier = Modifier.height(sectionGap))
+                CategoryFilterChips(
+                    activeCategory = state.activeCategory,
+                    onCategorySelected = onCategorySelected,
+                )
+                Spacer(modifier = Modifier.height(sectionGap))
+                WardrobeContent(
+                    state = state,
+                    isCompact = isCompact,
+                    onToggleSelection = onToggleSelection,
+                )
+            }
         }
     }
 
-    if (showDeleteDialog) {
-        DeleteConfirmationDialog(
-            count = state.selectedIds.size,
-            isDeleting = state.isDeleting,
-            onConfirm = {
-                onDeleteSelected()
-                showDeleteDialog = false
-            },
-            onDismiss = { showDeleteDialog = false },
-        )
-    }
+    if (showDeleteDialog) DeleteConfirmationDialog(
+        count = state.selectedIds.size,
+        isDeleting = state.isDeleting,
+        onConfirm = { onDeleteSelected(); showDeleteDialog = false },
+        onDismiss = { showDeleteDialog = false },
+    )
 }
 
 @Composable
 private fun WardrobeHeader(itemCount: Int) {
     Spacer(modifier = Modifier.height(8.dp))
     Text(
-        text = "Worn",
+        text = if (itemCount == 0) "Your wardrobe" else "Worn",
         color = WornColors.TextPrimary,
-        fontSize = 28.sp,
+        fontSize = if (itemCount == 0) 22.sp else 28.sp,
         fontWeight = FontWeight.SemiBold,
-        letterSpacing = (-0.8).sp,
+        letterSpacing = (-0.5).sp,
     )
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        text = "Your capsule wardrobe \u00B7 $itemCount items",
-        color = WornColors.TextSecondary,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Medium,
-    )
+    if (itemCount > 0) {
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Your capsule wardrobe \u00B7 $itemCount items",
+            color = WornColors.TextSecondary,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+        )
+    }
 }
 
 @Composable
@@ -263,6 +275,80 @@ private fun WardrobeContent(
     }
 }
 
+private val AccentGreenEnd = Color(0xFF6B8A58)
+private val CtaShape = RoundedCornerShape(28.dp)
+private val CtaGradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, AccentGreenEnd))
+
+@Composable
+private fun EmptyState(onAddItemClick: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Box(
+            modifier = Modifier.size(130.dp)
+                .shadow(15.dp, CircleShape)
+                .background(WornColors.BgCard, CircleShape)
+                .border(1.dp, WornColors.BorderSubtle, CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_shirt),
+                contentDescription = null,
+                modifier = Modifier.size(52.dp),
+                tint = WornColors.TextSecondary,
+            )
+        }
+        Spacer(Modifier.height(24.dp))
+        Text(
+            "No items yet",
+            color = WornColors.TextPrimary,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = (-0.5).sp,
+        )
+        Spacer(Modifier.height(24.dp))
+        Text(
+            "Add your first piece to start\nbuilding your wardrobe",
+            color = WornColors.TextSecondary,
+            fontSize = 15.sp,
+            lineHeight = 22.sp,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = Modifier
+                .shadow(elevation = 10.dp, shape = CtaShape)
+                .clickable(onClick = onAddItemClick)
+                .background(brush = CtaGradient, shape = CtaShape)
+                .padding(horizontal = 36.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Icon(Icons.Default.Add, contentDescription = null, Modifier.size(18.dp), WornColors.BgPage)
+            Text(
+                "Add your first item",
+                color = WornColors.TextOnColor, fontSize = 16.sp, fontWeight = FontWeight.SemiBold,
+            )
+        }
+    }
+}
+
+@Composable
+private fun AddItemFab(onClick: () -> Unit) {
+    ExtendedFloatingActionButton(
+        onClick = onClick,
+        containerColor = WornColors.AccentGreen,
+        contentColor = WornColors.TextOnColor,
+        shape = RoundedCornerShape(30.dp),
+    ) {
+        Icon(Icons.Default.Add, contentDescription = null)
+        Spacer(Modifier.width(8.dp))
+        Text(text = "Add item", fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+    }
+}
+
 @Composable
 private fun DeleteConfirmationDialog(
     count: Int,
@@ -303,20 +389,6 @@ private fun DeleteConfirmationDialog(
     )
 }
 
-@Composable
-private fun AddItemFab(onClick: () -> Unit) {
-    ExtendedFloatingActionButton(
-        onClick = onClick,
-        containerColor = WornColors.AccentGreen,
-        contentColor = WornColors.TextOnColor,
-        shape = RoundedCornerShape(30.dp),
-    ) {
-        Icon(Icons.Default.Add, contentDescription = null)
-        Spacer(Modifier.width(8.dp))
-        Text(text = "Add item", fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
-    }
-}
-
 private val previewItems = listOf(
     ClothingItem("1", "Black T-Shirt", Category.TOP, listOf("black"), photoPath = "", createdAt = 0),
     ClothingItem("2", "Navy Jeans", Category.BOTTOM, listOf("navy"), photoPath = "", createdAt = 0),
@@ -350,12 +422,36 @@ private fun WardrobeSelectModePreview() {
     }
 }
 
+@Preview(showSystemUi = true, device = "id:pixel_8")
+@Composable
+private fun WardrobeEmptyPhonePreview() {
+    WornTheme {
+        WardrobeScaffold(
+            state = WardrobeState(),
+            isCompact = true,
+            onCategorySelected = {},
+        )
+    }
+}
+
 @Preview(showSystemUi = true, device = "id:pixel_tablet")
 @Composable
 private fun WardrobeScreenTabletPreview() {
     WornTheme {
         WardrobeScaffold(
             state = WardrobeState(items = previewItems),
+            isCompact = false,
+            onCategorySelected = {},
+        )
+    }
+}
+
+@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@Composable
+private fun WardrobeEmptyTabletPreview() {
+    WornTheme {
+        WardrobeScaffold(
+            state = WardrobeState(),
             isCompact = false,
             onCategorySelected = {},
         )

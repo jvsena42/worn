@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Checkroom
 import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.QrCodeScanner
@@ -25,17 +25,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.worn.R
 import com.github.worn.ui.theme.WornColors
 
-enum class Tab(val label: String, val icon: ImageVector) {
-    WARDROBE("WARDROBE", Icons.Outlined.Checkroom),
-    OUTFITS("OUTFITS", Icons.Outlined.Layers),
-    GAPS("GAPS", Icons.Outlined.Extension),
-    TRY_IT("TRY IT", Icons.Outlined.QrCodeScanner),
-    SETTINGS("SETTINGS", Icons.Outlined.Settings),
+enum class Tab(
+    val label: String,
+    val icon: ImageVector? = null,
+    @DrawableRes val iconRes: Int? = null,
+) {
+    WARDROBE("WARDROBE", iconRes = R.drawable.ic_shirt),
+    OUTFITS("OUTFITS", icon = Icons.Outlined.Layers),
+    GAPS("GAPS", icon = Icons.Outlined.Extension),
+    TRY_IT("TRY IT", icon = Icons.Outlined.QrCodeScanner),
+    SETTINGS("SETTINGS", icon = Icons.Outlined.Settings),
 }
 
 @Composable
@@ -102,12 +108,22 @@ private fun TabItem(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxHeight(),
         ) {
-            Icon(
-                imageVector = tab.icon,
-                contentDescription = tab.label,
-                tint = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
-                modifier = Modifier.size(18.dp),
-            )
+            val tint = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary
+            if (tab.iconRes != null) {
+                Icon(
+                    painter = painterResource(id = tab.iconRes),
+                    contentDescription = tab.label,
+                    tint = tint,
+                    modifier = Modifier.size(18.dp),
+                )
+            } else if (tab.icon != null) {
+                Icon(
+                    imageVector = tab.icon,
+                    contentDescription = tab.label,
+                    tint = tint,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
             Text(
                 text = tab.label,
                 color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,

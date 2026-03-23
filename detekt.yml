@@ -6,6 +6,11 @@ naming:
     # expect/actual files use Platform.android.kt / Platform.ios.kt naming
     active: false
 
+complexity:
+  TooManyFunctions:
+    # Preview composables inflate count but are not real logic
+    ignoreAnnotatedFunctions: ['Preview']
+
 style:
   MagicNumber:
     active: false

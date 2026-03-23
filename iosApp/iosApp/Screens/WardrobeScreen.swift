@@ -73,6 +73,8 @@ struct WardrobeContent: View {
         }
     }
 
+    private var isEmpty: Bool { !state.isLoading && state.items.isEmpty }
+
     private var scrollContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: sectionGap) {
@@ -81,11 +83,16 @@ struct WardrobeContent: View {
                 } else {
                     normalHeader
                 }
-                CategoryFilterChips(
-                    activeCategory: state.activeCategory,
-                    onCategorySelected: onCategorySelected
-                )
-                gridSection
+                if isEmpty {
+                    emptyState
+                        .frame(maxWidth: .infinity)
+                } else {
+                    CategoryFilterChips(
+                        activeCategory: state.activeCategory,
+                        onCategorySelected: onCategorySelected
+                    )
+                    gridSection
+                }
             }
             .padding(.horizontal, contentPadding)
             .padding(.top, 8)
@@ -94,14 +101,21 @@ struct WardrobeContent: View {
 
     private var normalHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Worn")
-                .font(.system(size: 28, weight: .semibold))
-                .tracking(-0.8)
-                .foregroundColor(WornColors.textPrimary)
+            if state.items.isEmpty {
+                Text("Your wardrobe")
+                    .font(.system(size: 22, weight: .semibold))
+                    .tracking(-0.5)
+                    .foregroundColor(WornColors.textPrimary)
+            } else {
+                Text("Worn")
+                    .font(.system(size: 28, weight: .semibold))
+                    .tracking(-0.8)
+                    .foregroundColor(WornColors.textPrimary)
 
-            Text("Your capsule wardrobe · \(state.items.count) items")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(WornColors.textSecondary)
+                Text("Your capsule wardrobe · \(state.items.count) items")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(WornColors.textSecondary)
+            }
         }
     }
 
@@ -170,6 +184,62 @@ struct WardrobeContent: View {
         }
     }
 
+    private var emptyState: some View {
+        VStack(spacing: 24) {
+            Spacer().frame(height: 60)
+
+            ZStack {
+                Circle()
+                    .fill(Color.white)
+                    .frame(width: 130, height: 130)
+                    .shadow(color: Color(hex: "6B7B8E").opacity(0.08), radius: 15, x: 0, y: 0)
+                    .overlay(
+                        Circle()
+                            .stroke(WornColors.borderSubtle, lineWidth: 1)
+                    )
+
+                Image(systemName: "tshirt")
+                    .font(.system(size: 42, weight: .regular))
+                    .foregroundColor(WornColors.textSecondary)
+            }
+
+            Text("No items yet")
+                .font(.system(size: 24, weight: .semibold))
+                .tracking(-0.5)
+                .foregroundColor(WornColors.textPrimary)
+
+            Text("Add your first piece to start\nbuilding your wardrobe")
+                .font(.system(size: 15))
+                .lineSpacing(4)
+                .multilineTextAlignment(.center)
+                .foregroundColor(WornColors.textSecondary)
+
+            Button(action: onAddItemClick) {
+                HStack(spacing: 8) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(WornColors.bgPage)
+                    Text("Add your first item")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(WornColors.textOnColor)
+                }
+                .padding(.horizontal, 36)
+                .padding(.vertical, 16)
+                .background(
+                    LinearGradient(
+                        colors: [WornColors.accentGreen, Color(hex: "6B8A58")],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .clipShape(Capsule())
+                .shadow(color: Color(hex: "6B7B8E").opacity(0.15), radius: 10, x: 0, y: 6)
+            }
+
+            Spacer()
+        }
+    }
+
     private var addItemFab: some View {
         Button(action: onAddItemClick) {
             HStack(spacing: 8) {
@@ -211,9 +281,24 @@ private let previewItems: [ClothingItem] = [
     )
 }
 
+#Preview("iPhone - Empty") {
+    WardrobeContent(
+        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil),
+        isCompact: true
+    )
+}
+
 #Preview("iPad Portrait") {
     WardrobeContent(
         state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil),
+        isCompact: false
+    )
+    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
+}
+
+#Preview("iPad - Empty") {
+    WardrobeContent(
+        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil),
         isCompact: false
     )
     .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
