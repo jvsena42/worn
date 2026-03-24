@@ -61,8 +61,6 @@ import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 
-private val DeleteRed = Color(0xFFC45B4A)
-
 @Composable
 fun OutfitsScreen(
     onTabSelected: (Tab) -> Unit = {},
@@ -232,7 +230,7 @@ private fun SelectionHeader(count: Int, onCancel: () -> Unit, onDelete: () -> Un
         )
         Button(
             onClick = onDelete,
-            colors = ButtonDefaults.buttonColors(containerColor = DeleteRed),
+            colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
             shape = RoundedCornerShape(22.dp),
         ) {
             Icon(Icons.Outlined.Delete, contentDescription = null, tint = Color.White)
@@ -277,9 +275,8 @@ private fun OutfitsContent(
     }
 }
 
-private val AccentGreenEnd = Color(0xFF6B8A58)
 private val CtaShape = RoundedCornerShape(28.dp)
-private val CtaGradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, AccentGreenEnd))
+private val CtaGradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenEnd))
 
 @Composable
 private fun EmptyState(onCreateClick: () -> Unit = {}) {
@@ -365,7 +362,7 @@ private fun DeleteConfirmationDialog(
             Button(
                 onClick = onConfirm,
                 enabled = !isDeleting,
-                colors = ButtonDefaults.buttonColors(containerColor = DeleteRed),
+                colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
                 shape = RoundedCornerShape(24.dp),
             ) {
                 Text(if (isDeleting) "Deleting…" else "Delete", fontWeight = FontWeight.SemiBold)

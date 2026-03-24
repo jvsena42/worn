@@ -114,7 +114,7 @@ fun AiBadge(onClick: () -> Unit = {}) {
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(28.dp),
-        color = Color(0xFF6B7B8E),
+        color = WornColors.AccentIndigo,
     ) {
         Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)) {
             Text("✦ ", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
@@ -295,8 +295,8 @@ fun SeasonSection(selectedSeasons: Set<Season>, onToggle: (Season) -> Unit) {
 
 @Composable
 fun SaveButton(enabled: Boolean, isSaving: Boolean, onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(listOf(Color(0xFF8FA47D), Color(0xFF6B7F5E)))
-    val disabledGradient = Brush.verticalGradient(listOf(Color(0xFFB5AFA8), Color(0xFFA09A92)))
+    val gradient = Brush.verticalGradient(listOf(WornColors.SaveGradientStart, WornColors.SaveGradientEnd))
+    val disabledGradient = Brush.verticalGradient(listOf(WornColors.TextMuted, WornColors.IconMuted))
     Button(
         onClick = onClick,
         enabled = enabled,

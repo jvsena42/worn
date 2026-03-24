@@ -164,12 +164,12 @@ private fun ItemInfo(item: ClothingItem) {
 }
 
 private fun Category.dotColor(): Color = when (this) {
-    Category.TOP -> Color(0xFF444444)
-    Category.BOTTOM -> Color(0xFF2B4570)
-    Category.DRESS -> Color(0xFFA87560)
-    Category.OUTERWEAR -> Color(0xFF7A9468)
-    Category.SHOES -> Color(0xFF8B6914)
-    Category.ACCESSORY -> Color(0xFFB59D6E)
+    Category.TOP -> WornColors.CategoryDotTop
+    Category.BOTTOM -> WornColors.CategoryDotBottom
+    Category.DRESS -> WornColors.CategoryDotDress
+    Category.OUTERWEAR -> WornColors.CategoryDotOuterwear
+    Category.SHOES -> WornColors.CategoryDotShoes
+    Category.ACCESSORY -> WornColors.CategoryDotAccessory
 }
 
 private fun Category.displayLabel(): String = when (this) {

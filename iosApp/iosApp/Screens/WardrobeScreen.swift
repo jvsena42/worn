@@ -148,7 +148,7 @@ struct WardrobeContent: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)
-                    .background(Color(hex: "C45B4A"))
+                    .background(WornColors.deleteRed)
                     .clipShape(Capsule())
                 }
             }
@@ -217,7 +217,7 @@ struct WardrobeContent: View {
                 Circle()
                     .fill(Color.white)
                     .frame(width: 130, height: 130)
-                    .shadow(color: Color(hex: "6B7B8E").opacity(0.08), radius: 15, x: 0, y: 0)
+                    .shadow(color: WornColors.accentIndigo.opacity(0.08), radius: 15, x: 0, y: 0)
                     .overlay(
                         Circle()
                             .stroke(WornColors.borderSubtle, lineWidth: 1)
@@ -252,13 +252,13 @@ struct WardrobeContent: View {
                 .padding(.vertical, 16)
                 .background(
                     LinearGradient(
-                        colors: [WornColors.accentGreen, Color(hex: "6B8A58")],
+                        colors: [WornColors.accentGreen, WornColors.accentGreenEnd],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
                 .clipShape(Capsule())
-                .shadow(color: Color(hex: "6B7B8E").opacity(0.15), radius: 10, x: 0, y: 6)
+                .shadow(color: WornColors.accentIndigo.opacity(0.15), radius: 10, x: 0, y: 6)
             }
 
             Spacer()
@@ -278,7 +278,7 @@ struct WardrobeContent: View {
             .padding(.vertical, 14)
             .background(WornColors.accentGreen)
             .clipShape(Capsule())
-            .shadow(color: Color(hex: "8FA47D").opacity(0.2), radius: 12, x: 0, y: 8)
+            .shadow(color: WornColors.saveGradientStart.opacity(0.2), radius: 12, x: 0, y: 8)
         }
     }
 }

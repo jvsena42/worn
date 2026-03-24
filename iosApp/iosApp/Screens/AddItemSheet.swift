@@ -130,7 +130,7 @@ struct AddItemSheet: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(Color(hex: "6B7B8E"))
+            .background(WornColors.accentIndigo)
             .clipShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -297,14 +297,14 @@ struct AddItemSheet: View {
                 .background(
                     LinearGradient(
                         colors: canSave
-                            ? [Color(hex: "8FA47D"), Color(hex: "6B7F5E")]
+                            ? [WornColors.saveGradientStart, WornColors.saveGradientEnd]
                             : [WornColors.textMuted, WornColors.iconMuted],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 16))
-                .shadow(color: Color(hex: "8FA47D").opacity(0.2), radius: 12, x: 0, y: 8)
+                .shadow(color: WornColors.saveGradientStart.opacity(0.2), radius: 12, x: 0, y: 8)
         }
         .disabled(!canSave)
     }

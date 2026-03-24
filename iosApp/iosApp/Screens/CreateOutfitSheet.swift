@@ -103,14 +103,14 @@ struct CreateOutfitSheet: View {
                 .background(
                     LinearGradient(
                         colors: canSave
-                            ? [Color(hex: "7A9468"), Color(hex: "5C6E50")]
+                            ? [WornColors.accentGreen, WornColors.accentGreenDark]
                             : [WornColors.textMuted, WornColors.iconMuted],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 16))
-                .shadow(color: Color(hex: "8FA47D").opacity(0.2), radius: 12, x: 0, y: 8)
+                .shadow(color: WornColors.saveGradientStart.opacity(0.2), radius: 12, x: 0, y: 8)
         }
         .disabled(!canSave)
     }
