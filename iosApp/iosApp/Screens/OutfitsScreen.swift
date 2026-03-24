@@ -160,7 +160,7 @@ struct OutfitsContent: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)
-                    .background(Color(hex: "C45B4A"))
+                    .background(WornColors.deleteRed)
                     .clipShape(Capsule())
                 }
             }
@@ -199,7 +199,7 @@ struct OutfitsContent: View {
                 Circle()
                     .fill(Color.white)
                     .frame(width: 130, height: 130)
-                    .shadow(color: Color(hex: "6B7B8E").opacity(0.08), radius: 15, x: 0, y: 0)
+                    .shadow(color: WornColors.accentIndigo.opacity(0.08), radius: 15, x: 0, y: 0)
                     .overlay(
                         Circle()
                             .stroke(WornColors.borderSubtle, lineWidth: 1)
@@ -234,13 +234,13 @@ struct OutfitsContent: View {
                 .padding(.vertical, 16)
                 .background(
                     LinearGradient(
-                        colors: [WornColors.accentGreen, Color(hex: "6B8A58")],
+                        colors: [WornColors.accentGreen, WornColors.accentGreenEnd],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
                 .clipShape(Capsule())
-                .shadow(color: Color(hex: "6B7B8E").opacity(0.15), radius: 10, x: 0, y: 6)
+                .shadow(color: WornColors.accentIndigo.opacity(0.15), radius: 10, x: 0, y: 6)
             }
 
             Spacer()
@@ -249,9 +249,9 @@ struct OutfitsContent: View {
 }
 
 private let outfitBadgeColors: [Color] = [
-    Color(hex: "6B7B8E"),
-    Color(hex: "A87560"),
-    Color(hex: "7A9468"),
+    WornColors.accentIndigo,
+    WornColors.accentCoral,
+    WornColors.accentGreen,
 ]
 
 private struct OutfitCardView: View {

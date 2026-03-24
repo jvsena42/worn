@@ -42,9 +42,9 @@ private val thumbnailShape = RoundedCornerShape(10.dp)
 private val badgeShape = RoundedCornerShape(8.dp)
 
 private val badgeColors = listOf(
-    Color(0xFF6B7B8E),
-    Color(0xFFA87560),
-    Color(0xFF7A9468),
+    WornColors.AccentIndigo,
+    WornColors.AccentCoral,
+    WornColors.AccentGreen,
 )
 
 @OptIn(ExperimentalFoundationApi::class)

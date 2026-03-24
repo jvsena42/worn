@@ -95,12 +95,12 @@ struct ClothingCard: View {
 
     private func dotColor(for category: Category) -> Color {
         switch category {
-        case .top: return Color(hex: "444444")
-        case .bottom: return Color(hex: "2B4570")
-        case .dress: return Color(hex: "A87560")
-        case .outerwear: return Color(hex: "7A9468")
-        case .shoes: return Color(hex: "8B6914")
-        case .accessory: return Color(hex: "B59D6E")
+        case .top: return WornColors.categoryDotTop
+        case .bottom: return WornColors.categoryDotBottom
+        case .dress: return WornColors.categoryDotDress
+        case .outerwear: return WornColors.categoryDotOuterwear
+        case .shoes: return WornColors.categoryDotShoes
+        case .accessory: return WornColors.categoryDotAccessory
         default: return Color.gray
         }
     }

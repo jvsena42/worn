@@ -293,8 +293,8 @@ private fun ItemCheckbox(isSelected: Boolean, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SaveOutfitButton(enabled: Boolean, isSaving: Boolean, onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(listOf(Color(0xFF7A9468), Color(0xFF5C6E50)))
-    val disabledGradient = Brush.verticalGradient(listOf(Color(0xFFB5AFA8), Color(0xFFA09A92)))
+    val gradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenDark))
+    val disabledGradient = Brush.verticalGradient(listOf(WornColors.TextMuted, WornColors.IconMuted))
     Button(
         onClick = onClick,
         enabled = enabled,

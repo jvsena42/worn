@@ -18,7 +18,7 @@ struct AiLockedSheet: View {
 
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(hex: "6B7B8E"))
+                    .fill(WornColors.accentIndigo)
                     .frame(width: 44, height: 44)
                 Image(systemName: "cpu")
                     .font(.system(size: 20))
@@ -47,13 +47,13 @@ struct AiLockedSheet: View {
                     .padding(.vertical, 14)
                     .background(
                         LinearGradient(
-                            colors: [Color(hex: "7A9468"), Color(hex: "5C6E50")],
+                            colors: [WornColors.accentGreen, WornColors.accentGreenDark],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: Color(hex: "7A9468").opacity(0.2), radius: 6, x: 0, y: 4)
+                    .shadow(color: WornColors.accentGreen.opacity(0.2), radius: 6, x: 0, y: 4)
             }
         }
         .padding(.horizontal, 24)

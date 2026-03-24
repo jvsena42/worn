@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.WornColors
 
-private val IndigoAccent = Color(0xFF6B7B8E)
+private val IndigoAccent = WornColors.AccentIndigo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,7 +111,7 @@ internal fun AiLockedContent(
 
 @Composable
 private fun SettingsCta(onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(listOf(Color(0xFF7A9468), Color(0xFF5C6E50)))
+    val gradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenDark))
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
