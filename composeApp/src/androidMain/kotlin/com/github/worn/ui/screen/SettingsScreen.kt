@@ -45,6 +45,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -239,6 +241,14 @@ private fun SettingsCard(
 
 @Composable
 private fun AboutCard() {
+    val context = LocalContext.current
+    val versionName = remember {
+        runCatching {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        }.getOrDefault("1.0")
+    }
+    val uriHandler = LocalUriHandler.current
+
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = WornColors.BgCard,
@@ -249,11 +259,11 @@ private fun AboutCard() {
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
             ) {
                 Text("Version", color = WornColors.TextPrimary, fontSize = 15.sp, modifier = Modifier.weight(1f))
-                Text("1.0.0", color = WornColors.TextSecondary, fontSize = 15.sp)
+                Text(versionName ?: "1.0", color = WornColors.TextSecondary, fontSize = 15.sp)
             }
             HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
             Surface(
-                onClick = { },
+                onClick = { uriHandler.openUri(LICENSE_URL) },
                 color = Color.Transparent,
             ) {
                 Row(
@@ -640,6 +650,8 @@ private fun Lifestyle.displayName(): String = when (this) {
 }
 
 // endregion
+
+private const val LICENSE_URL = "https://github.com/jvsena42/worn/blob/main/LICENSE"
 
 @Preview(showSystemUi = true, device = "id:pixel_8")
 @Composable
