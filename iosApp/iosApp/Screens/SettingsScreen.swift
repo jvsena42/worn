@@ -116,6 +116,10 @@ struct SettingsScreen: View {
         .buttonStyle(.plain)
     }
 
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+    }
+
     private var aboutCard: some View {
         VStack(spacing: 0) {
             HStack {
@@ -123,7 +127,7 @@ struct SettingsScreen: View {
                     .font(.system(size: 15))
                     .foregroundColor(WornColors.textPrimary)
                 Spacer()
-                Text("1.0.0")
+                Text(appVersion)
                     .font(.system(size: 15))
                     .foregroundColor(WornColors.textSecondary)
             }
@@ -131,7 +135,11 @@ struct SettingsScreen: View {
 
             Divider().overlay(WornColors.borderSubtle.opacity(0.5))
 
-            Button {} label: {
+            Button {
+                if let url = URL(string: licenseURL) {
+                    UIApplication.shared.open(url)
+                }
+            } label: {
                 HStack {
                     Text("Licenses")
                         .font(.system(size: 15))
@@ -149,6 +157,8 @@ struct SettingsScreen: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
+
+private let licenseURL = "https://github.com/jvsena42/worn/blob/main/LICENSE"
 
 // MARK: - Profile Sheet
 
