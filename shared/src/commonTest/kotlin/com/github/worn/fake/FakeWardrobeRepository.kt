@@ -2,8 +2,11 @@ package com.github.worn.fake
 
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
+import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.GapRecommendation
+import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
+import com.github.worn.domain.model.Subcategory
 import com.github.worn.domain.model.TryItResult
 import com.github.worn.domain.repository.WardrobeRepository
 import kotlinx.datetime.Clock
@@ -39,6 +42,9 @@ class FakeWardrobeRepository : WardrobeRepository {
         category: Category,
         colors: List<String>,
         seasons: List<Season>,
+        subcategory: Subcategory?,
+        fit: Fit?,
+        material: Material?,
     ): Result<ClothingItem> {
         addItemError?.let { return Result.failure(it) }
         val item = ClothingItem(

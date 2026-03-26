@@ -2,8 +2,11 @@ package com.github.worn.domain.repository
 
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
+import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.GapRecommendation
+import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
+import com.github.worn.domain.model.Subcategory
 import com.github.worn.domain.model.TryItResult
 
 interface WardrobeRepository {
@@ -17,6 +20,9 @@ interface WardrobeRepository {
         category: Category,
         colors: List<String>,
         seasons: List<Season>,
+        subcategory: Subcategory? = null,
+        fit: Fit? = null,
+        material: Material? = null,
     ): Result<ClothingItem>
     suspend fun analyzeAndTag(itemId: String): Result<ClothingItem>
     suspend fun updateItem(item: ClothingItem): Result<ClothingItem>

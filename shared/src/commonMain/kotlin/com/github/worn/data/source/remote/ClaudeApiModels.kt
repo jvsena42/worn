@@ -49,6 +49,9 @@ internal data class AiAnalysisJson(
     val colors: List<String>,
     val seasons: List<String>,
     val tags: List<String>,
+    @SerialName("suggested_subcategory") val suggestedSubcategory: String? = null,
+    @SerialName("suggested_fit") val suggestedFit: String? = null,
+    @SerialName("suggested_material") val suggestedMaterial: String? = null,
 )
 
 @Serializable

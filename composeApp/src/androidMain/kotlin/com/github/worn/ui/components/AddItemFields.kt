@@ -55,18 +55,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
 import com.github.worn.domain.model.Category
+import com.github.worn.domain.model.Fit
+import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
+import com.github.worn.domain.model.Subcategory
+import com.github.worn.domain.model.subcategoriesFor
 import com.github.worn.ui.theme.WornColors
 
 val addItemColorPalette = listOf(
+    "White" to Color(0xFFFFFFFF),
     "Cream" to Color(0xFFEDE8E1),
     "Black" to Color(0xFF2C2924),
     "Navy" to Color(0xFF2B4570),
     "Grey" to Color(0xFF808080),
+    "Charcoal" to Color(0xFF36454F),
     "Olive" to Color(0xFF6B7B3F),
     "Beige" to Color(0xFFC4A882),
+    "Khaki" to Color(0xFFC3B091),
+    "Tan" to Color(0xFFD2B48C),
     "Brown" to Color(0xFF8B4513),
+    "Burgundy" to Color(0xFF800020),
     "Coral" to Color(0xFFA87560),
+    "Light Blue" to Color(0xFFADD8E6),
 )
 
 @Composable
@@ -236,7 +246,10 @@ private fun CategoryOptionList(onSelected: (Category) -> Unit) {
 fun ColorSection(selectedColors: Set<String>, onToggle: (String) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Text("Color", color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
             addItemColorPalette.forEach { (name, color) ->
                 val isSelected = name in selectedColors
                 Surface(
@@ -328,7 +341,6 @@ fun SaveButton(enabled: Boolean, isSaving: Boolean, onClick: () -> Unit) {
 internal fun Category.iconRes(): Int = when (this) {
     Category.TOP -> R.drawable.ic_shirt
     Category.BOTTOM -> R.drawable.ic_rectangle_horizontal
-    Category.DRESS -> R.drawable.ic_dress
     Category.OUTERWEAR -> R.drawable.ic_wind
     Category.SHOES -> R.drawable.ic_footprints
     Category.ACCESSORY -> R.drawable.ic_glasses
@@ -337,11 +349,160 @@ internal fun Category.iconRes(): Int = when (this) {
 private fun Category.displayName(): String = when (this) {
     Category.TOP -> "Tops"
     Category.BOTTOM -> "Bottoms"
-    Category.DRESS -> "Dresses"
     Category.OUTERWEAR -> "Outerwear"
     Category.SHOES -> "Shoes"
     Category.ACCESSORY -> "Accessories"
 }
+
+@Composable
+fun SubcategoryDropdown(category: Category, selected: Subcategory?, onSelected: (Subcategory) -> Unit) {
+    val options = subcategoriesFor(category)
+    var expanded by remember { mutableStateOf(false) }
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = WornColors.BgCard,
+        border = BorderStroke(1.dp, WornColors.BorderSubtle),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column {
+            Surface(
+                onClick = { expanded = !expanded },
+                color = Color.Transparent,
+            ) {
+                DropdownHeader(
+                    text = selected?.displayName() ?: "Subcategory",
+                    hasSelection = selected != null,
+                    expanded = expanded,
+                )
+            }
+            AnimatedVisibility(
+                visible = expanded,
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+            ) {
+                SubcategoryOptionList(options = options, onSelected = {
+                    onSelected(it)
+                    expanded = false
+                })
+            }
+        }
+    }
+}
+
+@Composable
+private fun DropdownHeader(text: String, hasSelection: Boolean, expanded: Boolean) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
+    ) {
+        Text(
+            text = text,
+            color = if (hasSelection) WornColors.TextPrimary else WornColors.IconMuted,
+            fontSize = 15.sp,
+            modifier = Modifier.weight(1f),
+        )
+        Icon(
+            imageVector = if (expanded) Icons.Outlined.KeyboardArrowUp
+            else Icons.Outlined.KeyboardArrowDown,
+            contentDescription = null,
+            tint = WornColors.IconMuted,
+            modifier = Modifier.size(18.dp),
+        )
+    }
+}
+
+@Composable
+private fun SubcategoryOptionList(options: List<Subcategory>, onSelected: (Subcategory) -> Unit) {
+    Column {
+        HorizontalDivider(color = WornColors.BorderSubtle)
+        options.forEach { subcategory ->
+            Surface(onClick = { onSelected(subcategory) }, color = Color.Transparent) {
+                Text(
+                    text = subcategory.displayName(),
+                    color = WornColors.TextPrimary,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                )
+            }
+            if (subcategory != options.last()) {
+                HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun FitSection(selected: Fit?, onSelected: (Fit?) -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text("Fit", color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Fit.entries.forEach { fit ->
+                val isActive = fit == selected
+                Surface(
+                    onClick = { onSelected(if (isActive) null else fit) },
+                    shape = RoundedCornerShape(20.dp),
+                    color = if (isActive) WornColors.AccentGreen else WornColors.BgCard,
+                    border = if (isActive) null else BorderStroke(1.dp, WornColors.BorderSubtle),
+                ) {
+                    Text(
+                        text = fit.displayName(),
+                        color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun MaterialSection(selected: Material?, onSelected: (Material?) -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text("Material", color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Material.entries.forEach { material ->
+                val isActive = material == selected
+                Surface(
+                    onClick = { onSelected(if (isActive) null else material) },
+                    shape = RoundedCornerShape(20.dp),
+                    color = if (isActive) WornColors.AccentGreen else WornColors.BgCard,
+                    border = if (isActive) null else BorderStroke(1.dp, WornColors.BorderSubtle),
+                ) {
+                    Text(
+                        text = material.displayName(),
+                        color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+private fun Subcategory.displayName(): String = name.lowercase()
+    .replace('_', ' ')
+    .replaceFirstChar { it.uppercase() }
+
+private fun Fit.displayName(): String = when (this) {
+    Fit.SLIM_FIT -> "Slim Fit"
+    Fit.REGULAR -> "Regular"
+    Fit.RELAXED -> "Relaxed"
+    Fit.OVERSIZED -> "Oversized"
+}
+
+private fun Material.displayName(): String = name.lowercase().replaceFirstChar { it.uppercase() }
 
 private fun Season.displayName(): String = when (this) {
     Season.SPRING -> "Spring"

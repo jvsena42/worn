@@ -5,10 +5,15 @@ import com.github.worn.data.source.local.db.WardrobeDatabase
 import com.github.worn.data.source.remote.ClaudeApiClient
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
+import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.GapRecommendation
+import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
+import com.github.worn.domain.model.Subcategory
 import com.github.worn.domain.model.TryItResult
+import com.github.worn.domain.repository.SettingsRepository
 import com.github.worn.domain.repository.WardrobeRepository
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlin.coroutines.CoroutineContext
@@ -21,6 +26,7 @@ class WardrobeRepositoryImpl(
     private val db: WardrobeDatabase,
     private val fileStorage: PhotoFileStorage,
     private val aiClient: ClaudeApiClient,
+    private val settingsRepository: SettingsRepository,
     private val dispatcher: CoroutineContext,
 ) : WardrobeRepository {
 
@@ -57,6 +63,9 @@ class WardrobeRepositoryImpl(
         category: Category,
         colors: List<String>,
         seasons: List<Season>,
+        subcategory: Subcategory?,
+        fit: Fit?,
+        material: Material?,
     ): Result<ClothingItem> = runCatching {
         withContext(dispatcher) {
             val id = Uuid.random().toString()
@@ -72,6 +81,9 @@ class WardrobeRepositoryImpl(
                 seasons = seasons.map { it.name },
                 tags = emptyList(),
                 description = null,
+                subcategory = subcategory?.name,
+                fit = fit?.name,
+                material = material?.name,
                 photoPath = photoPath,
                 createdAt = createdAt,
             )
@@ -82,6 +94,9 @@ class WardrobeRepositoryImpl(
                 category = category,
                 colors = colors,
                 seasons = seasons,
+                subcategory = subcategory,
+                fit = fit,
+                material = material,
                 photoPath = photoPath,
                 createdAt = createdAt,
             )
@@ -100,6 +115,9 @@ class WardrobeRepositoryImpl(
                 colors = analysis.colors,
                 seasons = analysis.seasons,
                 tags = analysis.tags,
+                subcategory = analysis.suggestedSubcategory ?: item.subcategory,
+                fit = analysis.suggestedFit ?: item.fit,
+                material = analysis.suggestedMaterial ?: item.material,
             )
 
             db.clothingItemQueries.update(
@@ -109,6 +127,9 @@ class WardrobeRepositoryImpl(
                 seasons = updated.seasons.map { it.name },
                 tags = updated.tags,
                 description = updated.description,
+                subcategory = updated.subcategory?.name,
+                fit = updated.fit?.name,
+                material = updated.material?.name,
                 photoPath = updated.photoPath,
                 id = updated.id,
             )
@@ -126,6 +147,9 @@ class WardrobeRepositoryImpl(
                 seasons = item.seasons.map { it.name },
                 tags = item.tags,
                 description = item.description,
+                subcategory = item.subcategory?.name,
+                fit = item.fit?.name,
+                material = item.material?.name,
                 photoPath = item.photoPath,
                 id = item.id,
             )
@@ -148,7 +172,8 @@ class WardrobeRepositoryImpl(
     override suspend fun getGapRecommendations(): Result<List<GapRecommendation>> = runCatching {
         withContext(dispatcher) {
             val items = db.clothingItemQueries.getAll().executeAsList().map { it.toDomain() }
-            aiClient.getGapRecommendations(items)
+            val userProfile = settingsRepository.getUserProfile().first()
+            aiClient.getGapRecommendations(items, userProfile)
         }
     }
 
@@ -156,7 +181,8 @@ class WardrobeRepositoryImpl(
         runCatching {
             withContext(dispatcher) {
                 val items = db.clothingItemQueries.getAll().executeAsList().map { it.toDomain() }
-                aiClient.analyzeProspectiveItem(imageBytes, items)
+                val userProfile = settingsRepository.getUserProfile().first()
+                aiClient.analyzeProspectiveItem(imageBytes, items, userProfile)
             }
         }
 
@@ -168,11 +194,14 @@ class WardrobeRepositoryImpl(
 private fun DbClothingItem.toDomain(): ClothingItem = ClothingItem(
     id = id,
     name = name,
-    category = Category.valueOf(category),
+    category = runCatching { Category.valueOf(category) }.getOrDefault(Category.TOP),
     colors = colors,
     seasons = seasons.mapNotNull { runCatching { Season.valueOf(it) }.getOrNull() },
     tags = tags,
     description = description,
+    subcategory = subcategory?.let { runCatching { Subcategory.valueOf(it) }.getOrNull() },
+    fit = fit?.let { runCatching { Fit.valueOf(it) }.getOrNull() },
+    material = material?.let { runCatching { Material.valueOf(it) }.getOrNull() },
     photoPath = photoPath,
     createdAt = createdAt,
 )

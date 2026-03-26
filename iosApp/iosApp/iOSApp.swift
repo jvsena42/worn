@@ -16,6 +16,8 @@ struct iOSApp: App {
                 WardrobeScreen(onTabSelected: { activeTab = $0 })
             case .outfits:
                 OutfitsScreen(onTabSelected: { activeTab = $0 })
+            case .settings:
+                SettingsScreen(onTabSelected: { activeTab = $0 })
             default:
                 WardrobeScreen(onTabSelected: { activeTab = $0 })
             }

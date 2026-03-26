@@ -1,0 +1,4 @@
+ALTER TABLE clothingItem ADD COLUMN subcategory TEXT;
+ALTER TABLE clothingItem ADD COLUMN fit TEXT;
+ALTER TABLE clothingItem ADD COLUMN material TEXT;
+UPDATE clothingItem SET category = 'TOP' WHERE category = 'DRESS';
