@@ -68,13 +68,23 @@ fun OutfitsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showCreateSheet by remember { mutableStateOf(false) }
+    var detailOutfit by remember { mutableStateOf<Outfit?>(null) }
+    var editOutfit by remember { mutableStateOf<Outfit?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.onIntent(OutfitIntent.LoadOutfits)
         viewModel.effects.collect { effect ->
             when (effect) {
                 is OutfitEffect.OutfitsDeleted -> {}
-                is OutfitEffect.OutfitCreated -> showCreateSheet = false
+                is OutfitEffect.OutfitCreated -> {
+                    showCreateSheet = false
+                    editOutfit = null
+                }
+                is OutfitEffect.OutfitUpdated -> {
+                    showCreateSheet = false
+                    editOutfit = null
+                }
+                is OutfitEffect.OutfitDeleted -> detailOutfit = null
                 is OutfitEffect.ShowError -> {}
             }
         }
@@ -96,6 +106,7 @@ fun OutfitsScreen(
         onToggleSelection = { viewModel.onIntent(OutfitIntent.ToggleSelection(it)) },
         onClearSelection = { viewModel.onIntent(OutfitIntent.ClearSelection) },
         onDeleteSelected = { viewModel.onIntent(OutfitIntent.DeleteSelected) },
+        onOutfitClick = { detailOutfit = it },
         onTabSelected = onTabSelected,
     )
 
@@ -105,10 +116,46 @@ fun OutfitsScreen(
             selectedItemIds = state.selectedItemIds,
             activeCategory = state.activeItemCategory,
             isSaving = state.isSaving,
+            existingOutfit = editOutfit,
             onCategorySelected = { viewModel.onIntent(OutfitIntent.FilterItemsByCategory(it)) },
             onToggleItem = { viewModel.onIntent(OutfitIntent.ToggleItemSelection(it)) },
-            onSave = { name -> viewModel.onIntent(OutfitIntent.CreateOutfit(name)) },
-            onDismiss = { showCreateSheet = false },
+            onSave = { name ->
+                val existing = editOutfit
+                if (existing != null) {
+                    viewModel.onIntent(
+                        OutfitIntent.UpdateOutfit(
+                            existing.copy(
+                                name = name,
+                                itemIds = state.selectedItemIds.toList(),
+                            ),
+                        ),
+                    )
+                } else {
+                    viewModel.onIntent(OutfitIntent.CreateOutfit(name))
+                }
+            },
+            onDismiss = { showCreateSheet = false; editOutfit = null },
+        )
+    }
+
+    detailOutfit?.let { outfit ->
+        OutfitDetailSheet(
+            outfit = outfit,
+            clothingItems = state.allClothingItems,
+            isCompact = isCompact,
+            onEdit = { editingOutfit ->
+                detailOutfit = null
+                editOutfit = editingOutfit
+                // Pre-select the outfit's items
+                editingOutfit.itemIds.forEach { itemId ->
+                    if (itemId !in state.selectedItemIds) {
+                        viewModel.onIntent(OutfitIntent.ToggleItemSelection(itemId))
+                    }
+                }
+                showCreateSheet = true
+            },
+            onDelete = { viewModel.onIntent(OutfitIntent.DeleteOutfit(it)) },
+            onDismiss = { detailOutfit = null },
         )
     }
 }
@@ -121,6 +168,7 @@ private fun OutfitsScaffold(
     onToggleSelection: (String) -> Unit = {},
     onClearSelection: () -> Unit = {},
     onDeleteSelected: () -> Unit = {},
+    onOutfitClick: (Outfit) -> Unit = {},
     onTabSelected: (Tab) -> Unit = {},
 ) {
     val isSelectionMode = state.selectedIds.isNotEmpty()
@@ -162,6 +210,7 @@ private fun OutfitsScaffold(
                 OutfitsContent(
                     state = state,
                     onToggleSelection = onToggleSelection,
+                    onOutfitClick = onOutfitClick,
                 )
             }
         }
@@ -252,6 +301,7 @@ private fun SelectionHeader(count: Int, onCancel: () -> Unit, onDelete: () -> Un
 private fun OutfitsContent(
     state: OutfitState,
     onToggleSelection: (String) -> Unit,
+    onOutfitClick: (Outfit) -> Unit = {},
 ) {
     val isSelectionMode = state.selectedIds.isNotEmpty()
 
@@ -267,7 +317,7 @@ private fun OutfitsContent(
                 isSelectionMode = isSelectionMode,
                 onLongPress = { onToggleSelection(outfit.id) },
                 onClick = {
-                    if (isSelectionMode) onToggleSelection(outfit.id)
+                    if (isSelectionMode) onToggleSelection(outfit.id) else onOutfitClick(outfit)
                 },
                 modifier = Modifier.animateItem(),
             )

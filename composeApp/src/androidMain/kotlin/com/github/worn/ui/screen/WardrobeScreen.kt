@@ -77,12 +77,22 @@ fun WardrobeScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showAddSheet by remember { mutableStateOf(false) }
+    var detailItem by remember { mutableStateOf<ClothingItem?>(null) }
+    var editItem by remember { mutableStateOf<ClothingItem?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                is WardrobeEffect.ItemAdded -> showAddSheet = false
+                is WardrobeEffect.ItemAdded -> {
+                    showAddSheet = false
+                    editItem = null
+                }
+                is WardrobeEffect.ItemUpdated -> {
+                    showAddSheet = false
+                    editItem = null
+                }
                 is WardrobeEffect.ItemsDeleted -> {}
+                is WardrobeEffect.ItemDeleted -> detailItem = null
                 is WardrobeEffect.ShowError -> {}
             }
         }
@@ -99,6 +109,7 @@ fun WardrobeScreen(
         onToggleSelection = { viewModel.onIntent(WardrobeIntent.ToggleSelection(it)) },
         onClearSelection = { viewModel.onIntent(WardrobeIntent.ClearSelection) },
         onDeleteSelected = { viewModel.onIntent(WardrobeIntent.DeleteSelected) },
+        onItemClick = { detailItem = it },
         onTabSelected = onTabSelected,
     )
 
@@ -106,15 +117,43 @@ fun WardrobeScreen(
         AddItemSheet(
             isSaving = state.isSaving,
             hasApiKey = state.hasApiKey,
+            existingItem = editItem,
             onSave = { imageBytes, name, category, colors, seasons, subcategory, fit, material ->
-                viewModel.onIntent(
-                    WardrobeIntent.AddItem(
-                        imageBytes, name, category, colors, seasons,
-                        subcategory, fit, material,
-                    ),
-                )
+                val existing = editItem
+                if (existing != null) {
+                    viewModel.onIntent(
+                        WardrobeIntent.UpdateItem(
+                            existing.copy(
+                                name = name, category = category, colors = colors,
+                                seasons = seasons, subcategory = subcategory,
+                                fit = fit, material = material,
+                            ),
+                        ),
+                    )
+                } else {
+                    viewModel.onIntent(
+                        WardrobeIntent.AddItem(
+                            imageBytes, name, category, colors, seasons,
+                            subcategory, fit, material,
+                        ),
+                    )
+                }
             },
-            onDismiss = { showAddSheet = false },
+            onDismiss = { showAddSheet = false; editItem = null },
+        )
+    }
+
+    detailItem?.let { item ->
+        ItemDetailSheet(
+            item = item,
+            isCompact = isCompact,
+            onEdit = { editingItem ->
+                detailItem = null
+                editItem = editingItem
+                showAddSheet = true
+            },
+            onDelete = { viewModel.onIntent(WardrobeIntent.DeleteItem(it)) },
+            onDismiss = { detailItem = null },
         )
     }
 }
@@ -128,6 +167,7 @@ private fun WardrobeScaffold(
     onToggleSelection: (String) -> Unit = {},
     onClearSelection: () -> Unit = {},
     onDeleteSelected: () -> Unit = {},
+    onItemClick: (ClothingItem) -> Unit = {},
     onTabSelected: (Tab) -> Unit = {},
 ) {
     val isSelectionMode = state.selectedIds.isNotEmpty()
@@ -178,6 +218,7 @@ private fun WardrobeScaffold(
                         state = state,
                         isCompact = isCompact,
                         onToggleSelection = onToggleSelection,
+                        onItemClick = onItemClick,
                     )
                 }
             }
@@ -253,6 +294,7 @@ private fun WardrobeContent(
     state: WardrobeState,
     isCompact: Boolean,
     onToggleSelection: (String) -> Unit,
+    onItemClick: (ClothingItem) -> Unit = {},
 ) {
     val gridGap = if (isCompact) GRID_GAP_COMPACT else GRID_GAP_EXPANDED
     val photoHeight: Dp = if (isCompact) 171.dp else 200.dp
@@ -277,7 +319,7 @@ private fun WardrobeContent(
                     isSelectionMode = isSelectionMode,
                     onLongPress = { onToggleSelection(item.id) },
                     onClick = {
-                        if (isSelectionMode) onToggleSelection(item.id)
+                        if (isSelectionMode) onToggleSelection(item.id) else onItemClick(item)
                     },
                     modifier = Modifier.animateItem(),
                 )
