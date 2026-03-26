@@ -246,7 +246,10 @@ private fun CategoryOptionList(onSelected: (Category) -> Unit) {
 fun ColorSection(selectedColors: Set<String>, onToggle: (String) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Text("Color", color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
             addItemColorPalette.forEach { (name, color) ->
                 val isSelected = name in selectedColors
                 Surface(
