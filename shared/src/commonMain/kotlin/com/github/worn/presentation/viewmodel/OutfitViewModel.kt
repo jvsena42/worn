@@ -25,6 +25,8 @@ sealed interface OutfitIntent {
     data object ClearSelection : OutfitIntent
     data object DeleteSelected : OutfitIntent
     data class CreateOutfit(val name: String) : OutfitIntent
+    data class DeleteOutfit(val outfitId: String) : OutfitIntent
+    data class UpdateOutfit(val outfit: Outfit) : OutfitIntent
 }
 
 data class OutfitState(
@@ -34,6 +36,7 @@ data class OutfitState(
     val selectedIds: Set<String> = emptySet(),
     val error: String? = null,
     val itemCategories: Map<String, Category> = emptyMap(),
+    val allClothingItems: List<ClothingItem> = emptyList(),
     val clothingItems: List<ClothingItem> = emptyList(),
     val selectedItemIds: Set<String> = emptySet(),
     val activeItemCategory: Category? = null,
@@ -45,6 +48,8 @@ sealed interface OutfitEffect {
     data class ShowError(val message: String) : OutfitEffect
     data object OutfitsDeleted : OutfitEffect
     data object OutfitCreated : OutfitEffect
+    data object OutfitDeleted : OutfitEffect
+    data object OutfitUpdated : OutfitEffect
 }
 
 class OutfitViewModel(
@@ -67,7 +72,7 @@ class OutfitViewModel(
         viewModelScope.launch {
             wardrobeRepository.getAll().onSuccess { items ->
                 val categories = items.associate { it.id to it.category }
-                _state.update { it.copy(itemCategories = categories) }
+                _state.update { it.copy(itemCategories = categories, allClothingItems = items) }
             }
         }
     }
@@ -82,6 +87,8 @@ class OutfitViewModel(
             is OutfitIntent.ClearSelection -> clearSelection()
             is OutfitIntent.DeleteSelected -> deleteSelected()
             is OutfitIntent.CreateOutfit -> createOutfit(intent.name)
+            is OutfitIntent.DeleteOutfit -> deleteOutfit(intent.outfitId)
+            is OutfitIntent.UpdateOutfit -> updateOutfit(intent.outfit)
         }
     }
 
@@ -188,6 +195,31 @@ class OutfitViewModel(
                 _effects.send(OutfitEffect.OutfitsDeleted)
             }
             loadOutfits()
+        }
+    }
+
+    private fun deleteOutfit(outfitId: String) {
+        viewModelScope.launch {
+            _state.update { state ->
+                state.copy(outfits = state.outfits.filterNot { it.id == outfitId })
+            }
+            repository.deleteOutfit(outfitId)
+                .onSuccess { _effects.send(OutfitEffect.OutfitDeleted) }
+                .onFailure { _effects.send(OutfitEffect.ShowError(it.message ?: "Failed to delete")) }
+            loadOutfits()
+        }
+    }
+
+    private fun updateOutfit(outfit: Outfit) {
+        viewModelScope.launch {
+            repository.updateOutfit(outfit)
+                .onSuccess {
+                    _effects.send(OutfitEffect.OutfitUpdated)
+                    loadOutfits()
+                }
+                .onFailure {
+                    _effects.send(OutfitEffect.ShowError(it.message ?: "Failed to update"))
+                }
         }
     }
 }
