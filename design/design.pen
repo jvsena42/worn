@@ -12141,17 +12141,29 @@
                 "fill": "$border-subtle"
               },
               "padding": 16,
+              "justifyContent": "space_between",
               "alignItems": "center",
               "children": [
                 {
                   "type": "text",
                   "id": "vR1Ya",
                   "name": "placeholder",
-                  "fill": "$text-muted",
-                  "content": "sk-ant-...",
+                  "fill": "$text-primary",
+                  "content": "••••••••••••••••",
                   "fontFamily": "DM Sans",
                   "fontSize": 14,
-                  "fontWeight": "normal"
+                  "fontWeight": "normal",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "icon_font",
+                  "id": "f7yXb",
+                  "name": "eyeIcon",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "eye-off",
+                  "iconFontFamily": "lucide",
+                  "fill": "$text-secondary"
                 }
               ]
             },
