@@ -307,7 +307,12 @@ fun SeasonSection(selectedSeasons: Set<Season>, onToggle: (Season) -> Unit) {
 }
 
 @Composable
-fun SaveButton(enabled: Boolean, isSaving: Boolean, onClick: () -> Unit) {
+fun SaveButton(
+    enabled: Boolean,
+    isSaving: Boolean,
+    onClick: () -> Unit,
+    label: String? = null,
+) {
     val gradient = Brush.verticalGradient(listOf(WornColors.SaveGradientStart, WornColors.SaveGradientEnd))
     val disabledGradient = Brush.verticalGradient(listOf(WornColors.TextMuted, WornColors.IconMuted))
     Button(
@@ -328,7 +333,7 @@ fun SaveButton(enabled: Boolean, isSaving: Boolean, onClick: () -> Unit) {
                 .background(if (enabled) gradient else disabledGradient),
         ) {
             Text(
-                text = if (isSaving) "Saving…" else "Save to wardrobe",
+                text = if (isSaving) "Saving…" else (label ?: "Save to wardrobe"),
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,

@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.domain.model.Category
+import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
@@ -69,6 +70,7 @@ import java.io.ByteArrayOutputStream
 fun AddItemSheet(
     isSaving: Boolean,
     hasApiKey: Boolean,
+    existingItem: ClothingItem? = null,
     onSave: (
         imageBytes: ByteArray, name: String, category: Category,
         colors: List<String>, seasons: List<Season>,
@@ -85,7 +87,12 @@ fun AddItemSheet(
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
         dragHandle = { SheetHandle() },
     ) {
-        AddItemForm(isSaving = isSaving, hasApiKey = hasApiKey, onSave = onSave)
+        AddItemForm(
+            isSaving = isSaving,
+            hasApiKey = hasApiKey,
+            existingItem = existingItem,
+            onSave = onSave,
+        )
     }
 }
 
@@ -109,20 +116,36 @@ private fun SheetHandle() {
 internal fun AddItemForm(
     isSaving: Boolean = false,
     hasApiKey: Boolean = false,
+    existingItem: ClothingItem? = null,
     onSave: (ByteArray, String, Category, List<String>, List<Season>, Subcategory?, Fit?, Material?) -> Unit =
         { _, _, _, _, _, _, _, _ -> },
 ) {
+    val isEditing = existingItem != null
     var photoBytes by remember { mutableStateOf<ByteArray?>(null) }
     var photoBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
-    var name by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf<Category?>(null) }
-    var selectedColors by remember { mutableStateOf(setOf<String>()) }
-    var selectedSeasons by remember { mutableStateOf(setOf<Season>()) }
-    var selectedSubcategory by remember { mutableStateOf<Subcategory?>(null) }
-    var selectedFit by remember { mutableStateOf<Fit?>(null) }
-    var selectedMaterial by remember { mutableStateOf<Material?>(null) }
+    var name by remember { mutableStateOf(existingItem?.name ?: "") }
+    var selectedCategory by remember { mutableStateOf(existingItem?.category) }
+    var selectedColors by remember { mutableStateOf(existingItem?.colors?.toSet() ?: emptySet()) }
+    var selectedSeasons by remember { mutableStateOf(existingItem?.seasons?.toSet() ?: emptySet()) }
+    var selectedSubcategory by remember { mutableStateOf(existingItem?.subcategory) }
+    var selectedFit by remember { mutableStateOf(existingItem?.fit) }
+    var selectedMaterial by remember { mutableStateOf(existingItem?.material) }
     var showSourceChooser by remember { mutableStateOf(false) }
     var showAiLockedSheet by remember { mutableStateOf(false) }
+
+    // Load existing photo bitmap for edit mode
+    val existingPhotoBitmap = remember(existingItem?.photoPath) {
+        existingItem?.photoPath?.takeIf { it.isNotEmpty() }?.let { path ->
+            val file = java.io.File(path)
+            if (file.exists()) {
+                BitmapFactory.decodeFile(path)?.asImageBitmap()
+            } else {
+                null
+            }
+        }
+    }
+    // Use a sentinel byte array for edit mode so canSave works when photo hasn't changed
+    val hasPhoto = photoBytes != null || (isEditing && existingPhotoBitmap != null)
 
     PhotoSourceChooser(
         show = showSourceChooser,
@@ -138,7 +161,7 @@ internal fun AddItemForm(
     }
 
     AddItemFormContent(
-        photoBitmap = photoBitmap,
+        photoBitmap = photoBitmap ?: existingPhotoBitmap,
         name = name,
         onNameChange = { name = it },
         selectedCategory = selectedCategory,
@@ -157,12 +180,14 @@ internal fun AddItemForm(
         selectedMaterial = selectedMaterial,
         onMaterialSelected = { selectedMaterial = it },
         isSaving = isSaving,
-        canSave = photoBytes != null && name.isNotBlank() && selectedCategory != null,
+        canSave = hasPhoto && name.isNotBlank() && selectedCategory != null,
+        isEditing = isEditing,
         onPhotoClick = { showSourceChooser = true },
         onAiBadgeClick = { if (!hasApiKey) showAiLockedSheet = true },
         onSave = {
-            val bytes = photoBytes ?: return@AddItemFormContent
             val cat = selectedCategory ?: return@AddItemFormContent
+            // For edit mode without new photo, pass empty byte array (caller uses existing photoPath)
+            val bytes = photoBytes ?: ByteArray(0)
             onSave(
                 bytes, name, cat, selectedColors.toList(), selectedSeasons.toList(),
                 selectedSubcategory, selectedFit, selectedMaterial,
@@ -244,6 +269,7 @@ private fun AddItemFormContent(
     onMaterialSelected: (Material?) -> Unit,
     isSaving: Boolean,
     canSave: Boolean,
+    isEditing: Boolean = false,
     onPhotoClick: () -> Unit,
     onAiBadgeClick: () -> Unit,
     onSave: () -> Unit,
@@ -256,14 +282,14 @@ private fun AddItemFormContent(
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(
-            text = "Add new item",
+            text = if (isEditing) "Edit item" else "Add new item",
             color = WornColors.TextPrimary,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.5).sp,
         )
         PhotoUploadZone(bitmap = photoBitmap, onClick = onPhotoClick)
-        AiBadge(onClick = onAiBadgeClick)
+        if (!isEditing) AiBadge(onClick = onAiBadgeClick)
         ItemNameField(value = name, onValueChange = onNameChange)
         CategoryDropdown(selected = selectedCategory, onSelected = onCategorySelected)
         if (selectedCategory != null) {
@@ -277,7 +303,12 @@ private fun AddItemFormContent(
         SeasonSection(selectedSeasons = selectedSeasons, onToggle = onSeasonToggle)
         FitSection(selected = selectedFit, onSelected = onFitSelected)
         MaterialSection(selected = selectedMaterial, onSelected = onMaterialSelected)
-        SaveButton(enabled = canSave && !isSaving, isSaving = isSaving, onClick = onSave)
+        SaveButton(
+            enabled = canSave && !isSaving,
+            isSaving = isSaving,
+            onClick = onSave,
+            label = if (isEditing) "Save Changes" else null,
+        )
     }
 }
 
