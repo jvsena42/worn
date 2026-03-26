@@ -12781,10 +12781,9 @@
           "type": "frame",
           "id": "sWOWL",
           "x": 0,
-          "y": 260,
+          "y": 527,
           "name": "Sheet",
           "width": 402,
-          "height": 614,
           "fill": "$bg-elevated",
           "cornerRadius": [
             24,
@@ -13186,6 +13185,7 @@
               "id": "VTYv9",
               "name": "Content",
               "width": "fill_container",
+              "height": "fill_container",
               "layout": "vertical",
               "gap": 28,
               "padding": [
@@ -20572,11 +20572,11 @@
           "type": "frame",
           "id": "h73fl",
           "x": 0,
-          "y": 100,
+          "y": 514,
           "name": "Sheet",
           "clip": true,
           "width": 834,
-          "height": 1094,
+          "height": 680,
           "fill": "$bg-elevated",
           "cornerRadius": [
             24,
@@ -21264,6 +21264,7 @@
               "id": "4I0vt",
               "name": "lsGroup",
               "width": "fill_container",
+              "height": "fill_container",
               "layout": "vertical",
               "gap": 12,
               "children": [
