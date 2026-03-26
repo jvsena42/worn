@@ -69,7 +69,6 @@ private fun CategoryChip(
 private fun Category.displayName(): String = when (this) {
     Category.TOP -> "Tops"
     Category.BOTTOM -> "Bottoms"
-    Category.DRESS -> "Dresses"
     Category.OUTERWEAR -> "Outerwear"
     Category.SHOES -> "Shoes"
     Category.ACCESSORY -> "Accessories"

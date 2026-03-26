@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
+import com.github.worn.domain.model.Fit
+import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
+import com.github.worn.domain.model.Subcategory
 import com.github.worn.domain.repository.WardrobeRepository
 import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.channels.Channel
@@ -25,6 +28,9 @@ sealed interface WardrobeIntent {
         val category: Category,
         val colors: List<String>,
         val seasons: List<Season>,
+        val subcategory: Subcategory? = null,
+        val fit: Fit? = null,
+        val material: Material? = null,
     ) : WardrobeIntent
     data class ToggleSelection(val itemId: String) : WardrobeIntent
     data object ClearSelection : WardrobeIntent
@@ -116,6 +122,9 @@ class WardrobeViewModel(
                 category = intent.category,
                 colors = intent.colors,
                 seasons = intent.seasons,
+                subcategory = intent.subcategory,
+                fit = intent.fit,
+                material = intent.material,
             ).onSuccess {
                 _state.update { it.copy(isSaving = false) }
                 _effects.send(WardrobeEffect.ItemAdded)

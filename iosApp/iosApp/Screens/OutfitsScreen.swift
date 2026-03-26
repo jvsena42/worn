@@ -316,7 +316,6 @@ private struct OutfitCardView: View {
         switch category {
         case .top: return "tshirt"
         case .bottom: return "ruler"
-        case .dress: return "figure.dress.line.vertical.figure"
         case .outerwear: return "wind"
         case .shoes: return "shoe"
         case .accessory: return "eyeglasses"

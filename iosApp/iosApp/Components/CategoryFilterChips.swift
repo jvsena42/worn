@@ -9,7 +9,6 @@ struct CategoryFilterChips: View {
         (nil, "All"),
         (.top, "Tops"),
         (.bottom, "Bottoms"),
-        (.dress, "Dresses"),
         (.outerwear, "Outerwear"),
         (.shoes, "Shoes"),
         (.accessory, "Accessories"),

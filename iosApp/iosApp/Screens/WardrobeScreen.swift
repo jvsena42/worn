@@ -22,10 +22,11 @@ struct WardrobeScreen: View {
             AddItemSheet(
                 isSaving: viewModel.state.isSaving,
                 hasApiKey: viewModel.state.hasApiKey,
-                onSave: { data, name, category, colors, seasons in
+                onSave: { data, name, category, colors, seasons, subcategory, fit, material in
                     viewModel.addItem(
                         imageData: data, name: name, category: category,
-                        colors: colors, seasons: seasons
+                        colors: colors, seasons: seasons,
+                        subcategory: subcategory, fit: fit, material: material
                     )
                 },
                 onDismiss: { showAddSheet = false }

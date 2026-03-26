@@ -5,7 +5,7 @@ import Shared
 struct AddItemSheet: View {
     let isSaving: Bool
     let hasApiKey: Bool
-    let onSave: (Data, String, Category, [String], [Season]) -> Void
+    let onSave: (Data, String, Category, [String], [Season], Subcategory?, Fit?, Material?) -> Void
     let onDismiss: () -> Void
 
     @State private var selectedPhotoItem: PhotosPickerItem?
@@ -15,20 +15,29 @@ struct AddItemSheet: View {
     @State private var selectedCategory: Category?
     @State private var selectedColors: Set<String> = []
     @State private var selectedSeasons: Set<Season> = []
+    @State private var selectedSubcategory: Subcategory?
+    @State private var selectedFit: Fit?
+    @State private var selectedMaterial: Material?
     @State private var showSourceChooser = false
     @State private var showPhotoPicker = false
     @State private var showCamera = false
     @State private var showAiLockedSheet = false
 
     private let colorPalette: [(name: String, color: Color)] = [
+        ("White", Color(hex: "FFFFFF")),
         ("Cream", Color(hex: "EDE8E1")),
         ("Black", Color(hex: "2C2924")),
         ("Navy", Color(hex: "2B4570")),
         ("Grey", Color(hex: "808080")),
+        ("Charcoal", Color(hex: "36454F")),
         ("Olive", Color(hex: "6B7B3F")),
         ("Beige", Color(hex: "C4A882")),
+        ("Khaki", Color(hex: "C3B091")),
+        ("Tan", Color(hex: "D2B48C")),
         ("Brown", Color(hex: "8B4513")),
+        ("Burgundy", Color(hex: "800020")),
         ("Coral", Color(hex: "A87560")),
+        ("Light Blue", Color(hex: "ADD8E6")),
     ]
 
     private var canSave: Bool {
@@ -43,8 +52,13 @@ struct AddItemSheet: View {
                     aiBadge
                     nameField
                     categoryField
+                    if selectedCategory != nil {
+                        subcategoryField
+                    }
                     colorSection
                     seasonSection
+                    fitSection
+                    materialSection
                     saveButton
                 }
                 .padding(.horizontal, 24)
@@ -219,7 +233,7 @@ struct AddItemSheet: View {
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(WornColors.textPrimary)
 
-            HStack(spacing: 12) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 7), spacing: 12) {
                 ForEach(colorPalette, id: \.name) { item in
                     let isSelected = selectedColors.contains(item.name)
                     Button {
@@ -287,7 +301,8 @@ struct AddItemSheet: View {
     private var saveButton: some View {
         Button {
             guard let data = photoData, let cat = selectedCategory else { return }
-            onSave(data, name, cat, Array(selectedColors), Array(selectedSeasons))
+            onSave(data, name, cat, Array(selectedColors), Array(selectedSeasons),
+                   selectedSubcategory, selectedFit, selectedMaterial)
         } label: {
             Text(isSaving ? "Saving…" : "Save to wardrobe")
                 .font(.system(size: 16, weight: .semibold))
@@ -311,7 +326,7 @@ struct AddItemSheet: View {
 
     private var categoryOptions: [(Category, String)] {
         [
-            (.top, "Tops"), (.bottom, "Bottoms"), (.dress, "Dresses"),
+            (.top, "Tops"), (.bottom, "Bottoms"),
             (.outerwear, "Outerwear"), (.shoes, "Shoes"), (.accessory, "Accessories"),
         ]
     }
@@ -324,7 +339,6 @@ struct AddItemSheet: View {
         switch category {
         case .top: return "tshirt"
         case .bottom: return "ruler"
-        case .dress: return "figure.dress.line.vertical.figure"
         case .outerwear: return "wind"
         case .shoes: return "shoe"
         case .accessory: return "eyeglasses"
@@ -336,20 +350,152 @@ struct AddItemSheet: View {
         switch category {
         case .top: return "Tops"
         case .bottom: return "Bottoms"
-        case .dress: return "Dresses"
         case .outerwear: return "Outerwear"
         case .shoes: return "Shoes"
         case .accessory: return "Accessories"
         default: return ""
         }
     }
+
+    // MARK: - Subcategory
+
+    @State private var subcategoryExpanded = false
+
+    private var subcategoryOptions: [(Subcategory, String)] {
+        guard let cat = selectedCategory else { return [] }
+        return SubcategoryKt.subcategoriesFor(category: cat).map { sub in
+            (sub, sub.name.lowercased().replacingOccurrences(of: "_", with: " ").capitalized)
+        }
+    }
+
+    private var subcategoryField: some View {
+        VStack(spacing: 0) {
+            Button { withAnimation { subcategoryExpanded.toggle() } } label: {
+                HStack {
+                    Text(selectedSubcategory.map {
+                        $0.name.lowercased().replacingOccurrences(of: "_", with: " ").capitalized
+                    } ?? "Subcategory")
+                        .font(.system(size: 15))
+                        .foregroundColor(selectedSubcategory != nil ? WornColors.textPrimary : WornColors.iconMuted)
+                    Spacer()
+                    Image(systemName: subcategoryExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 14))
+                        .foregroundColor(WornColors.iconMuted)
+                }
+                .padding(16)
+            }
+            .buttonStyle(.plain)
+
+            if subcategoryExpanded {
+                Divider().overlay(WornColors.borderSubtle)
+                ForEach(Array(subcategoryOptions.enumerated()), id: \.offset) { index, item in
+                    let (subcategory, label) = item
+                    Button {
+                        selectedSubcategory = subcategory
+                        withAnimation { subcategoryExpanded = false }
+                    } label: {
+                        Text(label)
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(WornColors.textPrimary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                    }
+                    .buttonStyle(.plain)
+
+                    if index < subcategoryOptions.count - 1 {
+                        Divider().overlay(WornColors.borderSubtle.opacity(0.5))
+                    }
+                }
+            }
+        }
+        .background(WornColors.bgCard)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(WornColors.borderSubtle, lineWidth: 1)
+        )
+    }
+
+    // MARK: - Fit
+
+    private let fitOptions: [(Fit, String)] = [
+        (.slimFit, "Slim Fit"), (.regular, "Regular"), (.relaxed, "Relaxed"), (.oversized, "Oversized"),
+    ]
+
+    private var fitSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Fit")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(WornColors.textPrimary)
+
+            HStack(spacing: 8) {
+                ForEach(fitOptions, id: \.0) { fit, label in
+                    let isActive = selectedFit == fit
+                    Button {
+                        selectedFit = isActive ? nil : fit
+                    } label: {
+                        Text(label)
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(isActive ? WornColors.accentGreen : WornColors.bgCard)
+                            .clipShape(Capsule())
+                            .overlay(
+                                Capsule()
+                                    .stroke(isActive ? Color.clear : WornColors.borderSubtle, lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+    }
+
+    // MARK: - Material
+
+    private let materialOptions: [(Material, String)] = [
+        (.cotton, "Cotton"), (.linen, "Linen"), (.denim, "Denim"), (.wool, "Wool"),
+        (.synthetic, "Synthetic"), (.leather, "Leather"), (.silk, "Silk"), (.knit, "Knit"),
+    ]
+
+    private var materialSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Material")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(WornColors.textPrimary)
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
+                ForEach(materialOptions, id: \.0) { material, label in
+                    let isActive = selectedMaterial == material
+                    Button {
+                        selectedMaterial = isActive ? nil : material
+                    } label: {
+                        Text(label)
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity)
+                            .background(isActive ? WornColors.accentGreen : WornColors.bgCard)
+                            .clipShape(Capsule())
+                            .overlay(
+                                Capsule()
+                                    .stroke(isActive ? Color.clear : WornColors.borderSubtle, lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+    }
 }
 
 #Preview("iPhone") {
-    AddItemSheet(isSaving: false, hasApiKey: false, onSave: { _, _, _, _, _ in }, onDismiss: {})
+    AddItemSheet(isSaving: false, hasApiKey: false, onSave: { _, _, _, _, _, _, _, _ in }, onDismiss: {})
 }
 
 #Preview("iPad Portrait") {
-    AddItemSheet(isSaving: false, hasApiKey: false, onSave: { _, _, _, _, _ in }, onDismiss: {})
+    AddItemSheet(isSaving: false, hasApiKey: false, onSave: { _, _, _, _, _, _, _, _ in }, onDismiss: {})
         .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

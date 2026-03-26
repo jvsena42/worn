@@ -43,6 +43,8 @@ kotlin {
             implementation(libs.sqldelight.coroutines)
             implementation(libs.koin.core)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
+            implementation(libs.datastore)
+            implementation(libs.datastore.preferences)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -69,6 +71,8 @@ sqldelight {
     databases {
         create("WardrobeDatabase") {
             packageName.set("com.github.worn.data.source.local.db")
+            version = 2
+            srcDirs("src/commonMain/sqldelight")
         }
     }
 }

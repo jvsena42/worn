@@ -97,7 +97,6 @@ struct ClothingCard: View {
         switch category {
         case .top: return WornColors.categoryDotTop
         case .bottom: return WornColors.categoryDotBottom
-        case .dress: return WornColors.categoryDotDress
         case .outerwear: return WornColors.categoryDotOuterwear
         case .shoes: return WornColors.categoryDotShoes
         case .accessory: return WornColors.categoryDotAccessory
@@ -109,7 +108,6 @@ struct ClothingCard: View {
         switch category {
         case .top: return "Tops"
         case .bottom: return "Bottoms"
-        case .dress: return "Dresses"
         case .outerwear: return "Outerwear"
         case .shoes: return "Shoes"
         case .accessory: return "Accessories"

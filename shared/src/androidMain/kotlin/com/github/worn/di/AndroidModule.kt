@@ -1,7 +1,10 @@
 package com.github.worn.di
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.github.worn.data.source.local.DatabaseDriverFactory
 import com.github.worn.data.source.local.PhotoFileStorage
+import com.github.worn.data.source.local.createDataStore
 import com.github.worn.util.secret.AndroidSecretStore
 import com.github.worn.util.secret.SecretStore
 import io.ktor.client.HttpClient
@@ -17,4 +20,5 @@ val androidModule = module {
     single<SecretStore> { AndroidSecretStore(get()) }
     single { HttpClient(OkHttp) }
     single<CoroutineContext> { Dispatchers.IO }
+    single<DataStore<Preferences>> { createDataStore(context = get()) }
 }

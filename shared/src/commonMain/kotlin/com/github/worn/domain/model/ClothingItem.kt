@@ -8,6 +8,9 @@ data class ClothingItem(
     val seasons: List<Season> = emptyList(),
     val tags: List<String> = emptyList(),
     val description: String? = null,
+    val subcategory: Subcategory? = null,
+    val fit: Fit? = null,
+    val material: Material? = null,
     val photoPath: String,
     val createdAt: Long,
 )

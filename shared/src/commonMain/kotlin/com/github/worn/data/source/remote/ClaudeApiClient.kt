@@ -3,9 +3,13 @@ package com.github.worn.data.source.remote
 import com.github.worn.domain.model.AiAnalysisResult
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
+import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.GapRecommendation
+import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
+import com.github.worn.domain.model.Subcategory
 import com.github.worn.domain.model.TryItResult
+import com.github.worn.domain.model.UserProfile
 import com.github.worn.util.secret.SecretStore
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
@@ -33,23 +37,45 @@ class ClaudeApiClient(
         val parsed = json.decodeFromString<AiAnalysisJson>(responseText)
         return AiAnalysisResult(
             description = parsed.description,
-            suggestedCategory = Category.valueOf(parsed.suggestedCategory.uppercase()),
+            suggestedCategory = runCatching {
+                Category.valueOf(parsed.suggestedCategory.uppercase())
+            }.getOrDefault(Category.TOP),
             colors = parsed.colors,
-            seasons = parsed.seasons.map { Season.valueOf(it.uppercase()) },
+            seasons = parsed.seasons.mapNotNull {
+                runCatching { Season.valueOf(it.uppercase()) }.getOrNull()
+            },
             tags = parsed.tags,
+            suggestedSubcategory = parsed.suggestedSubcategory?.let {
+                runCatching { Subcategory.valueOf(it.uppercase()) }.getOrNull()
+            },
+            suggestedFit = parsed.suggestedFit?.let {
+                runCatching { Fit.valueOf(it.uppercase()) }.getOrNull()
+            },
+            suggestedMaterial = parsed.suggestedMaterial?.let {
+                runCatching { Material.valueOf(it.uppercase()) }.getOrNull()
+            },
         )
     }
 
     suspend fun getGapRecommendations(
         items: List<ClothingItem>,
+        userProfile: UserProfile? = null,
     ): List<GapRecommendation> {
         val wardrobeSummary = items.joinToString("\n") { item ->
-            "- ${item.name} (${item.category}, colors: ${item.colors.joinToString()}, " +
-                "seasons: ${item.seasons.joinToString()})"
+            buildString {
+                append("- ${item.name} (${item.category}")
+                item.subcategory?.let { append(", type: $it") }
+                append(", colors: ${item.colors.joinToString()}")
+                append(", seasons: ${item.seasons.joinToString()}")
+                item.fit?.let { append(", fit: $it") }
+                item.material?.let { append(", material: $it") }
+                append(")")
+            }
         }
+        val profileContext = userProfile?.toPromptContext() ?: ""
         val responseText = sendRequest(
             systemPrompt = GAPS_SYSTEM_PROMPT,
-            userText = "My wardrobe:\n$wardrobeSummary",
+            userText = "${profileContext}My wardrobe:\n$wardrobeSummary",
         )
         val parsed = json.decodeFromString<List<GapRecommendationJson>>(responseText)
         return parsed.map {
@@ -64,15 +90,24 @@ class ClaudeApiClient(
     suspend fun analyzeProspectiveItem(
         imageBytes: ByteArray,
         existingItems: List<ClothingItem>,
+        userProfile: UserProfile? = null,
     ): TryItResult {
         val wardrobeSummary = existingItems.joinToString("\n") { item ->
-            "- [${item.id}] ${item.name} (${item.category}, colors: ${item.colors.joinToString()}, " +
-                "seasons: ${item.seasons.joinToString()})"
+            buildString {
+                append("- [${item.id}] ${item.name} (${item.category}")
+                item.subcategory?.let { append(", type: $it") }
+                append(", colors: ${item.colors.joinToString()}")
+                append(", seasons: ${item.seasons.joinToString()}")
+                item.fit?.let { append(", fit: $it") }
+                item.material?.let { append(", material: $it") }
+                append(")")
+            }
         }
+        val profileContext = userProfile?.toPromptContext() ?: ""
         val responseText = sendRequest(
             systemPrompt = TRY_IT_SYSTEM_PROMPT,
             imageBytes = imageBytes,
-            userText = "Would this item fit my wardrobe?\n\nMy wardrobe:\n$wardrobeSummary",
+            userText = "${profileContext}Would this item fit my wardrobe?\n\nMy wardrobe:\n$wardrobeSummary",
         )
         val parsed = json.decodeFromString<TryItResultJson>(responseText)
         val matchingItems = parsed.matchingItemIds.mapNotNull { id ->
@@ -139,28 +174,35 @@ class ClaudeApiClient(
         private const val MAX_TOKENS = 1024
 
         private val ANALYZE_SYSTEM_PROMPT = """
-            You are a fashion analysis AI. Analyze the clothing item in the image.
+            You are a men's fashion analysis AI specialized in capsule wardrobe building.
+            Analyze the clothing item in the image.
             Respond with ONLY a JSON object (no markdown):
             {
               "description": "brief description of the item",
-              "suggested_category": "one of: TOP, BOTTOM, DRESS, OUTERWEAR, SHOES, ACCESSORY",
+              "suggested_category": "one of: TOP, BOTTOM, OUTERWEAR, SHOES, ACCESSORY",
               "colors": ["color1", "color2"],
               "seasons": ["one or more of: SPRING, SUMMER, FALL, WINTER"],
-              "tags": ["tag1", "tag2", "tag3"]
+              "tags": ["tag1", "tag2", "tag3"],
+              "suggested_subcategory": "one of: T_SHIRT, POLO, DRESS_SHIRT, HENLEY, SWEATER, HOODIE, JEANS, CHINOS, TAILORED_PANTS, SHORTS, CARGO_PANTS, SWEATPANTS, BOMBER, TRUCKER, PUFFER, BLAZER, COAT, WINDBREAKER, SNEAKERS, BOOTS_MILITARY, BOOTS_CHELSEA, DERBY, OXFORD, LOAFER, SANDALS, WATCH, BELT, SUNGLASSES, HAT_CAP, SCARF, BAG_BACKPACK",
+              "suggested_fit": "one of: SLIM_FIT, REGULAR, RELAXED, OVERSIZED",
+              "suggested_material": "one of: COTTON, LINEN, DENIM, WOOL, SYNTHETIC, LEATHER, SILK, KNIT"
             }
         """.trimIndent()
 
         private val GAPS_SYSTEM_PROMPT = """
-            You are a wardrobe analysis AI. Given a user's wardrobe, suggest items that would
-            expand their outfit combinations the most. Group suggestions by category
-            (BASICS, LAYERING, BOTTOMS, SHOES, ACCESSORIES).
+            You are a men's capsule wardrobe analysis AI. Given a user's wardrobe, suggest
+            versatile items that would maximize outfit combinations following capsule wardrobe
+            principles. Prioritize timeless, mix-and-match pieces over trendy items.
+            Group suggestions by category (BASICS, LAYERING, BOTTOMS, SHOES, ACCESSORIES).
             Respond with ONLY a JSON array (no markdown):
             [{"item_name": "...", "category": "...", "pairing_count": N}]
         """.trimIndent()
 
         private val TRY_IT_SYSTEM_PROMPT = """
-            You are a wardrobe analysis AI. Given a photo of a prospective clothing item and
-            the user's existing wardrobe, analyze how well this item would fit.
+            You are a men's capsule wardrobe analysis AI. Given a photo of a prospective
+            clothing item and the user's existing wardrobe, evaluate how well this item
+            contributes to versatility and outfit combinations following capsule wardrobe
+            principles.
             Respond with ONLY a JSON object (no markdown):
             {
               "matching_item_ids": ["id1", "id2"],
@@ -170,4 +212,20 @@ class ClaudeApiClient(
             }
         """.trimIndent()
     }
+}
+
+private fun UserProfile.toPromptContext(): String {
+    val parts = mutableListOf<String>()
+    bodyType?.let { parts.add("Body type: ${it.name.lowercase().replace('_', ' ')}") }
+    styleProfile?.let { parts.add("Style: ${it.name.lowercase().replace('_', ' ')}") }
+    ageRange?.let {
+        parts.add(
+            "Age range: ${it.name.removePrefix("AGE_").replace('_', '-').replace("PLUS", "+")}",
+        )
+    }
+    climate?.let { parts.add("Climate: ${it.name.lowercase()}") }
+    if (lifestyles.isNotEmpty()) {
+        parts.add("Lifestyle: ${lifestyles.joinToString { it.name.lowercase().replace('_', ' ') }}")
+    }
+    return if (parts.isEmpty()) "" else "User profile:\n${parts.joinToString("\n")}\n\n"
 }

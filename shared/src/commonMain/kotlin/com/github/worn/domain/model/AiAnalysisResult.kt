@@ -6,4 +6,7 @@ data class AiAnalysisResult(
     val colors: List<String>,
     val seasons: List<Season>,
     val tags: List<String>,
+    val suggestedSubcategory: Subcategory? = null,
+    val suggestedFit: Fit? = null,
+    val suggestedMaterial: Material? = null,
 )

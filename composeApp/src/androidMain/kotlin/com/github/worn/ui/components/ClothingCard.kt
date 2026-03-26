@@ -166,7 +166,6 @@ private fun ItemInfo(item: ClothingItem) {
 private fun Category.dotColor(): Color = when (this) {
     Category.TOP -> WornColors.CategoryDotTop
     Category.BOTTOM -> WornColors.CategoryDotBottom
-    Category.DRESS -> WornColors.CategoryDotDress
     Category.OUTERWEAR -> WornColors.CategoryDotOuterwear
     Category.SHOES -> WornColors.CategoryDotShoes
     Category.ACCESSORY -> WornColors.CategoryDotAccessory
@@ -175,7 +174,6 @@ private fun Category.dotColor(): Color = when (this) {
 private fun Category.displayLabel(): String = when (this) {
     Category.TOP -> "Tops"
     Category.BOTTOM -> "Bottoms"
-    Category.DRESS -> "Dresses"
     Category.OUTERWEAR -> "Outerwear"
     Category.SHOES -> "Shoes"
     Category.ACCESSORY -> "Accessories"

@@ -106,9 +106,12 @@ fun WardrobeScreen(
         AddItemSheet(
             isSaving = state.isSaving,
             hasApiKey = state.hasApiKey,
-            onSave = { imageBytes, name, category, colors, seasons ->
+            onSave = { imageBytes, name, category, colors, seasons, subcategory, fit, material ->
                 viewModel.onIntent(
-                    WardrobeIntent.AddItem(imageBytes, name, category, colors, seasons),
+                    WardrobeIntent.AddItem(
+                        imageBytes, name, category, colors, seasons,
+                        subcategory, fit, material,
+                    ),
                 )
             },
             onDismiss = { showAddSheet = false },

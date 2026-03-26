@@ -38,7 +38,10 @@ class WardrobeViewModelWrapper: ObservableObject {
         viewModel.onIntent(intent: WardrobeIntent.LoadItems())
     }
 
-    func addItem(imageData: Data, name: String, category: Category, colors: [String], seasons: [Season]) {
+    func addItem(
+        imageData: Data, name: String, category: Category, colors: [String], seasons: [Season],
+        subcategory: Subcategory? = nil, fit: Fit? = nil, material: Material? = nil
+    ) {
         let bytes = [UInt8](imageData)
         let kotlinBytes = KotlinByteArray(size: Int32(bytes.count))
         for (index, byte) in bytes.enumerated() {
@@ -49,7 +52,10 @@ class WardrobeViewModelWrapper: ObservableObject {
             name: name,
             category: category,
             colors: colors,
-            seasons: seasons
+            seasons: seasons,
+            subcategory: subcategory,
+            fit: fit,
+            material: material
         )
         viewModel.onIntent(intent: intent)
     }

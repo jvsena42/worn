@@ -45,15 +45,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.domain.model.Category
+import com.github.worn.domain.model.Fit
+import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
+import com.github.worn.domain.model.Subcategory
 import com.github.worn.ui.components.AiBadge
 import com.github.worn.ui.components.AiLockedSheet
 import com.github.worn.ui.components.CategoryDropdown
 import com.github.worn.ui.components.ColorSection
+import com.github.worn.ui.components.FitSection
 import com.github.worn.ui.components.ItemNameField
+import com.github.worn.ui.components.MaterialSection
 import com.github.worn.ui.components.PhotoUploadZone
 import com.github.worn.ui.components.SaveButton
 import com.github.worn.ui.components.SeasonSection
+import com.github.worn.ui.components.SubcategoryDropdown
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.WornColors
 import java.io.ByteArrayOutputStream
@@ -66,6 +72,7 @@ fun AddItemSheet(
     onSave: (
         imageBytes: ByteArray, name: String, category: Category,
         colors: List<String>, seasons: List<Season>,
+        subcategory: Subcategory?, fit: Fit?, material: Material?,
     ) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -102,8 +109,8 @@ private fun SheetHandle() {
 internal fun AddItemForm(
     isSaving: Boolean = false,
     hasApiKey: Boolean = false,
-    onSave: (ByteArray, String, Category, List<String>, List<Season>) -> Unit =
-        { _, _, _, _, _ -> },
+    onSave: (ByteArray, String, Category, List<String>, List<Season>, Subcategory?, Fit?, Material?) -> Unit =
+        { _, _, _, _, _, _, _, _ -> },
 ) {
     var photoBytes by remember { mutableStateOf<ByteArray?>(null) }
     var photoBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
@@ -111,6 +118,9 @@ internal fun AddItemForm(
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
     var selectedColors by remember { mutableStateOf(setOf<String>()) }
     var selectedSeasons by remember { mutableStateOf(setOf<Season>()) }
+    var selectedSubcategory by remember { mutableStateOf<Subcategory?>(null) }
+    var selectedFit by remember { mutableStateOf<Fit?>(null) }
+    var selectedMaterial by remember { mutableStateOf<Material?>(null) }
     var showSourceChooser by remember { mutableStateOf(false) }
     var showAiLockedSheet by remember { mutableStateOf(false) }
 
@@ -132,11 +142,20 @@ internal fun AddItemForm(
         name = name,
         onNameChange = { name = it },
         selectedCategory = selectedCategory,
-        onCategorySelected = { selectedCategory = it },
+        onCategorySelected = {
+            selectedCategory = it
+            selectedSubcategory = null
+        },
+        selectedSubcategory = selectedSubcategory,
+        onSubcategorySelected = { selectedSubcategory = it },
         selectedColors = selectedColors,
         onColorToggle = { toggleInSet(it, selectedColors) { selectedColors = it } },
         selectedSeasons = selectedSeasons,
         onSeasonToggle = { toggleInSet(it, selectedSeasons) { selectedSeasons = it } },
+        selectedFit = selectedFit,
+        onFitSelected = { selectedFit = it },
+        selectedMaterial = selectedMaterial,
+        onMaterialSelected = { selectedMaterial = it },
         isSaving = isSaving,
         canSave = photoBytes != null && name.isNotBlank() && selectedCategory != null,
         onPhotoClick = { showSourceChooser = true },
@@ -144,7 +163,10 @@ internal fun AddItemForm(
         onSave = {
             val bytes = photoBytes ?: return@AddItemFormContent
             val cat = selectedCategory ?: return@AddItemFormContent
-            onSave(bytes, name, cat, selectedColors.toList(), selectedSeasons.toList())
+            onSave(
+                bytes, name, cat, selectedColors.toList(), selectedSeasons.toList(),
+                selectedSubcategory, selectedFit, selectedMaterial,
+            )
         },
     )
 }
@@ -210,10 +232,16 @@ private fun AddItemFormContent(
     onNameChange: (String) -> Unit,
     selectedCategory: Category?,
     onCategorySelected: (Category) -> Unit,
+    selectedSubcategory: Subcategory?,
+    onSubcategorySelected: (Subcategory) -> Unit,
     selectedColors: Set<String>,
     onColorToggle: (String) -> Unit,
     selectedSeasons: Set<Season>,
     onSeasonToggle: (Season) -> Unit,
+    selectedFit: Fit?,
+    onFitSelected: (Fit?) -> Unit,
+    selectedMaterial: Material?,
+    onMaterialSelected: (Material?) -> Unit,
     isSaving: Boolean,
     canSave: Boolean,
     onPhotoClick: () -> Unit,
@@ -238,8 +266,17 @@ private fun AddItemFormContent(
         AiBadge(onClick = onAiBadgeClick)
         ItemNameField(value = name, onValueChange = onNameChange)
         CategoryDropdown(selected = selectedCategory, onSelected = onCategorySelected)
+        if (selectedCategory != null) {
+            SubcategoryDropdown(
+                category = selectedCategory,
+                selected = selectedSubcategory,
+                onSelected = onSubcategorySelected,
+            )
+        }
         ColorSection(selectedColors = selectedColors, onToggle = onColorToggle)
         SeasonSection(selectedSeasons = selectedSeasons, onToggle = onSeasonToggle)
+        FitSection(selected = selectedFit, onSelected = onFitSelected)
+        MaterialSection(selected = selectedMaterial, onSelected = onMaterialSelected)
         SaveButton(enabled = canSave && !isSaving, isSaving = isSaving, onClick = onSave)
     }
 }
