@@ -88,3 +88,12 @@ After completing all changes in a plan, always run `./gradlew detekt` and fix an
 Reference these for version compatibility and best practices:
 - https://developer.android.com/kotlin/multiplatform
 - https://kotlinlang.org/docs/multiplatform/multiplatform-compatibility-guide.html#kotlin-2-0-0-and-later
+
+## Commits
+
+- **Atomic commits** — each commit should represent exactly one logical change. Don't mix unrelated changes (e.g., a bug fix and a refactor) in the same commit.
+- **Commit early, commit often** — break work into small, self-contained commits rather than one large commit at the end. Each commit should leave the project in a buildable state.
+- **Meaningful commit messages** — use the imperative mood (e.g., "add category filter" not "added category filter"). Keep the subject line concise (<72 chars) and add a body when the *why* isn't obvious from the diff.
+- **Conventional prefixes** — start commit messages with a type: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`, `style:`. Example: `feat: add clothing item detail sheet`.
+- **Don't commit generated or temporary files** — build outputs, `.DS_Store`, IDE-specific files, etc. should be in `.gitignore`.
+- **Stage intentionally** — review staged changes before committing. Avoid `git add -A` blindly; prefer adding specific files to keep commits focused.
