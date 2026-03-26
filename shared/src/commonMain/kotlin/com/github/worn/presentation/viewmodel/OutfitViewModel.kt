@@ -52,6 +52,7 @@ sealed interface OutfitEffect {
     data object OutfitUpdated : OutfitEffect
 }
 
+@Suppress("TooManyFunctions")
 class OutfitViewModel(
     private val repository: OutfitRepository,
     private val wardrobeRepository: WardrobeRepository,

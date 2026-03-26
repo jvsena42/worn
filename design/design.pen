@@ -21555,7 +21555,7 @@
           "id": "kdfnd",
           "layoutPosition": "absolute",
           "x": 0,
-          "y": 152,
+          "y": 120,
           "name": "Sheet",
           "width": 402,
           "fill": "$bg-elevated",
@@ -21806,6 +21806,36 @@
                       "name": "r3v",
                       "fill": "$text-primary",
                       "content": "Regular",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "3rUhp",
+                  "name": "SubcategoryRow",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "6y9JY",
+                      "name": "subLabel",
+                      "fill": "$text-secondary",
+                      "content": "Subcategory",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "LELjE",
+                      "name": "subValue",
+                      "fill": "$text-primary",
+                      "content": "T-Shirt",
                       "fontFamily": "DM Sans",
                       "fontSize": 14,
                       "fontWeight": "500"
@@ -22473,7 +22503,7 @@
           "id": "IveGv",
           "layoutPosition": "absolute",
           "x": 0,
-          "y": 341,
+          "y": 305,
           "name": "Sheet",
           "width": 834,
           "fill": "$bg-elevated",
@@ -22724,6 +22754,36 @@
                       "name": "r3v",
                       "fill": "$text-primary",
                       "content": "Regular",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "YZZOO",
+                  "name": "SubcategoryRow",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "KqTr3",
+                      "name": "tSubLabel",
+                      "fill": "$text-secondary",
+                      "content": "Subcategory",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "BJ9fs",
+                      "name": "tSubValue",
+                      "fill": "$text-primary",
+                      "content": "T-Shirt",
                       "fontFamily": "DM Sans",
                       "fontSize": 15,
                       "fontWeight": "500"

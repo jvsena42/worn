@@ -120,80 +120,76 @@ internal fun AddItemForm(
     onSave: (ByteArray, String, Category, List<String>, List<Season>, Subcategory?, Fit?, Material?) -> Unit =
         { _, _, _, _, _, _, _, _ -> },
 ) {
-    val isEditing = existingItem != null
-    var photoBytes by remember { mutableStateOf<ByteArray?>(null) }
-    var photoBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
-    var name by remember { mutableStateOf(existingItem?.name ?: "") }
-    var selectedCategory by remember { mutableStateOf(existingItem?.category) }
-    var selectedColors by remember { mutableStateOf(existingItem?.colors?.toSet() ?: emptySet()) }
-    var selectedSeasons by remember { mutableStateOf(existingItem?.seasons?.toSet() ?: emptySet()) }
-    var selectedSubcategory by remember { mutableStateOf(existingItem?.subcategory) }
-    var selectedFit by remember { mutableStateOf(existingItem?.fit) }
-    var selectedMaterial by remember { mutableStateOf(existingItem?.material) }
-    var showSourceChooser by remember { mutableStateOf(false) }
-    var showAiLockedSheet by remember { mutableStateOf(false) }
-
-    // Load existing photo bitmap for edit mode
-    val existingPhotoBitmap = remember(existingItem?.photoPath) {
-        existingItem?.photoPath?.takeIf { it.isNotEmpty() }?.let { path ->
-            val file = java.io.File(path)
-            if (file.exists()) {
-                BitmapFactory.decodeFile(path)?.asImageBitmap()
-            } else {
-                null
-            }
-        }
-    }
-    // Use a sentinel byte array for edit mode so canSave works when photo hasn't changed
-    val hasPhoto = photoBytes != null || (isEditing && existingPhotoBitmap != null)
+    val formState = rememberAddItemFormState(existingItem)
 
     PhotoSourceChooser(
-        show = showSourceChooser,
-        onDismiss = { showSourceChooser = false },
-        onPhoto = { bytes, bitmap ->
-            photoBytes = bytes
-            photoBitmap = bitmap
-        },
+        show = formState.showSourceChooser,
+        onDismiss = { formState.showSourceChooser = false },
+        onPhoto = { bytes, bitmap -> formState.photoBytes = bytes; formState.photoBitmap = bitmap },
     )
 
-    if (showAiLockedSheet) {
-        AiLockedSheet(onDismiss = { showAiLockedSheet = false })
+    if (formState.showAiLockedSheet) {
+        AiLockedSheet(onDismiss = { formState.showAiLockedSheet = false })
     }
 
     AddItemFormContent(
-        photoBitmap = photoBitmap ?: existingPhotoBitmap,
-        name = name,
-        onNameChange = { name = it },
-        selectedCategory = selectedCategory,
-        onCategorySelected = {
-            selectedCategory = it
-            selectedSubcategory = null
-        },
-        selectedSubcategory = selectedSubcategory,
-        onSubcategorySelected = { selectedSubcategory = it },
-        selectedColors = selectedColors,
-        onColorToggle = { toggleInSet(it, selectedColors) { selectedColors = it } },
-        selectedSeasons = selectedSeasons,
-        onSeasonToggle = { toggleInSet(it, selectedSeasons) { selectedSeasons = it } },
-        selectedFit = selectedFit,
-        onFitSelected = { selectedFit = it },
-        selectedMaterial = selectedMaterial,
-        onMaterialSelected = { selectedMaterial = it },
+        photoBitmap = formState.photoBitmap ?: formState.existingPhotoBitmap,
+        name = formState.name,
+        onNameChange = { formState.name = it },
+        selectedCategory = formState.selectedCategory,
+        onCategorySelected = { formState.selectedCategory = it; formState.selectedSubcategory = null },
+        selectedSubcategory = formState.selectedSubcategory,
+        onSubcategorySelected = { formState.selectedSubcategory = it },
+        selectedColors = formState.selectedColors,
+        onColorToggle = { toggleInSet(it, formState.selectedColors) { formState.selectedColors = it } },
+        selectedSeasons = formState.selectedSeasons,
+        onSeasonToggle = { toggleInSet(it, formState.selectedSeasons) { formState.selectedSeasons = it } },
+        selectedFit = formState.selectedFit,
+        onFitSelected = { formState.selectedFit = it },
+        selectedMaterial = formState.selectedMaterial,
+        onMaterialSelected = { formState.selectedMaterial = it },
         isSaving = isSaving,
-        canSave = hasPhoto && name.isNotBlank() && selectedCategory != null,
-        isEditing = isEditing,
-        onPhotoClick = { showSourceChooser = true },
-        onAiBadgeClick = { if (!hasApiKey) showAiLockedSheet = true },
+        canSave = formState.hasPhoto && formState.name.isNotBlank() && formState.selectedCategory != null,
+        isEditing = existingItem != null,
+        onPhotoClick = { formState.showSourceChooser = true },
+        onAiBadgeClick = { if (!hasApiKey) formState.showAiLockedSheet = true },
         onSave = {
-            val cat = selectedCategory ?: return@AddItemFormContent
-            // For edit mode without new photo, pass empty byte array (caller uses existing photoPath)
-            val bytes = photoBytes ?: ByteArray(0)
-            onSave(
-                bytes, name, cat, selectedColors.toList(), selectedSeasons.toList(),
-                selectedSubcategory, selectedFit, selectedMaterial,
-            )
+            val cat = formState.selectedCategory ?: return@AddItemFormContent
+            val bytes = formState.photoBytes ?: ByteArray(0)
+            onSave(bytes, formState.name, cat, formState.selectedColors.toList(),
+                formState.selectedSeasons.toList(), formState.selectedSubcategory,
+                formState.selectedFit, formState.selectedMaterial)
         },
     )
+}
+
+private class AddItemFormState(
+    existingItem: ClothingItem?,
+    val existingPhotoBitmap: ImageBitmap?,
+) {
+    var photoBytes by mutableStateOf<ByteArray?>(null)
+    var photoBitmap by mutableStateOf<ImageBitmap?>(null)
+    var name by mutableStateOf(existingItem?.name ?: "")
+    var selectedCategory by mutableStateOf(existingItem?.category)
+    var selectedColors by mutableStateOf(existingItem?.colors?.toSet() ?: emptySet())
+    var selectedSeasons by mutableStateOf(existingItem?.seasons?.toSet() ?: emptySet())
+    var selectedSubcategory by mutableStateOf(existingItem?.subcategory)
+    var selectedFit by mutableStateOf(existingItem?.fit)
+    var selectedMaterial by mutableStateOf(existingItem?.material)
+    var showSourceChooser by mutableStateOf(false)
+    var showAiLockedSheet by mutableStateOf(false)
+    val hasPhoto: Boolean get() = photoBytes != null || existingPhotoBitmap != null
+}
+
+@Composable
+private fun rememberAddItemFormState(existingItem: ClothingItem?): AddItemFormState {
+    val existingPhotoBitmap = remember(existingItem?.photoPath) {
+        existingItem?.photoPath?.takeIf { it.isNotEmpty() }?.let { path ->
+            val file = java.io.File(path)
+            if (file.exists()) BitmapFactory.decodeFile(path)?.asImageBitmap() else null
+        }
+    }
+    return remember { AddItemFormState(existingItem, existingPhotoBitmap) }
 }
 
 @Composable

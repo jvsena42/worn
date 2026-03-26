@@ -75,17 +75,11 @@ fun OutfitsScreen(
         viewModel.onIntent(OutfitIntent.LoadOutfits)
         viewModel.effects.collect { effect ->
             when (effect) {
-                is OutfitEffect.OutfitsDeleted -> {}
-                is OutfitEffect.OutfitCreated -> {
-                    showCreateSheet = false
-                    editOutfit = null
-                }
-                is OutfitEffect.OutfitUpdated -> {
-                    showCreateSheet = false
-                    editOutfit = null
+                is OutfitEffect.OutfitCreated, is OutfitEffect.OutfitUpdated -> {
+                    showCreateSheet = false; editOutfit = null
                 }
                 is OutfitEffect.OutfitDeleted -> detailOutfit = null
-                is OutfitEffect.ShowError -> {}
+                is OutfitEffect.OutfitsDeleted, is OutfitEffect.ShowError -> {}
             }
         }
     }
@@ -111,29 +105,10 @@ fun OutfitsScreen(
     )
 
     if (showCreateSheet) {
-        CreateOutfitSheet(
-            clothingItems = state.clothingItems,
-            selectedItemIds = state.selectedItemIds,
-            activeCategory = state.activeItemCategory,
-            isSaving = state.isSaving,
-            existingOutfit = editOutfit,
-            onCategorySelected = { viewModel.onIntent(OutfitIntent.FilterItemsByCategory(it)) },
-            onToggleItem = { viewModel.onIntent(OutfitIntent.ToggleItemSelection(it)) },
-            onSave = { name ->
-                val existing = editOutfit
-                if (existing != null) {
-                    viewModel.onIntent(
-                        OutfitIntent.UpdateOutfit(
-                            existing.copy(
-                                name = name,
-                                itemIds = state.selectedItemIds.toList(),
-                            ),
-                        ),
-                    )
-                } else {
-                    viewModel.onIntent(OutfitIntent.CreateOutfit(name))
-                }
-            },
+        OutfitCreateSheet(
+            state = state,
+            editOutfit = editOutfit,
+            onIntent = viewModel::onIntent,
             onDismiss = { showCreateSheet = false; editOutfit = null },
         )
     }
@@ -146,11 +121,8 @@ fun OutfitsScreen(
             onEdit = { editingOutfit ->
                 detailOutfit = null
                 editOutfit = editingOutfit
-                // Pre-select the outfit's items
                 editingOutfit.itemIds.forEach { itemId ->
-                    if (itemId !in state.selectedItemIds) {
-                        viewModel.onIntent(OutfitIntent.ToggleItemSelection(itemId))
-                    }
+                    if (itemId !in state.selectedItemIds) viewModel.onIntent(OutfitIntent.ToggleItemSelection(itemId))
                 }
                 showCreateSheet = true
             },
@@ -158,6 +130,33 @@ fun OutfitsScreen(
             onDismiss = { detailOutfit = null },
         )
     }
+}
+
+@Composable
+private fun OutfitCreateSheet(
+    state: OutfitState,
+    editOutfit: Outfit?,
+    onIntent: (OutfitIntent) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    CreateOutfitSheet(
+        clothingItems = state.clothingItems,
+        selectedItemIds = state.selectedItemIds,
+        activeCategory = state.activeItemCategory,
+        isSaving = state.isSaving,
+        existingOutfit = editOutfit,
+        onCategorySelected = { onIntent(OutfitIntent.FilterItemsByCategory(it)) },
+        onToggleItem = { onIntent(OutfitIntent.ToggleItemSelection(it)) },
+        onSave = { name ->
+            if (editOutfit != null) {
+                val updated = editOutfit.copy(name = name, itemIds = state.selectedItemIds.toList())
+                onIntent(OutfitIntent.UpdateOutfit(updated))
+            } else {
+                onIntent(OutfitIntent.CreateOutfit(name))
+            }
+        },
+        onDismiss = onDismiss,
+    )
 }
 
 @Composable

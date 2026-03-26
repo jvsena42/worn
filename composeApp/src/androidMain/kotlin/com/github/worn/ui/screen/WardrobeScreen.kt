@@ -114,31 +114,10 @@ fun WardrobeScreen(
     )
 
     if (showAddSheet) {
-        AddItemSheet(
-            isSaving = state.isSaving,
-            hasApiKey = state.hasApiKey,
-            existingItem = editItem,
-            onSave = { imageBytes, name, category, colors, seasons, subcategory, fit, material ->
-                val existing = editItem
-                if (existing != null) {
-                    viewModel.onIntent(
-                        WardrobeIntent.UpdateItem(
-                            existing.copy(
-                                name = name, category = category, colors = colors,
-                                seasons = seasons, subcategory = subcategory,
-                                fit = fit, material = material,
-                            ),
-                        ),
-                    )
-                } else {
-                    viewModel.onIntent(
-                        WardrobeIntent.AddItem(
-                            imageBytes, name, category, colors, seasons,
-                            subcategory, fit, material,
-                        ),
-                    )
-                }
-            },
+        WardrobeAddItemSheet(
+            state = state,
+            editItem = editItem,
+            onIntent = viewModel::onIntent,
             onDismiss = { showAddSheet = false; editItem = null },
         )
     }
@@ -147,15 +126,43 @@ fun WardrobeScreen(
         ItemDetailSheet(
             item = item,
             isCompact = isCompact,
-            onEdit = { editingItem ->
-                detailItem = null
-                editItem = editingItem
-                showAddSheet = true
-            },
+            onEdit = { detailItem = null; editItem = it; showAddSheet = true },
             onDelete = { viewModel.onIntent(WardrobeIntent.DeleteItem(it)) },
             onDismiss = { detailItem = null },
         )
     }
+}
+
+@Composable
+private fun WardrobeAddItemSheet(
+    state: WardrobeState,
+    editItem: ClothingItem?,
+    onIntent: (WardrobeIntent) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AddItemSheet(
+        isSaving = state.isSaving,
+        hasApiKey = state.hasApiKey,
+        existingItem = editItem,
+        onSave = { imageBytes, name, category, colors, seasons, subcategory, fit, material ->
+            if (editItem != null) {
+                onIntent(
+                    WardrobeIntent.UpdateItem(
+                        editItem.copy(
+                            name = name, category = category, colors = colors,
+                            seasons = seasons, subcategory = subcategory,
+                            fit = fit, material = material,
+                        ),
+                    ),
+                )
+            } else {
+                onIntent(
+                    WardrobeIntent.AddItem(imageBytes, name, category, colors, seasons, subcategory, fit, material),
+                )
+            }
+        },
+        onDismiss = onDismiss,
+    )
 }
 
 @Composable

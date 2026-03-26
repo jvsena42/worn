@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package com.github.worn.ui.screen
 
 import androidx.compose.foundation.BorderStroke
@@ -6,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,6 +42,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -74,19 +77,14 @@ fun ItemDetailSheet(
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { SheetDragHandle() },
+        dragHandle = { DetailSheetDragHandle() },
     ) {
-        ItemDetailContent(
-            item = item,
-            isCompact = isCompact,
-            onEdit = onEdit,
-            onDelete = onDelete,
-        )
+        ItemDetailContent(item = item, isCompact = isCompact, onEdit = onEdit, onDelete = onDelete)
     }
 }
 
 @Composable
-private fun SheetDragHandle() {
+private fun DetailSheetDragHandle() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
@@ -108,250 +106,234 @@ internal fun ItemDetailContent(
     onEdit: (ClothingItem) -> Unit = {},
     onDelete: (String) -> Unit = {},
 ) {
-    val contentPadding = if (isCompact) 24.dp else 32.dp
-    val sectionGap = if (isCompact) 20.dp else 24.dp
-    val photoHeight = if (isCompact) 280.dp else 360.dp
-    val photoRadius = if (isCompact) 20.dp else 24.dp
-    val nameSize = if (isCompact) 22.sp else 26.sp
-    val propFontSize = if (isCompact) 14.sp else 15.sp
-    val propGap = if (isCompact) 14.dp else 16.dp
-    val buttonHeight = if (isCompact) 48.dp else 52.dp
-    val buttonFontSize = if (isCompact) 15.sp else 16.sp
-    val placeholderIconSize = if (isCompact) 64.dp else 80.dp
-
+    val dims = ItemDetailDimens(isCompact)
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = contentPadding)
+            .padding(horizontal = dims.contentPadding)
             .padding(bottom = 36.dp),
-        verticalArrangement = Arrangement.spacedBy(sectionGap),
+        verticalArrangement = Arrangement.spacedBy(dims.sectionGap),
     ) {
-        // Photo
-        Surface(
-            shape = RoundedCornerShape(photoRadius),
-            color = WornColors.BgCard,
-            border = BorderStroke(1.dp, WornColors.BorderSubtle),
-            shadowElevation = 8.dp,
-            modifier = Modifier.fillMaxWidth().height(photoHeight),
-        ) {
-            if (item.photoPath.isNotEmpty() && File(item.photoPath).exists()) {
-                AsyncImage(
-                    model = File(item.photoPath),
-                    contentDescription = item.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(photoRadius)),
-                )
-            } else {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Icon(
-                        imageVector = Icons.Outlined.Checkroom,
-                        contentDescription = null,
-                        tint = WornColors.IconMuted,
-                        modifier = Modifier.size(placeholderIconSize),
-                    )
-                }
-            }
-        }
-
-        // Name + Category
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(
-                text = item.name,
-                color = WornColors.TextPrimary,
-                fontSize = nameSize,
-                fontWeight = FontWeight.SemiBold,
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(10.dp)
-                        .clip(CircleShape)
-                        .background(item.category.dotColor()),
-                )
-                Text(
-                    text = item.category.displayLabel(),
-                    color = WornColors.TextSecondary,
-                    fontSize = 14.sp,
-                )
-            }
-        }
-
-        // Divider
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(WornColors.BorderSubtle),
+        ItemPhoto(item = item, dims = dims)
+        ItemNameGroup(item = item, nameSize = dims.nameSize)
+        HorizontalDivider()
+        ItemProperties(item = item, fontSize = dims.propFontSize, gap = dims.propGap)
+        DetailActionButtons(
+            editLabel = "Edit Item",
+            deleteLabel = "Delete Item",
+            buttonHeight = dims.buttonHeight,
+            buttonFontSize = dims.buttonFontSize,
+            onEdit = { onEdit(item) },
+            onDelete = { showDeleteDialog = true },
         )
-
-        // Properties
-        Column(verticalArrangement = Arrangement.spacedBy(propGap)) {
-            if (item.colors.isNotEmpty()) {
-                PropertyRow(
-                    label = "Color",
-                    fontSize = propFontSize,
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        val colorHex = colorForName(item.colors.first())
-                        Surface(
-                            shape = CircleShape,
-                            color = colorHex,
-                            border = BorderStroke(1.dp, WornColors.BorderSubtle),
-                            modifier = Modifier.size(14.dp),
-                        ) {}
-                        Text(
-                            text = item.colors.joinToString(", ") { it.replaceFirstChar(Char::uppercase) },
-                            color = WornColors.TextPrimary,
-                            fontSize = propFontSize,
-                            fontWeight = FontWeight.Medium,
-                        )
-                    }
-                }
-            }
-
-            if (item.seasons.isNotEmpty()) {
-                val seasonText = if (item.seasons.size == Season.entries.size) {
-                    "All seasons"
-                } else {
-                    item.seasons.joinToString(", ") { it.displayName() }
-                }
-                PropertyRow(label = "Season", value = seasonText, fontSize = propFontSize)
-            }
-
-            item.fit?.let {
-                PropertyRow(label = "Fit", value = it.displayName(), fontSize = propFontSize)
-            }
-
-            item.subcategory?.let {
-                PropertyRow(label = "Subcategory", value = it.displayName(), fontSize = propFontSize)
-            }
-
-            item.material?.let {
-                PropertyRow(label = "Material", value = it.displayName(), fontSize = propFontSize)
-            }
-        }
-
-        // Buttons
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Surface(
-                onClick = { onEdit(item) },
-                shape = RoundedCornerShape(24.dp),
-                color = WornColors.BgCard,
-                border = BorderStroke(1.dp, WornColors.BorderSubtle),
-                modifier = Modifier.fillMaxWidth().height(buttonHeight),
-            ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        text = "Edit Item",
-                        color = WornColors.TextPrimary,
-                        fontSize = buttonFontSize,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
-            }
-
-            Surface(
-                onClick = { showDeleteDialog = true },
-                shape = RoundedCornerShape(24.dp),
-                color = WornColors.DeleteRed,
-                modifier = Modifier.fillMaxWidth().height(buttonHeight),
-            ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        text = "Delete Item",
-                        color = Color.White,
-                        fontSize = buttonFontSize,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
-            }
-        }
     }
 
     if (showDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            title = {
-                Text("Delete item?", fontWeight = FontWeight.SemiBold, fontSize = 22.sp)
-            },
-            text = {
-                Text(
-                    "This action cannot be undone. \"${item.name}\" will be permanently removed from your wardrobe.",
-                    color = WornColors.TextSecondary,
-                    fontSize = 15.sp,
-                    lineHeight = 22.sp,
+        DeleteItemDialog(
+            itemName = item.name,
+            onConfirm = { showDeleteDialog = false; onDelete(item.id) },
+            onDismiss = { showDeleteDialog = false },
+        )
+    }
+}
+
+private data class ItemDetailDimens(val isCompact: Boolean) {
+    val contentPadding: Dp = if (isCompact) 24.dp else 32.dp
+    val sectionGap: Dp = if (isCompact) 20.dp else 24.dp
+    val photoHeight: Dp = if (isCompact) 280.dp else 360.dp
+    val photoRadius: Dp = if (isCompact) 20.dp else 24.dp
+    val nameSize: TextUnit = if (isCompact) 22.sp else 26.sp
+    val propFontSize: TextUnit = if (isCompact) 14.sp else 15.sp
+    val propGap: Dp = if (isCompact) 14.dp else 16.dp
+    val buttonHeight: Dp = if (isCompact) 48.dp else 52.dp
+    val buttonFontSize: TextUnit = if (isCompact) 15.sp else 16.sp
+    val placeholderIconSize: Dp = if (isCompact) 64.dp else 80.dp
+}
+
+@Composable
+private fun ItemPhoto(item: ClothingItem, dims: ItemDetailDimens) {
+    Surface(
+        shape = RoundedCornerShape(dims.photoRadius),
+        color = WornColors.BgCard,
+        border = BorderStroke(1.dp, WornColors.BorderSubtle),
+        shadowElevation = 8.dp,
+        modifier = Modifier.fillMaxWidth().height(dims.photoHeight),
+    ) {
+        if (item.photoPath.isNotEmpty() && File(item.photoPath).exists()) {
+            AsyncImage(
+                model = File(item.photoPath),
+                contentDescription = item.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(dims.photoRadius)),
+            )
+        } else {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Icon(
+                    imageVector = Icons.Outlined.Checkroom,
+                    contentDescription = null,
+                    tint = WornColors.IconMuted,
+                    modifier = Modifier.size(dims.placeholderIconSize),
                 )
-            },
-            confirmButton = {
-                Button(
-                    onClick = { showDeleteDialog = false; onDelete(item.id) },
-                    colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
-                    shape = RoundedCornerShape(24.dp),
-                ) {
-                    Text("Delete", fontWeight = FontWeight.SemiBold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) { Text("Cancel") }
-            },
-        )
+            }
+        }
     }
 }
 
 @Composable
-private fun PropertyRow(
-    label: String,
-    value: String,
-    fontSize: androidx.compose.ui.unit.TextUnit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
+private fun ItemNameGroup(item: ClothingItem, nameSize: TextUnit) {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
-            text = label,
-            color = WornColors.TextSecondary,
-            fontSize = fontSize,
-            fontWeight = FontWeight.Medium,
-        )
-        Text(
-            text = value,
+            text = item.name,
             color = WornColors.TextPrimary,
-            fontSize = fontSize,
-            fontWeight = FontWeight.Medium,
+            fontSize = nameSize,
+            fontWeight = FontWeight.SemiBold,
         )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(10.dp)
+                    .clip(CircleShape)
+                    .background(item.category.dotColor()),
+            )
+            Text(
+                text = item.category.displayLabel(),
+                color = WornColors.TextSecondary,
+                fontSize = 14.sp,
+            )
+        }
     }
 }
 
 @Composable
-private fun PropertyRow(
-    label: String,
-    fontSize: androidx.compose.ui.unit.TextUnit,
-    valueContent: @Composable () -> Unit,
-) {
+private fun HorizontalDivider() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(WornColors.BorderSubtle),
+    )
+}
+
+@Composable
+private fun ItemProperties(item: ClothingItem, fontSize: TextUnit, gap: Dp) {
+    Column(verticalArrangement = Arrangement.spacedBy(gap)) {
+        if (item.colors.isNotEmpty()) {
+            ColorPropertyRow(item = item, fontSize = fontSize)
+        }
+        if (item.seasons.isNotEmpty()) {
+            val seasonText = if (item.seasons.size == Season.entries.size) {
+                "All seasons"
+            } else {
+                item.seasons.joinToString(", ") { it.displayName() }
+            }
+            PropertyRow(label = "Season", value = seasonText, fontSize = fontSize)
+        }
+        item.fit?.let { PropertyRow(label = "Fit", value = it.displayName(), fontSize = fontSize) }
+        item.subcategory?.let { PropertyRow(label = "Subcategory", value = it.displayName(), fontSize = fontSize) }
+        item.material?.let { PropertyRow(label = "Material", value = it.displayName(), fontSize = fontSize) }
+    }
+}
+
+@Composable
+private fun ColorPropertyRow(item: ClothingItem, fontSize: TextUnit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = label,
-            color = WornColors.TextSecondary,
-            fontSize = fontSize,
-            fontWeight = FontWeight.Medium,
-        )
-        valueContent()
+        Text("Color", color = WornColors.TextSecondary, fontSize = fontSize, fontWeight = FontWeight.Medium)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Surface(
+                shape = CircleShape,
+                color = colorForName(item.colors.first()),
+                border = BorderStroke(1.dp, WornColors.BorderSubtle),
+                modifier = Modifier.size(14.dp),
+            ) {}
+            Text(
+                text = item.colors.joinToString(", ") { it.replaceFirstChar(Char::uppercase) },
+                color = WornColors.TextPrimary,
+                fontSize = fontSize,
+                fontWeight = FontWeight.Medium,
+            )
+        }
     }
+}
+
+@Composable
+private fun PropertyRow(label: String, value: String, fontSize: TextUnit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(label, color = WornColors.TextSecondary, fontSize = fontSize, fontWeight = FontWeight.Medium)
+        Text(value, color = WornColors.TextPrimary, fontSize = fontSize, fontWeight = FontWeight.Medium)
+    }
+}
+
+@Composable
+internal fun DetailActionButtons(
+    editLabel: String,
+    deleteLabel: String,
+    buttonHeight: Dp,
+    buttonFontSize: TextUnit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Surface(
+            onClick = onEdit,
+            shape = RoundedCornerShape(24.dp),
+            color = WornColors.BgCard,
+            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            modifier = Modifier.fillMaxWidth().height(buttonHeight),
+        ) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Text(
+                    editLabel, color = WornColors.TextPrimary,
+                    fontSize = buttonFontSize, fontWeight = FontWeight.SemiBold,
+                )
+            }
+        }
+        Surface(
+            onClick = onDelete,
+            shape = RoundedCornerShape(24.dp),
+            color = WornColors.DeleteRed,
+            modifier = Modifier.fillMaxWidth().height(buttonHeight),
+        ) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Text(deleteLabel, color = Color.White, fontSize = buttonFontSize, fontWeight = FontWeight.SemiBold)
+            }
+        }
+    }
+}
+
+@Composable
+private fun DeleteItemDialog(itemName: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Delete item?", fontWeight = FontWeight.SemiBold, fontSize = 22.sp) },
+        text = {
+            Text(
+                "This action cannot be undone. \"$itemName\" will be permanently removed from your wardrobe.",
+                color = WornColors.TextSecondary, fontSize = 15.sp, lineHeight = 22.sp,
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
+                shape = RoundedCornerShape(24.dp),
+            ) { Text("Delete", fontWeight = FontWeight.SemiBold) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+    )
 }
 
 private fun colorForName(name: String): Color {
@@ -360,30 +342,20 @@ private fun colorForName(name: String): Color {
 }
 
 private val previewItem = ClothingItem(
-    id = "1",
-    name = "Black T-Shirt",
-    category = Category.TOP,
-    colors = listOf("Black"),
+    id = "1", name = "Black T-Shirt", category = Category.TOP, colors = listOf("Black"),
     seasons = listOf(Season.SPRING, Season.SUMMER, Season.FALL, Season.WINTER),
-    subcategory = Subcategory.T_SHIRT,
-    fit = Fit.REGULAR,
-    material = Material.COTTON,
-    photoPath = "",
-    createdAt = 0,
+    subcategory = Subcategory.T_SHIRT, fit = Fit.REGULAR, material = Material.COTTON,
+    photoPath = "", createdAt = 0,
 )
 
 @Preview(showSystemUi = true, device = "id:pixel_8")
 @Composable
 private fun ItemDetailSheetPhonePreview() {
-    SheetPreview {
-        ItemDetailContent(item = previewItem, isCompact = true)
-    }
+    SheetPreview { ItemDetailContent(item = previewItem, isCompact = true) }
 }
 
 @Preview(showSystemUi = true, device = "id:pixel_tablet")
 @Composable
 private fun ItemDetailSheetTabletPreview() {
-    SheetPreview {
-        ItemDetailContent(item = previewItem, isCompact = false)
-    }
+    SheetPreview { ItemDetailContent(item = previewItem, isCompact = false) }
 }
