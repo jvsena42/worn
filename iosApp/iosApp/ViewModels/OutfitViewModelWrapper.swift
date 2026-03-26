@@ -70,6 +70,14 @@ class OutfitViewModelWrapper: ObservableObject {
         viewModel.onIntent(intent: OutfitIntent.CreateOutfit(name: name))
     }
 
+    func deleteOutfit(_ outfitId: String) {
+        viewModel.onIntent(intent: OutfitIntent.DeleteOutfit(outfitId: outfitId))
+    }
+
+    func updateOutfit(_ outfit: Outfit) {
+        viewModel.onIntent(intent: OutfitIntent.UpdateOutfit(outfit: outfit))
+    }
+
     deinit {
         stateCancellable?.cancel()
         effectsCancellable?.cancel()

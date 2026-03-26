@@ -72,6 +72,14 @@ class WardrobeViewModelWrapper: ObservableObject {
         viewModel.onIntent(intent: WardrobeIntent.DeleteSelected())
     }
 
+    func deleteItem(_ itemId: String) {
+        viewModel.onIntent(intent: WardrobeIntent.DeleteItem(itemId: itemId))
+    }
+
+    func updateItem(_ item: ClothingItem) {
+        viewModel.onIntent(intent: WardrobeIntent.UpdateItem(item: item))
+    }
+
     deinit {
         cancellable?.cancel()
     }

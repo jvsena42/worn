@@ -5,6 +5,7 @@ import Shared
 struct AddItemSheet: View {
     let isSaving: Bool
     let hasApiKey: Bool
+    var existingItem: ClothingItem?
     let onSave: (Data, String, Category, [String], [Season], Subcategory?, Fit?, Material?) -> Void
     let onDismiss: () -> Void
 
@@ -22,6 +23,7 @@ struct AddItemSheet: View {
     @State private var showPhotoPicker = false
     @State private var showCamera = false
     @State private var showAiLockedSheet = false
+    @State private var didInitFromExisting = false
 
     private let colorPalette: [(name: String, color: Color)] = [
         ("White", Color(hex: "FFFFFF")),
@@ -40,8 +42,11 @@ struct AddItemSheet: View {
         ("Light Blue", Color(hex: "ADD8E6")),
     ]
 
+    private var isEditing: Bool { existingItem != nil }
+
     private var canSave: Bool {
-        photoData != nil && !name.isEmpty && selectedCategory != nil && !isSaving
+        let hasPhoto = photoData != nil || (isEditing && existingItem?.photoPath.isEmpty == false)
+        return hasPhoto && !name.isEmpty && selectedCategory != nil && !isSaving
     }
 
     var body: some View {
@@ -49,7 +54,7 @@ struct AddItemSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     photoUploadZone
-                    aiBadge
+                    if !isEditing { aiBadge }
                     nameField
                     categoryField
                     if selectedCategory != nil {
@@ -65,7 +70,7 @@ struct AddItemSheet: View {
                 .padding(.bottom, 24)
             }
             .background(WornColors.bgElevated)
-            .navigationTitle("Add new item")
+            .navigationTitle(isEditing ? "Edit item" : "Add new item")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -87,6 +92,22 @@ struct AddItemSheet: View {
                     onDismiss: { showCamera = false }
                 )
                 .ignoresSafeArea()
+            }
+            .onAppear {
+                if let item = existingItem, !didInitFromExisting {
+                    didInitFromExisting = true
+                    name = item.name
+                    selectedCategory = item.category
+                    selectedColors = Set(item.colors)
+                    selectedSeasons = Set(item.seasons)
+                    selectedSubcategory = item.subcategory
+                    selectedFit = item.fit
+                    selectedMaterial = item.material
+                    if !item.photoPath.isEmpty,
+                       let uiImage = UIImage(contentsOfFile: item.photoPath) {
+                        photoImage = uiImage
+                    }
+                }
             }
             .onChange(of: selectedPhotoItem) { _, newItem in
                 Task {
@@ -300,11 +321,12 @@ struct AddItemSheet: View {
 
     private var saveButton: some View {
         Button {
-            guard let data = photoData, let cat = selectedCategory else { return }
+            guard let cat = selectedCategory else { return }
+            let data = photoData ?? Data()
             onSave(data, name, cat, Array(selectedColors), Array(selectedSeasons),
                    selectedSubcategory, selectedFit, selectedMaterial)
         } label: {
-            Text(isSaving ? "Saving…" : "Save to wardrobe")
+            Text(isSaving ? "Saving…" : (isEditing ? "Save Changes" : "Save to wardrobe"))
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)

@@ -6,6 +6,8 @@ struct OutfitsScreen: View {
     @Environment(\.horizontalSizeClass) var sizeClass
     var onTabSelected: (WornTab) -> Void = { _ in }
     @State private var showCreateSheet = false
+    @State private var detailOutfit: Outfit?
+    @State private var editOutfit: Outfit?
 
     var body: some View {
         OutfitsContent(
@@ -18,6 +20,7 @@ struct OutfitsScreen: View {
             onToggleSelection: { viewModel.toggleSelection($0) },
             onClearSelection: { viewModel.clearSelection() },
             onDeleteSelected: { viewModel.deleteSelected() },
+            onOutfitClick: { detailOutfit = $0 },
             onTabSelected: onTabSelected
         )
         .sheet(isPresented: $showCreateSheet) {
@@ -26,15 +29,51 @@ struct OutfitsScreen: View {
                 selectedItemIds: viewModel.state.selectedItemIds,
                 activeCategory: viewModel.state.activeItemCategory,
                 isSaving: viewModel.state.isSaving,
+                existingOutfit: editOutfit,
                 onCategorySelected: { viewModel.filterItemsByCategory($0) },
                 onToggleItem: { viewModel.toggleItemSelection($0) },
-                onSave: { name in viewModel.createOutfit(name: name) },
-                onDismiss: { showCreateSheet = false }
+                onSave: { name in
+                    if let existing = editOutfit {
+                        viewModel.updateOutfit(existing.doCopy(
+                            id: existing.id, name: name,
+                            itemIds: Array(viewModel.state.selectedItemIds),
+                            createdAt: existing.createdAt
+                        ))
+                        editOutfit = nil
+                    } else {
+                        viewModel.createOutfit(name: name)
+                    }
+                },
+                onDismiss: { showCreateSheet = false; editOutfit = nil }
+            )
+        }
+        .sheet(item: $detailOutfit) { outfit in
+            OutfitDetailSheet(
+                outfit: outfit,
+                clothingItems: viewModel.state.allClothingItems,
+                isCompact: sizeClass == .compact,
+                onEdit: { editingOutfit in
+                    detailOutfit = nil
+                    editOutfit = editingOutfit
+                    // Pre-select outfit items
+                    for itemId in editingOutfit.itemIds {
+                        if !viewModel.state.selectedItemIds.contains(itemId) {
+                            viewModel.toggleItemSelection(itemId)
+                        }
+                    }
+                    viewModel.loadClothingItems()
+                    showCreateSheet = true
+                },
+                onDelete: { id in
+                    detailOutfit = nil
+                    viewModel.deleteOutfit(id)
+                }
             )
         }
         .onChange(of: viewModel.outfitCreated) { _, created in
             if created {
                 showCreateSheet = false
+                editOutfit = nil
                 viewModel.outfitCreated = false
             }
         }
@@ -51,6 +90,7 @@ struct OutfitsContent: View {
     var onToggleSelection: (String) -> Void = { _ in }
     var onClearSelection: () -> Void = {}
     var onDeleteSelected: () -> Void = {}
+    var onOutfitClick: (Outfit) -> Void = { _ in }
     var onTabSelected: (WornTab) -> Void = { _ in }
 
     private var contentPadding: CGFloat { isCompact ? 24 : 32 }
@@ -181,7 +221,11 @@ struct OutfitsContent: View {
                 )
                 .transition(.opacity.combined(with: .scale(scale: 0.95)))
                 .onTapGesture {
-                    if isSelectionMode { onToggleSelection(outfit.id) }
+                    if isSelectionMode {
+                        onToggleSelection(outfit.id)
+                    } else {
+                        onOutfitClick(outfit)
+                    }
                 }
                 .onLongPressGesture {
                     onToggleSelection(outfit.id)
