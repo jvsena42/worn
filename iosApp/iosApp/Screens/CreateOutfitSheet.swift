@@ -6,12 +6,14 @@ struct CreateOutfitSheet: View {
     let selectedItemIds: Set<String>
     let activeCategory: Category?
     let isSaving: Bool
+    var existingOutfit: Outfit?
     let onCategorySelected: (Category?) -> Void
     let onToggleItem: (String) -> Void
     let onSave: (String) -> Void
     let onDismiss: () -> Void
 
     @State private var name = ""
+    @State private var didInitFromExisting = false
 
     private var canSave: Bool {
         !name.isEmpty && !selectedItemIds.isEmpty && !isSaving
@@ -38,7 +40,13 @@ struct CreateOutfitSheet: View {
                 .padding(.bottom, 24)
             }
             .background(WornColors.bgElevated)
-            .navigationTitle("Create outfit")
+            .navigationTitle(existingOutfit != nil ? "Edit outfit" : "Create outfit")
+            .onAppear {
+                if let outfit = existingOutfit, !didInitFromExisting {
+                    didInitFromExisting = true
+                    name = outfit.name
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -95,7 +103,7 @@ struct CreateOutfitSheet: View {
         Button {
             onSave(name)
         } label: {
-            Text(isSaving ? "Saving…" : "Save outfit")
+            Text(isSaving ? "Saving…" : (existingOutfit != nil ? "Save Changes" : "Save outfit"))
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)

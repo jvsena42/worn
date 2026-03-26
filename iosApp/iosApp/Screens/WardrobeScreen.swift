@@ -5,6 +5,8 @@ struct WardrobeScreen: View {
     @StateObject private var viewModel = WardrobeViewModelWrapper()
     @Environment(\.horizontalSizeClass) var sizeClass
     @State private var showAddSheet = false
+    @State private var detailItem: ClothingItem?
+    @State private var editItem: ClothingItem?
     var onTabSelected: (WornTab) -> Void = { _ in }
 
     var body: some View {
@@ -16,20 +18,48 @@ struct WardrobeScreen: View {
             onToggleSelection: { viewModel.toggleSelection($0) },
             onClearSelection: { viewModel.clearSelection() },
             onDeleteSelected: { viewModel.deleteSelected() },
+            onItemClick: { detailItem = $0 },
             onTabSelected: onTabSelected
         )
         .sheet(isPresented: $showAddSheet) {
             AddItemSheet(
                 isSaving: viewModel.state.isSaving,
                 hasApiKey: viewModel.state.hasApiKey,
+                existingItem: editItem,
                 onSave: { data, name, category, colors, seasons, subcategory, fit, material in
-                    viewModel.addItem(
-                        imageData: data, name: name, category: category,
-                        colors: colors, seasons: seasons,
-                        subcategory: subcategory, fit: fit, material: material
-                    )
+                    if let existing = editItem {
+                        viewModel.updateItem(existing.doCopy(
+                            id: existing.id, name: name, category: category,
+                            colors: colors, seasons: seasons, tags: existing.tags,
+                            description: existing.description_,
+                            subcategory: subcategory, fit: fit, material: material,
+                            photoPath: existing.photoPath, createdAt: existing.createdAt
+                        ))
+                        editItem = nil
+                    } else {
+                        viewModel.addItem(
+                            imageData: data, name: name, category: category,
+                            colors: colors, seasons: seasons,
+                            subcategory: subcategory, fit: fit, material: material
+                        )
+                    }
                 },
-                onDismiss: { showAddSheet = false }
+                onDismiss: { showAddSheet = false; editItem = nil }
+            )
+        }
+        .sheet(item: $detailItem) { item in
+            ItemDetailSheet(
+                item: item,
+                isCompact: sizeClass == .compact,
+                onEdit: { editingItem in
+                    detailItem = nil
+                    editItem = editingItem
+                    showAddSheet = true
+                },
+                onDelete: { id in
+                    detailItem = nil
+                    viewModel.deleteItem(id)
+                }
             )
         }
     }
@@ -43,6 +73,7 @@ struct WardrobeContent: View {
     var onToggleSelection: (String) -> Void = { _ in }
     var onClearSelection: () -> Void = {}
     var onDeleteSelected: () -> Void = {}
+    var onItemClick: (ClothingItem) -> Void = { _ in }
     var onTabSelected: (WornTab) -> Void = { _ in }
 
     private var contentPadding: CGFloat { isCompact ? 24 : 32 }
@@ -182,7 +213,11 @@ struct WardrobeContent: View {
                         )
                         .transition(.opacity.combined(with: .scale(scale: 0.95)))
                         .onTapGesture {
-                            if isSelectionMode { onToggleSelection(item.id) }
+                            if isSelectionMode {
+                                onToggleSelection(item.id)
+                            } else {
+                                onItemClick(item)
+                            }
                         }
                         .onLongPressGesture {
                             onToggleSelection(item.id)

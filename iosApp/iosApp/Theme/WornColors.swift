@@ -40,6 +40,11 @@ enum WornColors {
     static let categoryDotAccessory = Color(hex: "B59D6E")
 }
 
+// MARK: - KMP model Identifiable conformance
+
+extension ClothingItem: @retroactive Identifiable {}
+extension Outfit: @retroactive Identifiable {}
+
 extension Color {
     init(hex: String) {
         let scanner = Scanner(string: hex)

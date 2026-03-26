@@ -35,6 +35,8 @@ sealed interface WardrobeIntent {
     data class ToggleSelection(val itemId: String) : WardrobeIntent
     data object ClearSelection : WardrobeIntent
     data object DeleteSelected : WardrobeIntent
+    data class DeleteItem(val itemId: String) : WardrobeIntent
+    data class UpdateItem(val item: ClothingItem) : WardrobeIntent
 }
 
 data class WardrobeState(
@@ -53,6 +55,8 @@ sealed interface WardrobeEffect {
     data class ShowError(val message: String) : WardrobeEffect
     data object ItemAdded : WardrobeEffect
     data object ItemsDeleted : WardrobeEffect
+    data object ItemDeleted : WardrobeEffect
+    data object ItemUpdated : WardrobeEffect
 }
 
 class WardrobeViewModel(
@@ -83,6 +87,8 @@ class WardrobeViewModel(
             is WardrobeIntent.ToggleSelection -> toggleSelection(intent.itemId)
             is WardrobeIntent.ClearSelection -> clearSelection()
             is WardrobeIntent.DeleteSelected -> deleteSelected()
+            is WardrobeIntent.DeleteItem -> deleteItem(intent.itemId)
+            is WardrobeIntent.UpdateItem -> updateItem(intent.item)
         }
     }
 
@@ -173,6 +179,31 @@ class WardrobeViewModel(
                 _effects.send(WardrobeEffect.ItemsDeleted)
             }
             loadItems()
+        }
+    }
+
+    private fun deleteItem(itemId: String) {
+        viewModelScope.launch {
+            _state.update { state ->
+                state.copy(items = state.items.filterNot { it.id == itemId })
+            }
+            repository.deleteItem(itemId)
+                .onSuccess { _effects.send(WardrobeEffect.ItemDeleted) }
+                .onFailure { _effects.send(WardrobeEffect.ShowError(it.message ?: "Failed to delete")) }
+            loadItems()
+        }
+    }
+
+    private fun updateItem(item: ClothingItem) {
+        viewModelScope.launch {
+            repository.updateItem(item)
+                .onSuccess {
+                    _effects.send(WardrobeEffect.ItemUpdated)
+                    loadItems()
+                }
+                .onFailure {
+                    _effects.send(WardrobeEffect.ShowError(it.message ?: "Failed to update"))
+                }
         }
     }
 }

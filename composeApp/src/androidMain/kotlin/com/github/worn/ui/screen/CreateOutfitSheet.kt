@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
+import com.github.worn.domain.model.Outfit
 import com.github.worn.ui.components.CategoryFilterChips
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.WornColors
@@ -66,6 +67,7 @@ fun CreateOutfitSheet(
     selectedItemIds: Set<String>,
     activeCategory: Category?,
     isSaving: Boolean,
+    existingOutfit: Outfit? = null,
     onCategorySelected: (Category?) -> Unit,
     onToggleItem: (String) -> Unit,
     onSave: (String) -> Unit,
@@ -85,6 +87,7 @@ fun CreateOutfitSheet(
             selectedItemIds = selectedItemIds,
             activeCategory = activeCategory,
             isSaving = isSaving,
+            existingOutfit = existingOutfit,
             onCategorySelected = onCategorySelected,
             onToggleItem = onToggleItem,
             onSave = onSave,
@@ -114,11 +117,13 @@ internal fun CreateOutfitForm(
     selectedItemIds: Set<String> = emptySet(),
     activeCategory: Category? = null,
     isSaving: Boolean = false,
+    existingOutfit: Outfit? = null,
     onCategorySelected: (Category?) -> Unit = {},
     onToggleItem: (String) -> Unit = {},
     onSave: (String) -> Unit = {},
 ) {
-    var name by remember { mutableStateOf("") }
+    val isEditing = existingOutfit != null
+    var name by remember { mutableStateOf(existingOutfit?.name ?: "") }
     val canSave = name.isNotBlank() && selectedItemIds.isNotEmpty() && !isSaving
 
     Column(
@@ -129,7 +134,7 @@ internal fun CreateOutfitForm(
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(
-            text = "Create outfit",
+            text = if (isEditing) "Edit outfit" else "Create outfit",
             color = WornColors.TextPrimary,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
@@ -143,7 +148,12 @@ internal fun CreateOutfitForm(
             selectedItemIds = selectedItemIds,
             onToggleItem = onToggleItem,
         )
-        SaveOutfitButton(enabled = canSave, isSaving = isSaving, onClick = { onSave(name) })
+        SaveOutfitButton(
+            enabled = canSave,
+            isSaving = isSaving,
+            label = if (isEditing) "Save Changes" else null,
+            onClick = { onSave(name) },
+        )
     }
 }
 
@@ -292,7 +302,7 @@ private fun ItemCheckbox(isSelected: Boolean, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SaveOutfitButton(enabled: Boolean, isSaving: Boolean, onClick: () -> Unit) {
+private fun SaveOutfitButton(enabled: Boolean, isSaving: Boolean, label: String? = null, onClick: () -> Unit) {
     val gradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenDark))
     val disabledGradient = Brush.verticalGradient(listOf(WornColors.TextMuted, WornColors.IconMuted))
     Button(
@@ -313,7 +323,7 @@ private fun SaveOutfitButton(enabled: Boolean, isSaving: Boolean, onClick: () ->
                 .background(if (enabled) gradient else disabledGradient),
         ) {
             Text(
-                text = if (isSaving) "Saving…" else "Save outfit",
+                text = if (isSaving) "Saving…" else (label ?: "Save outfit"),
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,

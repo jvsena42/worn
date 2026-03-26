@@ -307,7 +307,12 @@ fun SeasonSection(selectedSeasons: Set<Season>, onToggle: (Season) -> Unit) {
 }
 
 @Composable
-fun SaveButton(enabled: Boolean, isSaving: Boolean, onClick: () -> Unit) {
+fun SaveButton(
+    enabled: Boolean,
+    isSaving: Boolean,
+    onClick: () -> Unit,
+    label: String? = null,
+) {
     val gradient = Brush.verticalGradient(listOf(WornColors.SaveGradientStart, WornColors.SaveGradientEnd))
     val disabledGradient = Brush.verticalGradient(listOf(WornColors.TextMuted, WornColors.IconMuted))
     Button(
@@ -328,7 +333,7 @@ fun SaveButton(enabled: Boolean, isSaving: Boolean, onClick: () -> Unit) {
                 .background(if (enabled) gradient else disabledGradient),
         ) {
             Text(
-                text = if (isSaving) "Saving…" else "Save to wardrobe",
+                text = if (isSaving) "Saving…" else (label ?: "Save to wardrobe"),
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -491,20 +496,20 @@ fun MaterialSection(selected: Material?, onSelected: (Material?) -> Unit) {
     }
 }
 
-private fun Subcategory.displayName(): String = name.lowercase()
+internal fun Subcategory.displayName(): String = name.lowercase()
     .replace('_', ' ')
     .replaceFirstChar { it.uppercase() }
 
-private fun Fit.displayName(): String = when (this) {
+internal fun Fit.displayName(): String = when (this) {
     Fit.SLIM_FIT -> "Slim Fit"
     Fit.REGULAR -> "Regular"
     Fit.RELAXED -> "Relaxed"
     Fit.OVERSIZED -> "Oversized"
 }
 
-private fun Material.displayName(): String = name.lowercase().replaceFirstChar { it.uppercase() }
+internal fun Material.displayName(): String = name.lowercase().replaceFirstChar { it.uppercase() }
 
-private fun Season.displayName(): String = when (this) {
+internal fun Season.displayName(): String = when (this) {
     Season.SPRING -> "Spring"
     Season.SUMMER -> "Summer"
     Season.FALL -> "Fall"
