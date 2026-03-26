@@ -22,6 +22,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -92,14 +94,21 @@ fun SettingsScreen(onTabSelected: (Tab) -> Unit) {
             state = state,
             onIntent = viewModel::onIntent,
             onDismiss = { showProfileSheet = false },
+            onSave = { showProfileSheet = false },
         )
     }
 
     if (showApiKeySheet) {
         ApiKeySheet(
             hasApiKey = state.hasApiKey,
-            onSave = { viewModel.onIntent(SettingsIntent.SaveApiKey(it)) },
-            onClear = { viewModel.onIntent(SettingsIntent.ClearApiKey) },
+            onSave = {
+                viewModel.onIntent(SettingsIntent.SaveApiKey(it))
+                showApiKeySheet = false
+            },
+            onClear = {
+                viewModel.onIntent(SettingsIntent.ClearApiKey)
+                showApiKeySheet = false
+            },
             onDismiss = { showApiKeySheet = false },
         )
     }
@@ -141,7 +150,7 @@ private fun SettingsScaffold(
             SectionLabel("YOUR PROFILE")
             Spacer(Modifier.height(10.dp))
             SettingsCard(
-                icon = { ProfileIcon(color = WornColors.AccentGreen) },
+                icon = { SettingsIcon(color = WornColors.AccentGreen, icon = Icons.Outlined.Person) },
                 title = "Your Profile",
                 subtitle = state.userProfile.summaryText(),
                 onClick = onProfileClick,
@@ -151,7 +160,7 @@ private fun SettingsScaffold(
             SectionLabel("AI FEATURES")
             Spacer(Modifier.height(10.dp))
             SettingsCard(
-                icon = { ProfileIcon(color = WornColors.AccentIndigo) },
+                icon = { SettingsIcon(color = WornColors.AccentIndigo, icon = Icons.Outlined.AutoAwesome) },
                 title = "Claude API Key",
                 subtitle = if (state.hasApiKey) "Connected" else "Required for AI features",
                 onClick = onApiKeyClick,
@@ -179,7 +188,7 @@ private fun SectionLabel(text: String) {
 }
 
 @Composable
-private fun ProfileIcon(color: Color) {
+private fun SettingsIcon(color: Color, icon: androidx.compose.ui.graphics.vector.ImageVector) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -187,7 +196,12 @@ private fun ProfileIcon(color: Color) {
             .clip(RoundedCornerShape(12.dp))
             .background(color),
     ) {
-        Text("👤", fontSize = 18.sp)
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.size(22.dp),
+        )
     }
 }
 
@@ -267,6 +281,7 @@ private fun ProfileSheet(
     state: SettingsState,
     onIntent: (SettingsIntent) -> Unit,
     onDismiss: () -> Unit,
+    onSave: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
@@ -275,12 +290,12 @@ private fun ProfileSheet(
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
     ) {
-        ProfileSheetContent(state = state, onIntent = onIntent)
+        ProfileSheetContent(state = state, onIntent = onIntent, onSave = onSave)
     }
 }
 
 @Composable
-private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent) -> Unit) {
+private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent) -> Unit, onSave: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -329,7 +344,7 @@ private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent)
             selected = state.userProfile.lifestyles,
             onToggle = { onIntent(SettingsIntent.ToggleLifestyle(it)) },
         )
-        SaveGradientButton(text = "Save", onClick = {})
+        SaveGradientButton(text = "Save", onClick = onSave)
     }
 }
 

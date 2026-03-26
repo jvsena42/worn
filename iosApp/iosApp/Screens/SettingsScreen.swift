@@ -21,6 +21,7 @@ struct SettingsScreen: View {
                     sectionLabel("YOUR PROFILE")
                     settingsCard(
                         iconColor: WornColors.accentGreen,
+                        iconName: "person.fill",
                         title: "Your Profile",
                         subtitle: profileSummary,
                         action: { showProfileSheet = true }
@@ -31,6 +32,7 @@ struct SettingsScreen: View {
                         .padding(.top, 24)
                     settingsCard(
                         iconColor: WornColors.accentIndigo,
+                        iconName: "sparkles",
                         title: "Claude API Key",
                         subtitle: viewModel.state.hasApiKey ? "Connected" : "Required for AI features",
                         action: { showApiKeySheet = true }
@@ -83,15 +85,16 @@ struct SettingsScreen: View {
             .tracking(0.5)
     }
 
-    private func settingsCard(iconColor: Color, title: String, subtitle: String, action: @escaping () -> Void) -> some View {
+    private func settingsCard(iconColor: Color, iconName: String, title: String, subtitle: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 14) {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(iconColor)
                     .frame(width: 40, height: 40)
                     .overlay(
-                        Text("👤")
+                        Image(systemName: iconName)
                             .font(.system(size: 18))
+                            .foregroundColor(.white)
                     )
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
