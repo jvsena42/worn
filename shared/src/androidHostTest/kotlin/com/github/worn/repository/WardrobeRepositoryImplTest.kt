@@ -14,6 +14,9 @@ import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.GapRecommendation
 import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.TryItResult
+import com.github.worn.domain.model.UserProfile
+import com.github.worn.domain.repository.SettingsRepository
+import kotlinx.coroutines.flow.flowOf
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -39,6 +42,9 @@ class WardrobeRepositoryImplTest {
     private val outfitQueries = mockk<OutfitQueries>(relaxed = true)
     private val fileStorage = mockk<PhotoFileStorage>()
     private val aiClient = mockk<ClaudeApiClient>()
+    private val settingsRepository = mockk<SettingsRepository> {
+        every { getUserProfile() } returns flowOf(UserProfile())
+    }
 
     private lateinit var repository: WardrobeRepositoryImpl
 
@@ -50,6 +56,9 @@ class WardrobeRepositoryImplTest {
         seasons = listOf("SUMMER"),
         tags = listOf("casual"),
         description = "A blue t-shirt",
+        subcategory = null,
+        fit = null,
+        material = null,
         photoPath = "/photos/item-1.jpg",
         createdAt = 1_000_000L,
     )
@@ -64,7 +73,7 @@ class WardrobeRepositoryImplTest {
             val tx = mockk<TransactionWithoutReturn>(relaxed = true)
             body(tx)
         }
-        repository = WardrobeRepositoryImpl(db, fileStorage, aiClient, testDispatcher)
+        repository = WardrobeRepositoryImpl(db, fileStorage, aiClient, settingsRepository, testDispatcher)
     }
 
     // region getAll
@@ -180,6 +189,9 @@ class WardrobeRepositoryImplTest {
                 seasons = listOf("WINTER"),
                 tags = emptyList(),
                 description = null,
+                subcategory = null,
+                fit = null,
+                material = null,
                 photoPath = "/photos/new.jpg",
                 createdAt = any(),
             )
@@ -239,6 +251,9 @@ class WardrobeRepositoryImplTest {
                 seasons = listOf("SPRING", "FALL"),
                 tags = listOf("smart-casual"),
                 description = "Analyzed shirt",
+                subcategory = null,
+                fit = null,
+                material = null,
                 photoPath = "/photos/item-1.jpg",
                 id = "item-1",
             )
@@ -320,6 +335,9 @@ class WardrobeRepositoryImplTest {
                 seasons = listOf("SPRING"),
                 tags = listOf("updated"),
                 description = "Updated description",
+                subcategory = null,
+                fit = null,
+                material = null,
                 photoPath = "/photos/item-1.jpg",
                 id = "item-1",
             )
