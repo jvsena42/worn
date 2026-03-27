@@ -59,6 +59,11 @@ internal data class GapRecommendationJson(
     @SerialName("item_name") val itemName: String,
     val category: String,
     @SerialName("pairing_count") val pairingCount: Int,
+    val subcategory: String? = null,
+    val colors: List<String> = emptyList(),
+    val seasons: List<String> = emptyList(),
+    val fit: String? = null,
+    val material: String? = null,
 )
 
 @Serializable

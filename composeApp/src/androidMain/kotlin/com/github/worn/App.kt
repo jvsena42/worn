@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.github.worn.ui.components.Tab
+import com.github.worn.ui.screen.GapsScreen
 import com.github.worn.ui.screen.OutfitsScreen
 import com.github.worn.ui.screen.SettingsScreen
 import com.github.worn.ui.screen.WardrobeScreen
@@ -19,6 +20,7 @@ fun App() {
         when (activeTab) {
             Tab.WARDROBE -> WardrobeScreen(onTabSelected = { activeTab = it })
             Tab.OUTFITS -> OutfitsScreen(onTabSelected = { activeTab = it })
+            Tab.GAPS -> GapsScreen(onTabSelected = { activeTab = it })
             Tab.SETTINGS -> SettingsScreen(onTabSelected = { activeTab = it })
             else -> WardrobeScreen(onTabSelected = { activeTab = it })
         }

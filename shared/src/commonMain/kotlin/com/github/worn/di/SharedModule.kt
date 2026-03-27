@@ -8,6 +8,7 @@ import com.github.worn.data.source.remote.ClaudeApiClient
 import com.github.worn.domain.repository.OutfitRepository
 import com.github.worn.domain.repository.SettingsRepository
 import com.github.worn.domain.repository.WardrobeRepository
+import com.github.worn.presentation.viewmodel.GapsViewModel
 import com.github.worn.presentation.viewmodel.OutfitViewModel
 import com.github.worn.presentation.viewmodel.SettingsViewModel
 import com.github.worn.presentation.viewmodel.WardrobeViewModel
@@ -36,4 +37,5 @@ val sharedModule = module {
     factoryOf(::WardrobeViewModel)
     factoryOf(::OutfitViewModel)
     factoryOf(::SettingsViewModel)
+    factoryOf(::GapsViewModel)
 }
