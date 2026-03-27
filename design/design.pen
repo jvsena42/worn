@@ -2338,7 +2338,7 @@
                   "name": "aiChev",
                   "width": 20,
                   "height": 20,
-                  "iconFontName": "chevron-right",
+                  "iconFontName": "sparkles",
                   "iconFontFamily": "lucide",
                   "fill": "#FFFFFF"
                 }
@@ -9502,7 +9502,7 @@
                   "name": "aiChev2",
                   "width": 22,
                   "height": 22,
-                  "iconFontName": "chevron-right",
+                  "iconFontName": "sparkles",
                   "iconFontFamily": "lucide",
                   "fill": "#FFFFFF"
                 }
@@ -13913,139 +13913,789 @@
             },
             {
               "type": "frame",
-              "id": "D0dl2",
-              "name": "Empty State",
+              "id": "dwFPJ",
+              "name": "AI Banner",
               "width": "fill_container",
-              "height": "fill_container",
-              "layout": "vertical",
-              "gap": 24,
-              "justifyContent": "center",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 90,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "$accent-indigo",
+                    "position": 0
+                  },
+                  {
+                    "color": "$accent-indigo-end",
+                    "position": 1
+                  }
+                ]
+              },
+              "cornerRadius": 16,
+              "gap": 12,
+              "padding": [
+                16,
+                20
+              ],
               "alignItems": "center",
               "children": [
                 {
                   "type": "frame",
-                  "id": "yMd9B",
-                  "name": "emptyCircle",
-                  "width": 130,
-                  "height": 130,
+                  "id": "bbpXG",
+                  "name": "Banner Content",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tfo1H",
+                      "name": "bannerTitle",
+                      "fill": "#FFFFFF",
+                      "content": "Common Suggestions",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "n1HUe",
+                      "name": "bannerSub",
+                      "fill": "#FFFFFFB3",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Connect Claude AI for personalized picks",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "0LcJ4",
+                  "name": "bannerChev",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "sparkles",
+                  "iconFontFamily": "lucide",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "3uOxH",
+              "name": "Tops Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "0lhzh",
+                  "name": "topsLabel",
+                  "fill": "$text-tertiary",
+                  "content": "TOPS",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "KdyIC",
+                  "name": "Gap Row 1",
+                  "width": "fill_container",
                   "fill": "$bg-card",
-                  "cornerRadius": 65,
+                  "cornerRadius": 16,
                   "stroke": {
                     "align": "inside",
                     "thickness": 1,
                     "fill": "$border-subtle"
                   },
-                  "effect": [
-                    {
-                      "type": "shadow",
-                      "shadowType": "outer",
-                      "color": "#6B7B8E15",
-                      "blur": 30
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000010",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
                     },
-                    {
-                      "type": "shadow",
-                      "shadowType": "outer",
-                      "color": "#00000008",
-                      "offset": {
-                        "x": 0,
-                        "y": 2
-                      },
-                      "blur": 8
-                    }
+                    "blur": 8
+                  },
+                  "gap": 14,
+                  "padding": [
+                    14,
+                    16
                   ],
-                  "layout": "vertical",
-                  "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
                     {
+                      "type": "frame",
+                      "id": "ij6en",
+                      "name": "iconTile",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "$accent-green",
+                      "cornerRadius": 12,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#7A946830",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 16
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "sltog",
+                          "x": 10,
+                          "y": 10,
+                          "name": "ic1",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "shirt",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "JnEhs",
+                      "name": "textCol",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ne9sq",
+                          "name": "n1",
+                          "fill": "$text-primary",
+                          "content": "White crew-neck tee",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "rMtmv",
+                          "name": "s1",
+                          "fill": "$text-secondary",
+                          "content": "Common wardrobe essential",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
                       "type": "icon_font",
-                      "id": "xzlhW",
-                      "name": "botIcon",
-                      "width": 52,
-                      "height": 52,
-                      "iconFontName": "bot",
+                      "id": "oPKDN",
+                      "name": "ch1",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "chevron-right",
                       "iconFontFamily": "lucide",
-                      "fill": "$accent-indigo"
+                      "fill": "$text-tertiary"
                     }
                   ]
                 },
                 {
-                  "type": "text",
-                  "id": "fyG9j",
-                  "name": "emTitle",
-                  "fill": "$text-primary",
-                  "content": "AI analysis needed",
-                  "textAlign": "center",
-                  "fontFamily": "Fraunces",
-                  "fontSize": 24,
-                  "fontWeight": "500",
-                  "letterSpacing": -0.5
-                },
-                {
-                  "type": "text",
-                  "id": "Vm2dM",
-                  "name": "emDesc",
-                  "fill": "$text-secondary",
-                  "textGrowth": "fixed-width",
-                  "width": 280,
-                  "content": "Connect your Claude API key in Settings to get personalized gap recommendations.",
-                  "lineHeight": 1.5,
-                  "textAlign": "center",
-                  "fontFamily": "DM Sans",
-                  "fontSize": 15,
-                  "fontWeight": "normal"
-                },
-                {
                   "type": "frame",
-                  "id": "LtlOI",
-                  "name": "CTA",
-                  "fill": {
-                    "type": "gradient",
-                    "gradientType": "linear",
-                    "enabled": true,
-                    "rotation": 90,
-                    "size": {
-                      "height": 1
-                    },
-                    "colors": [
-                      {
-                        "color": "$accent-indigo",
-                        "position": 0
-                      },
-                      {
-                        "color": "$accent-indigo-end",
-                        "position": 1
-                      }
-                    ]
+                  "id": "4Ge8T",
+                  "name": "Gap Row 2",
+                  "width": "fill_container",
+                  "fill": "$bg-card",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
                   },
-                  "cornerRadius": 28,
                   "effect": {
                     "type": "shadow",
                     "shadowType": "outer",
-                    "color": "#6B7B8E25",
+                    "color": "#00000010",
                     "offset": {
                       "x": 0,
-                      "y": 6
+                      "y": 2
                     },
-                    "blur": 20
+                    "blur": 8
                   },
-                  "gap": 8,
+                  "gap": 14,
                   "padding": [
                     14,
-                    40
+                    16
                   ],
-                  "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "text",
-                      "id": "0UEQd",
-                      "name": "ctaText",
-                      "fill": "#FFFFFF",
-                      "content": "Connect Claude AI",
-                      "fontFamily": "DM Sans",
-                      "fontSize": 16,
-                      "fontWeight": "600"
+                      "type": "frame",
+                      "id": "4UFv5",
+                      "name": "iconTile",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "$accent-green",
+                      "cornerRadius": 12,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#7A946830",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 16
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "243nk",
+                          "x": 10,
+                          "y": 10,
+                          "name": "ic2",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "shirt",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DiMNU",
+                      "name": "textCol",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "mGFoy",
+                          "name": "n2",
+                          "fill": "$text-primary",
+                          "content": "Grey heather henley",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hlAZm",
+                          "name": "s2",
+                          "fill": "$text-secondary",
+                          "content": "Common wardrobe essential",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "4FB3H",
+                      "name": "ch2",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "chevron-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "xRQp8",
+              "name": "Layering Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dxc2z",
+                  "name": "layerLabel",
+                  "fill": "$text-tertiary",
+                  "content": "LAYERING",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "wXq59",
+                  "name": "Gap Row 3",
+                  "width": "fill_container",
+                  "fill": "$bg-card",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000010",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
+                    },
+                    "blur": 8
+                  },
+                  "gap": 14,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "NZxDc",
+                      "name": "iconTile",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "$accent-indigo",
+                      "cornerRadius": 12,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#6B7B8E30",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 16
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "OoiLi",
+                          "x": 10,
+                          "y": 10,
+                          "name": "ic3",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "shirt",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "UUiIB",
+                      "name": "textCol",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "QnsEe",
+                          "name": "n3",
+                          "fill": "$text-primary",
+                          "content": "Navy zip-up hoodie",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "lp0YP",
+                          "name": "s3",
+                          "fill": "$text-secondary",
+                          "content": "Common wardrobe essential",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "JFugr",
+                      "name": "ch3",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "chevron-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "sVNOW",
+                  "name": "Gap Row 4",
+                  "width": "fill_container",
+                  "fill": "$bg-card",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000010",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
+                    },
+                    "blur": 8
+                  },
+                  "gap": 14,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "lAc7p",
+                      "name": "iconTile",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "$accent-indigo",
+                      "cornerRadius": 12,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#6B7B8E30",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 16
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "sJECo",
+                          "x": 10,
+                          "y": 10,
+                          "name": "ic4",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "shirt",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ldUYk",
+                      "name": "textCol",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "VPDal",
+                          "name": "n4",
+                          "fill": "$text-primary",
+                          "content": "Lightweight denim jacket",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "BHYkb",
+                          "name": "s4",
+                          "fill": "$text-secondary",
+                          "content": "Common wardrobe essential",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "WqJZv",
+                      "name": "ch4",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "chevron-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "1Xj65",
+              "name": "Bottoms Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qzFgB",
+                  "name": "bottomsLabel",
+                  "fill": "$text-tertiary",
+                  "content": "BOTTOMS",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "342Jb",
+                  "name": "Gap Row 5",
+                  "width": "fill_container",
+                  "fill": "$bg-card",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000010",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
+                    },
+                    "blur": 8
+                  },
+                  "gap": 14,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Vsndp",
+                      "name": "iconTile",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "$accent-coral",
+                      "cornerRadius": 12,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#A8756030",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 16
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "Fpg7x",
+                          "x": 10,
+                          "y": 10,
+                          "name": "ic5",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "shirt",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fJBWR",
+                      "name": "textCol",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ZiWT1",
+                          "name": "n5",
+                          "fill": "$text-primary",
+                          "content": "Dark wash straight jeans",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Liot3",
+                          "name": "s5",
+                          "fill": "$text-secondary",
+                          "content": "Common wardrobe essential",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "cP4Hl",
+                      "name": "ch5",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "chevron-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "4SfhR",
+              "name": "Accessories Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Of6kj",
+                  "name": "accLabel",
+                  "fill": "$text-tertiary",
+                  "content": "ACCESSORIES",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "oXVxb",
+                  "name": "Gap Row 6",
+                  "width": "fill_container",
+                  "fill": "$bg-card",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000010",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
+                    },
+                    "blur": 8
+                  },
+                  "gap": 14,
+                  "padding": [
+                    14,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Dq6By",
+                      "name": "iconTile",
+                      "width": 40,
+                      "height": 40,
+                      "fill": "$accent-amber",
+                      "cornerRadius": 12,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#B59D6E30",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 16
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "WNauk",
+                          "x": 10,
+                          "y": 10,
+                          "name": "ic6",
+                          "width": 20,
+                          "height": 20,
+                          "iconFontName": "watch",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "czXdZ",
+                      "name": "textCol",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kWe2q",
+                          "name": "n6",
+                          "fill": "$text-primary",
+                          "content": "Brown leather belt",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 15,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "6AeKm",
+                          "name": "s6",
+                          "fill": "$text-secondary",
+                          "content": "Common wardrobe essential",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "TV1FI",
+                      "name": "ch6",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "chevron-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
                     }
                   ]
                 }
@@ -14871,137 +15521,789 @@
             },
             {
               "type": "frame",
-              "id": "jlIRT",
-              "name": "Empty State",
+              "id": "iZfbD",
+              "name": "Common Suggestions Banner",
               "width": "fill_container",
-              "height": "fill_container",
-              "layout": "vertical",
-              "gap": 24,
-              "justifyContent": "center",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 90,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "$accent-indigo",
+                    "position": 0
+                  },
+                  {
+                    "color": "$accent-indigo-end",
+                    "position": 1
+                  }
+                ]
+              },
+              "cornerRadius": 16,
+              "gap": 12,
+              "padding": [
+                16,
+                20
+              ],
               "alignItems": "center",
               "children": [
                 {
                   "type": "frame",
-                  "id": "ug78V",
-                  "name": "Circle",
-                  "width": 150,
-                  "height": 150,
-                  "fill": "$bg-card",
-                  "cornerRadius": 75,
+                  "id": "dFxKj",
+                  "name": "Banner Content",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "VO2zA",
+                      "name": "bannerTitle",
+                      "fill": "#FFFFFF",
+                      "content": "Common Suggestions",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "vO3Y8",
+                      "name": "bannerSub",
+                      "fill": "#FFFFFFB3",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Connect Claude AI for personalized picks",
+                      "fontFamily": "DM Sans",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "icon_font",
+                  "id": "quhJk",
+                  "name": "bannerChev",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "chevron-right",
+                  "iconFontFamily": "lucide",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "kr7iR",
+              "name": "Tops Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "rlYnE",
+                  "name": "topsLabel",
+                  "fill": "$text-tertiary",
+                  "content": "TOPS",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 13,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "Sm8z3",
+                  "name": "Gap Row - White Tee",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
                   "stroke": {
                     "align": "inside",
                     "thickness": 1,
                     "fill": "$border-subtle"
                   },
-                  "effect": [
-                    {
-                      "type": "shadow",
-                      "shadowType": "outer",
-                      "color": "#6B7B8E15",
-                      "blur": 30
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000010",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
                     },
-                    {
-                      "type": "shadow",
-                      "shadowType": "outer",
-                      "color": "#00000008",
-                      "offset": {
-                        "x": 0,
-                        "y": 2
-                      },
-                      "blur": 8
-                    }
+                    "blur": 8
+                  },
+                  "gap": 14,
+                  "padding": [
+                    16,
+                    20
                   ],
-                  "layout": "vertical",
-                  "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
                     {
+                      "type": "frame",
+                      "id": "8EhMc",
+                      "name": "Icon Tile",
+                      "width": 48,
+                      "height": 48,
+                      "fill": "$accent-green",
+                      "cornerRadius": 12,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#7A946830",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 16
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "2poDG",
+                          "x": 13,
+                          "y": 13,
+                          "name": "icon1",
+                          "width": 22,
+                          "height": 22,
+                          "iconFontName": "shirt",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "XnEa6",
+                      "name": "Text Col",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "DwnQQ",
+                          "name": "n1",
+                          "fill": "$text-primary",
+                          "content": "White crew-neck tee",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "eJdjv",
+                          "name": "s1",
+                          "fill": "$text-secondary",
+                          "content": "Common wardrobe essential",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
                       "type": "icon_font",
-                      "id": "zX6KV",
-                      "name": "botIcon1",
-                      "width": 52,
-                      "height": 52,
-                      "iconFontName": "bot",
+                      "id": "0dJpC",
+                      "name": "chev1",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "chevron-right",
                       "iconFontFamily": "lucide",
-                      "fill": "$accent-indigo"
+                      "fill": "$text-tertiary"
                     }
                   ]
                 },
                 {
-                  "type": "text",
-                  "id": "BpXRQ",
-                  "name": "emTitle1",
-                  "fill": "$text-primary",
-                  "content": "AI analysis needed",
-                  "textAlign": "center",
-                  "fontFamily": "Fraunces",
-                  "fontSize": 26,
-                  "fontWeight": "500"
-                },
-                {
-                  "type": "text",
-                  "id": "UTiP3",
-                  "name": "emDesc1",
-                  "fill": "$text-secondary",
-                  "textGrowth": "fixed-width",
-                  "width": 380,
-                  "content": "Connect your Claude API key in Settings to get personalized gap recommendations.",
-                  "lineHeight": 1.5,
-                  "textAlign": "center",
-                  "fontFamily": "DM Sans",
-                  "fontSize": 16,
-                  "fontWeight": "normal"
-                },
-                {
                   "type": "frame",
-                  "id": "mn8Rt",
-                  "name": "CTA",
-                  "fill": {
-                    "type": "gradient",
-                    "gradientType": "linear",
-                    "enabled": true,
-                    "rotation": 90,
-                    "size": {
-                      "height": 1
-                    },
-                    "colors": [
-                      {
-                        "color": "$accent-indigo",
-                        "position": 0
-                      },
-                      {
-                        "color": "$accent-indigo-end",
-                        "position": 1
-                      }
-                    ]
+                  "id": "TqPph",
+                  "name": "Gap Row - Grey Henley",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
                   },
-                  "cornerRadius": 28,
                   "effect": {
                     "type": "shadow",
                     "shadowType": "outer",
-                    "color": "#6B7B8E25",
+                    "color": "#00000010",
                     "offset": {
                       "x": 0,
-                      "y": 6
+                      "y": 2
                     },
-                    "blur": 20
+                    "blur": 8
                   },
+                  "gap": 14,
                   "padding": [
-                    14,
-                    40
+                    16,
+                    20
                   ],
-                  "justifyContent": "center",
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "text",
-                      "id": "5W1D5",
-                      "name": "ctaText1",
-                      "fill": "$text-on-color",
-                      "content": "Connect Claude AI",
-                      "fontFamily": "DM Sans",
-                      "fontSize": 16,
-                      "fontWeight": "600"
+                      "type": "frame",
+                      "id": "V6c4E",
+                      "name": "Icon Tile",
+                      "width": 48,
+                      "height": 48,
+                      "fill": "$accent-green",
+                      "cornerRadius": 12,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#7A946830",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 16
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "Z4vH5",
+                          "x": 13,
+                          "y": 13,
+                          "name": "ic2",
+                          "width": 22,
+                          "height": 22,
+                          "iconFontName": "shirt",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "6Qpw0",
+                      "name": "Text Col",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "27eiv",
+                          "name": "n2",
+                          "fill": "$text-primary",
+                          "content": "Grey henley",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "O9PiR",
+                          "name": "s2",
+                          "fill": "$text-secondary",
+                          "content": "Common wardrobe essential",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "qeByG",
+                      "name": "ch2",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "chevron-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Z7RbN",
+              "name": "Layering Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "yUoBJ",
+                  "name": "layerLabel",
+                  "fill": "$text-tertiary",
+                  "content": "LAYERING",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 13,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "jhZum",
+                  "name": "Gap Row - Hoodie",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000010",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
+                    },
+                    "blur": 8
+                  },
+                  "gap": 14,
+                  "padding": [
+                    16,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "jwnEg",
+                      "name": "Icon Tile",
+                      "width": 48,
+                      "height": 48,
+                      "fill": "$accent-indigo",
+                      "cornerRadius": 12,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#6B7B8E30",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 16
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "Y0m4z",
+                          "x": 13,
+                          "y": 13,
+                          "name": "ic3",
+                          "width": 22,
+                          "height": 22,
+                          "iconFontName": "shirt",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Ehsuu",
+                      "name": "Text Col",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rzL1N",
+                          "name": "n3",
+                          "fill": "$text-primary",
+                          "content": "Navy zip-up hoodie",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "z4GvX",
+                          "name": "s3",
+                          "fill": "$text-secondary",
+                          "content": "Common wardrobe essential",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "SDQFD",
+                      "name": "ch3",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "chevron-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "99AFu",
+                  "name": "Gap Row - Denim Jacket",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000010",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
+                    },
+                    "blur": 8
+                  },
+                  "gap": 14,
+                  "padding": [
+                    16,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "u20zs",
+                      "name": "Icon Tile",
+                      "width": 48,
+                      "height": 48,
+                      "fill": "$accent-indigo",
+                      "cornerRadius": 12,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#6B7B8E30",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 16
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "W1JCa",
+                          "x": 13,
+                          "y": 13,
+                          "name": "ic4",
+                          "width": 22,
+                          "height": 22,
+                          "iconFontName": "shirt",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Ww5uP",
+                      "name": "Text Col",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qkfbj",
+                          "name": "n4",
+                          "fill": "$text-primary",
+                          "content": "Denim jacket",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "2bw9F",
+                          "name": "s4",
+                          "fill": "$text-secondary",
+                          "content": "Common wardrobe essential",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "JxOpZ",
+                      "name": "ch4",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "chevron-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "2KT64",
+              "name": "Bottoms Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qAwZV",
+                  "name": "bottomsLabel",
+                  "fill": "$text-tertiary",
+                  "content": "BOTTOMS",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 13,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "s22g8",
+                  "name": "Gap Row - Jeans",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000010",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
+                    },
+                    "blur": 8
+                  },
+                  "gap": 14,
+                  "padding": [
+                    16,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "9H9ek",
+                      "name": "Icon Tile",
+                      "width": 48,
+                      "height": 48,
+                      "fill": "$accent-coral",
+                      "cornerRadius": 12,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#A8756030",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 16
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "WtvfI",
+                          "x": 13,
+                          "y": 13,
+                          "name": "ic5",
+                          "width": 22,
+                          "height": 22,
+                          "iconFontName": "shirt",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "us1gs",
+                      "name": "Text Col",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "4aq6B",
+                          "name": "n5",
+                          "fill": "$text-primary",
+                          "content": "Dark wash straight jeans",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "fr0px",
+                          "name": "s5",
+                          "fill": "$text-secondary",
+                          "content": "Common wardrobe essential",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "lAjIf",
+                      "name": "ch5",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "chevron-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Qu1mP",
+              "name": "Accessories Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "3W0gi",
+                  "name": "accLabel",
+                  "fill": "$text-tertiary",
+                  "content": "ACCESSORIES",
+                  "fontFamily": "DM Sans",
+                  "fontSize": 13,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.5
+                },
+                {
+                  "type": "frame",
+                  "id": "uaaZz",
+                  "name": "Gap Row - Belt",
+                  "width": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$border-subtle"
+                  },
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000010",
+                    "offset": {
+                      "x": 0,
+                      "y": 2
+                    },
+                    "blur": 8
+                  },
+                  "gap": 14,
+                  "padding": [
+                    16,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "nKyHc",
+                      "name": "Icon Tile",
+                      "width": 48,
+                      "height": 48,
+                      "fill": "$accent-amber",
+                      "cornerRadius": 12,
+                      "effect": {
+                        "type": "shadow",
+                        "shadowType": "outer",
+                        "color": "#B59D6E30",
+                        "offset": {
+                          "x": 0,
+                          "y": 6
+                        },
+                        "blur": 16
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "RRrkb",
+                          "x": 13,
+                          "y": 13,
+                          "name": "ic6",
+                          "width": 22,
+                          "height": 22,
+                          "iconFontName": "watch",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "4KqVt",
+                      "name": "Text Col",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "oJC1j",
+                          "name": "n6",
+                          "fill": "$text-primary",
+                          "content": "Brown leather belt",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 16,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "t7CET",
+                          "name": "s6",
+                          "fill": "$text-secondary",
+                          "content": "Common wardrobe essential",
+                          "fontFamily": "DM Sans",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "t0m4z",
+                      "name": "ch6",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "chevron-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-tertiary"
                     }
                   ]
                 }
@@ -21678,7 +22980,8 @@
                       "fill": "$text-secondary",
                       "content": "Tops",
                       "fontFamily": "DM Sans",
-                      "fontSize": 14
+                      "fontSize": 14,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -22626,7 +23929,8 @@
                       "fill": "$text-secondary",
                       "content": "Tops",
                       "fontFamily": "DM Sans",
-                      "fontSize": 14
+                      "fontSize": 14,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
