@@ -78,13 +78,7 @@ class ClaudeApiClient(
             userText = "${profileContext}My wardrobe:\n$wardrobeSummary",
         )
         val parsed = json.decodeFromString<List<GapRecommendationJson>>(responseText)
-        return parsed.map {
-            GapRecommendation(
-                itemName = it.itemName,
-                category = it.category,
-                pairingCount = it.pairingCount,
-            )
-        }
+        return parsed.map { it.toDomain() }
     }
 
     suspend fun analyzeProspectiveItem(
@@ -195,7 +189,12 @@ class ClaudeApiClient(
             principles. Prioritize timeless, mix-and-match pieces over trendy items.
             Group suggestions by category (BASICS, LAYERING, BOTTOMS, SHOES, ACCESSORIES).
             Respond with ONLY a JSON array (no markdown):
-            [{"item_name": "...", "category": "...", "pairing_count": N}]
+            [{"item_name": "...", "category": "...", "pairing_count": N,
+              "subcategory": "one of: T_SHIRT, POLO, DRESS_SHIRT, HENLEY, SWEATER, HOODIE, JEANS, CHINOS, TAILORED_PANTS, SHORTS, CARGO_PANTS, SWEATPANTS, BOMBER, TRUCKER, PUFFER, BLAZER, COAT, WINDBREAKER, SNEAKERS, BOOTS_MILITARY, BOOTS_CHELSEA, DERBY, OXFORD, LOAFER, SANDALS, WATCH, BELT, SUNGLASSES, HAT_CAP, SCARF, BAG_BACKPACK",
+              "colors": ["color1"],
+              "seasons": ["SPRING", "SUMMER", "FALL", "WINTER"],
+              "fit": "one of: SLIM_FIT, REGULAR, RELAXED, OVERSIZED",
+              "material": "one of: COTTON, LINEN, DENIM, WOOL, SYNTHETIC, LEATHER, SILK, KNIT"}]
         """.trimIndent()
 
         private val TRY_IT_SYSTEM_PROMPT = """
@@ -213,6 +212,28 @@ class ClaudeApiClient(
         """.trimIndent()
     }
 }
+
+internal fun GapRecommendationJson.toDomain(): GapRecommendation = GapRecommendation(
+    itemName = itemName,
+    category = category,
+    pairingCount = pairingCount,
+    subcategory = subcategory?.let { runCatching { Subcategory.valueOf(it.uppercase()) }.getOrNull() },
+    colors = colors,
+    seasons = seasons.mapNotNull { runCatching { Season.valueOf(it.uppercase()) }.getOrNull() },
+    fit = fit?.let { runCatching { Fit.valueOf(it.uppercase()) }.getOrNull() },
+    material = material?.let { runCatching { Material.valueOf(it.uppercase()) }.getOrNull() },
+    mappedCategory = mapDisplayCategoryToCategory(category),
+)
+
+private fun mapDisplayCategoryToCategory(displayCategory: String): Category =
+    when (displayCategory.uppercase()) {
+        "BASICS", "TOPS" -> Category.TOP
+        "LAYERING" -> Category.OUTERWEAR
+        "BOTTOMS" -> Category.BOTTOM
+        "SHOES" -> Category.SHOES
+        "ACCESSORIES" -> Category.ACCESSORY
+        else -> Category.TOP
+    }
 
 private fun UserProfile.toPromptContext(): String {
     val parts = mutableListOf<String>()
