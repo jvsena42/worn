@@ -12996,7 +12996,7 @@
           "layout": "vertical",
           "gap": 20,
           "padding": [
-            24,
+            12,
             24,
             32,
             24
@@ -13005,22 +13005,38 @@
           "children": [
             {
               "type": "frame",
-              "id": "NbP1j",
-              "name": "DismissWrap",
+              "id": "fE8MG",
+              "name": "HandleWrap",
               "width": "fill_container",
-              "justifyContent": "end",
+              "padding": [
+                4,
+                0,
+                8,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
               "children": [
                 {
-                  "type": "icon_font",
-                  "id": "RsVUh",
-                  "name": "dismissIcon",
-                  "width": 20,
-                  "height": 20,
-                  "iconFontName": "x",
-                  "iconFontFamily": "lucide",
-                  "fill": "$text-tertiary"
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "bJVOW",
+                  "name": "Handle",
+                  "fill": "$text-tertiary",
+                  "width": 40,
+                  "height": 4
                 }
               ]
+            },
+            {
+              "type": "text",
+              "id": "S3Lrb",
+              "name": "lockTitle",
+              "fill": "$text-primary",
+              "content": "Unlock AI features",
+              "fontFamily": "Fraunces",
+              "fontSize": 22,
+              "fontWeight": "500"
             },
             {
               "type": "frame",
@@ -13045,16 +13061,6 @@
                   "fill": "#FFFFFF"
                 }
               ]
-            },
-            {
-              "type": "text",
-              "id": "S3Lrb",
-              "name": "lockTitle",
-              "fill": "$text-primary",
-              "content": "Unlock AI features",
-              "fontFamily": "Fraunces",
-              "fontSize": 22,
-              "fontWeight": "500"
             },
             {
               "type": "text",
