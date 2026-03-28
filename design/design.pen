@@ -25813,6 +25813,95 @@
           "letterSpacing": 16
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "vUAtu",
+      "x": 700,
+      "y": 7958,
+      "name": "App Icon - Export",
+      "clip": true,
+      "width": 600,
+      "height": 600,
+      "fill": [
+        {
+          "type": "gradient",
+          "gradientType": "linear",
+          "enabled": true,
+          "rotation": 150,
+          "size": {
+            "height": 1
+          },
+          "colors": [
+            {
+              "color": "#8FAF78",
+              "position": 0
+            },
+            {
+              "color": "#7A9468",
+              "position": 0.4
+            },
+            {
+              "color": "#5C6E50",
+              "position": 0.75
+            },
+            {
+              "color": "#4A5940",
+              "position": 1
+            }
+          ]
+        },
+        {
+          "type": "gradient",
+          "gradientType": "radial",
+          "enabled": true,
+          "opacity": 0.35,
+          "rotation": 0,
+          "size": {
+            "width": 1,
+            "height": 1
+          },
+          "colors": [
+            {
+              "color": "#B59D6E",
+              "position": 0
+            },
+            {
+              "color": "#B59D6E00",
+              "position": 0.75
+            }
+          ],
+          "center": {
+            "x": 0.3,
+            "y": 0.25
+          }
+        }
+      ],
+      "layout": "vertical",
+      "gap": 28,
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "path",
+          "id": "rVBs7",
+          "name": "icon",
+          "geometry": "M0 85l40 125 60-112 60 112 40-125-25 10-30 100-45-69-45 69-30-100z m91 13l0-53c0-40 57-40 57 0l0 17-14-7c0-33-25-33-25-10l0 53z",
+          "fill": "#FFFFFF",
+          "width": 300,
+          "height": 315,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#3D1F1233",
+            "offset": {
+              "x": 0,
+              "y": 6
+            },
+            "blur": 24
+          }
+        }
+      ]
     }
   ],
   "variables": {
