@@ -370,6 +370,22 @@ private fun Category.dotColor(): Color = when (this) {
 
 // region Detail Sheet
 
+@Composable
+private fun GapSheetDragHandle() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .width(40.dp)
+                .height(4.dp)
+                .clip(RoundedCornerShape(2.dp))
+                .background(WornColors.BorderStrong),
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GapDetailSheet(
@@ -384,6 +400,7 @@ private fun GapDetailSheet(
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        dragHandle = { GapSheetDragHandle() },
     ) {
         GapDetailContent(
             recommendation = recommendation,
