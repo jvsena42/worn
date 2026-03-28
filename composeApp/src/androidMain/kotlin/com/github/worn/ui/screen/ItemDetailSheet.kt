@@ -66,9 +66,10 @@ import java.io.File
 fun ItemDetailSheet(
     item: ClothingItem,
     isCompact: Boolean,
-    onEdit: (ClothingItem) -> Unit,
-    onDelete: (String) -> Unit,
+    onEdit: (ClothingItem) -> Unit = {},
+    onDelete: (String) -> Unit = {},
     onDismiss: () -> Unit,
+    showActions: Boolean = true,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -79,7 +80,13 @@ fun ItemDetailSheet(
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
         dragHandle = { DetailSheetDragHandle() },
     ) {
-        ItemDetailContent(item = item, isCompact = isCompact, onEdit = onEdit, onDelete = onDelete)
+        ItemDetailContent(
+            item = item,
+            isCompact = isCompact,
+            onEdit = onEdit,
+            onDelete = onDelete,
+            showActions = showActions,
+        )
     }
 }
 
@@ -105,6 +112,7 @@ internal fun ItemDetailContent(
     isCompact: Boolean,
     onEdit: (ClothingItem) -> Unit = {},
     onDelete: (String) -> Unit = {},
+    showActions: Boolean = true,
 ) {
     val dims = ItemDetailDimens(isCompact)
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -121,14 +129,16 @@ internal fun ItemDetailContent(
         ItemNameGroup(item = item, nameSize = dims.nameSize)
         HorizontalDivider()
         ItemProperties(item = item, fontSize = dims.propFontSize, gap = dims.propGap)
-        DetailActionButtons(
-            editLabel = "Edit Item",
-            deleteLabel = "Delete Item",
-            buttonHeight = dims.buttonHeight,
-            buttonFontSize = dims.buttonFontSize,
-            onEdit = { onEdit(item) },
-            onDelete = { showDeleteDialog = true },
-        )
+        if (showActions) {
+            DetailActionButtons(
+                editLabel = "Edit Item",
+                deleteLabel = "Delete Item",
+                buttonHeight = dims.buttonHeight,
+                buttonFontSize = dims.buttonFontSize,
+                onEdit = { onEdit(item) },
+                onDelete = { showDeleteDialog = true },
+            )
+        }
     }
 
     if (showDeleteDialog) {

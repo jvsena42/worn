@@ -11,6 +11,7 @@ import com.github.worn.domain.repository.WardrobeRepository
 import com.github.worn.presentation.viewmodel.GapsViewModel
 import com.github.worn.presentation.viewmodel.OutfitViewModel
 import com.github.worn.presentation.viewmodel.SettingsViewModel
+import com.github.worn.presentation.viewmodel.TryItViewModel
 import com.github.worn.presentation.viewmodel.WardrobeViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -38,4 +39,5 @@ val sharedModule = module {
     factoryOf(::OutfitViewModel)
     factoryOf(::SettingsViewModel)
     factoryOf(::GapsViewModel)
+    factoryOf(::TryItViewModel)
 }
