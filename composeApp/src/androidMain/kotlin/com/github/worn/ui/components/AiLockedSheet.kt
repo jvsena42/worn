@@ -1,28 +1,30 @@
 package com.github.worn.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.SmartToy
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -45,33 +47,38 @@ fun AiLockedSheet(onDismiss: () -> Unit, onGoToSettings: () -> Unit = {}) {
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = null,
+        dragHandle = { SheetHandle() },
     ) {
-        AiLockedContent(onDismiss = onDismiss, onGoToSettings = onGoToSettings)
+        AiLockedContent(onGoToSettings = onGoToSettings, onDismiss = onDismiss)
+    }
+}
+
+@Composable
+private fun SheetHandle() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .width(40.dp)
+                .height(4.dp)
+                .clip(RoundedCornerShape(2.dp))
+                .background(WornColors.IconMuted),
+        )
     }
 }
 
 @Composable
 internal fun AiLockedContent(
-    onDismiss: () -> Unit = {},
     onGoToSettings: () -> Unit = {},
+    onDismiss: () -> Unit = {},
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp),
-        modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 32.dp, top = 24.dp),
+        modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 32.dp),
     ) {
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-            IconButton(onClick = onDismiss) {
-                Icon(
-                    Icons.Outlined.Close,
-                    contentDescription = "Dismiss",
-                    tint = WornColors.IconMuted,
-                    modifier = Modifier.size(20.dp),
-                )
-            }
-        }
-
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier

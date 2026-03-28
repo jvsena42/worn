@@ -88,7 +88,7 @@ fun OutfitDetailSheet(
 private fun OutfitSheetDragHandle() {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
     ) {
         Box(
             modifier = Modifier

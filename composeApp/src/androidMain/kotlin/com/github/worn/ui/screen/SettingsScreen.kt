@@ -283,6 +283,26 @@ private fun AboutCard() {
     }
 }
 
+// region Sheet Handle
+
+@Composable
+private fun SettingsSheetHandle() {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .width(40.dp)
+                .height(4.dp)
+                .clip(RoundedCornerShape(2.dp))
+                .background(WornColors.IconMuted),
+        )
+    }
+}
+
+// endregion
+
 // region Profile Sheet
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -299,6 +319,7 @@ private fun ProfileSheet(
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        dragHandle = { SettingsSheetHandle() },
     ) {
         ProfileSheetContent(state = state, onIntent = onIntent, onSave = onSave)
     }
@@ -376,6 +397,7 @@ private fun ApiKeySheet(
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        dragHandle = { SettingsSheetHandle() },
     ) {
         ApiKeySheetContent(hasApiKey = hasApiKey, onSave = onSave, onClear = onClear)
     }
