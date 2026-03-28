@@ -9,6 +9,7 @@ import com.github.worn.ui.components.Tab
 import com.github.worn.ui.screen.GapsScreen
 import com.github.worn.ui.screen.OutfitsScreen
 import com.github.worn.ui.screen.SettingsScreen
+import com.github.worn.ui.screen.TryItScreen
 import com.github.worn.ui.screen.WardrobeScreen
 import com.github.worn.ui.theme.WornTheme
 
@@ -21,8 +22,8 @@ fun App() {
             Tab.WARDROBE -> WardrobeScreen(onTabSelected = { activeTab = it })
             Tab.OUTFITS -> OutfitsScreen(onTabSelected = { activeTab = it })
             Tab.GAPS -> GapsScreen(onTabSelected = { activeTab = it })
+            Tab.TRY_IT -> TryItScreen(onTabSelected = { activeTab = it })
             Tab.SETTINGS -> SettingsScreen(onTabSelected = { activeTab = it })
-            else -> WardrobeScreen(onTabSelected = { activeTab = it })
         }
     }
 }

@@ -4,6 +4,7 @@ import Shared
 struct ItemDetailSheet: View {
     let item: ClothingItem
     var isCompact: Bool = true
+    var showActions: Bool = true
     let onEdit: (ClothingItem) -> Void
     let onDelete: (String) -> Void
 
@@ -27,7 +28,9 @@ struct ItemDetailSheet: View {
                 nameGroup
                 divider
                 properties
-                buttons
+                if showActions {
+                    buttons
+                }
             }
             .padding(.horizontal, contentPadding)
             .padding(.bottom, 36)

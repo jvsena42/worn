@@ -18,6 +18,8 @@ struct iOSApp: App {
                 OutfitsScreen(onTabSelected: { activeTab = $0 })
             case .gaps:
                 GapsScreen(onTabSelected: { activeTab = $0 })
+            case .tryIt:
+                TryItScreen(onTabSelected: { activeTab = $0 })
             case .settings:
                 SettingsScreen(onTabSelected: { activeTab = $0 })
             default:
