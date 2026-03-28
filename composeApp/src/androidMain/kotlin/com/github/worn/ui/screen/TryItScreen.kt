@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -682,11 +683,13 @@ private fun CombinationsCard(count: Int, isCompact: Boolean) {
         color = WornColors.BgCard,
         border = BorderStroke(1.dp, WornColors.BorderSubtle),
         shadowElevation = 2.dp,
-        modifier = Modifier.fillMaxWidth().height(cardHeight),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+            modifier = Modifier
+                .heightIn(min = cardHeight)
+                .padding(horizontal = 20.dp, vertical = 16.dp),
         ) {
             Text(
                 text = "Combinations unlocked",
