@@ -36,11 +36,11 @@ struct ItemDetailSheet: View {
             .padding(.bottom, 36)
         }
         .background(WornColors.bgElevated)
-        .alert("Delete item?", isPresented: $showDeleteAlert) {
-            Button("Cancel", role: .cancel) {}
-            Button("Delete", role: .destructive) { onDelete(item.id) }
+        .alert(String(localized: "item_detail_delete_dialog_title"), isPresented: $showDeleteAlert) {
+            Button(String(localized: "common_cancel"), role: .cancel) {}
+            Button(String(localized: "common_delete"), role: .destructive) { onDelete(item.id) }
         } message: {
-            Text("This action cannot be undone. \"\(item.name)\" will be permanently removed from your wardrobe.")
+            Text(String(format: String(localized: "item_detail_delete_dialog_message"), item.name))
         }
     }
 
@@ -107,7 +107,7 @@ struct ItemDetailSheet: View {
         VStack(spacing: propGap) {
             if !item.colors.isEmpty {
                 HStack {
-                    Text("Color")
+                    Text(String(localized: "label_color"))
                         .font(.system(size: propFontSize, weight: .medium))
                         .foregroundColor(WornColors.textSecondary)
                     Spacer()
@@ -127,21 +127,21 @@ struct ItemDetailSheet: View {
 
             if !item.seasons.isEmpty {
                 let seasonText = item.seasons.count == Season.entries.count
-                    ? "All seasons"
+                    ? String(localized: "common_all_seasons")
                     : item.seasons.map { seasonDisplayName($0) }.joined(separator: ", ")
-                propertyRow(label: "Season", value: seasonText)
+                propertyRow(label: String(localized: "label_season"), value: seasonText)
             }
 
             if let fit = item.fit {
-                propertyRow(label: "Fit", value: fitDisplayName(fit))
+                propertyRow(label: String(localized: "label_fit"), value: fitDisplayName(fit))
             }
 
             if let subcategory = item.subcategory {
-                propertyRow(label: "Subcategory", value: subcategoryDisplayName(subcategory))
+                propertyRow(label: String(localized: "label_subcategory"), value: subcategoryDisplayName(subcategory))
             }
 
             if let material = item.material {
-                propertyRow(label: "Material", value: materialDisplayName(material))
+                propertyRow(label: String(localized: "label_material"), value: materialDisplayName(material))
             }
         }
     }
@@ -161,7 +161,7 @@ struct ItemDetailSheet: View {
     private var buttons: some View {
         VStack(spacing: 12) {
             Button { onEdit(item) } label: {
-                Text("Edit Item")
+                Text(String(localized: "item_detail_edit"))
                     .font(.system(size: buttonFontSize, weight: .semibold))
                     .foregroundColor(WornColors.textPrimary)
                     .frame(maxWidth: .infinity)
@@ -175,7 +175,7 @@ struct ItemDetailSheet: View {
             }
 
             Button { showDeleteAlert = true } label: {
-                Text("Delete Item")
+                Text(String(localized: "item_detail_delete"))
                     .font(.system(size: buttonFontSize, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
@@ -199,41 +199,43 @@ struct ItemDetailSheet: View {
 
     private func displayLabel(for category: Category) -> String {
         switch category {
-        case .top: return "Tops"
-        case .bottom: return "Bottoms"
-        case .outerwear: return "Outerwear"
-        case .shoes: return "Shoes"
-        case .accessory: return "Accessories"
+        case .top: return String(localized: "category_tops")
+        case .bottom: return String(localized: "category_bottoms")
+        case .outerwear: return String(localized: "category_outerwear")
+        case .shoes: return String(localized: "category_shoes")
+        case .accessory: return String(localized: "category_accessories")
         default: return ""
         }
     }
 
     private func seasonDisplayName(_ season: Season) -> String {
         switch season {
-        case .spring: return "Spring"
-        case .summer: return "Summer"
-        case .fall: return "Fall"
-        case .winter: return "Winter"
+        case .spring: return String(localized: "season_spring")
+        case .summer: return String(localized: "season_summer")
+        case .fall: return String(localized: "season_fall")
+        case .winter: return String(localized: "season_winter")
         default: return ""
         }
     }
 
     private func fitDisplayName(_ fit: Fit) -> String {
         switch fit {
-        case .slimFit: return "Slim Fit"
-        case .regular: return "Regular"
-        case .relaxed: return "Relaxed"
-        case .oversized: return "Oversized"
+        case .slimFit: return String(localized: "fit_slim_fit")
+        case .regular: return String(localized: "fit_regular")
+        case .relaxed: return String(localized: "fit_relaxed")
+        case .oversized: return String(localized: "fit_oversized")
         default: return ""
         }
     }
 
     private func subcategoryDisplayName(_ sub: Subcategory) -> String {
-        sub.name.lowercased().replacingOccurrences(of: "_", with: " ").capitalized
+        let key = "subcategory_\(sub.name.lowercased())"
+        return String(localized: String.LocalizationValue(key))
     }
 
     private func materialDisplayName(_ material: Material) -> String {
-        material.name.lowercased().capitalized
+        let key = "material_\(material.name.lowercased())"
+        return String(localized: String.LocalizationValue(key))
     }
 
     private let colorPalette: [(name: String, color: Color)] = [

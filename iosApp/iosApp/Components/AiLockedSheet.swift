@@ -25,11 +25,11 @@ struct AiLockedSheet: View {
                     .foregroundColor(.white)
             }
 
-            Text("Unlock AI features")
+            Text(String(localized: "ai_locked_title"))
                 .font(.system(size: 22, weight: .medium))
                 .foregroundColor(WornColors.textPrimary)
 
-            Text("Add your Claude API key in Settings to enable this.")
+            Text(String(localized: "ai_locked_description"))
                 .font(.system(size: 14))
                 .foregroundColor(WornColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -40,7 +40,7 @@ struct AiLockedSheet: View {
                 onGoToSettings()
                 onDismiss()
             } label: {
-                Text("Go to Settings")
+                Text(String(localized: "ai_locked_cta"))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 40)

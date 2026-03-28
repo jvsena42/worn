@@ -50,6 +50,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -109,7 +111,7 @@ fun PhotoUploadZone(bitmap: ImageBitmap?, onClick: () -> Unit) {
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Tap to add photo",
+                    text = stringResource(R.string.add_item_photo_hint),
                     color = WornColors.TextSecondary,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
@@ -128,7 +130,12 @@ fun AiBadge(onClick: () -> Unit = {}) {
     ) {
         Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)) {
             Text("✦ ", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-            Text("Auto-tag with AI", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                stringResource(R.string.add_item_ai_badge),
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
         }
     }
 }
@@ -138,7 +145,13 @@ fun ItemNameField(value: String, onValueChange: (String) -> Unit) {
     TextField(
         value = value,
         onValueChange = onValueChange,
-        placeholder = { Text("Item name", color = WornColors.IconMuted, fontSize = 15.sp) },
+        placeholder = {
+            Text(
+                stringResource(R.string.add_item_name_hint),
+                color = WornColors.IconMuted,
+                fontSize = 15.sp,
+            )
+        },
         colors = TextFieldDefaults.colors(
             focusedContainerColor = WornColors.BgCard,
             unfocusedContainerColor = WornColors.BgCard,
@@ -178,7 +191,7 @@ fun CategoryDropdown(selected: Category?, onSelected: (Category) -> Unit) {
                         Spacer(Modifier.size(12.dp))
                     }
                     Text(
-                        text = selected?.displayName() ?: "Category",
+                        text = selected?.displayName() ?: stringResource(R.string.label_category),
                         color = if (selected != null) WornColors.TextPrimary else WornColors.IconMuted,
                         fontSize = 15.sp,
                         modifier = Modifier.weight(1f),
@@ -245,7 +258,12 @@ private fun CategoryOptionList(onSelected: (Category) -> Unit) {
 @Composable
 fun ColorSection(selectedColors: Set<String>, onToggle: (String) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text("Color", color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+        Text(
+            stringResource(R.string.label_color),
+            color = WornColors.TextPrimary,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -283,7 +301,12 @@ private fun contrastColor(background: Color): Color {
 @Composable
 fun SeasonSection(selectedSeasons: Set<Season>, onToggle: (Season) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text("Season", color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+        Text(
+            stringResource(R.string.label_season),
+            color = WornColors.TextPrimary,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Season.entries.forEach { season ->
                 val isActive = season in selectedSeasons
@@ -333,7 +356,11 @@ fun SaveButton(
                 .background(if (enabled) gradient else disabledGradient),
         ) {
             Text(
-                text = if (isSaving) "Saving…" else (label ?: "Save to wardrobe"),
+                text = if (isSaving) {
+                    stringResource(R.string.common_saving)
+                } else {
+                    label ?: stringResource(R.string.add_item_save_to_wardrobe)
+                },
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -351,12 +378,13 @@ internal fun Category.iconRes(): Int = when (this) {
     Category.ACCESSORY -> R.drawable.ic_glasses
 }
 
+@Composable
 private fun Category.displayName(): String = when (this) {
-    Category.TOP -> "Tops"
-    Category.BOTTOM -> "Bottoms"
-    Category.OUTERWEAR -> "Outerwear"
-    Category.SHOES -> "Shoes"
-    Category.ACCESSORY -> "Accessories"
+    Category.TOP -> stringResource(R.string.category_tops)
+    Category.BOTTOM -> stringResource(R.string.category_bottoms)
+    Category.OUTERWEAR -> stringResource(R.string.category_outerwear)
+    Category.SHOES -> stringResource(R.string.category_shoes)
+    Category.ACCESSORY -> stringResource(R.string.category_accessories)
 }
 
 @Composable
@@ -375,7 +403,7 @@ fun SubcategoryDropdown(category: Category, selected: Subcategory?, onSelected: 
                 color = Color.Transparent,
             ) {
                 DropdownHeader(
-                    text = selected?.displayName() ?: "Subcategory",
+                    text = selected?.displayName() ?: stringResource(R.string.label_subcategory),
                     hasSelection = selected != null,
                     expanded = expanded,
                 )
@@ -443,7 +471,12 @@ private fun SubcategoryOptionList(options: List<Subcategory>, onSelected: (Subca
 @Composable
 fun FitSection(selected: Fit?, onSelected: (Fit?) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text("Fit", color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+        Text(
+            stringResource(R.string.label_fit),
+            color = WornColors.TextPrimary,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Fit.entries.forEach { fit ->
                 val isActive = fit == selected
@@ -470,7 +503,12 @@ fun FitSection(selected: Fit?, onSelected: (Fit?) -> Unit) {
 @Composable
 fun MaterialSection(selected: Material?, onSelected: (Material?) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text("Material", color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+        Text(
+            stringResource(R.string.label_material),
+            color = WornColors.TextPrimary,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -496,22 +534,84 @@ fun MaterialSection(selected: Material?, onSelected: (Material?) -> Unit) {
     }
 }
 
-internal fun Subcategory.displayName(): String = name.lowercase()
-    .replace('_', ' ')
-    .replaceFirstChar { it.uppercase() }
+@Suppress("CyclomaticComplexMethod")
+@Composable
+internal fun Subcategory.displayName(): String = stringResource(
+    when (this) {
+        Subcategory.T_SHIRT -> R.string.subcategory_t_shirt
+        Subcategory.POLO -> R.string.subcategory_polo
+        Subcategory.DRESS_SHIRT -> R.string.subcategory_dress_shirt
+        Subcategory.HENLEY -> R.string.subcategory_henley
+        Subcategory.SWEATER -> R.string.subcategory_sweater
+        Subcategory.HOODIE -> R.string.subcategory_hoodie
+        Subcategory.JEANS -> R.string.subcategory_jeans
+        Subcategory.CHINOS -> R.string.subcategory_chinos
+        Subcategory.TAILORED_PANTS -> R.string.subcategory_tailored_pants
+        Subcategory.SHORTS -> R.string.subcategory_shorts
+        Subcategory.CARGO_PANTS -> R.string.subcategory_cargo_pants
+        Subcategory.SWEATPANTS -> R.string.subcategory_sweatpants
+        Subcategory.BOMBER -> R.string.subcategory_bomber
+        Subcategory.TRUCKER -> R.string.subcategory_trucker
+        Subcategory.PUFFER -> R.string.subcategory_puffer
+        Subcategory.BLAZER -> R.string.subcategory_blazer
+        Subcategory.COAT -> R.string.subcategory_coat
+        Subcategory.WINDBREAKER -> R.string.subcategory_windbreaker
+        Subcategory.SNEAKERS -> R.string.subcategory_sneakers
+        Subcategory.BOOTS_MILITARY -> R.string.subcategory_boots_military
+        Subcategory.BOOTS_CHELSEA -> R.string.subcategory_boots_chelsea
+        Subcategory.DERBY -> R.string.subcategory_derby
+        Subcategory.OXFORD -> R.string.subcategory_oxford
+        Subcategory.LOAFER -> R.string.subcategory_loafer
+        Subcategory.SANDALS -> R.string.subcategory_sandals
+        Subcategory.WATCH -> R.string.subcategory_watch
+        Subcategory.BELT -> R.string.subcategory_belt
+        Subcategory.SUNGLASSES -> R.string.subcategory_sunglasses
+        Subcategory.HAT_CAP -> R.string.subcategory_hat_cap
+        Subcategory.SCARF -> R.string.subcategory_scarf
+        Subcategory.BAG_BACKPACK -> R.string.subcategory_bag_backpack
+    },
+)
 
-internal fun Fit.displayName(): String = when (this) {
-    Fit.SLIM_FIT -> "Slim Fit"
-    Fit.REGULAR -> "Regular"
-    Fit.RELAXED -> "Relaxed"
-    Fit.OVERSIZED -> "Oversized"
+@Composable
+internal fun Fit.displayName(): String = stringResource(
+    when (this) {
+        Fit.SLIM_FIT -> R.string.fit_slim
+        Fit.REGULAR -> R.string.fit_regular
+        Fit.RELAXED -> R.string.fit_relaxed
+        Fit.OVERSIZED -> R.string.fit_oversized
+    },
+)
+
+@Composable
+internal fun Material.displayName(): String = stringResource(
+    when (this) {
+        Material.COTTON -> R.string.material_cotton
+        Material.LINEN -> R.string.material_linen
+        Material.DENIM -> R.string.material_denim
+        Material.WOOL -> R.string.material_wool
+        Material.SYNTHETIC -> R.string.material_synthetic
+        Material.LEATHER -> R.string.material_leather
+        Material.SILK -> R.string.material_silk
+        Material.KNIT -> R.string.material_knit
+    },
+)
+
+@Composable
+internal fun Season.displayName(): String = stringResource(
+    when (this) {
+        Season.SPRING -> R.string.season_spring
+        Season.SUMMER -> R.string.season_summer
+        Season.FALL -> R.string.season_fall
+        Season.WINTER -> R.string.season_winter
+    },
+)
+
+@Composable
+internal fun Category.displayLabel(): String = when (this) {
+    Category.TOP -> stringResource(R.string.category_tops)
+    Category.BOTTOM -> stringResource(R.string.category_bottoms)
+    Category.OUTERWEAR -> stringResource(R.string.category_outerwear)
+    Category.SHOES -> stringResource(R.string.category_shoes)
+    Category.ACCESSORY -> stringResource(R.string.category_accessories)
 }
 
-internal fun Material.displayName(): String = name.lowercase().replaceFirstChar { it.uppercase() }
-
-internal fun Season.displayName(): String = when (this) {
-    Season.SPRING -> "Spring"
-    Season.SUMMER -> "Summer"
-    Season.FALL -> "Fall"
-    Season.WINTER -> "Winter"
-}

@@ -1,3 +1,256 @@
 <resources>
     <string name="app_name">Worn</string>
+
+    <!-- Common -->
+    <string name="common_delete">Delete</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_save">Save</string>
+    <string name="common_deleting">Deleting…</string>
+    <string name="common_saving">Saving…</string>
+    <string name="common_save_changes">Save Changes</string>
+    <string name="common_all_seasons">All seasons</string>
+    <string name="common_not_specified">Not specified</string>
+
+    <!-- Tabs -->
+    <string name="tab_wardrobe">WARDROBE</string>
+    <string name="tab_outfits">OUTFITS</string>
+    <string name="tab_gaps">GAPS</string>
+    <string name="tab_try_it">TRY IT</string>
+    <string name="tab_settings">SETTINGS</string>
+
+    <!-- Wardrobe Screen -->
+    <string name="wardrobe_title_empty">Your wardrobe</string>
+    <string name="wardrobe_title">Worn</string>
+    <string name="wardrobe_subtitle">Your capsule wardrobe · %d items</string>
+    <string name="wardrobe_empty_title">No items yet</string>
+    <string name="wardrobe_empty_description">Add your first piece to start\nbuilding your wardrobe</string>
+    <string name="wardrobe_empty_cta">Add your first item</string>
+    <string name="wardrobe_category_empty">No items in this category</string>
+    <string name="wardrobe_fab_add">Add item</string>
+    <string name="wardrobe_delete_dialog_message">This action cannot be undone. The selected items will be permanently removed from your wardrobe.</string>
+
+    <!-- Outfits Screen -->
+    <string name="outfits_title">Your outfits</string>
+    <string name="outfits_button_create">Create</string>
+    <string name="outfits_empty_title">No outfits yet</string>
+    <string name="outfits_empty_description">Create your first look by combining\nitems from your wardrobe</string>
+    <string name="outfits_empty_cta">Create your first outfit</string>
+    <string name="outfits_delete_dialog_message">This action cannot be undone. The selected outfits will be permanently removed.</string>
+
+    <!-- Add Item Sheet -->
+    <string name="add_item_title">Add new item</string>
+    <string name="add_item_title_edit">Edit item</string>
+    <string name="add_item_photo_dialog_title">Add photo</string>
+    <string name="add_item_take_photo">Take photo</string>
+    <string name="add_item_choose_gallery">Choose from gallery</string>
+    <string name="add_item_photo_hint">Tap to add photo</string>
+    <string name="add_item_ai_badge">Auto-tag with AI</string>
+    <string name="add_item_name_hint">Item name</string>
+    <string name="add_item_save_to_wardrobe">Save to wardrobe</string>
+
+    <!-- Create Outfit Sheet -->
+    <string name="create_outfit_title">Create outfit</string>
+    <string name="create_outfit_title_edit">Edit outfit</string>
+    <string name="create_outfit_name_hint">Outfit name</string>
+    <string name="create_outfit_select_items">Select items</string>
+    <string name="create_outfit_save">Save outfit</string>
+
+    <!-- Item Detail Sheet -->
+    <string name="item_detail_edit">Edit Item</string>
+    <string name="item_detail_delete">Delete Item</string>
+    <string name="item_detail_delete_dialog_title">Delete item?</string>
+    <string name="item_detail_delete_dialog_message">This action cannot be undone. \"%s\" will be permanently removed from your wardrobe.</string>
+
+    <!-- Outfit Detail Sheet -->
+    <string name="outfit_detail_edit">Edit Outfit</string>
+    <string name="outfit_detail_delete">Delete Outfit</string>
+    <string name="outfit_detail_items_count">%d items</string>
+    <string name="outfit_detail_delete_dialog_title">Delete outfit?</string>
+    <string name="outfit_detail_delete_dialog_message">This action cannot be undone. \"%s\" will be permanently removed.</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_profile">YOUR PROFILE</string>
+    <string name="settings_section_ai">AI FEATURES</string>
+    <string name="settings_section_about">ABOUT</string>
+    <string name="settings_your_profile">Your Profile</string>
+    <string name="settings_profile_subtitle_empty">Tap to set up</string>
+    <string name="settings_profile_help">Help AI give better suggestions</string>
+    <string name="settings_api_key_title">Claude API Key</string>
+    <string name="settings_api_key_connected">Connected</string>
+    <string name="settings_api_key_required">Required for AI features</string>
+    <string name="settings_connect_claude">Connect Claude AI</string>
+    <string name="settings_api_description">Paste your Anthropic API key to unlock AI-powered features like auto-tagging clothes and outfit analysis.</string>
+    <string name="settings_api_get_key">Get a free key at console.anthropic.com →</string>
+    <string name="settings_save_connect">Save &amp; Connect</string>
+    <string name="settings_remove_key">Remove key</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_licenses">Licenses</string>
+    <string name="settings_multi_select">(multi-select)</string>
+    <string name="settings_api_hide">Hide</string>
+    <string name="settings_api_show">Show</string>
+
+    <!-- Gaps Screen -->
+    <string name="gaps_title">What\'s missing</string>
+    <string name="gaps_subtitle">Items that would expand your combinations most</string>
+    <string name="gaps_complete_title">Your wardrobe looks complete!</string>
+    <string name="gaps_complete_description">We couldn\'t find any gaps.\nYou have great coverage across categories.</string>
+    <string name="gaps_banner_ai_title">AI Recommendations</string>
+    <string name="gaps_banner_common_title">Common Suggestions</string>
+    <string name="gaps_banner_ai_subtitle">Personalized suggestions based on your wardrobe</string>
+    <string name="gaps_banner_common_subtitle">Connect Claude AI for personalized picks</string>
+    <string name="gaps_pairing_ai">Would pair with %d of your items</string>
+    <string name="gaps_pairing_common">Common wardrobe essential</string>
+    <string name="gaps_add_to_wardrobe">Add to Wardrobe</string>
+    <string name="gaps_dismiss">Dismiss</string>
+
+    <!-- Try It Screen -->
+    <string name="tryit_title">Would it fit your wardrobe?</string>
+    <string name="tryit_upload_hint">Upload a photo of the item\nyou\'re considering</string>
+    <string name="tryit_analyze">Analyze with Claude</string>
+    <string name="tryit_ai_empty_title">AI powered analysis</string>
+    <string name="tryit_ai_empty_description">Connect your Claude API key in Settings to analyze items against your wardrobe.</string>
+    <string name="tryit_connect_cta">Connect Claude AI</string>
+    <string name="tryit_pairs_with">It would pair with…</string>
+    <string name="tryit_combinations_unlocked">Combinations unlocked</string>
+    <string name="tryit_gaps_filled">Wardrobe gaps it fills</string>
+    <string name="tryit_worth_adding">Worth adding</string>
+    <string name="tryit_skip">Skip this one</string>
+
+    <!-- AI Locked Sheet -->
+    <string name="ai_locked_title">Unlock AI features</string>
+    <string name="ai_locked_description">Add your Claude API key in Settings to enable this.</string>
+    <string name="ai_locked_cta">Go to Settings</string>
+
+    <!-- Filter -->
+    <string name="filter_all">All</string>
+
+    <!-- Form Labels -->
+    <string name="label_color">Color</string>
+    <string name="label_season">Season</string>
+    <string name="label_fit">Fit</string>
+    <string name="label_subcategory">Subcategory</string>
+    <string name="label_material">Material</string>
+    <string name="label_category">Category</string>
+    <string name="label_items">Items</string>
+    <string name="label_body_type">Body Type</string>
+    <string name="label_style_profile">Style Profile</string>
+    <string name="label_age_range">Age Range</string>
+    <string name="label_climate">Climate / Region</string>
+    <string name="label_lifestyle">Lifestyle / Occasions</string>
+
+    <!-- Category -->
+    <string name="category_tops">Tops</string>
+    <string name="category_bottoms">Bottoms</string>
+    <string name="category_outerwear">Outerwear</string>
+    <string name="category_shoes">Shoes</string>
+    <string name="category_accessories">Accessories</string>
+
+    <!-- Season -->
+    <string name="season_spring">Spring</string>
+    <string name="season_summer">Summer</string>
+    <string name="season_fall">Fall</string>
+    <string name="season_winter">Winter</string>
+
+    <!-- Fit -->
+    <string name="fit_slim">Slim Fit</string>
+    <string name="fit_regular">Regular</string>
+    <string name="fit_relaxed">Relaxed</string>
+    <string name="fit_oversized">Oversized</string>
+
+    <!-- Material -->
+    <string name="material_cotton">Cotton</string>
+    <string name="material_linen">Linen</string>
+    <string name="material_denim">Denim</string>
+    <string name="material_wool">Wool</string>
+    <string name="material_synthetic">Synthetic</string>
+    <string name="material_leather">Leather</string>
+    <string name="material_silk">Silk</string>
+    <string name="material_knit">Knit</string>
+
+    <!-- Subcategory -->
+    <string name="subcategory_t_shirt">T shirt</string>
+    <string name="subcategory_polo">Polo</string>
+    <string name="subcategory_dress_shirt">Dress shirt</string>
+    <string name="subcategory_henley">Henley</string>
+    <string name="subcategory_sweater">Sweater</string>
+    <string name="subcategory_hoodie">Hoodie</string>
+    <string name="subcategory_jeans">Jeans</string>
+    <string name="subcategory_chinos">Chinos</string>
+    <string name="subcategory_tailored_pants">Tailored pants</string>
+    <string name="subcategory_shorts">Shorts</string>
+    <string name="subcategory_cargo_pants">Cargo pants</string>
+    <string name="subcategory_sweatpants">Sweatpants</string>
+    <string name="subcategory_bomber">Bomber</string>
+    <string name="subcategory_trucker">Trucker</string>
+    <string name="subcategory_puffer">Puffer</string>
+    <string name="subcategory_blazer">Blazer</string>
+    <string name="subcategory_coat">Coat</string>
+    <string name="subcategory_windbreaker">Windbreaker</string>
+    <string name="subcategory_sneakers">Sneakers</string>
+    <string name="subcategory_boots_military">Boots military</string>
+    <string name="subcategory_boots_chelsea">Boots chelsea</string>
+    <string name="subcategory_derby">Derby</string>
+    <string name="subcategory_oxford">Oxford</string>
+    <string name="subcategory_loafer">Loafer</string>
+    <string name="subcategory_sandals">Sandals</string>
+    <string name="subcategory_watch">Watch</string>
+    <string name="subcategory_belt">Belt</string>
+    <string name="subcategory_sunglasses">Sunglasses</string>
+    <string name="subcategory_hat_cap">Hat cap</string>
+    <string name="subcategory_scarf">Scarf</string>
+    <string name="subcategory_bag_backpack">Bag backpack</string>
+
+    <!-- Body Type -->
+    <string name="body_type_slim">Slim</string>
+    <string name="body_type_athletic">Athletic</string>
+    <string name="body_type_average">Average</string>
+    <string name="body_type_stocky">Stocky</string>
+    <string name="body_type_short">Short</string>
+    <string name="body_type_tall_and_slim">Tall &amp; Slim</string>
+    <string name="body_type_big_and_tall">Big &amp; Tall</string>
+
+    <!-- Style Profile -->
+    <string name="style_classic">Classic</string>
+    <string name="style_casual">Casual</string>
+    <string name="style_streetwear">Streetwear</string>
+    <string name="style_smart_casual">Smart Casual</string>
+    <string name="style_minimalist">Minimalist</string>
+
+    <!-- Age Range -->
+    <string name="age_18_25">18–25</string>
+    <string name="age_26_35">26–35</string>
+    <string name="age_36_45">36–45</string>
+    <string name="age_46_plus">46+</string>
+
+    <!-- Climate -->
+    <string name="climate_tropical">Tropical</string>
+    <string name="climate_temperate">Temperate</string>
+    <string name="climate_cold">Cold</string>
+    <string name="climate_mixed">Mixed</string>
+
+    <!-- Lifestyle -->
+    <string name="lifestyle_work_office">Work (Office)</string>
+    <string name="lifestyle_work_manual">Work (Manual)</string>
+    <string name="lifestyle_social">Social</string>
+    <string name="lifestyle_sports">Sports</string>
+    <string name="lifestyle_formal_events">Formal Events</string>
+
+    <!-- Plurals -->
+    <plurals name="selected_count">
+        <item quantity="one">%d selected</item>
+        <item quantity="other">%d selected</item>
+    </plurals>
+    <plurals name="delete_items_title">
+        <item quantity="one">Delete %d item?</item>
+        <item quantity="other">Delete %d items?</item>
+    </plurals>
+    <plurals name="delete_outfits_title">
+        <item quantity="one">Delete %d outfit?</item>
+        <item quantity="other">Delete %d outfits?</item>
+    </plurals>
+    <plurals name="saved_combinations">
+        <item quantity="one">%d saved combination</item>
+        <item quantity="other">%d saved combinations</item>
+    </plurals>
 </resources>

@@ -40,7 +40,7 @@ struct CreateOutfitSheet: View {
                 .padding(.bottom, 24)
             }
             .background(WornColors.bgElevated)
-            .navigationTitle(existingOutfit != nil ? "Edit outfit" : "Create outfit")
+            .navigationTitle(existingOutfit != nil ? String(localized: "create_outfit_title_edit") : String(localized: "create_outfit_title"))
             .onAppear {
                 if let outfit = existingOutfit, !didInitFromExisting {
                     didInitFromExisting = true
@@ -50,14 +50,14 @@ struct CreateOutfitSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: onDismiss)
+                    Button(String(localized: "common_cancel"), action: onDismiss)
                 }
             }
         }
     }
 
     private var nameField: some View {
-        TextField("Outfit name", text: $name)
+        TextField(String(localized: "create_outfit_name_hint"), text: $name)
             .font(.system(size: 15))
             .padding(16)
             .background(WornColors.bgCard)
@@ -70,12 +70,12 @@ struct CreateOutfitSheet: View {
 
     private var selectItemsHeader: some View {
         HStack {
-            Text("Select items")
+            Text(String(localized: "create_outfit_select_items"))
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(WornColors.textPrimary)
             Spacer()
             if !selectedItemIds.isEmpty {
-                Text("\(selectedItemIds.count) selected")
+                Text(String(format: String(localized: "selected_count"), selectedItemIds.count))
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(WornColors.accentGreen)
             }
@@ -103,7 +103,7 @@ struct CreateOutfitSheet: View {
         Button {
             onSave(name)
         } label: {
-            Text(isSaving ? "Saving…" : (existingOutfit != nil ? "Save Changes" : "Save outfit"))
+            Text(isSaving ? String(localized: "common_saving") : (existingOutfit != nil ? String(localized: "common_save_changes") : String(localized: "create_outfit_save")))
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)

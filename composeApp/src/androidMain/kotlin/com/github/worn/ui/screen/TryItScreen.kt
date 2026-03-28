@@ -65,6 +65,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -73,6 +74,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.window.core.layout.WindowWidthSizeClass
 import coil3.compose.AsyncImage
+import com.github.worn.R
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.TryItResult
 import com.github.worn.presentation.viewmodel.TryItEffect
@@ -204,7 +206,7 @@ private fun PhotoSourceDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add photo") },
+        title = { Text(stringResource(R.string.add_item_photo_dialog_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 TextButton(onClick = onCamera, modifier = Modifier.fillMaxWidth()) {
@@ -215,7 +217,7 @@ private fun PhotoSourceDialog(
                     ) {
                         Icon(Icons.Outlined.CameraAlt, contentDescription = null, modifier = Modifier.size(24.dp))
                         Spacer(Modifier.width(12.dp))
-                        Text("Take photo", fontSize = 16.sp)
+                        Text(stringResource(R.string.add_item_take_photo), fontSize = 16.sp)
                     }
                 }
                 TextButton(onClick = onGallery, modifier = Modifier.fillMaxWidth()) {
@@ -230,13 +232,13 @@ private fun PhotoSourceDialog(
                             modifier = Modifier.size(24.dp),
                         )
                         Spacer(Modifier.width(12.dp))
-                        Text("Choose from gallery", fontSize = 16.sp)
+                        Text(stringResource(R.string.add_item_choose_gallery), fontSize = 16.sp)
                     }
                 }
             }
         },
         confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }
 
@@ -327,7 +329,7 @@ private fun AiEmptyContent(
         }
         Spacer(Modifier.height(24.dp))
         Text(
-            text = "AI powered analysis",
+            text = stringResource(R.string.tryit_ai_empty_title),
             color = WornColors.TextPrimary,
             fontSize = titleSize,
             fontWeight = FontWeight.Medium,
@@ -335,7 +337,7 @@ private fun AiEmptyContent(
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            text = "Connect your Claude API key in Settings to analyze items against your wardrobe.",
+            text = stringResource(R.string.tryit_ai_empty_description),
             color = WornColors.TextSecondary,
             fontSize = if (isCompact) 15.sp else 16.sp,
             lineHeight = if (isCompact) 22.sp else 24.sp,
@@ -343,7 +345,7 @@ private fun AiEmptyContent(
             modifier = Modifier.widthIn(max = descWidth),
         )
         Spacer(Modifier.height(24.dp))
-        IndigoCtaButton(text = "Connect Claude AI", onClick = onGoToSettings)
+        IndigoCtaButton(text = stringResource(R.string.tryit_connect_cta), onClick = onGoToSettings)
     }
 }
 
@@ -479,7 +481,7 @@ private fun TryItTabletContent(
 @Composable
 private fun TryItTitle(fontSize: androidx.compose.ui.unit.TextUnit) {
     Text(
-        text = "Would it fit your wardrobe?",
+        text = stringResource(R.string.tryit_title),
         color = WornColors.TextPrimary,
         fontSize = fontSize,
         fontWeight = FontWeight.SemiBold,
@@ -522,7 +524,7 @@ private fun UploadZone(
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    text = "Upload a photo of the item\nyou're considering",
+                    text = stringResource(R.string.tryit_upload_hint),
                     color = WornColors.TextSecondary,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
@@ -564,7 +566,7 @@ private fun AnalyzeButton(onClick: () -> Unit) {
                     modifier = Modifier.size(20.dp),
                 )
                 Text(
-                    "Analyze with Claude",
+                    stringResource(R.string.tryit_analyze),
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -623,7 +625,7 @@ private fun PairsSection(
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
-            text = "It would pair with...",
+            text = stringResource(R.string.tryit_pairs_with),
             color = WornColors.TextPrimary,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -692,7 +694,7 @@ private fun CombinationsCard(count: Int, isCompact: Boolean) {
                 .padding(horizontal = 20.dp, vertical = 16.dp),
         ) {
             Text(
-                text = "Combinations unlocked",
+                text = stringResource(R.string.tryit_combinations_unlocked),
                 color = WornColors.TextSecondary,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -717,7 +719,7 @@ private fun GapsFilledSection(gaps: List<String>, isCompact: Boolean) {
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
-            text = "Wardrobe gaps it fills",
+            text = stringResource(R.string.tryit_gaps_filled),
             color = WornColors.TextPrimary,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -754,7 +756,7 @@ private fun DecisionBanner(worthAdding: Boolean, isCompact: Boolean) {
         Brush.verticalGradient(listOf(Color(0xFF8B7D7D), Color(0xFF6B5E5E)))
     }
     val icon = if (worthAdding) Icons.Outlined.CheckCircle else Icons.Outlined.Cancel
-    val text = if (worthAdding) "Worth adding" else "Skip this one"
+    val text = stringResource(if (worthAdding) R.string.tryit_worth_adding else R.string.tryit_skip)
 
     Box(
         contentAlignment = Alignment.Center,

@@ -12,34 +12,34 @@ struct SettingsScreen: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Settings")
+                    Text(String(localized: "settings_title"))
                         .font(.system(size: 28, weight: .semibold))
                         .foregroundColor(WornColors.textPrimary)
                         .padding(.top, 24)
                         .padding(.bottom, 28)
 
-                    sectionLabel("YOUR PROFILE")
+                    sectionLabel(String(localized: "settings_section_profile"))
                     settingsCard(
                         iconColor: WornColors.accentGreen,
                         iconName: "person.fill",
-                        title: "Your Profile",
+                        title: String(localized: "settings_your_profile"),
                         subtitle: profileSummary,
                         action: { showProfileSheet = true }
                     )
                     .padding(.top, 10)
 
-                    sectionLabel("AI FEATURES")
+                    sectionLabel(String(localized: "settings_section_ai"))
                         .padding(.top, 24)
                     settingsCard(
                         iconColor: WornColors.accentIndigo,
                         iconName: "sparkles",
-                        title: "Claude API Key",
-                        subtitle: viewModel.state.hasApiKey ? "Connected" : "Required for AI features",
+                        title: String(localized: "settings_api_key_title"),
+                        subtitle: viewModel.state.hasApiKey ? String(localized: "settings_api_key_connected") : String(localized: "settings_api_key_required"),
                         action: { showApiKeySheet = true }
                     )
                     .padding(.top, 10)
 
-                    sectionLabel("ABOUT")
+                    sectionLabel(String(localized: "settings_section_about"))
                         .padding(.top, 24)
                     aboutCard
                         .padding(.top, 10)
@@ -73,7 +73,7 @@ struct SettingsScreen: View {
             (profile.styleProfile as? StyleProfile)?.displayName,
             (profile.ageRange as? AgeRange)?.displayName,
         ].compactMap { $0 }
-        return parts.isEmpty ? "Tap to set up" : parts.joined(separator: " · ")
+        return parts.isEmpty ? String(localized: "settings_profile_subtitle_empty") : parts.joined(separator: " · ")
     }
 
     // MARK: - Components
@@ -123,7 +123,7 @@ struct SettingsScreen: View {
     private var aboutCard: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Version")
+                Text(String(localized: "settings_version"))
                     .font(.system(size: 15))
                     .foregroundColor(WornColors.textPrimary)
                 Spacer()
@@ -141,7 +141,7 @@ struct SettingsScreen: View {
                 }
             } label: {
                 HStack {
-                    Text("Licenses")
+                    Text(String(localized: "settings_licenses"))
                         .font(.system(size: 15))
                         .foregroundColor(WornColors.textPrimary)
                     Spacer()
@@ -170,35 +170,35 @@ private struct ProfileSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Your Profile")
+                    Text(String(localized: "settings_your_profile"))
                         .font(.system(size: 24, weight: .semibold))
                         .foregroundColor(WornColors.textPrimary)
-                    Text("Help AI give better suggestions")
+                    Text(String(localized: "settings_profile_help"))
                         .font(.system(size: 14))
                         .foregroundColor(WornColors.textSecondary)
 
-                    chipGroup(title: "Body Type", options: bodyTypeOptions,
+                    chipGroup(title: String(localized: "label_body_type"), options: bodyTypeOptions,
                               selected: viewModel.state.userProfile.bodyType as? BodyType) {
                         viewModel.selectBodyType($0)
                     }
-                    chipGroup(title: "Style Profile", options: styleOptions,
+                    chipGroup(title: String(localized: "label_style_profile"), options: styleOptions,
                               selected: viewModel.state.userProfile.styleProfile as? StyleProfile) {
                         viewModel.selectStyleProfile($0)
                     }
-                    chipGroup(title: "Age Range", options: ageOptions,
+                    chipGroup(title: String(localized: "label_age_range"), options: ageOptions,
                               selected: viewModel.state.userProfile.ageRange as? AgeRange) {
                         viewModel.selectAgeRange($0)
                     }
-                    chipGroup(title: "Climate / Region", options: climateOptions,
+                    chipGroup(title: String(localized: "label_climate"), options: climateOptions,
                               selected: viewModel.state.userProfile.climate as? Climate) {
                         viewModel.selectClimate($0)
                     }
-                    multiChipGroup(title: "Lifestyle / Occasions", options: lifestyleOptions,
+                    multiChipGroup(title: String(localized: "label_lifestyle"), options: lifestyleOptions,
                                    selected: Set((viewModel.state.userProfile.lifestyles as? Set<Lifestyle>) ?? [])) {
                         viewModel.toggleLifestyle($0)
                     }
 
-                    saveGradientButton(text: "Save") { dismiss() }
+                    saveGradientButton(text: String(localized: "common_save")) { dismiss() }
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
@@ -208,23 +208,23 @@ private struct ProfileSheet: View {
     }
 
     private var bodyTypeOptions: [(BodyType, String)] {
-        [(.slim, "Slim"), (.athletic, "Athletic"), (.average, "Average"),
-         (.stocky, "Stocky"), (.short_, "Short"), (.tallAndSlim, "Tall & Slim"),
-         (.bigAndTall, "Big & Tall")]
+        [(.slim, String(localized: "body_type_slim")), (.athletic, String(localized: "body_type_athletic")), (.average, String(localized: "body_type_average")),
+         (.stocky, String(localized: "body_type_stocky")), (.short_, String(localized: "body_type_short")), (.tallAndSlim, String(localized: "body_type_tall_slim")),
+         (.bigAndTall, String(localized: "body_type_big_tall"))]
     }
     private var styleOptions: [(StyleProfile, String)] {
-        [(.classic, "Classic"), (.casual, "Casual"), (.streetwear, "Streetwear"),
-         (.smartCasual, "Smart Casual"), (.minimalist, "Minimalist")]
+        [(.classic, String(localized: "style_classic")), (.casual, String(localized: "style_casual")), (.streetwear, String(localized: "style_streetwear")),
+         (.smartCasual, String(localized: "style_smart_casual")), (.minimalist, String(localized: "style_minimalist"))]
     }
     private var ageOptions: [(AgeRange, String)] {
-        [(.age1825, "18-25"), (.age2635, "26-35"), (.age3645, "36-45"), (.age46Plus, "46+")]
+        [(.age1825, String(localized: "age_18_25")), (.age2635, String(localized: "age_26_35")), (.age3645, String(localized: "age_36_45")), (.age46Plus, String(localized: "age_46_plus"))]
     }
     private var climateOptions: [(Climate, String)] {
-        [(.tropical, "Tropical"), (.temperate, "Temperate"), (.cold, "Cold"), (.mixed, "Mixed")]
+        [(.tropical, String(localized: "climate_tropical")), (.temperate, String(localized: "climate_temperate")), (.cold, String(localized: "climate_cold")), (.mixed, String(localized: "climate_mixed"))]
     }
     private var lifestyleOptions: [(Lifestyle, String)] {
-        [(.workOffice, "Work (Office)"), (.workManual, "Work (Manual)"),
-         (.social, "Social"), (.sports, "Sports"), (.formalEvents, "Formal Events")]
+        [(.workOffice, String(localized: "lifestyle_work_office")), (.workManual, String(localized: "lifestyle_work_manual")),
+         (.social, String(localized: "lifestyle_social")), (.sports, String(localized: "lifestyle_sports")), (.formalEvents, String(localized: "lifestyle_formal_events"))]
     }
 }
 
@@ -241,13 +241,13 @@ private struct ApiKeySheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Connect Claude AI")
+            Text(String(localized: "settings_connect_claude"))
                 .font(.system(size: 24, weight: .semibold))
                 .foregroundColor(WornColors.textPrimary)
-            Text("Paste your Anthropic API key to unlock AI-powered features like auto-tagging clothes and outfit analysis.")
+            Text(String(localized: "settings_api_description"))
                 .font(.system(size: 14))
                 .foregroundColor(WornColors.textSecondary)
-            Text("Get a free key at console.anthropic.com →")
+            Text(String(localized: "settings_api_get_key"))
                 .font(.system(size: 13, weight: .medium))
                 .foregroundColor(WornColors.accentGreen)
 
@@ -275,7 +275,7 @@ private struct ApiKeySheet: View {
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
 
-            saveGradientButton(text: "Save & Connect", enabled: !hasApiKey && !keyInput.isEmpty) {
+            saveGradientButton(text: String(localized: "settings_save_connect"), enabled: !hasApiKey && !keyInput.isEmpty) {
                 onSave(keyInput)
                 keyInput = ""
                 dismiss()
@@ -288,7 +288,7 @@ private struct ApiKeySheet: View {
                         onClear()
                         dismiss()
                     } label: {
-                        Text("Remove key")
+                        Text(String(localized: "settings_remove_key"))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(WornColors.textSecondary)
                     }
@@ -338,7 +338,7 @@ private func multiChipGroup<T: Hashable>(
             Text(title)
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(WornColors.textPrimary)
-            Text("(multi-select)")
+            Text(String(localized: "settings_multi_select"))
                 .font(.system(size: 12))
                 .foregroundColor(WornColors.textMuted)
         }
@@ -388,13 +388,13 @@ private func saveGradientButton(text: String, enabled: Bool = true, action: @esc
 private extension BodyType {
     var displayName: String {
         switch self {
-        case .slim: return "Slim"
-        case .athletic: return "Athletic"
-        case .average: return "Average"
-        case .stocky: return "Stocky"
-        case .short_: return "Short"
-        case .tallAndSlim: return "Tall & Slim"
-        case .bigAndTall: return "Big & Tall"
+        case .slim: return String(localized: "body_type_slim")
+        case .athletic: return String(localized: "body_type_athletic")
+        case .average: return String(localized: "body_type_average")
+        case .stocky: return String(localized: "body_type_stocky")
+        case .short_: return String(localized: "body_type_short")
+        case .tallAndSlim: return String(localized: "body_type_tall_slim")
+        case .bigAndTall: return String(localized: "body_type_big_tall")
         default: return ""
         }
     }
@@ -403,11 +403,11 @@ private extension BodyType {
 private extension StyleProfile {
     var displayName: String {
         switch self {
-        case .classic: return "Classic"
-        case .casual: return "Casual"
-        case .streetwear: return "Streetwear"
-        case .smartCasual: return "Smart Casual"
-        case .minimalist: return "Minimalist"
+        case .classic: return String(localized: "style_classic")
+        case .casual: return String(localized: "style_casual")
+        case .streetwear: return String(localized: "style_streetwear")
+        case .smartCasual: return String(localized: "style_smart_casual")
+        case .minimalist: return String(localized: "style_minimalist")
         default: return ""
         }
     }
@@ -416,10 +416,10 @@ private extension StyleProfile {
 private extension AgeRange {
     var displayName: String {
         switch self {
-        case .age1825: return "18-25"
-        case .age2635: return "26-35"
-        case .age3645: return "36-45"
-        case .age46Plus: return "46+"
+        case .age1825: return String(localized: "age_18_25")
+        case .age2635: return String(localized: "age_26_35")
+        case .age3645: return String(localized: "age_36_45")
+        case .age46Plus: return String(localized: "age_46_plus")
         default: return ""
         }
     }

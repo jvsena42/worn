@@ -14,11 +14,11 @@ struct GapsScreen: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("What's missing")
+                    Text(String(localized: "gaps_title"))
                         .font(.system(size: 28, weight: .semibold))
                         .foregroundColor(WornColors.textPrimary)
                         .padding(.top, 24)
-                    Text("Items that would expand your combinations most")
+                    Text(String(localized: "gaps_subtitle"))
                         .font(.system(size: 14))
                         .foregroundColor(WornColors.textSecondary)
                         .padding(.top, 4)
@@ -102,13 +102,13 @@ struct GapsScreen: View {
             }
             .frame(maxWidth: .infinity)
 
-            Text("Your wardrobe looks complete!")
+            Text(String(localized: "gaps_complete_title"))
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(WornColors.textPrimary)
                 .padding(.top, 24)
                 .multilineTextAlignment(.center)
 
-            Text("We couldn't find any gaps.\nYou have great coverage across categories.")
+            Text(String(localized: "gaps_complete_description"))
                 .font(.system(size: 14))
                 .foregroundColor(WornColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -151,12 +151,12 @@ struct GapsScreen: View {
         } label: {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(viewModel.state.isAiMode ? "AI Recommendations" : "Common Suggestions")
+                    Text(viewModel.state.isAiMode ? String(localized: "gaps_banner_ai_title") : String(localized: "gaps_banner_common_title"))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white)
                     Text(viewModel.state.isAiMode
-                         ? "Personalized suggestions based on your wardrobe"
-                         : "Connect Claude AI for personalized picks")
+                         ? String(localized: "gaps_banner_ai_subtitle")
+                         : String(localized: "gaps_banner_common_subtitle"))
                         .font(.system(size: 13))
                         .foregroundColor(.white.opacity(0.8))
                 }
@@ -190,8 +190,8 @@ struct GapsScreen: View {
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(WornColors.textPrimary)
                     Text(viewModel.state.isAiMode
-                         ? "Would pair with \(recommendation.pairingCount) of your items"
-                         : "Common wardrobe essential")
+                         ? String(format: String(localized: "gaps_pairing_ai"), recommendation.pairingCount)
+                         : String(localized: "gaps_pairing_common"))
                         .font(.system(size: 12))
                         .foregroundColor(WornColors.textSecondary)
                 }
@@ -301,8 +301,8 @@ private struct GapDetailSheet: View {
                 .font(.system(size: 14))
                 .foregroundColor(WornColors.accentGreen)
             Text(isAiMode
-                 ? "Would pair with \(recommendation.pairingCount) of your items"
-                 : "Common wardrobe essential")
+                 ? String(format: String(localized: "gaps_pairing_ai"), recommendation.pairingCount)
+                 : String(localized: "gaps_pairing_common"))
                 .font(.system(size: 13))
                 .foregroundColor(WornColors.textSecondary)
         }
@@ -315,22 +315,22 @@ private struct GapDetailSheet: View {
     private var detailRows: some View {
         VStack(spacing: 0) {
             if let sub = recommendation.subcategory {
-                detailRow("Subcategory", sub.name.lowercased().replacingOccurrences(of: "_", with: " ").capitalized)
+                detailRow(String(localized: "label_subcategory"), sub.name.lowercased().replacingOccurrences(of: "_", with: " ").capitalized)
             }
             if !recommendation.colors.isEmpty {
-                detailRow("Color", recommendation.colors.joined(separator: ", "))
+                detailRow(String(localized: "label_color"), recommendation.colors.joined(separator: ", "))
             }
             if !recommendation.seasons.isEmpty {
                 let text = recommendation.seasons.count == 4
-                    ? "All seasons"
+                    ? String(localized: "common_all_seasons")
                     : recommendation.seasons.map { $0.name.lowercased().capitalized }.joined(separator: ", ")
-                detailRow("Season", text)
+                detailRow(String(localized: "label_season"), text)
             }
             if let fit = recommendation.fit {
-                detailRow("Fit", fit.name.lowercased().replacingOccurrences(of: "_", with: " ").capitalized)
+                detailRow(String(localized: "label_fit"), fit.name.lowercased().replacingOccurrences(of: "_", with: " ").capitalized)
             }
             if let material = recommendation.material {
-                detailRow("Material", material.name.lowercased().capitalized)
+                detailRow(String(localized: "label_material"), material.name.lowercased().capitalized)
             }
         }
     }
@@ -351,7 +351,7 @@ private struct GapDetailSheet: View {
     private var detailActions: some View {
         VStack(spacing: 8) {
             Button(action: onAddToWardrobe) {
-                Text("Add to Wardrobe")
+                Text(String(localized: "gaps_add_to_wardrobe"))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
@@ -366,7 +366,7 @@ private struct GapDetailSheet: View {
             }
 
             Button(action: onDismiss) {
-                Text("Dismiss")
+                Text(String(localized: "gaps_dismiss"))
                     .font(.system(size: 15, weight: .medium))
                     .foregroundColor(WornColors.textSecondary)
                     .frame(maxWidth: .infinity)
@@ -401,11 +401,11 @@ private struct GapDetailSheet: View {
 
     private func displayLabel(for category: Category) -> String {
         switch category {
-        case .top: return "Tops"
-        case .bottom: return "Bottoms"
-        case .outerwear: return "Outerwear"
-        case .shoes: return "Shoes"
-        case .accessory: return "Accessories"
+        case .top: return String(localized: "category_tops")
+        case .bottom: return String(localized: "category_bottoms")
+        case .outerwear: return String(localized: "category_outerwear")
+        case .shoes: return String(localized: "category_shoes")
+        case .accessory: return String(localized: "category_accessories")
         default: return ""
         }
     }

@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -46,11 +47,12 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import androidx.compose.ui.res.stringResource
+import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
 import com.github.worn.domain.model.Season
-import com.github.worn.ui.components.displayName
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.WornColors
 import java.io.File
@@ -133,8 +135,8 @@ internal fun OutfitDetailContent(
         OutfitProperties(outfit = outfit, items = outfitItems, isCompact = isCompact, padding = contentPadding)
         Box(modifier = Modifier.padding(horizontal = contentPadding)) {
             DetailActionButtons(
-                editLabel = "Edit Outfit",
-                deleteLabel = "Delete Outfit",
+                editLabel = stringResource(R.string.outfit_detail_edit),
+                deleteLabel = stringResource(R.string.outfit_detail_delete),
                 buttonHeight = if (isCompact) 48.dp else 52.dp,
                 buttonFontSize = if (isCompact) 15.sp else 16.sp,
                 onEdit = { onEdit(outfit) },
@@ -188,8 +190,16 @@ private fun OutfitProperties(outfit: Outfit, items: List<ClothingItem>, isCompac
         modifier = Modifier.padding(horizontal = padding),
         verticalArrangement = Arrangement.spacedBy(propGap),
     ) {
-        OutfitPropertyRow(label = "Items", value = "${outfit.itemIds.size} items", fontSize = propFontSize)
-        OutfitPropertyRow(label = "Season", value = deriveSeasonText(items), fontSize = propFontSize)
+        OutfitPropertyRow(
+            label = stringResource(R.string.label_items),
+            value = stringResource(R.string.outfit_detail_items_count, outfit.itemIds.size),
+            fontSize = propFontSize,
+        )
+        OutfitPropertyRow(
+            label = stringResource(R.string.label_season),
+            value = deriveSeasonText(items),
+            fontSize = propFontSize,
+        )
     }
 }
 
@@ -197,10 +207,16 @@ private fun OutfitProperties(outfit: Outfit, items: List<ClothingItem>, isCompac
 private fun DeleteOutfitDialog(outfitName: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Delete outfit?", fontWeight = FontWeight.SemiBold, fontSize = 22.sp) },
+        title = {
+            Text(
+                stringResource(R.string.outfit_detail_delete_dialog_title),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 22.sp,
+            )
+        },
         text = {
             Text(
-                "This action cannot be undone. \"$outfitName\" will be permanently removed.",
+                stringResource(R.string.outfit_detail_delete_dialog_message, outfitName),
                 color = WornColors.TextSecondary, fontSize = 15.sp, lineHeight = 22.sp,
             )
         },
@@ -209,9 +225,9 @@ private fun DeleteOutfitDialog(outfitName: String, onConfirm: () -> Unit, onDism
                 onClick = onConfirm,
                 colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
                 shape = RoundedCornerShape(24.dp),
-            ) { Text("Delete", fontWeight = FontWeight.SemiBold) }
+            ) { Text(stringResource(R.string.common_delete), fontWeight = FontWeight.SemiBold) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }
 
@@ -281,13 +297,25 @@ private fun OutfitPropertyRow(label: String, value: String, fontSize: TextUnit) 
     }
 }
 
+@Composable
 private fun deriveSeasonText(items: List<ClothingItem>): String {
+    val context = LocalContext.current
     val allSeasons = items.flatMap { it.seasons }.toSet()
     return when {
-        allSeasons.isEmpty() -> "Not specified"
-        allSeasons.size == Season.entries.size -> "All seasons"
-        else -> allSeasons.joinToString("/") { it.displayName() }
+        allSeasons.isEmpty() -> stringResource(R.string.common_not_specified)
+        allSeasons.size == Season.entries.size -> stringResource(R.string.common_all_seasons)
+        else -> allSeasons.joinToString("/") { season ->
+            context.getString(season.stringRes())
+        }
     }
+}
+
+@androidx.annotation.StringRes
+private fun Season.stringRes(): Int = when (this) {
+    Season.SPRING -> R.string.season_spring
+    Season.SUMMER -> R.string.season_summer
+    Season.FALL -> R.string.season_fall
+    Season.WINTER -> R.string.season_winter
 }
 
 private val previewItems = listOf(

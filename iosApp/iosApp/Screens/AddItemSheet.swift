@@ -70,17 +70,17 @@ struct AddItemSheet: View {
                 .padding(.bottom, 24)
             }
             .background(WornColors.bgElevated)
-            .navigationTitle(isEditing ? "Edit item" : "Add new item")
+            .navigationTitle(isEditing ? String(localized: "add_item_title_edit") : String(localized: "add_item_title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", action: onDismiss)
+                    Button(String(localized: "common_cancel"), action: onDismiss)
                 }
             }
-            .confirmationDialog("Add photo", isPresented: $showSourceChooser) {
-                Button("Take Photo") { showCamera = true }
-                Button("Choose from Library") { showPhotoPicker = true }
-                Button("Cancel", role: .cancel) {}
+            .confirmationDialog(String(localized: "add_item_photo_dialog_title"), isPresented: $showSourceChooser) {
+                Button(String(localized: "add_item_take_photo")) { showCamera = true }
+                Button(String(localized: "add_item_choose_gallery")) { showPhotoPicker = true }
+                Button(String(localized: "common_cancel"), role: .cancel) {}
             }
             .photosPicker(isPresented: $showPhotoPicker, selection: $selectedPhotoItem, matching: .images)
             .fullScreenCover(isPresented: $showCamera) {
@@ -134,7 +134,7 @@ struct AddItemSheet: View {
                         Image(systemName: "camera")
                             .font(.system(size: 32))
                             .foregroundColor(WornColors.iconMuted)
-                        Text("Tap to add photo")
+                        Text(String(localized: "add_item_photo_hint"))
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(WornColors.textSecondary)
                     }
@@ -159,7 +159,7 @@ struct AddItemSheet: View {
                 Text("✦")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.white)
-                Text("Auto-tag with AI")
+                Text(String(localized: "add_item_ai_badge"))
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundColor(.white)
             }
@@ -176,7 +176,7 @@ struct AddItemSheet: View {
     }
 
     private var nameField: some View {
-        TextField("Item name", text: $name)
+        TextField(String(localized: "add_item_name_hint"), text: $name)
             .font(.system(size: 15))
             .padding(16)
             .background(WornColors.bgCard)
@@ -199,7 +199,7 @@ struct AddItemSheet: View {
                             .foregroundColor(WornColors.textSecondary)
                             .frame(width: 20, height: 20)
                     }
-                    Text(selectedCategory.map { displayName(for: $0) } ?? "Category")
+                    Text(selectedCategory.map { displayName(for: $0) } ?? String(localized: "label_category"))
                         .font(.system(size: 15))
                         .foregroundColor(selectedCategory != nil ? WornColors.textPrimary : WornColors.iconMuted)
                     Spacer()
@@ -250,7 +250,7 @@ struct AddItemSheet: View {
 
     private var colorSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Color")
+            Text(String(localized: "label_color"))
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(WornColors.textPrimary)
 
@@ -287,7 +287,7 @@ struct AddItemSheet: View {
 
     private var seasonSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Season")
+            Text(String(localized: "label_season"))
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(WornColors.textPrimary)
 
@@ -326,7 +326,7 @@ struct AddItemSheet: View {
             onSave(data, name, cat, Array(selectedColors), Array(selectedSeasons),
                    selectedSubcategory, selectedFit, selectedMaterial)
         } label: {
-            Text(isSaving ? "Saving…" : (isEditing ? "Save Changes" : "Save to wardrobe"))
+            Text(isSaving ? String(localized: "common_saving") : (isEditing ? String(localized: "common_save_changes") : String(localized: "add_item_save_to_wardrobe")))
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
@@ -348,13 +348,13 @@ struct AddItemSheet: View {
 
     private var categoryOptions: [(Category, String)] {
         [
-            (.top, "Tops"), (.bottom, "Bottoms"),
-            (.outerwear, "Outerwear"), (.shoes, "Shoes"), (.accessory, "Accessories"),
+            (.top, String(localized: "category_tops")), (.bottom, String(localized: "category_bottoms")),
+            (.outerwear, String(localized: "category_outerwear")), (.shoes, String(localized: "category_shoes")), (.accessory, String(localized: "category_accessories")),
         ]
     }
 
     private var seasonOptions: [(Season, String)] {
-        [(.spring, "Spring"), (.summer, "Summer"), (.fall, "Fall"), (.winter, "Winter")]
+        [(.spring, String(localized: "season_spring")), (.summer, String(localized: "season_summer")), (.fall, String(localized: "season_fall")), (.winter, String(localized: "season_winter"))]
     }
 
     private func iconName(for category: Category) -> String {
@@ -370,11 +370,11 @@ struct AddItemSheet: View {
 
     private func displayName(for category: Category) -> String {
         switch category {
-        case .top: return "Tops"
-        case .bottom: return "Bottoms"
-        case .outerwear: return "Outerwear"
-        case .shoes: return "Shoes"
-        case .accessory: return "Accessories"
+        case .top: return String(localized: "category_tops")
+        case .bottom: return String(localized: "category_bottoms")
+        case .outerwear: return String(localized: "category_outerwear")
+        case .shoes: return String(localized: "category_shoes")
+        case .accessory: return String(localized: "category_accessories")
         default: return ""
         }
     }
@@ -386,8 +386,13 @@ struct AddItemSheet: View {
     private var subcategoryOptions: [(Subcategory, String)] {
         guard let cat = selectedCategory else { return [] }
         return SubcategoryKt.subcategoriesFor(category: cat).map { sub in
-            (sub, sub.name.lowercased().replacingOccurrences(of: "_", with: " ").capitalized)
+            (sub, localizedSubcategoryName(sub))
         }
+    }
+
+    private func localizedSubcategoryName(_ subcategory: Subcategory) -> String {
+        let key = "subcategory_\(subcategory.name.lowercased())"
+        return String(localized: String.LocalizationValue(key))
     }
 
     private var subcategoryField: some View {
@@ -395,8 +400,8 @@ struct AddItemSheet: View {
             Button { withAnimation { subcategoryExpanded.toggle() } } label: {
                 HStack {
                     Text(selectedSubcategory.map {
-                        $0.name.lowercased().replacingOccurrences(of: "_", with: " ").capitalized
-                    } ?? "Subcategory")
+                        localizedSubcategoryName($0)
+                    } ?? String(localized: "label_subcategory"))
                         .font(.system(size: 15))
                         .foregroundColor(selectedSubcategory != nil ? WornColors.textPrimary : WornColors.iconMuted)
                     Spacer()
@@ -441,13 +446,16 @@ struct AddItemSheet: View {
 
     // MARK: - Fit
 
-    private let fitOptions: [(Fit, String)] = [
-        (.slimFit, "Slim Fit"), (.regular, "Regular"), (.relaxed, "Relaxed"), (.oversized, "Oversized"),
-    ]
+    private var fitOptions: [(Fit, String)] {
+        [
+            (.slimFit, String(localized: "fit_slim")), (.regular, String(localized: "fit_regular")),
+            (.relaxed, String(localized: "fit_relaxed")), (.oversized, String(localized: "fit_oversized")),
+        ]
+    }
 
     private var fitSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Fit")
+            Text(String(localized: "label_fit"))
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(WornColors.textPrimary)
 
@@ -477,14 +485,18 @@ struct AddItemSheet: View {
 
     // MARK: - Material
 
-    private let materialOptions: [(Material, String)] = [
-        (.cotton, "Cotton"), (.linen, "Linen"), (.denim, "Denim"), (.wool, "Wool"),
-        (.synthetic, "Synthetic"), (.leather, "Leather"), (.silk, "Silk"), (.knit, "Knit"),
-    ]
+    private var materialOptions: [(Material, String)] {
+        [
+            (.cotton, String(localized: "material_cotton")), (.linen, String(localized: "material_linen")),
+            (.denim, String(localized: "material_denim")), (.wool, String(localized: "material_wool")),
+            (.synthetic, String(localized: "material_synthetic")), (.leather, String(localized: "material_leather")),
+            (.silk, String(localized: "material_silk")), (.knit, String(localized: "material_knit")),
+        ]
+    }
 
     private var materialSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Material")
+            Text(String(localized: "label_material"))
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(WornColors.textPrimary)
 

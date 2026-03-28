@@ -106,11 +106,11 @@ struct ClothingCard: View {
 
     private func displayLabel(for category: Category) -> String {
         switch category {
-        case .top: return "Tops"
-        case .bottom: return "Bottoms"
-        case .outerwear: return "Outerwear"
-        case .shoes: return "Shoes"
-        case .accessory: return "Accessories"
+        case .top: return String(localized: "category_tops")
+        case .bottom: return String(localized: "category_bottoms")
+        case .outerwear: return String(localized: "category_outerwear")
+        case .shoes: return String(localized: "category_shoes")
+        case .accessory: return String(localized: "category_accessories")
         default: return ""
         }
     }

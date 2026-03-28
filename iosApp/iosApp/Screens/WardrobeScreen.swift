@@ -100,11 +100,11 @@ struct WardrobeContent: View {
             }
         }
         .background(WornColors.bgPage)
-        .alert("Delete \(state.selectedIds.count) item\(state.selectedIds.count != 1 ? "s" : "")?", isPresented: $showDeleteDialog) {
-            Button("Cancel", role: .cancel) {}
-            Button("Delete", role: .destructive) { onDeleteSelected() }
+        .alert(String(format: String(localized: "delete_items_title"), state.selectedIds.count), isPresented: $showDeleteDialog) {
+            Button(String(localized: "common_cancel"), role: .cancel) {}
+            Button(String(localized: "common_delete"), role: .destructive) { onDeleteSelected() }
         } message: {
-            Text("This action cannot be undone. The selected items will be permanently removed from your wardrobe.")
+            Text(String(localized: "wardrobe_delete_dialog_message"))
         }
     }
 
@@ -143,17 +143,17 @@ struct WardrobeContent: View {
     private var normalHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
             if state.totalItemCount == 0 {
-                Text("Your wardrobe")
+                Text(String(localized: "wardrobe_title_empty"))
                     .font(.system(size: 22, weight: .semibold))
                     .tracking(-0.5)
                     .foregroundColor(WornColors.textPrimary)
             } else {
-                Text("Worn")
+                Text(String(localized: "wardrobe_title"))
                     .font(.system(size: 28, weight: .semibold))
                     .tracking(-0.8)
                     .foregroundColor(WornColors.textPrimary)
 
-                Text("Your capsule wardrobe · \(state.totalItemCount) items")
+                Text(String(format: String(localized: "wardrobe_subtitle"), state.totalItemCount))
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(WornColors.textSecondary)
             }
@@ -163,7 +163,7 @@ struct WardrobeContent: View {
     private var selectionHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("\(state.selectedIds.count) selected")
+                Text(String(format: String(localized: "selected_count"), state.selectedIds.count))
                     .font(.system(size: 28, weight: .medium))
                     .tracking(-0.8)
                     .foregroundColor(WornColors.textPrimary)
@@ -174,7 +174,7 @@ struct WardrobeContent: View {
                     HStack(spacing: 6) {
                         Image(systemName: "trash")
                             .font(.system(size: 15))
-                        Text("Delete")
+                        Text(String(localized: "common_delete"))
                             .font(.system(size: 15, weight: .semibold))
                     }
                     .foregroundColor(.white)
@@ -184,7 +184,7 @@ struct WardrobeContent: View {
                     .clipShape(Capsule())
                 }
             }
-            Button("Cancel") { onClearSelection() }
+            Button(String(localized: "common_cancel")) { onClearSelection() }
                 .font(.system(size: 15, weight: .medium))
                 .foregroundColor(WornColors.textSecondary)
         }
@@ -237,7 +237,7 @@ struct WardrobeContent: View {
                 .font(.system(size: 36, weight: .regular))
                 .foregroundColor(WornColors.textSecondary.opacity(0.5))
 
-            Text("No items in this category")
+            Text(String(localized: "wardrobe_category_empty"))
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(WornColors.textSecondary)
 
@@ -264,12 +264,12 @@ struct WardrobeContent: View {
                     .foregroundColor(WornColors.textSecondary)
             }
 
-            Text("No items yet")
+            Text(String(localized: "wardrobe_empty_title"))
                 .font(.system(size: 24, weight: .semibold))
                 .tracking(-0.5)
                 .foregroundColor(WornColors.textPrimary)
 
-            Text("Add your first piece to start\nbuilding your wardrobe")
+            Text(String(localized: "wardrobe_empty_description"))
                 .font(.system(size: 15))
                 .lineSpacing(4)
                 .multilineTextAlignment(.center)
@@ -280,7 +280,7 @@ struct WardrobeContent: View {
                     Image(systemName: "plus")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(WornColors.bgPage)
-                    Text("Add your first item")
+                    Text(String(localized: "wardrobe_empty_cta"))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(WornColors.textOnColor)
                 }
@@ -306,7 +306,7 @@ struct WardrobeContent: View {
             HStack(spacing: 8) {
                 Image(systemName: "plus")
                     .font(.system(size: 15, weight: .semibold))
-                Text("Add item")
+                Text(String(localized: "wardrobe_fab_add"))
                     .font(.system(size: 15, weight: .semibold))
             }
             .foregroundColor(WornColors.textOnColor)

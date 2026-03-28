@@ -53,6 +53,8 @@ import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.Subcategory
+import androidx.compose.ui.res.stringResource
+import com.github.worn.R
 import com.github.worn.ui.components.addItemColorPalette
 import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
@@ -131,8 +133,8 @@ internal fun ItemDetailContent(
         ItemProperties(item = item, fontSize = dims.propFontSize, gap = dims.propGap)
         if (showActions) {
             DetailActionButtons(
-                editLabel = "Edit Item",
-                deleteLabel = "Delete Item",
+                editLabel = stringResource(R.string.item_detail_edit),
+                deleteLabel = stringResource(R.string.item_detail_delete),
                 buttonHeight = dims.buttonHeight,
                 buttonFontSize = dims.buttonFontSize,
                 onEdit = { onEdit(item) },
@@ -238,15 +240,25 @@ private fun ItemProperties(item: ClothingItem, fontSize: TextUnit, gap: Dp) {
         }
         if (item.seasons.isNotEmpty()) {
             val seasonText = if (item.seasons.size == Season.entries.size) {
-                "All seasons"
+                stringResource(R.string.common_all_seasons)
             } else {
-                item.seasons.joinToString(", ") { it.displayName() }
+                item.seasons.map { it.displayName() }.joinToString(", ")
             }
-            PropertyRow(label = "Season", value = seasonText, fontSize = fontSize)
+            PropertyRow(label = stringResource(R.string.label_season), value = seasonText, fontSize = fontSize)
         }
-        item.fit?.let { PropertyRow(label = "Fit", value = it.displayName(), fontSize = fontSize) }
-        item.subcategory?.let { PropertyRow(label = "Subcategory", value = it.displayName(), fontSize = fontSize) }
-        item.material?.let { PropertyRow(label = "Material", value = it.displayName(), fontSize = fontSize) }
+        item.fit?.let {
+            PropertyRow(label = stringResource(R.string.label_fit), value = it.displayName(), fontSize = fontSize)
+        }
+        item.subcategory?.let {
+            PropertyRow(
+                label = stringResource(R.string.label_subcategory),
+                value = it.displayName(),
+                fontSize = fontSize,
+            )
+        }
+        item.material?.let {
+            PropertyRow(label = stringResource(R.string.label_material), value = it.displayName(), fontSize = fontSize)
+        }
     }
 }
 
@@ -257,7 +269,12 @@ private fun ColorPropertyRow(item: ClothingItem, fontSize: TextUnit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text("Color", color = WornColors.TextSecondary, fontSize = fontSize, fontWeight = FontWeight.Medium)
+        Text(
+            stringResource(R.string.label_color),
+            color = WornColors.TextSecondary,
+            fontSize = fontSize,
+            fontWeight = FontWeight.Medium,
+        )
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Surface(
                 shape = CircleShape,
@@ -328,10 +345,16 @@ internal fun DetailActionButtons(
 private fun DeleteItemDialog(itemName: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Delete item?", fontWeight = FontWeight.SemiBold, fontSize = 22.sp) },
+        title = {
+            Text(
+                stringResource(R.string.item_detail_delete_dialog_title),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 22.sp,
+            )
+        },
         text = {
             Text(
-                "This action cannot be undone. \"$itemName\" will be permanently removed from your wardrobe.",
+                stringResource(R.string.item_detail_delete_dialog_message, itemName),
                 color = WornColors.TextSecondary, fontSize = 15.sp, lineHeight = 22.sp,
             )
         },
@@ -340,9 +363,9 @@ private fun DeleteItemDialog(itemName: String, onConfirm: () -> Unit, onDismiss:
                 onClick = onConfirm,
                 colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
                 shape = RoundedCornerShape(24.dp),
-            ) { Text("Delete", fontWeight = FontWeight.SemiBold) }
+            ) { Text(stringResource(R.string.common_delete), fontWeight = FontWeight.SemiBold) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
     )
 }
 

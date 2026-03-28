@@ -108,13 +108,13 @@ struct OutfitsContent: View {
         }
         .background(WornColors.bgPage)
         .alert(
-            "Delete \(state.selectedIds.count) outfit\(state.selectedIds.count != 1 ? "s" : "")?",
+            String(format: String(localized: "delete_outfits_title"), state.selectedIds.count),
             isPresented: $showDeleteDialog
         ) {
-            Button("Cancel", role: .cancel) {}
-            Button("Delete", role: .destructive) { onDeleteSelected() }
+            Button(String(localized: "common_cancel"), role: .cancel) {}
+            Button(String(localized: "common_delete"), role: .destructive) { onDeleteSelected() }
         } message: {
-            Text("This action cannot be undone. The selected outfits will be permanently removed.")
+            Text(String(localized: "outfits_delete_dialog_message"))
         }
     }
 
@@ -150,7 +150,7 @@ struct OutfitsContent: View {
     private var normalHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Your outfits")
+                Text(String(localized: "outfits_title"))
                     .font(.system(size: state.outfits.isEmpty ? 22 : 28, weight: .semibold))
                     .tracking(-0.5)
                     .foregroundColor(WornColors.textPrimary)
@@ -160,7 +160,7 @@ struct OutfitsContent: View {
                         HStack(spacing: 4) {
                             Image(systemName: "plus")
                                 .font(.system(size: 12, weight: .semibold))
-                            Text("Create")
+                            Text(String(localized: "outfits_button_create"))
                                 .font(.system(size: 14, weight: .semibold))
                         }
                         .foregroundColor(.white)
@@ -173,7 +173,7 @@ struct OutfitsContent: View {
             }
 
             if !state.outfits.isEmpty {
-                Text("\(state.outfits.count) saved combination\(state.outfits.count != 1 ? "s" : "")")
+                Text(String(format: String(localized: "saved_combinations"), state.outfits.count))
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(WornColors.textSecondary)
             }
@@ -183,7 +183,7 @@ struct OutfitsContent: View {
     private var selectionHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("\(state.selectedIds.count) selected")
+                Text(String(format: String(localized: "selected_count"), state.selectedIds.count))
                     .font(.system(size: 28, weight: .medium))
                     .tracking(-0.8)
                     .foregroundColor(WornColors.textPrimary)
@@ -194,7 +194,7 @@ struct OutfitsContent: View {
                     HStack(spacing: 6) {
                         Image(systemName: "trash")
                             .font(.system(size: 15))
-                        Text("Delete")
+                        Text(String(localized: "common_delete"))
                             .font(.system(size: 15, weight: .semibold))
                     }
                     .foregroundColor(.white)
@@ -204,7 +204,7 @@ struct OutfitsContent: View {
                     .clipShape(Capsule())
                 }
             }
-            Button("Cancel") { onClearSelection() }
+            Button(String(localized: "common_cancel")) { onClearSelection() }
                 .font(.system(size: 15, weight: .medium))
                 .foregroundColor(WornColors.textSecondary)
         }
@@ -254,12 +254,12 @@ struct OutfitsContent: View {
                     .foregroundColor(WornColors.textSecondary)
             }
 
-            Text("No outfits yet")
+            Text(String(localized: "outfits_empty_title"))
                 .font(.system(size: 24, weight: .semibold))
                 .tracking(-0.5)
                 .foregroundColor(WornColors.textPrimary)
 
-            Text("Create your first look by combining\nitems from your wardrobe")
+            Text(String(localized: "outfits_empty_description"))
                 .font(.system(size: 15))
                 .lineSpacing(4)
                 .multilineTextAlignment(.center)
@@ -270,7 +270,7 @@ struct OutfitsContent: View {
                     Image(systemName: "plus")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(WornColors.bgPage)
-                    Text("Create your first outfit")
+                    Text(String(localized: "outfits_empty_cta"))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(WornColors.textOnColor)
                 }
@@ -368,7 +368,7 @@ private struct OutfitCardView: View {
     }
 
     private var itemCountBadge: some View {
-        Text("\(outfit.itemIds.count) items")
+        Text(String(format: String(localized: "outfit_detail_items_count"), outfit.itemIds.count))
             .font(.system(size: 11, weight: .semibold))
             .foregroundColor(.white)
             .padding(.horizontal, 10)

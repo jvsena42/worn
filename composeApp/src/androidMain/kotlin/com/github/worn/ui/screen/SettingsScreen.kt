@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -58,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.github.worn.R
 import com.github.worn.domain.model.AgeRange
 import com.github.worn.domain.model.BodyType
 import com.github.worn.domain.model.Climate
@@ -141,7 +143,7 @@ private fun SettingsScaffold(
         ) {
             Spacer(Modifier.height(24.dp))
             Text(
-                text = "Settings",
+                text = stringResource(R.string.settings_title),
                 color = WornColors.TextPrimary,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -149,27 +151,29 @@ private fun SettingsScaffold(
             )
 
             Spacer(Modifier.height(28.dp))
-            SectionLabel("YOUR PROFILE")
+            SectionLabel(stringResource(R.string.settings_section_profile))
             Spacer(Modifier.height(10.dp))
             SettingsCard(
                 icon = { SettingsIcon(color = WornColors.AccentGreen, icon = Icons.Outlined.Person) },
-                title = "Your Profile",
+                title = stringResource(R.string.settings_your_profile),
                 subtitle = state.userProfile.summaryText(),
                 onClick = onProfileClick,
             )
 
             Spacer(Modifier.height(24.dp))
-            SectionLabel("AI FEATURES")
+            SectionLabel(stringResource(R.string.settings_section_ai))
             Spacer(Modifier.height(10.dp))
             SettingsCard(
                 icon = { SettingsIcon(color = WornColors.AccentIndigo, icon = Icons.Outlined.AutoAwesome) },
-                title = "Claude API Key",
-                subtitle = if (state.hasApiKey) "Connected" else "Required for AI features",
+                title = stringResource(R.string.settings_api_key_title),
+                subtitle = stringResource(
+                    if (state.hasApiKey) R.string.settings_api_key_connected else R.string.settings_api_key_required,
+                ),
                 onClick = onApiKeyClick,
             )
 
             Spacer(Modifier.height(24.dp))
-            SectionLabel("ABOUT")
+            SectionLabel(stringResource(R.string.settings_section_about))
             Spacer(Modifier.height(10.dp))
             AboutCard()
 
@@ -258,7 +262,12 @@ private fun AboutCard() {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
             ) {
-                Text("Version", color = WornColors.TextPrimary, fontSize = 15.sp, modifier = Modifier.weight(1f))
+                Text(
+                    stringResource(R.string.settings_version),
+                    color = WornColors.TextPrimary,
+                    fontSize = 15.sp,
+                    modifier = Modifier.weight(1f),
+                )
                 Text(versionName ?: "1.0", color = WornColors.TextSecondary, fontSize = 15.sp)
             }
             HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
@@ -270,7 +279,12 @@ private fun AboutCard() {
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                 ) {
-                    Text("Licenses", color = WornColors.TextPrimary, fontSize = 15.sp, modifier = Modifier.weight(1f))
+                    Text(
+                        stringResource(R.string.settings_licenses),
+                        color = WornColors.TextPrimary,
+                        fontSize = 15.sp,
+                        modifier = Modifier.weight(1f),
+                    )
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                         contentDescription = null,
@@ -327,6 +341,12 @@ private fun ProfileSheet(
 
 @Composable
 private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent) -> Unit, onSave: () -> Unit) {
+    val bodyTypeOptions = BodyType.entries.map { it to it.displayName() }
+    val styleProfileOptions = StyleProfile.entries.map { it to it.displayName() }
+    val ageRangeOptions = AgeRange.entries.map { it to it.displayName() }
+    val climateOptions = Climate.entries.map { it to it.displayName() }
+    val lifestyleOptions = Lifestyle.entries.map { it to it.displayName() }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -335,47 +355,47 @@ private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent)
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(
-            text = "Your Profile",
+            text = stringResource(R.string.settings_your_profile),
             color = WornColors.TextPrimary,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
         )
         Text(
-            text = "Help AI give better suggestions",
+            text = stringResource(R.string.settings_profile_help),
             color = WornColors.TextSecondary,
             fontSize = 14.sp,
         )
         ChipGroup(
-            title = "Body Type",
-            options = BodyType.entries.map { it to it.displayName() },
+            title = stringResource(R.string.label_body_type),
+            options = bodyTypeOptions,
             selected = state.userProfile.bodyType,
             onSelected = { onIntent(SettingsIntent.SelectBodyType(it)) },
         )
         ChipGroup(
-            title = "Style Profile",
-            options = StyleProfile.entries.map { it to it.displayName() },
+            title = stringResource(R.string.label_style_profile),
+            options = styleProfileOptions,
             selected = state.userProfile.styleProfile,
             onSelected = { onIntent(SettingsIntent.SelectStyleProfile(it)) },
         )
         ChipGroup(
-            title = "Age Range",
-            options = AgeRange.entries.map { it to it.displayName() },
+            title = stringResource(R.string.label_age_range),
+            options = ageRangeOptions,
             selected = state.userProfile.ageRange,
             onSelected = { onIntent(SettingsIntent.SelectAgeRange(it)) },
         )
         ChipGroup(
-            title = "Climate / Region",
-            options = Climate.entries.map { it to it.displayName() },
+            title = stringResource(R.string.label_climate),
+            options = climateOptions,
             selected = state.userProfile.climate,
             onSelected = { onIntent(SettingsIntent.SelectClimate(it)) },
         )
         MultiChipGroup(
-            title = "Lifestyle / Occasions",
-            options = Lifestyle.entries.map { it to it.displayName() },
+            title = stringResource(R.string.label_lifestyle),
+            options = lifestyleOptions,
             selected = state.userProfile.lifestyles,
             onToggle = { onIntent(SettingsIntent.ToggleLifestyle(it)) },
         )
-        SaveGradientButton(text = "Save", onClick = onSave)
+        SaveGradientButton(text = stringResource(R.string.common_save), onClick = onSave)
     }
 }
 
@@ -427,7 +447,7 @@ private fun ApiKeySheetContent(
             onToggleVisibility = { passwordVisible = !passwordVisible },
         )
         SaveGradientButton(
-            text = "Save & Connect",
+            text = stringResource(R.string.settings_save_connect),
             enabled = !hasApiKey && keyInput.isNotBlank(),
             onClick = {
                 onSave(keyInput)
@@ -438,7 +458,7 @@ private fun ApiKeySheetContent(
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                 Surface(onClick = onClear, color = Color.Transparent) {
                     Text(
-                        text = "Remove key",
+                        text = stringResource(R.string.settings_remove_key),
                         color = WornColors.TextSecondary,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
@@ -453,19 +473,18 @@ private fun ApiKeySheetContent(
 @Composable
 private fun ApiKeySheetHeader() {
     Text(
-        text = "Connect Claude AI",
+        text = stringResource(R.string.settings_connect_claude),
         color = WornColors.TextPrimary,
         fontSize = 24.sp,
         fontWeight = FontWeight.SemiBold,
     )
     Text(
-        text = "Paste your Anthropic API key to unlock AI-powered " +
-            "features like auto-tagging clothes and outfit analysis.",
+        text = stringResource(R.string.settings_api_description),
         color = WornColors.TextSecondary,
         fontSize = 14.sp,
     )
     Text(
-        text = "Get a free key at console.anthropic.com →",
+        text = stringResource(R.string.settings_api_get_key),
         color = WornColors.AccentGreen,
         fontSize = 13.sp,
         fontWeight = FontWeight.Medium,
@@ -498,7 +517,9 @@ private fun ApiKeyTextField(
                     } else {
                         Icons.Outlined.VisibilityOff
                     },
-                    contentDescription = if (passwordVisible) "Hide" else "Show",
+                    contentDescription = stringResource(
+                        if (passwordVisible) R.string.settings_api_hide else R.string.settings_api_show,
+                    ),
                     tint = WornColors.IconMuted,
                 )
             }
@@ -591,7 +612,7 @@ private fun <T> MultiChipGroup(
         Row {
             Text(title, color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.width(6.dp))
-            Text("(multi-select)", color = WornColors.TextMuted, fontSize = 12.sp)
+            Text(stringResource(R.string.settings_multi_select), color = WornColors.TextMuted, fontSize = 12.sp)
         }
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -622,53 +643,59 @@ private fun <T> MultiChipGroup(
 
 // region Display names
 
+@Composable
 private fun UserProfile.summaryText(): String {
     val parts = listOfNotNull(
         bodyType?.displayName(),
         styleProfile?.displayName(),
         ageRange?.displayName(),
     )
-    return if (parts.isEmpty()) "Tap to set up" else parts.joinToString(" · ")
+    return if (parts.isEmpty()) stringResource(R.string.settings_profile_subtitle_empty) else parts.joinToString(" · ")
 }
 
+@Composable
 private fun BodyType.displayName(): String = when (this) {
-    BodyType.SLIM -> "Slim"
-    BodyType.ATHLETIC -> "Athletic"
-    BodyType.AVERAGE -> "Average"
-    BodyType.STOCKY -> "Stocky"
-    BodyType.SHORT -> "Short"
-    BodyType.TALL_AND_SLIM -> "Tall & Slim"
-    BodyType.BIG_AND_TALL -> "Big & Tall"
+    BodyType.SLIM -> stringResource(R.string.body_type_slim)
+    BodyType.ATHLETIC -> stringResource(R.string.body_type_athletic)
+    BodyType.AVERAGE -> stringResource(R.string.body_type_average)
+    BodyType.STOCKY -> stringResource(R.string.body_type_stocky)
+    BodyType.SHORT -> stringResource(R.string.body_type_short)
+    BodyType.TALL_AND_SLIM -> stringResource(R.string.body_type_tall_and_slim)
+    BodyType.BIG_AND_TALL -> stringResource(R.string.body_type_big_and_tall)
 }
 
+@Composable
 private fun StyleProfile.displayName(): String = when (this) {
-    StyleProfile.CLASSIC -> "Classic"
-    StyleProfile.CASUAL -> "Casual"
-    StyleProfile.STREETWEAR -> "Streetwear"
-    StyleProfile.SMART_CASUAL -> "Smart Casual"
-    StyleProfile.MINIMALIST -> "Minimalist"
+    StyleProfile.CLASSIC -> stringResource(R.string.style_classic)
+    StyleProfile.CASUAL -> stringResource(R.string.style_casual)
+    StyleProfile.STREETWEAR -> stringResource(R.string.style_streetwear)
+    StyleProfile.SMART_CASUAL -> stringResource(R.string.style_smart_casual)
+    StyleProfile.MINIMALIST -> stringResource(R.string.style_minimalist)
 }
 
+@Composable
 private fun AgeRange.displayName(): String = when (this) {
-    AgeRange.AGE_18_25 -> "18-25"
-    AgeRange.AGE_26_35 -> "26-35"
-    AgeRange.AGE_36_45 -> "36-45"
-    AgeRange.AGE_46_PLUS -> "46+"
+    AgeRange.AGE_18_25 -> stringResource(R.string.age_18_25)
+    AgeRange.AGE_26_35 -> stringResource(R.string.age_26_35)
+    AgeRange.AGE_36_45 -> stringResource(R.string.age_36_45)
+    AgeRange.AGE_46_PLUS -> stringResource(R.string.age_46_plus)
 }
 
+@Composable
 private fun Climate.displayName(): String = when (this) {
-    Climate.TROPICAL -> "Tropical"
-    Climate.TEMPERATE -> "Temperate"
-    Climate.COLD -> "Cold"
-    Climate.MIXED -> "Mixed"
+    Climate.TROPICAL -> stringResource(R.string.climate_tropical)
+    Climate.TEMPERATE -> stringResource(R.string.climate_temperate)
+    Climate.COLD -> stringResource(R.string.climate_cold)
+    Climate.MIXED -> stringResource(R.string.climate_mixed)
 }
 
+@Composable
 private fun Lifestyle.displayName(): String = when (this) {
-    Lifestyle.WORK_OFFICE -> "Work (Office)"
-    Lifestyle.WORK_MANUAL -> "Work (Manual)"
-    Lifestyle.SOCIAL -> "Social"
-    Lifestyle.SPORTS -> "Sports"
-    Lifestyle.FORMAL_EVENTS -> "Formal Events"
+    Lifestyle.WORK_OFFICE -> stringResource(R.string.lifestyle_work_office)
+    Lifestyle.WORK_MANUAL -> stringResource(R.string.lifestyle_work_manual)
+    Lifestyle.SOCIAL -> stringResource(R.string.lifestyle_social)
+    Lifestyle.SPORTS -> stringResource(R.string.lifestyle_sports)
+    Lifestyle.FORMAL_EVENTS -> stringResource(R.string.lifestyle_formal_events)
 }
 
 // endregion

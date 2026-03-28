@@ -1,5 +1,7 @@
 package com.github.worn.ui.components
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material.icons.outlined.Layers
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,15 +35,15 @@ import com.github.worn.R
 import com.github.worn.ui.theme.WornColors
 
 enum class Tab(
-    val label: String,
+    @StringRes val labelRes: Int,
     val icon: ImageVector? = null,
     @DrawableRes val iconRes: Int? = null,
 ) {
-    WARDROBE("WARDROBE", iconRes = R.drawable.ic_shirt),
-    OUTFITS("OUTFITS", icon = Icons.Outlined.Layers),
-    GAPS("GAPS", icon = Icons.Outlined.Extension),
-    TRY_IT("TRY IT", icon = Icons.Outlined.QrCodeScanner),
-    SETTINGS("SETTINGS", icon = Icons.Outlined.Settings),
+    WARDROBE(R.string.tab_wardrobe, iconRes = R.drawable.ic_shirt),
+    OUTFITS(R.string.tab_outfits, icon = Icons.Outlined.Layers),
+    GAPS(R.string.tab_gaps, icon = Icons.Outlined.Extension),
+    TRY_IT(R.string.tab_try_it, icon = Icons.Outlined.QrCodeScanner),
+    SETTINGS(R.string.tab_settings, icon = Icons.Outlined.Settings),
 }
 
 @Composable
@@ -109,23 +111,24 @@ private fun TabItem(
             modifier = Modifier.fillMaxHeight(),
         ) {
             val tint = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary
+            val label = stringResource(tab.labelRes)
             if (tab.iconRes != null) {
                 Icon(
                     painter = painterResource(id = tab.iconRes),
-                    contentDescription = tab.label,
+                    contentDescription = label,
                     tint = tint,
                     modifier = Modifier.size(18.dp),
                 )
             } else if (tab.icon != null) {
                 Icon(
                     imageVector = tab.icon,
-                    contentDescription = tab.label,
+                    contentDescription = label,
                     tint = tint,
                     modifier = Modifier.size(18.dp),
                 )
             }
             Text(
-                text = tab.label,
+                text = label,
                 color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.SemiBold,

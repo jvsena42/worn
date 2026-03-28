@@ -12,8 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.ui.theme.WornColors
 
@@ -25,7 +27,7 @@ fun CategoryFilterChips(
     onCategorySelected: (Category?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val allChips = listOf<Pair<Category?, String>>(null to "All") +
+    val allChips = listOf<Pair<Category?, String>>(null to stringResource(R.string.filter_all)) +
         Category.entries.map { it to it.displayName() }
 
     LazyRow(
@@ -66,10 +68,11 @@ private fun CategoryChip(
     }
 }
 
+@Composable
 private fun Category.displayName(): String = when (this) {
-    Category.TOP -> "Tops"
-    Category.BOTTOM -> "Bottoms"
-    Category.OUTERWEAR -> "Outerwear"
-    Category.SHOES -> "Shoes"
-    Category.ACCESSORY -> "Accessories"
+    Category.TOP -> stringResource(R.string.category_tops)
+    Category.BOTTOM -> stringResource(R.string.category_bottoms)
+    Category.OUTERWEAR -> stringResource(R.string.category_outerwear)
+    Category.SHOES -> stringResource(R.string.category_shoes)
+    Category.ACCESSORY -> stringResource(R.string.category_accessories)
 }

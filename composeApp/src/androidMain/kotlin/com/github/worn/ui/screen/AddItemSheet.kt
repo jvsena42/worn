@@ -40,10 +40,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Fit
@@ -278,7 +280,7 @@ private fun AddItemFormContent(
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(
-            text = if (isEditing) "Edit item" else "Add new item",
+            text = stringResource(if (isEditing) R.string.add_item_title_edit else R.string.add_item_title),
             color = WornColors.TextPrimary,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
@@ -303,7 +305,7 @@ private fun AddItemFormContent(
             enabled = canSave && !isSaving,
             isSaving = isSaving,
             onClick = onSave,
-            label = if (isEditing) "Save Changes" else null,
+            label = if (isEditing) stringResource(R.string.common_save_changes) else null,
         )
     }
 }
@@ -316,7 +318,7 @@ private fun PhotoSourceDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add photo") },
+        title = { Text(stringResource(R.string.add_item_photo_dialog_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 TextButton(onClick = onCamera, modifier = Modifier.fillMaxWidth()) {
@@ -327,7 +329,7 @@ private fun PhotoSourceDialog(
                     ) {
                         Icon(Icons.Outlined.CameraAlt, contentDescription = null, modifier = Modifier.size(24.dp))
                         Spacer(Modifier.width(12.dp))
-                        Text("Take photo", fontSize = 16.sp)
+                        Text(stringResource(R.string.add_item_take_photo), fontSize = 16.sp)
                     }
                 }
                 TextButton(onClick = onGallery, modifier = Modifier.fillMaxWidth()) {
@@ -338,14 +340,14 @@ private fun PhotoSourceDialog(
                     ) {
                         Icon(Icons.Outlined.PhotoLibrary, contentDescription = null, modifier = Modifier.size(24.dp))
                         Spacer(Modifier.width(12.dp))
-                        Text("Choose from gallery", fontSize = 16.sp)
+                        Text(stringResource(R.string.add_item_choose_gallery), fontSize = 16.sp)
                     }
                 }
             }
         },
         confirmButton = {},
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }

@@ -5,14 +5,16 @@ struct CategoryFilterChips: View {
     let activeCategory: Category?
     let onCategorySelected: (Category?) -> Void
 
-    private let allChips: [(category: Category?, label: String)] = [
-        (nil, "All"),
-        (.top, "Tops"),
-        (.bottom, "Bottoms"),
-        (.outerwear, "Outerwear"),
-        (.shoes, "Shoes"),
-        (.accessory, "Accessories"),
-    ]
+    private var allChips: [(category: Category?, label: String)] {
+        [
+            (nil, String(localized: "filter_all")),
+            (.top, String(localized: "category_tops")),
+            (.bottom, String(localized: "category_bottoms")),
+            (.outerwear, String(localized: "category_outerwear")),
+            (.shoes, String(localized: "category_shoes")),
+            (.accessory, String(localized: "category_accessories")),
+        ]
+    }
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
