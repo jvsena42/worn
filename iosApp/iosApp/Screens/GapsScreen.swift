@@ -39,8 +39,6 @@ struct GapsScreen: View {
                 .padding(.horizontal, 24)
             }
             .background(WornColors.bgPage)
-
-            WornBottomBar(activeTab: .gaps, onTabSelected: onTabSelected)
         }
         .sheet(item: $selectedGap) { gap in
             GapDetailSheet(

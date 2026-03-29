@@ -63,7 +63,6 @@ import com.github.worn.presentation.viewmodel.GapsState
 import com.github.worn.presentation.viewmodel.GapsViewModel
 import com.github.worn.ui.components.AiLockedSheet
 import com.github.worn.ui.components.Tab
-import com.github.worn.ui.components.WornBottomBar
 import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
 import com.github.worn.ui.components.iconRes
@@ -89,7 +88,6 @@ fun GapsScreen(onTabSelected: (Tab) -> Unit) {
         onRetry = { viewModel.onIntent(GapsIntent.LoadGaps) },
         onCardClick = { selectedGap = it },
         onBannerClick = { if (!state.isAiMode) showAiLockedSheet = true },
-        onTabSelected = onTabSelected,
     )
 
     if (selectedGap != null) {
@@ -134,19 +132,11 @@ private fun GapsScaffold(
     onRetry: () -> Unit = {},
     onCardClick: (GapRecommendation) -> Unit = {},
     onBannerClick: () -> Unit = {},
-    onTabSelected: (Tab) -> Unit = {},
 ) {
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
     Scaffold(
         containerColor = WornColors.BgPage,
-        bottomBar = {
-            WornBottomBar(
-                activeTab = Tab.GAPS,
-                onTabSelected = onTabSelected,
-                isCompact = isCompact,
-            )
-        },
     ) { paddingValues ->
         Column(
             modifier = Modifier

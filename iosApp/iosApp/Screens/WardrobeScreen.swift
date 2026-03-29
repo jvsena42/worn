@@ -88,9 +88,6 @@ struct WardrobeContent: View {
         ZStack(alignment: .bottomTrailing) {
             VStack(spacing: 0) {
                 scrollContent
-                WornBottomBar(
-                    activeTab: .wardrobe, onTabSelected: onTabSelected, isCompact: isCompact
-                )
             }
 
             if !isSelectionMode {

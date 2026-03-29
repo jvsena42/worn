@@ -70,11 +70,11 @@ import com.github.worn.presentation.viewmodel.SettingsIntent
 import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
 import com.github.worn.ui.components.Tab
-import com.github.worn.ui.components.WornBottomBar
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 
+@Suppress("UnusedParameter")
 @Composable
 fun SettingsScreen(onTabSelected: (Tab) -> Unit) {
     val viewModel: SettingsViewModel = koinViewModel()
@@ -90,7 +90,6 @@ fun SettingsScreen(onTabSelected: (Tab) -> Unit) {
         isCompact = isCompact,
         onProfileClick = { showProfileSheet = true },
         onApiKeyClick = { showApiKeySheet = true },
-        onTabSelected = onTabSelected,
     )
 
     if (showProfileSheet) {
@@ -124,15 +123,11 @@ private fun SettingsScaffold(
     isCompact: Boolean = true,
     onProfileClick: () -> Unit = {},
     onApiKeyClick: () -> Unit = {},
-    onTabSelected: (Tab) -> Unit = {},
 ) {
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
     Scaffold(
         containerColor = WornColors.BgPage,
-        bottomBar = {
-            WornBottomBar(activeTab = Tab.SETTINGS, onTabSelected = onTabSelected, isCompact = isCompact)
-        },
     ) { paddingValues ->
         Column(
             modifier = Modifier

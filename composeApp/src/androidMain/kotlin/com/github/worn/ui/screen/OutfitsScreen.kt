@@ -59,11 +59,11 @@ import com.github.worn.presentation.viewmodel.OutfitState
 import com.github.worn.presentation.viewmodel.OutfitViewModel
 import com.github.worn.ui.components.OutfitCard
 import com.github.worn.ui.components.Tab
-import com.github.worn.ui.components.WornBottomBar
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 
+@Suppress("UnusedParameter")
 @Composable
 fun OutfitsScreen(
     onTabSelected: (Tab) -> Unit = {},
@@ -104,7 +104,6 @@ fun OutfitsScreen(
         onClearSelection = { viewModel.onIntent(OutfitIntent.ClearSelection) },
         onDeleteSelected = { viewModel.onIntent(OutfitIntent.DeleteSelected) },
         onOutfitClick = { detailOutfit = it },
-        onTabSelected = onTabSelected,
     )
 
     if (showCreateSheet) {
@@ -171,7 +170,6 @@ private fun OutfitsScaffold(
     onClearSelection: () -> Unit = {},
     onDeleteSelected: () -> Unit = {},
     onOutfitClick: (Outfit) -> Unit = {},
-    onTabSelected: (Tab) -> Unit = {},
 ) {
     val isSelectionMode = state.selectedIds.isNotEmpty()
     val contentPadding = if (isCompact) 24.dp else 32.dp
@@ -180,9 +178,6 @@ private fun OutfitsScaffold(
 
     Scaffold(
         containerColor = WornColors.BgPage,
-        bottomBar = {
-            WornBottomBar(activeTab = Tab.OUTFITS, onTabSelected = onTabSelected, isCompact = isCompact)
-        },
     ) { paddingValues ->
         val isEmpty = !state.isLoading && state.outfits.isEmpty()
 

@@ -49,8 +49,6 @@ struct SettingsScreen: View {
                 .padding(.horizontal, 24)
             }
             .background(WornColors.bgPage)
-
-            WornBottomBar(activeTab: .settings, onTabSelected: onTabSelected)
         }
         .sheet(isPresented: $showProfileSheet) {
             ProfileSheet(viewModel: viewModel)

@@ -1,29 +1,67 @@
 package com.github.worn
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.github.worn.ui.components.Tab
+import com.github.worn.ui.components.WornBottomBar
 import com.github.worn.ui.screen.GapsScreen
 import com.github.worn.ui.screen.OutfitsScreen
 import com.github.worn.ui.screen.SettingsScreen
 import com.github.worn.ui.screen.TryItScreen
 import com.github.worn.ui.screen.WardrobeScreen
+import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
+import kotlinx.coroutines.launch
 
+private val tabs = Tab.entries.toList()
+
+@Suppress("FunctionNaming")
 @Composable
 fun App() {
     WornTheme {
-        var activeTab by rememberSaveable { mutableStateOf(Tab.WARDROBE) }
+        val pagerState = rememberPagerState(pageCount = { tabs.size })
+        val scope = rememberCoroutineScope()
+        val windowInfo = currentWindowAdaptiveInfo()
+        val isCompact = windowInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
-        when (activeTab) {
-            Tab.WARDROBE -> WardrobeScreen(onTabSelected = { activeTab = it })
-            Tab.OUTFITS -> OutfitsScreen(onTabSelected = { activeTab = it })
-            Tab.GAPS -> GapsScreen(onTabSelected = { activeTab = it })
-            Tab.TRY_IT -> TryItScreen(onTabSelected = { activeTab = it })
-            Tab.SETTINGS -> SettingsScreen(onTabSelected = { activeTab = it })
+        val onTabSelected: (Tab) -> Unit = { tab ->
+            val index = tabs.indexOf(tab)
+            if (index >= 0) {
+                scope.launch { pagerState.animateScrollToPage(index) }
+            }
+        }
+
+        Box(modifier = Modifier.fillMaxSize().background(WornColors.BgPage)) {
+            HorizontalPager(
+                state = pagerState,
+                beyondViewportPageCount = 1,
+                modifier = Modifier.fillMaxSize(),
+            ) { page ->
+                when (tabs[page]) {
+                    Tab.WARDROBE -> WardrobeScreen(onTabSelected = onTabSelected)
+                    Tab.OUTFITS -> OutfitsScreen(onTabSelected = onTabSelected)
+                    Tab.GAPS -> GapsScreen(onTabSelected = onTabSelected)
+                    Tab.TRY_IT -> TryItScreen(onTabSelected = onTabSelected)
+                    Tab.SETTINGS -> SettingsScreen(onTabSelected = onTabSelected)
+                }
+            }
+
+            WornBottomBar(
+                activeTab = tabs[pagerState.currentPage],
+                onTabSelected = onTabSelected,
+                isCompact = isCompact,
+                modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
+            )
         }
     }
 }

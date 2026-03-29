@@ -83,7 +83,6 @@ import com.github.worn.presentation.viewmodel.TryItIntent
 import com.github.worn.presentation.viewmodel.TryItState
 import com.github.worn.presentation.viewmodel.TryItViewModel
 import com.github.worn.ui.components.Tab
-import com.github.worn.ui.components.WornBottomBar
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
@@ -132,7 +131,6 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
         onAnalyze = { photoBytes?.let { viewModel.onIntent(TryItIntent.AnalyzePhoto(it)) } },
         onItemClick = { selectedItem = it },
         onGoToSettings = { onTabSelected(Tab.SETTINGS) },
-        onTabSelected = onTabSelected,
     )
 
     if (selectedItem != null) {
@@ -254,20 +252,12 @@ private fun TryItScaffold(
     onAnalyze: () -> Unit = {},
     onItemClick: (ClothingItem) -> Unit = {},
     onGoToSettings: () -> Unit = {},
-    onTabSelected: (Tab) -> Unit = {},
 ) {
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
     Scaffold(
         containerColor = WornColors.BgPage,
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = {
-            WornBottomBar(
-                activeTab = Tab.TRY_IT,
-                onTabSelected = onTabSelected,
-                isCompact = isCompact,
-            )
-        },
     ) { paddingValues ->
         if (!state.hasApiKey) {
             AiEmptyContent(

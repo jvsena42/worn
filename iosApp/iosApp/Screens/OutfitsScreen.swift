@@ -102,9 +102,6 @@ struct OutfitsContent: View {
     var body: some View {
         VStack(spacing: 0) {
             scrollContent
-            WornBottomBar(
-                activeTab: .outfits, onTabSelected: onTabSelected, isCompact: isCompact
-            )
         }
         .background(WornColors.bgPage)
         .alert(
