@@ -10,6 +10,7 @@
     <string name="common_save_changes">Save Changes</string>
     <string name="common_all_seasons">All seasons</string>
     <string name="common_not_specified">Not specified</string>
+    <string name="common_retry">Retry</string>
 
     <!-- Tabs -->
     <string name="tab_wardrobe">WARDROBE</string>

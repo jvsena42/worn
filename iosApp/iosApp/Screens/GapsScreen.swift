@@ -26,6 +26,8 @@ struct GapsScreen: View {
 
                     if viewModel.state.isLoading {
                         loadingContent
+                    } else if let error = viewModel.state.error {
+                        errorContent(message: error as String)
                     } else if viewModel.state.recommendations.isEmpty {
                         completeContent
                     } else {
@@ -84,6 +86,43 @@ struct GapsScreen: View {
             ProgressView()
                 .padding(.vertical, 80)
             Spacer()
+        }
+    }
+
+    // MARK: - Error
+
+    private func errorContent(message: String) -> some View {
+        VStack(spacing: 0) {
+            Spacer().frame(height: 60)
+            ZStack {
+                Circle()
+                    .fill(WornColors.deleteRed.opacity(0.1))
+                    .frame(width: 72, height: 72)
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.system(size: 32))
+                    .foregroundColor(WornColors.deleteRed)
+            }
+            .frame(maxWidth: .infinity)
+
+            Text(message)
+                .font(.system(size: 14))
+                .foregroundColor(WornColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .padding(.top, 24)
+
+            Button { viewModel.loadGaps() } label: {
+                Text(String(localized: "common_retry"))
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundColor(WornColors.accentGreen)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(WornColors.bgCard)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 20)
+
+            Spacer().frame(height: 60)
         }
     }
 

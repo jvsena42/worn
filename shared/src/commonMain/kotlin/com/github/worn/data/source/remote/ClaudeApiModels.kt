@@ -73,3 +73,15 @@ internal data class TryItResultJson(
     @SerialName("gaps_filled") val gapsFilled: List<String>,
     @SerialName("worth_adding") val worthAdding: Boolean,
 )
+
+@Serializable
+internal data class ClaudeErrorResponse(
+    val type: String,
+    val error: ClaudeErrorDetail,
+)
+
+@Serializable
+internal data class ClaudeErrorDetail(
+    val type: String,
+    val message: String,
+)

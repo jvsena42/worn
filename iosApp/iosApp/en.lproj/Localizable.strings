@@ -7,6 +7,7 @@
 "common_save_changes" = "Save Changes";
 "common_all_seasons" = "All seasons";
 "common_not_specified" = "Not specified";
+"common_retry" = "Retry";
 
 /* Tabs */
 "tab_wardrobe" = "WARDROBE";

@@ -18,6 +18,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
@@ -147,14 +148,32 @@ class ClaudeApiClient(
             ),
         )
 
-        val response = httpClient.post(API_URL) {
-            contentType(ContentType.Application.Json)
-            header("x-api-key", apiKey)
-            header("anthropic-version", API_VERSION)
-            setBody(json.encodeToString(ClaudeRequest.serializer(), request))
+        val response = try {
+            httpClient.post(API_URL) {
+                contentType(ContentType.Application.Json)
+                header("x-api-key", apiKey)
+                header("anthropic-version", API_VERSION)
+                setBody(json.encodeToString(ClaudeRequest.serializer(), request))
+            }
+        } catch (e: IllegalStateException) {
+            throw e
+        } catch (@Suppress("TooGenericExceptionCaught") _: Exception) {
+            error("Network error. Check your connection.")
         }
 
-        val claudeResponse = json.decodeFromString<ClaudeResponse>(response.bodyAsText())
+        val responseBody = response.bodyAsText()
+
+        if (!response.status.isSuccess()) {
+            val userMessage = when (response.status.value) {
+                HTTP_UNAUTHORIZED -> "Invalid API key. Check your key in Settings."
+                HTTP_TOO_MANY_REQUESTS -> "Too many requests. Please wait and try again."
+                in HTTP_SERVER_ERROR_RANGE -> "Claude service error. Please try again later."
+                else -> "Unexpected error (${response.status.value}). Please try again."
+            }
+            error(userMessage)
+        }
+
+        val claudeResponse = json.decodeFromString<ClaudeResponse>(responseBody)
         return claudeResponse.content
             .firstOrNull { it.type == "text" }
             ?.text
@@ -166,6 +185,9 @@ class ClaudeApiClient(
         private const val API_VERSION = "2023-06-01"
         private const val MODEL = "claude-sonnet-4-20250514"
         private const val MAX_TOKENS = 1024
+        private const val HTTP_UNAUTHORIZED = 401
+        private const val HTTP_TOO_MANY_REQUESTS = 429
+        private val HTTP_SERVER_ERROR_RANGE = 500..599
 
         private val ANALYZE_SYSTEM_PROMPT = """
             You are a men's fashion analysis AI specialized in capsule wardrobe building.

@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Brush
@@ -47,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,6 +58,7 @@ import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.GapRecommendation
 import com.github.worn.domain.model.Season
+import com.github.worn.presentation.viewmodel.GapsIntent
 import com.github.worn.presentation.viewmodel.GapsState
 import com.github.worn.presentation.viewmodel.GapsViewModel
 import com.github.worn.ui.components.AiLockedSheet
@@ -83,6 +86,7 @@ fun GapsScreen(onTabSelected: (Tab) -> Unit) {
     GapsScaffold(
         state = state,
         isCompact = isCompact,
+        onRetry = { viewModel.onIntent(GapsIntent.LoadGaps) },
         onCardClick = { selectedGap = it },
         onBannerClick = { if (!state.isAiMode) showAiLockedSheet = true },
         onTabSelected = onTabSelected,
@@ -127,6 +131,7 @@ fun GapsScreen(onTabSelected: (Tab) -> Unit) {
 private fun GapsScaffold(
     state: GapsState,
     isCompact: Boolean = true,
+    onRetry: () -> Unit = {},
     onCardClick: (GapRecommendation) -> Unit = {},
     onBannerClick: () -> Unit = {},
     onTabSelected: (Tab) -> Unit = {},
@@ -167,6 +172,10 @@ private fun GapsScaffold(
 
             when {
                 state.isLoading -> LoadingContent()
+                state.error != null -> ErrorContent(
+                    message = state.error!!,
+                    onRetry = onRetry,
+                )
                 state.recommendations.isEmpty() -> CompleteContent()
                 else -> GapsContent(
                     state = state,
@@ -187,6 +196,51 @@ private fun LoadingContent() {
         modifier = Modifier.fillMaxWidth().padding(vertical = 80.dp),
     ) {
         CircularProgressIndicator(color = WornColors.AccentGreen)
+    }
+}
+
+@Composable
+private fun ErrorContent(message: String, onRetry: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 60.dp),
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(72.dp)
+                .clip(CircleShape)
+                .background(WornColors.DeleteRed.copy(alpha = 0.1f)),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.ErrorOutline,
+                contentDescription = null,
+                tint = WornColors.DeleteRed,
+                modifier = Modifier.size(32.dp),
+            )
+        }
+        Spacer(Modifier.height(24.dp))
+        Text(
+            text = message,
+            color = WornColors.TextSecondary,
+            fontSize = 14.sp,
+            lineHeight = 20.sp,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(20.dp))
+        Surface(
+            onClick = onRetry,
+            shape = RoundedCornerShape(16.dp),
+            color = WornColors.BgCard,
+        ) {
+            Text(
+                text = stringResource(R.string.common_retry),
+                color = WornColors.AccentGreen,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+            )
+        }
     }
 }
 
@@ -656,5 +710,19 @@ private fun GapsScreenTabletPreview() {
 private fun GapsScreenCompletePreview() {
     WornTheme {
         GapsScaffold(state = GapsState())
+    }
+}
+
+@Preview(showSystemUi = true, device = "id:pixel_8")
+@Composable
+private fun GapsScreenErrorPreview() {
+    WornTheme {
+        GapsScaffold(
+            state = GapsState(
+                error = "Invalid API key. Check your key in Settings.",
+                isAiMode = true,
+                hasApiKey = true,
+            ),
+        )
     }
 }
