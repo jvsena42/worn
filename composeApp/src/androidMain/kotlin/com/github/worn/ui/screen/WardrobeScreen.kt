@@ -64,7 +64,6 @@ import com.github.worn.presentation.viewmodel.WardrobeViewModel
 import com.github.worn.ui.components.CategoryFilterChips
 import com.github.worn.ui.components.ClothingCard
 import com.github.worn.ui.components.Tab
-import com.github.worn.ui.components.WornBottomBar
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
@@ -72,6 +71,8 @@ import org.koin.compose.viewmodel.koinViewModel
 private val GRID_MIN_CELL_WIDTH = 160.dp
 private val GRID_GAP_COMPACT = 12.dp
 private val GRID_GAP_EXPANDED = 16.dp
+private val BOTTOM_BAR_HEIGHT = 95.dp
+@Suppress("UnusedParameter")
 @Composable
 fun WardrobeScreen(
     onTabSelected: (Tab) -> Unit = {},
@@ -112,7 +113,6 @@ fun WardrobeScreen(
         onClearSelection = { viewModel.onIntent(WardrobeIntent.ClearSelection) },
         onDeleteSelected = { viewModel.onIntent(WardrobeIntent.DeleteSelected) },
         onItemClick = { detailItem = it },
-        onTabSelected = onTabSelected,
     )
 
     if (showAddSheet) {
@@ -177,7 +177,6 @@ private fun WardrobeScaffold(
     onClearSelection: () -> Unit = {},
     onDeleteSelected: () -> Unit = {},
     onItemClick: (ClothingItem) -> Unit = {},
-    onTabSelected: (Tab) -> Unit = {},
 ) {
     val isSelectionMode = state.selectedIds.isNotEmpty()
     val contentPadding = if (isCompact) 24.dp else 32.dp
@@ -187,10 +186,7 @@ private fun WardrobeScaffold(
     Scaffold(
         containerColor = WornColors.BgPage,
         floatingActionButton = {
-            if (!isSelectionMode) AddItemFab(onClick = onAddItemClick)
-        },
-        bottomBar = {
-            WornBottomBar(activeTab = Tab.WARDROBE, onTabSelected = onTabSelected, isCompact = isCompact)
+            if (!isSelectionMode) AddItemFab(onAddItemClick, Modifier.padding(bottom = BOTTOM_BAR_HEIGHT))
         },
     ) { paddingValues ->
         val isWardrobeEmpty = !state.isLoading && state.totalItemCount == 0
@@ -429,12 +425,13 @@ private fun EmptyState(onAddItemClick: () -> Unit) {
 }
 
 @Composable
-private fun AddItemFab(onClick: () -> Unit) {
+private fun AddItemFab(onClick: () -> Unit, modifier: Modifier = Modifier) {
     ExtendedFloatingActionButton(
         onClick = onClick,
         containerColor = WornColors.AccentGreen,
         contentColor = WornColors.TextOnColor,
         shape = RoundedCornerShape(30.dp),
+        modifier = modifier,
     ) {
         Icon(Icons.Default.Add, contentDescription = null)
         Spacer(Modifier.width(8.dp))

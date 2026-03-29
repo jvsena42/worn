@@ -11,19 +11,22 @@ struct iOSApp: App {
 
     var body: some Scene {
         WindowGroup {
-            switch activeTab {
-            case .wardrobe:
-                WardrobeScreen(onTabSelected: { activeTab = $0 })
-            case .outfits:
-                OutfitsScreen(onTabSelected: { activeTab = $0 })
-            case .gaps:
-                GapsScreen(onTabSelected: { activeTab = $0 })
-            case .tryIt:
-                TryItScreen(onTabSelected: { activeTab = $0 })
-            case .settings:
-                SettingsScreen(onTabSelected: { activeTab = $0 })
-            default:
-                WardrobeScreen(onTabSelected: { activeTab = $0 })
+            VStack(spacing: 0) {
+                TabView(selection: $activeTab) {
+                    WardrobeScreen(onTabSelected: { activeTab = $0 })
+                        .tag(WornTab.wardrobe)
+                    OutfitsScreen(onTabSelected: { activeTab = $0 })
+                        .tag(WornTab.outfits)
+                    GapsScreen(onTabSelected: { activeTab = $0 })
+                        .tag(WornTab.gaps)
+                    TryItScreen(onTabSelected: { activeTab = $0 })
+                        .tag(WornTab.tryIt)
+                    SettingsScreen(onTabSelected: { activeTab = $0 })
+                        .tag(WornTab.settings)
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+
+                WornBottomBar(activeTab: activeTab, onTabSelected: { activeTab = $0 })
             }
         }
     }

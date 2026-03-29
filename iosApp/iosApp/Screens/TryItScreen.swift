@@ -26,7 +26,6 @@ struct TryItScreen: View {
                 tryItContent
             }
 
-            WornBottomBar(activeTab: .tryIt, onTabSelected: onTabSelected, isCompact: isCompact)
         }
         .background(WornColors.bgPage)
         .confirmationDialog(String(localized: "add_item_photo_dialog_title"), isPresented: $showSourceChooser) {
