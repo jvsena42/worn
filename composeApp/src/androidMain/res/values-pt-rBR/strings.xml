@@ -1,0 +1,256 @@
+<resources>
+    <string name="app_name">Worn</string>
+
+    <!-- Common -->
+    <string name="common_delete">Excluir</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_save">Salvar</string>
+    <string name="common_deleting">Excluindo…</string>
+    <string name="common_saving">Salvando…</string>
+    <string name="common_save_changes">Salvar alterações</string>
+    <string name="common_all_seasons">Todas as estações</string>
+    <string name="common_not_specified">Não especificado</string>
+
+    <!-- Tabs -->
+    <string name="tab_wardrobe">GUARDA-ROUPA</string>
+    <string name="tab_outfits">LOOKS</string>
+    <string name="tab_gaps">LACUNAS</string>
+    <string name="tab_try_it">TESTAR</string>
+    <string name="tab_settings">AJUSTES</string>
+
+    <!-- Wardrobe Screen -->
+    <string name="wardrobe_title_empty">Seu guarda-roupa</string>
+    <string name="wardrobe_title">Worn</string>
+    <string name="wardrobe_subtitle">Seu guarda-roupa cápsula · %d itens</string>
+    <string name="wardrobe_empty_title">Nenhum item ainda</string>
+    <string name="wardrobe_empty_description">Adicione sua primeira peça para\ncomeçar a montar seu guarda-roupa</string>
+    <string name="wardrobe_empty_cta">Adicione seu primeiro item</string>
+    <string name="wardrobe_category_empty">Nenhum item nesta categoria</string>
+    <string name="wardrobe_fab_add">Adicionar item</string>
+    <string name="wardrobe_delete_dialog_message">Esta ação não pode ser desfeita. Os itens selecionados serão removidos permanentemente do seu guarda-roupa.</string>
+
+    <!-- Outfits Screen -->
+    <string name="outfits_title">Seus looks</string>
+    <string name="outfits_button_create">Criar</string>
+    <string name="outfits_empty_title">Nenhum look ainda</string>
+    <string name="outfits_empty_description">Crie seu primeiro look combinando\nitens do seu guarda-roupa</string>
+    <string name="outfits_empty_cta">Crie seu primeiro look</string>
+    <string name="outfits_delete_dialog_message">Esta ação não pode ser desfeita. Os looks selecionados serão removidos permanentemente.</string>
+
+    <!-- Add Item Sheet -->
+    <string name="add_item_title">Adicionar novo item</string>
+    <string name="add_item_title_edit">Editar item</string>
+    <string name="add_item_photo_dialog_title">Adicionar foto</string>
+    <string name="add_item_take_photo">Tirar foto</string>
+    <string name="add_item_choose_gallery">Escolher da galeria</string>
+    <string name="add_item_photo_hint">Toque para adicionar foto</string>
+    <string name="add_item_ai_badge">Auto-tag com IA</string>
+    <string name="add_item_name_hint">Nome do item</string>
+    <string name="add_item_save_to_wardrobe">Salvar no guarda-roupa</string>
+
+    <!-- Create Outfit Sheet -->
+    <string name="create_outfit_title">Criar look</string>
+    <string name="create_outfit_title_edit">Editar look</string>
+    <string name="create_outfit_name_hint">Nome do look</string>
+    <string name="create_outfit_select_items">Selecionar itens</string>
+    <string name="create_outfit_save">Salvar look</string>
+
+    <!-- Item Detail Sheet -->
+    <string name="item_detail_edit">Editar Item</string>
+    <string name="item_detail_delete">Excluir Item</string>
+    <string name="item_detail_delete_dialog_title">Excluir item?</string>
+    <string name="item_detail_delete_dialog_message">Esta ação não pode ser desfeita. \"%s\" será removido permanentemente do seu guarda-roupa.</string>
+
+    <!-- Outfit Detail Sheet -->
+    <string name="outfit_detail_edit">Editar Look</string>
+    <string name="outfit_detail_delete">Excluir Look</string>
+    <string name="outfit_detail_items_count">%d itens</string>
+    <string name="outfit_detail_delete_dialog_title">Excluir look?</string>
+    <string name="outfit_detail_delete_dialog_message">Esta ação não pode ser desfeita. \"%s\" será removido permanentemente.</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_section_profile">SEU PERFIL</string>
+    <string name="settings_section_ai">FUNÇÕES DE IA</string>
+    <string name="settings_section_about">SOBRE</string>
+    <string name="settings_your_profile">Seu Perfil</string>
+    <string name="settings_profile_subtitle_empty">Toque para configurar</string>
+    <string name="settings_profile_help">Ajude a IA a dar melhores sugestões</string>
+    <string name="settings_api_key_title">Chave da API Claude</string>
+    <string name="settings_api_key_connected">Conectado</string>
+    <string name="settings_api_key_required">Necessária para funções de IA</string>
+    <string name="settings_connect_claude">Conectar Claude IA</string>
+    <string name="settings_api_description">Cole sua chave da API Anthropic para desbloquear funções de IA como auto-tag de roupas e análise de looks.</string>
+    <string name="settings_api_get_key">Obtenha uma chave gratuita em console.anthropic.com →</string>
+    <string name="settings_save_connect">Salvar e conectar</string>
+    <string name="settings_remove_key">Remover chave</string>
+    <string name="settings_version">Versão</string>
+    <string name="settings_licenses">Licenças</string>
+    <string name="settings_multi_select">(seleção múltipla)</string>
+    <string name="settings_api_hide">Ocultar</string>
+    <string name="settings_api_show">Mostrar</string>
+
+    <!-- Gaps Screen -->
+    <string name="gaps_title">O que está faltando</string>
+    <string name="gaps_subtitle">Itens que mais expandiriam suas combinações</string>
+    <string name="gaps_complete_title">Seu guarda-roupa parece completo!</string>
+    <string name="gaps_complete_description">Não encontramos nenhuma lacuna.\nVocê tem ótima cobertura em todas as categorias.</string>
+    <string name="gaps_banner_ai_title">Recomendações com IA</string>
+    <string name="gaps_banner_common_title">Sugestões Comuns</string>
+    <string name="gaps_banner_ai_subtitle">Sugestões personalizadas baseadas no seu guarda-roupa</string>
+    <string name="gaps_banner_common_subtitle">Conecte a Claude IA para sugestões personalizadas</string>
+    <string name="gaps_pairing_ai">Combinaria com %d dos seus itens</string>
+    <string name="gaps_pairing_common">Item essencial do guarda-roupa</string>
+    <string name="gaps_add_to_wardrobe">Adicionar ao guarda-roupa</string>
+    <string name="gaps_dismiss">Dispensar</string>
+
+    <!-- Try It Screen -->
+    <string name="tryit_title">Combinaria com seu guarda-roupa?</string>
+    <string name="tryit_upload_hint">Envie uma foto do item\nque você está considerando</string>
+    <string name="tryit_analyze">Analisar com Claude</string>
+    <string name="tryit_ai_empty_title">Análise com inteligência artificial</string>
+    <string name="tryit_ai_empty_description">Conecte sua chave da API Claude nos Ajustes para analisar itens com seu guarda-roupa.</string>
+    <string name="tryit_connect_cta">Conectar Claude IA</string>
+    <string name="tryit_pairs_with">Combinaria com…</string>
+    <string name="tryit_combinations_unlocked">Combinações desbloqueadas</string>
+    <string name="tryit_gaps_filled">Lacunas que preenche</string>
+    <string name="tryit_worth_adding">Vale adicionar</string>
+    <string name="tryit_skip">Pule esse</string>
+
+    <!-- AI Locked Sheet -->
+    <string name="ai_locked_title">Desbloquear funções de IA</string>
+    <string name="ai_locked_description">Adicione sua chave da API Claude nos Ajustes para habilitar.</string>
+    <string name="ai_locked_cta">Ir para Ajustes</string>
+
+    <!-- Filter -->
+    <string name="filter_all">Todos</string>
+
+    <!-- Form Labels -->
+    <string name="label_color">Cor</string>
+    <string name="label_season">Estação</string>
+    <string name="label_fit">Caimento</string>
+    <string name="label_subcategory">Subcategoria</string>
+    <string name="label_material">Material</string>
+    <string name="label_category">Categoria</string>
+    <string name="label_items">Itens</string>
+    <string name="label_body_type">Biotipo</string>
+    <string name="label_style_profile">Perfil de Estilo</string>
+    <string name="label_age_range">Faixa Etária</string>
+    <string name="label_climate">Clima / Região</string>
+    <string name="label_lifestyle">Estilo de Vida / Ocasiões</string>
+
+    <!-- Category -->
+    <string name="category_tops">Partes de Cima</string>
+    <string name="category_bottoms">Partes de Baixo</string>
+    <string name="category_outerwear">Agasalhos</string>
+    <string name="category_shoes">Calçados</string>
+    <string name="category_accessories">Acessórios</string>
+
+    <!-- Season -->
+    <string name="season_spring">Primavera</string>
+    <string name="season_summer">Verão</string>
+    <string name="season_fall">Outono</string>
+    <string name="season_winter">Inverno</string>
+
+    <!-- Fit -->
+    <string name="fit_slim">Slim</string>
+    <string name="fit_regular">Regular</string>
+    <string name="fit_relaxed">Relaxado</string>
+    <string name="fit_oversized">Oversized</string>
+
+    <!-- Material -->
+    <string name="material_cotton">Algodão</string>
+    <string name="material_linen">Linho</string>
+    <string name="material_denim">Jeans</string>
+    <string name="material_wool">Lã</string>
+    <string name="material_synthetic">Sintético</string>
+    <string name="material_leather">Couro</string>
+    <string name="material_silk">Seda</string>
+    <string name="material_knit">Malha</string>
+
+    <!-- Subcategory -->
+    <string name="subcategory_t_shirt">Camiseta</string>
+    <string name="subcategory_polo">Polo</string>
+    <string name="subcategory_dress_shirt">Camisa social</string>
+    <string name="subcategory_henley">Henley</string>
+    <string name="subcategory_sweater">Suéter</string>
+    <string name="subcategory_hoodie">Moletom</string>
+    <string name="subcategory_jeans">Jeans</string>
+    <string name="subcategory_chinos">Chinos</string>
+    <string name="subcategory_tailored_pants">Calça social</string>
+    <string name="subcategory_shorts">Bermuda</string>
+    <string name="subcategory_cargo_pants">Calça cargo</string>
+    <string name="subcategory_sweatpants">Calça de moletom</string>
+    <string name="subcategory_bomber">Bomber</string>
+    <string name="subcategory_trucker">Trucker</string>
+    <string name="subcategory_puffer">Puffer</string>
+    <string name="subcategory_blazer">Blazer</string>
+    <string name="subcategory_coat">Casaco</string>
+    <string name="subcategory_windbreaker">Corta-vento</string>
+    <string name="subcategory_sneakers">Tênis</string>
+    <string name="subcategory_boots_military">Coturno</string>
+    <string name="subcategory_boots_chelsea">Bota chelsea</string>
+    <string name="subcategory_derby">Derby</string>
+    <string name="subcategory_oxford">Oxford</string>
+    <string name="subcategory_loafer">Mocassim</string>
+    <string name="subcategory_sandals">Sandálias</string>
+    <string name="subcategory_watch">Relógio</string>
+    <string name="subcategory_belt">Cinto</string>
+    <string name="subcategory_sunglasses">Óculos de sol</string>
+    <string name="subcategory_hat_cap">Boné</string>
+    <string name="subcategory_scarf">Cachecol</string>
+    <string name="subcategory_bag_backpack">Mochila</string>
+
+    <!-- Body Type -->
+    <string name="body_type_slim">Magro</string>
+    <string name="body_type_athletic">Atlético</string>
+    <string name="body_type_average">Médio</string>
+    <string name="body_type_stocky">Robusto</string>
+    <string name="body_type_short">Baixo</string>
+    <string name="body_type_tall_and_slim">Alto e Magro</string>
+    <string name="body_type_big_and_tall">Grande e Alto</string>
+
+    <!-- Style Profile -->
+    <string name="style_classic">Clássico</string>
+    <string name="style_casual">Casual</string>
+    <string name="style_streetwear">Streetwear</string>
+    <string name="style_smart_casual">Smart Casual</string>
+    <string name="style_minimalist">Minimalista</string>
+
+    <!-- Age Range -->
+    <string name="age_18_25">18–25</string>
+    <string name="age_26_35">26–35</string>
+    <string name="age_36_45">36–45</string>
+    <string name="age_46_plus">46+</string>
+
+    <!-- Climate -->
+    <string name="climate_tropical">Tropical</string>
+    <string name="climate_temperate">Temperado</string>
+    <string name="climate_cold">Frio</string>
+    <string name="climate_mixed">Misto</string>
+
+    <!-- Lifestyle -->
+    <string name="lifestyle_work_office">Trabalho (Escritório)</string>
+    <string name="lifestyle_work_manual">Trabalho (Manual)</string>
+    <string name="lifestyle_social">Social</string>
+    <string name="lifestyle_sports">Esportes</string>
+    <string name="lifestyle_formal_events">Eventos Formais</string>
+
+    <!-- Plurals -->
+    <plurals name="selected_count">
+        <item quantity="one">%d selecionado</item>
+        <item quantity="other">%d selecionados</item>
+    </plurals>
+    <plurals name="delete_items_title">
+        <item quantity="one">Excluir %d item?</item>
+        <item quantity="other">Excluir %d itens?</item>
+    </plurals>
+    <plurals name="delete_outfits_title">
+        <item quantity="one">Excluir %d look?</item>
+        <item quantity="other">Excluir %d looks?</item>
+    </plurals>
+    <plurals name="saved_combinations">
+        <item quantity="one">%d combinação salva</item>
+        <item quantity="other">%d combinações salvas</item>
+    </plurals>
+</resources>

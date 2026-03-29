@@ -44,6 +44,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.window.core.layout.WindowWidthSizeClass
@@ -244,7 +246,11 @@ private fun WardrobeScaffold(
 private fun WardrobeHeader(itemCount: Int) {
     Spacer(modifier = Modifier.height(8.dp))
     Text(
-        text = if (itemCount == 0) "Your wardrobe" else "Worn",
+        text = if (itemCount == 0) {
+            stringResource(R.string.wardrobe_title_empty)
+        } else {
+            stringResource(R.string.wardrobe_title)
+        },
         color = WornColors.TextPrimary,
         fontSize = if (itemCount == 0) 22.sp else 28.sp,
         fontWeight = FontWeight.SemiBold,
@@ -253,7 +259,7 @@ private fun WardrobeHeader(itemCount: Int) {
     if (itemCount > 0) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Your capsule wardrobe \u00B7 $itemCount items",
+            text = stringResource(R.string.wardrobe_subtitle, itemCount),
             color = WornColors.TextSecondary,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
@@ -270,7 +276,7 @@ private fun SelectionHeader(count: Int, onCancel: () -> Unit, onDelete: () -> Un
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "$count selected",
+            text = pluralStringResource(R.plurals.selected_count, count, count),
             color = WornColors.TextPrimary,
             fontSize = 28.sp,
             fontWeight = FontWeight.Medium,
@@ -283,12 +289,17 @@ private fun SelectionHeader(count: Int, onCancel: () -> Unit, onDelete: () -> Un
         ) {
             Icon(Icons.Outlined.Delete, contentDescription = null, tint = Color.White)
             Spacer(Modifier.width(6.dp))
-            Text("Delete", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+            Text(
+                stringResource(R.string.common_delete),
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp,
+            )
         }
     }
     Spacer(modifier = Modifier.height(8.dp))
     Text(
-        text = "Cancel",
+        text = stringResource(R.string.common_cancel),
         color = WornColors.TextSecondary,
         fontSize = 15.sp,
         fontWeight = FontWeight.Medium,
@@ -353,7 +364,7 @@ private fun CategoryEmptyState() {
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            "No items in this category",
+            stringResource(R.string.wardrobe_category_empty),
             color = WornColors.TextSecondary,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
@@ -384,7 +395,7 @@ private fun EmptyState(onAddItemClick: () -> Unit) {
         }
         Spacer(Modifier.height(24.dp))
         Text(
-            "No items yet",
+            stringResource(R.string.wardrobe_empty_title),
             color = WornColors.TextPrimary,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
@@ -392,7 +403,7 @@ private fun EmptyState(onAddItemClick: () -> Unit) {
         )
         Spacer(Modifier.height(24.dp))
         Text(
-            "Add your first piece to start\nbuilding your wardrobe",
+            stringResource(R.string.wardrobe_empty_description),
             color = WornColors.TextSecondary,
             fontSize = 15.sp,
             lineHeight = 22.sp,
@@ -410,7 +421,7 @@ private fun EmptyState(onAddItemClick: () -> Unit) {
         ) {
             Icon(Icons.Default.Add, contentDescription = null, Modifier.size(18.dp), WornColors.BgPage)
             Text(
-                "Add your first item",
+                stringResource(R.string.wardrobe_empty_cta),
                 color = WornColors.TextOnColor, fontSize = 16.sp, fontWeight = FontWeight.SemiBold,
             )
         }
@@ -427,7 +438,7 @@ private fun AddItemFab(onClick: () -> Unit) {
     ) {
         Icon(Icons.Default.Add, contentDescription = null)
         Spacer(Modifier.width(8.dp))
-        Text(text = "Add item", fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+        Text(text = stringResource(R.string.wardrobe_fab_add), fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
     }
 }
 
@@ -442,14 +453,14 @@ private fun DeleteConfirmationDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                "Delete $count item${if (count != 1) "s" else ""}?",
+                pluralStringResource(R.plurals.delete_items_title, count, count),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 22.sp,
             )
         },
         text = {
             Text(
-                "This action cannot be undone. The selected items will be permanently removed from your wardrobe.",
+                stringResource(R.string.wardrobe_delete_dialog_message),
                 color = WornColors.TextSecondary,
                 fontSize = 15.sp,
                 lineHeight = 22.sp,
@@ -462,11 +473,18 @@ private fun DeleteConfirmationDialog(
                 colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
                 shape = RoundedCornerShape(24.dp),
             ) {
-                Text(if (isDeleting) "Deleting…" else "Delete", fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = if (isDeleting) {
+                        stringResource(R.string.common_deleting)
+                    } else {
+                        stringResource(R.string.common_delete)
+                    },
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }

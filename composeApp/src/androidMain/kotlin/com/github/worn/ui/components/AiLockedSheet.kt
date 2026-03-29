@@ -30,8 +30,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.worn.R
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.WornColors
 
@@ -94,14 +96,14 @@ internal fun AiLockedContent(
         }
 
         Text(
-            text = "Unlock AI features",
+            text = stringResource(R.string.ai_locked_title),
             color = WornColors.TextPrimary,
             fontSize = 22.sp,
             fontWeight = FontWeight.Medium,
         )
 
         Text(
-            text = "Add your Claude API key in Settings to enable this.",
+            text = stringResource(R.string.ai_locked_description),
             color = WornColors.TextSecondary,
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
@@ -132,7 +134,7 @@ private fun SettingsCta(onClick: () -> Unit) {
                 .padding(horizontal = 40.dp, vertical = 14.dp),
         ) {
             Text(
-                text = "Go to Settings",
+                text = stringResource(R.string.ai_locked_cta),
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,

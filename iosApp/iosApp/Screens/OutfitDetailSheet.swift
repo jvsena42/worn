@@ -57,15 +57,15 @@ struct OutfitDetailSheet: View {
 
                 // Properties
                 VStack(spacing: propGap) {
-                    propertyRow(label: "Items", value: "\(outfit.itemIds.count) items")
-                    propertyRow(label: "Season", value: deriveSeasonText())
+                    propertyRow(label: String(localized: "label_items"), value: String(format: String(localized: "outfit_detail_items_count"), outfit.itemIds.count))
+                    propertyRow(label: String(localized: "label_season"), value: deriveSeasonText())
                 }
                 .padding(.horizontal, contentPadding)
 
                 // Buttons
                 VStack(spacing: 12) {
                     Button { onEdit(outfit) } label: {
-                        Text("Edit Outfit")
+                        Text(String(localized: "outfit_detail_edit"))
                             .font(.system(size: buttonFontSize, weight: .semibold))
                             .foregroundColor(WornColors.textPrimary)
                             .frame(maxWidth: .infinity)
@@ -79,7 +79,7 @@ struct OutfitDetailSheet: View {
                     }
 
                     Button { showDeleteAlert = true } label: {
-                        Text("Delete Outfit")
+                        Text(String(localized: "outfit_detail_delete"))
                             .font(.system(size: buttonFontSize, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -93,11 +93,11 @@ struct OutfitDetailSheet: View {
             .padding(.bottom, 36)
         }
         .background(WornColors.bgElevated)
-        .alert("Delete outfit?", isPresented: $showDeleteAlert) {
-            Button("Cancel", role: .cancel) {}
-            Button("Delete", role: .destructive) { onDelete(outfit.id) }
+        .alert(String(localized: "outfit_detail_delete_dialog_title"), isPresented: $showDeleteAlert) {
+            Button(String(localized: "common_cancel"), role: .cancel) {}
+            Button(String(localized: "common_delete"), role: .destructive) { onDelete(outfit.id) }
         } message: {
-            Text("This action cannot be undone. \"\(outfit.name)\" will be permanently removed.")
+            Text(String(format: String(localized: "outfit_detail_delete_dialog_message"), outfit.name))
         }
     }
 
@@ -155,17 +155,17 @@ struct OutfitDetailSheet: View {
 
     private func deriveSeasonText() -> String {
         let allSeasons = Set(outfitItems.flatMap { $0.seasons })
-        if allSeasons.isEmpty { return "Not specified" }
-        if allSeasons.count == Season.entries.count { return "All seasons" }
+        if allSeasons.isEmpty { return String(localized: "common_not_specified") }
+        if allSeasons.count == Season.entries.count { return String(localized: "common_all_seasons") }
         return allSeasons.map { seasonName($0) }.joined(separator: "/")
     }
 
     private func seasonName(_ season: Season) -> String {
         switch season {
-        case .spring: return "Spring"
-        case .summer: return "Summer"
-        case .fall: return "Fall"
-        case .winter: return "Winter"
+        case .spring: return String(localized: "season_spring")
+        case .summer: return String(localized: "season_summer")
+        case .fall: return String(localized: "season_fall")
+        case .winter: return String(localized: "season_winter")
         default: return ""
         }
     }

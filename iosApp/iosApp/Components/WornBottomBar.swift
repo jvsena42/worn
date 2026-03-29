@@ -1,11 +1,11 @@
 import SwiftUI
 
 enum WornTab: String, CaseIterable {
-    case wardrobe = "WARDROBE"
-    case outfits = "OUTFITS"
-    case gaps = "GAPS"
-    case tryIt = "TRY IT"
-    case settings = "SETTINGS"
+    case wardrobe
+    case outfits
+    case gaps
+    case tryIt
+    case settings
 
     var icon: String {
         switch self {
@@ -14,6 +14,16 @@ enum WornTab: String, CaseIterable {
         case .gaps: return "puzzlepiece.extension"
         case .tryIt: return "viewfinder"
         case .settings: return "gearshape"
+        }
+    }
+
+    var label: String {
+        switch self {
+        case .wardrobe: return String(localized: "tab_wardrobe")
+        case .outfits: return String(localized: "tab_outfits")
+        case .gaps: return String(localized: "tab_gaps")
+        case .tryIt: return String(localized: "tab_try_it")
+        case .settings: return String(localized: "tab_settings")
         }
     }
 }
@@ -62,7 +72,7 @@ private struct TabItem: View {
             VStack(spacing: 4) {
                 Image(systemName: tab.icon)
                     .font(.system(size: 18))
-                Text(tab.rawValue)
+                Text(tab.label)
                     .font(.system(size: 10, weight: .semibold))
                     .tracking(0.5)
             }

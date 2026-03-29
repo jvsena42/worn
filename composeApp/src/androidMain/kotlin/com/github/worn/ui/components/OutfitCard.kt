@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -129,7 +130,7 @@ private fun ItemCountBadge(outfit: Outfit) {
     val badgeColor = badgeColors[outfit.id.hashCode().mod(badgeColors.size)]
     Surface(shape = badgeShape, color = badgeColor) {
         Text(
-            text = "${outfit.itemIds.size} items",
+            text = stringResource(R.string.outfit_detail_items_count, outfit.itemIds.size),
             color = WornColors.TextOnColor,
             fontSize = 11.sp,
             fontWeight = FontWeight.SemiBold,

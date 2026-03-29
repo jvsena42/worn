@@ -1,0 +1,234 @@
+/* Common */
+"common_delete" = "Excluir";
+"common_cancel" = "Cancelar";
+"common_save" = "Salvar";
+"common_deleting" = "Excluindo…";
+"common_saving" = "Salvando…";
+"common_save_changes" = "Salvar alterações";
+"common_all_seasons" = "Todas as estações";
+"common_not_specified" = "Não especificado";
+
+/* Tabs */
+"tab_wardrobe" = "GUARDA-ROUPA";
+"tab_outfits" = "LOOKS";
+"tab_gaps" = "LACUNAS";
+"tab_try_it" = "TESTAR";
+"tab_settings" = "AJUSTES";
+
+/* Wardrobe Screen */
+"wardrobe_title_empty" = "Seu guarda-roupa";
+"wardrobe_title" = "Worn";
+"wardrobe_subtitle" = "Seu guarda-roupa cápsula · %d itens";
+"wardrobe_empty_title" = "Nenhum item ainda";
+"wardrobe_empty_description" = "Adicione sua primeira peça para\ncomeçar a montar seu guarda-roupa";
+"wardrobe_empty_cta" = "Adicione seu primeiro item";
+"wardrobe_category_empty" = "Nenhum item nesta categoria";
+"wardrobe_fab_add" = "Adicionar item";
+"wardrobe_delete_dialog_message" = "Esta ação não pode ser desfeita. Os itens selecionados serão removidos permanentemente do seu guarda-roupa.";
+
+/* Outfits Screen */
+"outfits_title" = "Seus looks";
+"outfits_button_create" = "Criar";
+"outfits_empty_title" = "Nenhum look ainda";
+"outfits_empty_description" = "Crie seu primeiro look combinando\nitens do seu guarda-roupa";
+"outfits_empty_cta" = "Crie seu primeiro look";
+"outfits_delete_dialog_message" = "Esta ação não pode ser desfeita. Os looks selecionados serão removidos permanentemente.";
+
+/* Add Item Sheet */
+"add_item_title" = "Adicionar novo item";
+"add_item_title_edit" = "Editar item";
+"add_item_photo_dialog_title" = "Adicionar foto";
+"add_item_take_photo" = "Tirar foto";
+"add_item_choose_gallery" = "Escolher da galeria";
+"add_item_photo_hint" = "Toque para adicionar foto";
+"add_item_ai_badge" = "Auto-tag com IA";
+"add_item_name_hint" = "Nome do item";
+"add_item_save_to_wardrobe" = "Salvar no guarda-roupa";
+
+/* Create Outfit Sheet */
+"create_outfit_title" = "Criar look";
+"create_outfit_title_edit" = "Editar look";
+"create_outfit_name_hint" = "Nome do look";
+"create_outfit_select_items" = "Selecionar itens";
+"create_outfit_save" = "Salvar look";
+
+/* Item Detail Sheet */
+"item_detail_edit" = "Editar Item";
+"item_detail_delete" = "Excluir Item";
+"item_detail_delete_dialog_title" = "Excluir item?";
+"item_detail_delete_dialog_message" = "Esta ação não pode ser desfeita. \"%@\" será removido permanentemente do seu guarda-roupa.";
+
+/* Outfit Detail Sheet */
+"outfit_detail_edit" = "Editar Look";
+"outfit_detail_delete" = "Excluir Look";
+"outfit_detail_items_count" = "%d itens";
+"outfit_detail_delete_dialog_title" = "Excluir look?";
+"outfit_detail_delete_dialog_message" = "Esta ação não pode ser desfeita. \"%@\" será removido permanentemente.";
+
+/* Settings Screen */
+"settings_title" = "Ajustes";
+"settings_section_profile" = "SEU PERFIL";
+"settings_section_ai" = "FUNÇÕES DE IA";
+"settings_section_about" = "SOBRE";
+"settings_your_profile" = "Seu Perfil";
+"settings_profile_subtitle_empty" = "Toque para configurar";
+"settings_profile_help" = "Ajude a IA a dar melhores sugestões";
+"settings_api_key_title" = "Chave da API Claude";
+"settings_api_key_connected" = "Conectado";
+"settings_api_key_required" = "Necessária para funções de IA";
+"settings_connect_claude" = "Conectar Claude IA";
+"settings_api_description" = "Cole sua chave da API Anthropic para desbloquear funções de IA como auto-tag de roupas e análise de looks.";
+"settings_api_get_key" = "Obtenha uma chave gratuita em console.anthropic.com →";
+"settings_save_connect" = "Salvar e conectar";
+"settings_remove_key" = "Remover chave";
+"settings_version" = "Versão";
+"settings_licenses" = "Licenças";
+"settings_multi_select" = "(seleção múltipla)";
+"settings_api_hide" = "Ocultar";
+"settings_api_show" = "Mostrar";
+
+/* Gaps Screen */
+"gaps_title" = "O que está faltando";
+"gaps_subtitle" = "Itens que mais expandiriam suas combinações";
+"gaps_complete_title" = "Seu guarda-roupa parece completo!";
+"gaps_complete_description" = "Não encontramos nenhuma lacuna.\nVocê tem ótima cobertura em todas as categorias.";
+"gaps_banner_ai_title" = "Recomendações com IA";
+"gaps_banner_common_title" = "Sugestões Comuns";
+"gaps_banner_ai_subtitle" = "Sugestões personalizadas baseadas no seu guarda-roupa";
+"gaps_banner_common_subtitle" = "Conecte a Claude IA para sugestões personalizadas";
+"gaps_pairing_ai" = "Combinaria com %d dos seus itens";
+"gaps_pairing_common" = "Item essencial do guarda-roupa";
+"gaps_add_to_wardrobe" = "Adicionar ao guarda-roupa";
+"gaps_dismiss" = "Dispensar";
+
+/* Try It Screen */
+"tryit_title" = "Combinaria com seu guarda-roupa?";
+"tryit_upload_hint" = "Envie uma foto do item\nque você está considerando";
+"tryit_analyze" = "Analisar com Claude";
+"tryit_ai_empty_title" = "Análise com inteligência artificial";
+"tryit_ai_empty_description" = "Conecte sua chave da API Claude nos Ajustes para analisar itens com seu guarda-roupa.";
+"tryit_connect_cta" = "Conectar Claude IA";
+"tryit_pairs_with" = "Combinaria com…";
+"tryit_combinations_unlocked" = "Combinações desbloqueadas";
+"tryit_gaps_filled" = "Lacunas que preenche";
+"tryit_worth_adding" = "Vale adicionar";
+"tryit_skip" = "Pule esse";
+
+/* AI Locked Sheet */
+"ai_locked_title" = "Desbloquear funções de IA";
+"ai_locked_description" = "Adicione sua chave da API Claude nos Ajustes para habilitar.";
+"ai_locked_cta" = "Ir para Ajustes";
+
+/* Filter */
+"filter_all" = "Todos";
+
+/* Form Labels */
+"label_color" = "Cor";
+"label_season" = "Estação";
+"label_fit" = "Caimento";
+"label_subcategory" = "Subcategoria";
+"label_material" = "Material";
+"label_category" = "Categoria";
+"label_items" = "Itens";
+"label_body_type" = "Biotipo";
+"label_style_profile" = "Perfil de Estilo";
+"label_age_range" = "Faixa Etária";
+"label_climate" = "Clima / Região";
+"label_lifestyle" = "Estilo de Vida / Ocasiões";
+
+/* Category */
+"category_tops" = "Partes de Cima";
+"category_bottoms" = "Partes de Baixo";
+"category_outerwear" = "Agasalhos";
+"category_shoes" = "Calçados";
+"category_accessories" = "Acessórios";
+
+/* Season */
+"season_spring" = "Primavera";
+"season_summer" = "Verão";
+"season_fall" = "Outono";
+"season_winter" = "Inverno";
+
+/* Fit */
+"fit_slim" = "Slim";
+"fit_regular" = "Regular";
+"fit_relaxed" = "Relaxado";
+"fit_oversized" = "Oversized";
+
+/* Material */
+"material_cotton" = "Algodão";
+"material_linen" = "Linho";
+"material_denim" = "Jeans";
+"material_wool" = "Lã";
+"material_synthetic" = "Sintético";
+"material_leather" = "Couro";
+"material_silk" = "Seda";
+"material_knit" = "Malha";
+
+/* Subcategory */
+"subcategory_t_shirt" = "Camiseta";
+"subcategory_polo" = "Polo";
+"subcategory_dress_shirt" = "Camisa social";
+"subcategory_henley" = "Henley";
+"subcategory_sweater" = "Suéter";
+"subcategory_hoodie" = "Moletom";
+"subcategory_jeans" = "Jeans";
+"subcategory_chinos" = "Chinos";
+"subcategory_tailored_pants" = "Calça social";
+"subcategory_shorts" = "Bermuda";
+"subcategory_cargo_pants" = "Calça cargo";
+"subcategory_sweatpants" = "Calça de moletom";
+"subcategory_bomber" = "Bomber";
+"subcategory_trucker" = "Trucker";
+"subcategory_puffer" = "Puffer";
+"subcategory_blazer" = "Blazer";
+"subcategory_coat" = "Casaco";
+"subcategory_windbreaker" = "Corta-vento";
+"subcategory_sneakers" = "Tênis";
+"subcategory_boots_military" = "Coturno";
+"subcategory_boots_chelsea" = "Bota chelsea";
+"subcategory_derby" = "Derby";
+"subcategory_oxford" = "Oxford";
+"subcategory_loafer" = "Mocassim";
+"subcategory_sandals" = "Sandálias";
+"subcategory_watch" = "Relógio";
+"subcategory_belt" = "Cinto";
+"subcategory_sunglasses" = "Óculos de sol";
+"subcategory_hat_cap" = "Boné";
+"subcategory_scarf" = "Cachecol";
+"subcategory_bag_backpack" = "Mochila";
+
+/* Body Type */
+"body_type_slim" = "Magro";
+"body_type_athletic" = "Atlético";
+"body_type_average" = "Médio";
+"body_type_stocky" = "Robusto";
+"body_type_short" = "Baixo";
+"body_type_tall_and_slim" = "Alto e Magro";
+"body_type_big_and_tall" = "Grande e Alto";
+
+/* Style Profile */
+"style_classic" = "Clássico";
+"style_casual" = "Casual";
+"style_streetwear" = "Streetwear";
+"style_smart_casual" = "Smart Casual";
+"style_minimalist" = "Minimalista";
+
+/* Age Range */
+"age_18_25" = "18–25";
+"age_26_35" = "26–35";
+"age_36_45" = "36–45";
+"age_46_plus" = "46+";
+
+/* Climate */
+"climate_tropical" = "Tropical";
+"climate_temperate" = "Temperado";
+"climate_cold" = "Frio";
+"climate_mixed" = "Misto";
+
+/* Lifestyle */
+"lifestyle_work_office" = "Trabalho (Escritório)";
+"lifestyle_work_manual" = "Trabalho (Manual)";
+"lifestyle_social" = "Social";
+"lifestyle_sports" = "Esportes";
+"lifestyle_formal_events" = "Eventos Formais";

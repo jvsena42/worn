@@ -38,11 +38,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,11 +55,14 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.GapRecommendation
+import com.github.worn.domain.model.Season
 import com.github.worn.presentation.viewmodel.GapsState
 import com.github.worn.presentation.viewmodel.GapsViewModel
 import com.github.worn.ui.components.AiLockedSheet
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornBottomBar
+import com.github.worn.ui.components.displayLabel
+import com.github.worn.ui.components.displayName
 import com.github.worn.ui.components.iconRes
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
@@ -146,14 +152,14 @@ private fun GapsScaffold(
         ) {
             Spacer(Modifier.height(24.dp))
             Text(
-                text = "What's missing",
+                text = stringResource(R.string.gaps_title),
                 color = WornColors.TextPrimary,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = (-0.5).sp,
             )
             Text(
-                text = "Items that would expand your combinations most",
+                text = stringResource(R.string.gaps_subtitle),
                 color = WornColors.TextSecondary,
                 fontSize = 14.sp,
             )
@@ -206,14 +212,14 @@ private fun CompleteContent() {
         }
         Spacer(Modifier.height(24.dp))
         Text(
-            text = "Your wardrobe looks complete!",
+            text = stringResource(R.string.gaps_complete_title),
             color = WornColors.TextPrimary,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "We couldn't find any gaps.\nYou have great coverage across categories.",
+            text = stringResource(R.string.gaps_complete_description),
             color = WornColors.TextSecondary,
             fontSize = 14.sp,
             lineHeight = 20.sp,
@@ -259,18 +265,18 @@ private fun GapsBanner(isAiMode: Boolean, onClick: () -> Unit) {
             modifier = Modifier.fillMaxWidth().padding(16.dp),
         ) {
             Column(modifier = Modifier.weight(1f)) {
+                val titleRes = if (isAiMode) R.string.gaps_banner_ai_title
+                    else R.string.gaps_banner_common_title
+                val subtitleRes = if (isAiMode) R.string.gaps_banner_ai_subtitle
+                    else R.string.gaps_banner_common_subtitle
                 Text(
-                    text = if (isAiMode) "AI Recommendations" else "Common Suggestions",
+                    text = stringResource(titleRes),
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
-                    text = if (isAiMode) {
-                        "Personalized suggestions based on your wardrobe"
-                    } else {
-                        "Connect Claude AI for personalized picks"
-                    },
+                    text = stringResource(subtitleRes),
                     color = Color.White.copy(alpha = 0.8f),
                     fontSize = 13.sp,
                 )
@@ -323,9 +329,9 @@ private fun GapCard(
                 )
                 Text(
                     text = if (isAiMode) {
-                        "Would pair with ${recommendation.pairingCount} of your items"
+                        stringResource(R.string.gaps_pairing_ai, recommendation.pairingCount)
                     } else {
-                        "Common wardrobe essential"
+                        stringResource(R.string.gaps_pairing_common)
                     },
                     color = WornColors.TextSecondary,
                     fontSize = 12.sp,
@@ -494,9 +500,9 @@ private fun DetailPairingInfo(recommendation: GapRecommendation, isAiMode: Boole
             Spacer(Modifier.width(8.dp))
             Text(
                 text = if (isAiMode) {
-                    "Would pair with ${recommendation.pairingCount} of your items"
+                    stringResource(R.string.gaps_pairing_ai, recommendation.pairingCount)
                 } else {
-                    "Common wardrobe essential"
+                    stringResource(R.string.gaps_pairing_common)
                 },
                 color = WornColors.TextSecondary,
                 fontSize = 13.sp,
@@ -509,24 +515,27 @@ private fun DetailPairingInfo(recommendation: GapRecommendation, isAiMode: Boole
 private fun DetailRows(recommendation: GapRecommendation) {
     Column {
         recommendation.subcategory?.let {
-            DetailRow("Subcategory", it.name.lowercase().replace('_', ' ').replaceFirstChar(Char::uppercase))
+            DetailRow(stringResource(R.string.label_subcategory), it.displayName())
         }
         if (recommendation.colors.isNotEmpty()) {
-            DetailRow("Color", recommendation.colors.joinToString(", "))
+            DetailRow(stringResource(R.string.label_color), recommendation.colors.joinToString(", "))
         }
         if (recommendation.seasons.isNotEmpty()) {
-            val seasonsText = if (recommendation.seasons.size == 4) "All seasons" else {
-                recommendation.seasons.joinToString(", ") {
-                    it.name.lowercase().replaceFirstChar(Char::uppercase)
+            val seasonsText = if (recommendation.seasons.size == 4) {
+                stringResource(R.string.common_all_seasons)
+            } else {
+                val context = LocalContext.current
+                recommendation.seasons.joinToString(", ") { season ->
+                    context.getString(season.stringRes())
                 }
             }
-            DetailRow("Season", seasonsText)
+            DetailRow(stringResource(R.string.label_season), seasonsText)
         }
         recommendation.fit?.let {
-            DetailRow("Fit", it.name.lowercase().replace('_', ' ').replaceFirstChar(Char::uppercase))
+            DetailRow(stringResource(R.string.label_fit), it.displayName())
         }
         recommendation.material?.let {
-            DetailRow("Material", it.name.lowercase().replaceFirstChar(Char::uppercase))
+            DetailRow(stringResource(R.string.label_material), it.displayName())
         }
     }
 }
@@ -561,7 +570,7 @@ private fun DetailActions(onAddToWardrobe: () -> Unit, onDismiss: () -> Unit) {
                 .background(gradient),
         ) {
             Text(
-                "Add to Wardrobe",
+                stringResource(R.string.gaps_add_to_wardrobe),
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -580,7 +589,7 @@ private fun DetailActions(onAddToWardrobe: () -> Unit, onDismiss: () -> Unit) {
             modifier = Modifier.fillMaxWidth().height(48.dp),
         ) {
             Text(
-                "Dismiss",
+                stringResource(R.string.gaps_dismiss),
                 color = WornColors.TextSecondary,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
@@ -591,12 +600,12 @@ private fun DetailActions(onAddToWardrobe: () -> Unit, onDismiss: () -> Unit) {
 
 // endregion
 
-private fun Category.displayLabel(): String = when (this) {
-    Category.TOP -> "Tops"
-    Category.BOTTOM -> "Bottoms"
-    Category.OUTERWEAR -> "Outerwear"
-    Category.SHOES -> "Shoes"
-    Category.ACCESSORY -> "Accessories"
+@StringRes
+private fun Season.stringRes(): Int = when (this) {
+    Season.SPRING -> R.string.season_spring
+    Season.SUMMER -> R.string.season_summer
+    Season.FALL -> R.string.season_fall
+    Season.WINTER -> R.string.season_winter
 }
 
 private fun GapRecommendation.toPreFilledItem() =

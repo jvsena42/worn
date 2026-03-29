@@ -42,6 +42,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.github.worn.R
 import com.github.worn.domain.model.Outfit
 import com.github.worn.presentation.viewmodel.OutfitEffect
 import com.github.worn.presentation.viewmodel.OutfitIntent
@@ -232,7 +235,7 @@ private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "Your outfits",
+            text = stringResource(R.string.outfits_title),
             color = WornColors.TextPrimary,
             fontSize = if (outfitCount == 0) 22.sp else 28.sp,
             fontWeight = FontWeight.SemiBold,
@@ -246,14 +249,14 @@ private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
             ) {
                 Icon(Icons.Default.Add, contentDescription = null, Modifier.size(16.dp))
                 Spacer(Modifier.width(4.dp))
-                Text("Create", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                Text(stringResource(R.string.outfits_button_create), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
             }
         }
     }
     if (outfitCount > 0) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "$outfitCount saved combination${if (outfitCount != 1) "s" else ""}",
+            text = pluralStringResource(R.plurals.saved_combinations, outfitCount, outfitCount),
             color = WornColors.TextSecondary,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
@@ -270,7 +273,7 @@ private fun SelectionHeader(count: Int, onCancel: () -> Unit, onDelete: () -> Un
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "$count selected",
+            text = pluralStringResource(R.plurals.selected_count, count, count),
             color = WornColors.TextPrimary,
             fontSize = 28.sp,
             fontWeight = FontWeight.Medium,
@@ -283,12 +286,17 @@ private fun SelectionHeader(count: Int, onCancel: () -> Unit, onDelete: () -> Un
         ) {
             Icon(Icons.Outlined.Delete, contentDescription = null, tint = Color.White)
             Spacer(Modifier.width(6.dp))
-            Text("Delete", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+            Text(
+                stringResource(R.string.common_delete),
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 15.sp,
+            )
         }
     }
     Spacer(modifier = Modifier.height(8.dp))
     Text(
-        text = "Cancel",
+        text = stringResource(R.string.common_cancel),
         color = WornColors.TextSecondary,
         fontSize = 15.sp,
         fontWeight = FontWeight.Medium,
@@ -350,7 +358,7 @@ private fun EmptyState(onCreateClick: () -> Unit = {}) {
         }
         Spacer(Modifier.height(24.dp))
         Text(
-            "No outfits yet",
+            stringResource(R.string.outfits_empty_title),
             color = WornColors.TextPrimary,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
@@ -358,7 +366,7 @@ private fun EmptyState(onCreateClick: () -> Unit = {}) {
         )
         Spacer(Modifier.height(24.dp))
         Text(
-            "Create your first look by combining\nitems from your wardrobe",
+            stringResource(R.string.outfits_empty_description),
             color = WornColors.TextSecondary,
             fontSize = 15.sp,
             lineHeight = 22.sp,
@@ -376,7 +384,7 @@ private fun EmptyState(onCreateClick: () -> Unit = {}) {
         ) {
             Icon(Icons.Default.Add, contentDescription = null, Modifier.size(18.dp), WornColors.BgPage)
             Text(
-                "Create your first outfit",
+                stringResource(R.string.outfits_empty_cta),
                 color = WornColors.TextOnColor, fontSize = 16.sp, fontWeight = FontWeight.SemiBold,
             )
         }
@@ -394,14 +402,14 @@ private fun DeleteConfirmationDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                "Delete $count outfit${if (count != 1) "s" else ""}?",
+                pluralStringResource(R.plurals.delete_outfits_title, count, count),
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 22.sp,
             )
         },
         text = {
             Text(
-                "This action cannot be undone. The selected outfits will be permanently removed.",
+                stringResource(R.string.outfits_delete_dialog_message),
                 color = WornColors.TextSecondary,
                 fontSize = 15.sp,
                 lineHeight = 22.sp,
@@ -414,11 +422,18 @@ private fun DeleteConfirmationDialog(
                 colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
                 shape = RoundedCornerShape(24.dp),
             ) {
-                Text(if (isDeleting) "Deleting…" else "Delete", fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = if (isDeleting) {
+                        stringResource(R.string.common_deleting)
+                    } else {
+                        stringResource(R.string.common_delete)
+                    },
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
         },
     )
 }

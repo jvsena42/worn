@@ -29,10 +29,10 @@ struct TryItScreen: View {
             WornBottomBar(activeTab: .tryIt, onTabSelected: onTabSelected, isCompact: isCompact)
         }
         .background(WornColors.bgPage)
-        .confirmationDialog("Add photo", isPresented: $showSourceChooser) {
-            Button("Take Photo") { showCamera = true }
-            Button("Choose from Library") { showPhotoPicker = true }
-            Button("Cancel", role: .cancel) {}
+        .confirmationDialog(String(localized: "add_item_photo_dialog_title"), isPresented: $showSourceChooser) {
+            Button(String(localized: "add_item_take_photo")) { showCamera = true }
+            Button(String(localized: "add_item_choose_gallery")) { showPhotoPicker = true }
+            Button(String(localized: "common_cancel"), role: .cancel) {}
         }
         .photosPicker(isPresented: $showPhotoPicker, selection: $selectedPhotoItem, matching: .images)
         .fullScreenCover(isPresented: $showCamera) {
@@ -88,19 +88,19 @@ struct TryItScreen: View {
                     .foregroundColor(WornColors.accentIndigo)
             }
 
-            Text("AI powered analysis")
+            Text(String(localized: "tryit_ai_empty_title"))
                 .font(.system(size: isCompact ? 24 : 26, weight: .medium))
                 .foregroundColor(WornColors.textPrimary)
                 .multilineTextAlignment(.center)
 
-            Text("Connect your Claude API key in Settings to analyze items against your wardrobe.")
+            Text(String(localized: "tryit_ai_empty_description"))
                 .font(.system(size: isCompact ? 15 : 16))
                 .foregroundColor(WornColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
                 .frame(maxWidth: isCompact ? 280 : 380)
 
-            indigoCtaButton(text: "Connect Claude AI") {
+            indigoCtaButton(text: String(localized: "tryit_connect_cta")) {
                 onTabSelected(.settings)
             }
 
@@ -194,7 +194,7 @@ struct TryItScreen: View {
     // MARK: - Components
 
     private func tryItTitle(fontSize: CGFloat) -> some View {
-        Text("Would it fit your wardrobe?")
+        Text(String(localized: "tryit_title"))
             .font(.system(size: fontSize, weight: .semibold))
             .foregroundColor(WornColors.textPrimary)
             .tracking(-0.8)
@@ -214,7 +214,7 @@ struct TryItScreen: View {
                         Image(systemName: "camera")
                             .font(.system(size: 44))
                             .foregroundColor(WornColors.iconMuted)
-                        Text("Upload a photo of the item\nyou're considering")
+                        Text(String(localized: "tryit_upload_hint"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(WornColors.textSecondary)
                             .multilineTextAlignment(.center)
@@ -242,7 +242,7 @@ struct TryItScreen: View {
             HStack(spacing: 8) {
                 Image(systemName: "cpu")
                     .font(.system(size: 18))
-                Text("Analyze with Claude")
+                Text(String(localized: "tryit_analyze"))
                     .font(.system(size: 16, weight: .semibold))
             }
             .foregroundColor(.white)
@@ -294,7 +294,7 @@ struct TryItScreen: View {
         Group {
             if !matchingItems.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("It would pair with...")
+                    Text(String(localized: "tryit_pairs_with"))
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(WornColors.textPrimary)
                         .tracking(-0.2)
@@ -349,7 +349,7 @@ struct TryItScreen: View {
         let valueSize: CGFloat = isCompact ? 40 : 44
 
         return VStack(alignment: .leading, spacing: 4) {
-            Text("Combinations unlocked")
+            Text(String(localized: "tryit_combinations_unlocked"))
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundColor(WornColors.textSecondary)
                 .tracking(0.5)
@@ -375,7 +375,7 @@ struct TryItScreen: View {
         Group {
             if !gaps.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Wardrobe gaps it fills")
+                    Text(String(localized: "tryit_gaps_filled"))
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(WornColors.textPrimary)
                         .tracking(-0.2)
@@ -401,7 +401,7 @@ struct TryItScreen: View {
             ? [WornColors.accentGreen, WornColors.accentGreenDark]
             : [Color(hex: "8B7D7D"), Color(hex: "6B5E5E")]
         let iconName = worthAdding ? "checkmark.circle" : "xmark.circle"
-        let text = worthAdding ? "Worth adding" : "Skip this one"
+        let text = worthAdding ? String(localized: "tryit_worth_adding") : String(localized: "tryit_skip")
 
         return HStack(spacing: 10) {
             Image(systemName: iconName)

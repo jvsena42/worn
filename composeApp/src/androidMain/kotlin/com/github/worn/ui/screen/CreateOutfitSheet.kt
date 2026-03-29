@@ -47,11 +47,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
@@ -134,7 +137,7 @@ internal fun CreateOutfitForm(
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(
-            text = if (isEditing) "Edit outfit" else "Create outfit",
+            text = stringResource(if (isEditing) R.string.create_outfit_title_edit else R.string.create_outfit_title),
             color = WornColors.TextPrimary,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
@@ -151,7 +154,7 @@ internal fun CreateOutfitForm(
         SaveOutfitButton(
             enabled = canSave,
             isSaving = isSaving,
-            label = if (isEditing) "Save Changes" else null,
+            label = if (isEditing) stringResource(R.string.common_save_changes) else null,
             onClick = { onSave(name) },
         )
     }
@@ -162,7 +165,13 @@ private fun OutfitNameField(name: String, onNameChange: (String) -> Unit) {
     TextField(
         value = name,
         onValueChange = onNameChange,
-        placeholder = { Text("Outfit name", color = WornColors.IconMuted, fontSize = 15.sp) },
+        placeholder = {
+            Text(
+                stringResource(R.string.create_outfit_name_hint),
+                color = WornColors.IconMuted,
+                fontSize = 15.sp,
+            )
+        },
         colors = TextFieldDefaults.colors(
             focusedContainerColor = WornColors.BgCard,
             unfocusedContainerColor = WornColors.BgCard,
@@ -184,14 +193,14 @@ private fun SelectItemsHeader(selectedCount: Int) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "Select items",
+            text = stringResource(R.string.create_outfit_select_items),
             color = WornColors.TextPrimary,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
         )
         if (selectedCount > 0) {
             Text(
-                text = "$selectedCount selected",
+                text = pluralStringResource(R.plurals.selected_count, selectedCount, selectedCount),
                 color = WornColors.AccentGreen,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
@@ -323,7 +332,11 @@ private fun SaveOutfitButton(enabled: Boolean, isSaving: Boolean, label: String?
                 .background(if (enabled) gradient else disabledGradient),
         ) {
             Text(
-                text = if (isSaving) "Saving…" else (label ?: "Save outfit"),
+                text = if (isSaving) {
+                    stringResource(R.string.common_saving)
+                } else {
+                    label ?: stringResource(R.string.create_outfit_save)
+                },
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,

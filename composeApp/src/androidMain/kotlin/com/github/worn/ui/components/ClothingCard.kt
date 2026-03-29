@@ -170,11 +170,3 @@ internal fun Category.dotColor(): Color = when (this) {
     Category.SHOES -> WornColors.CategoryDotShoes
     Category.ACCESSORY -> WornColors.CategoryDotAccessory
 }
-
-internal fun Category.displayLabel(): String = when (this) {
-    Category.TOP -> "Tops"
-    Category.BOTTOM -> "Bottoms"
-    Category.OUTERWEAR -> "Outerwear"
-    Category.SHOES -> "Shoes"
-    Category.ACCESSORY -> "Accessories"
-}
