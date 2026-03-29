@@ -36,6 +36,7 @@ import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Checkroom
 import androidx.compose.material.icons.outlined.PhotoLibrary
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.SmartToy
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -414,7 +415,7 @@ private fun TryItPhoneContent(
             LoadingIndicator()
         }
         state.error?.let { errorMsg ->
-            if (!state.isLoading) ErrorMessage(errorMsg)
+            if (!state.isLoading) ErrorContent(message = errorMsg, onRetry = onAnalyze)
         }
         state.result?.let { result ->
             ResultsSection(result = result, isCompact = true, onItemClick = onItemClick)
@@ -453,7 +454,7 @@ private fun TryItTabletContent(
                     LoadingIndicator()
                 }
                 state.error?.let { errorMsg ->
-                    if (!state.isLoading) ErrorMessage(errorMsg)
+                    if (!state.isLoading) ErrorContent(message = errorMsg, onRetry = onAnalyze)
                 }
                 state.result?.let { result ->
                     PairsSection(
@@ -587,18 +588,47 @@ private fun LoadingIndicator() {
 }
 
 @Composable
-private fun ErrorMessage(message: String) {
-    Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = WornColors.DeleteRed.copy(alpha = 0.1f),
-        modifier = Modifier.fillMaxWidth(),
+private fun ErrorContent(message: String, onRetry: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 40.dp),
     ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(72.dp)
+                .clip(CircleShape)
+                .background(WornColors.DeleteRed.copy(alpha = 0.1f)),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.ErrorOutline,
+                contentDescription = null,
+                tint = WornColors.DeleteRed,
+                modifier = Modifier.size(32.dp),
+            )
+        }
+        Spacer(Modifier.height(20.dp))
         Text(
             text = message,
-            color = WornColors.DeleteRed,
+            color = WornColors.TextSecondary,
             fontSize = 14.sp,
-            modifier = Modifier.padding(16.dp),
+            lineHeight = 20.sp,
+            textAlign = TextAlign.Center,
         )
+        Spacer(Modifier.height(16.dp))
+        Surface(
+            onClick = onRetry,
+            shape = RoundedCornerShape(16.dp),
+            color = WornColors.BgCard,
+        ) {
+            Text(
+                text = stringResource(R.string.common_retry),
+                color = WornColors.AccentIndigo,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+            )
+        }
     }
 }
 
