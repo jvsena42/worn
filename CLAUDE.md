@@ -66,6 +66,7 @@ Requires JDK 17+ (SQLDelight 2.0.2 requirement). iOS builds require Xcode — op
 - Always add previews to screens: on Android, include `@Preview` for phone and tablet (portrait) with `showSystemUi = true`; on iOS, include SwiftUI `#Preview` for iPhone and iPad (portrait).
 - Use native/framework components (e.g., Material3 `Button`, `FilledTonalButton`, `ElevatedButton`) instead of building custom equivalents from `Box`/`clickable`. Only go custom when the framework component genuinely cannot match the design.
 - Always update both Android (Compose) and iOS (SwiftUI) when making UI changes. Every screen, component, or visual behavior change must be applied to both platforms in the same task.
+- Never hardcode user-facing strings in UI code. Always use platform string resources: `stringResource(R.string.xxx)` / `pluralStringResource()` on Android, `String(localized:)` / `String(format:)` on iOS. Add every new string to both `values/strings.xml` (en), `values-pt-rBR/strings.xml` (pt-BR), `en.lproj/Localizable.strings`, and `pt-BR.lproj/Localizable.strings`. For plurals, also update `values/strings.xml` `<plurals>` entries and the `.stringsdict` files in both `.lproj` directories.
 
 ## Dependencies
 
