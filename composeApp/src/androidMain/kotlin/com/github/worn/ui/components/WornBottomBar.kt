@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -130,12 +131,14 @@ private fun TabItem(
             }
             Text(
                 text = label,
-                color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.SemiBold,
+                style = TextStyle(
+                    color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = 0.5.sp,
+                ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                letterSpacing = 0.5.sp,
             )
         }
     }
