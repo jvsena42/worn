@@ -88,6 +88,10 @@
 "settings_multi_select" = "(seleção múltipla)";
 "settings_api_hide" = "Ocultar";
 "settings_api_show" = "Mostrar";
+"settings_donate_title" = "Me compre meias novas";
+"settings_donate_subtitle" = "Se o Worn te salvou de sair com meias descombinando, considere uma gorjeta em Bitcoin pela Lightning Network.";
+"settings_donate_copy" = "Copiar";
+"settings_donate_copied" = "Copiado!";
 
 /* Gaps Screen */
 "gaps_title" = "O que está faltando";

@@ -88,6 +88,10 @@
 "settings_multi_select" = "(multi-select)";
 "settings_api_hide" = "Hide";
 "settings_api_show" = "Show";
+"settings_donate_title" = "Buy me new socks";
+"settings_donate_subtitle" = "If Worn saved you from wearing mismatched socks, consider a tiny Bitcoin tip via Lightning Network.";
+"settings_donate_copy" = "Copy";
+"settings_donate_copied" = "Copied!";
 
 /* Gaps Screen */
 "gaps_title" = "What's missing";

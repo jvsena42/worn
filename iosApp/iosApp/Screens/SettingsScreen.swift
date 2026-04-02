@@ -44,6 +44,9 @@ struct SettingsScreen: View {
                     aboutCard
                         .padding(.top, 10)
 
+                    donationCard
+                        .padding(.top, 16)
+
                     Spacer().frame(height: 32)
                 }
                 .padding(.horizontal, 24)
@@ -174,8 +177,50 @@ struct SettingsScreen: View {
         .background(WornColors.bgCard)
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
+
+    @State private var showCopied = false
+
+    private var donationCard: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(String(localized: "settings_donate_title"))
+                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(WornColors.textPrimary)
+
+            Text(String(localized: "settings_donate_subtitle"))
+                .font(.system(size: 13))
+                .foregroundColor(WornColors.textSecondary)
+
+            Button {
+                UIPasteboard.general.string = donationLNAddress
+                showCopied = true
+            } label: {
+                HStack {
+                    Text(donationLNAddress)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(WornColors.accentGreen)
+                    Spacer()
+                    Text(showCopied ? String(localized: "settings_donate_copied") : String(localized: "settings_donate_copy"))
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(WornColors.textSecondary)
+                }
+                .padding(12)
+                .background(WornColors.bgElevated)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(WornColors.borderSubtle, lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 8)
+        }
+        .padding(16)
+        .background(WornColors.bgCard)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
 }
 
+private let donationLNAddress = "jvsena42@blink.sv"
 private let feedbackURL = "https://github.com/jvsena42/worn/issues/new"
 private let licenseURL = "https://github.com/jvsena42/worn/blob/main/LICENSE"
 

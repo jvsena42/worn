@@ -91,6 +91,10 @@
     <string name="settings_multi_select">(seleção múltipla)</string>
     <string name="settings_api_hide">Ocultar</string>
     <string name="settings_api_show">Mostrar</string>
+    <string name="settings_donate_title">Me compre meias novas</string>
+    <string name="settings_donate_subtitle">Se o Worn te salvou de sair com meias descombinando, considere uma gorjeta em Bitcoin pela Lightning Network.</string>
+    <string name="settings_donate_copy">Copiar</string>
+    <string name="settings_donate_copied">Copiado!</string>
 
     <!-- Gaps Screen -->
     <string name="gaps_title">O que está faltando</string>
