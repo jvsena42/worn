@@ -15,7 +15,8 @@
         android:theme="@style/Theme.Worn">
         <activity
             android:exported="true"
-            android:name=".MainActivity">
+            android:name=".MainActivity"
+            android:theme="@style/Theme.Worn.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

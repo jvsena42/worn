@@ -19,6 +19,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.splashscreen)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

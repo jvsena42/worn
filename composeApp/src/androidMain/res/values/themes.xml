@@ -6,5 +6,12 @@
         <item name="android:navigationBarColor">@color/splash_green</item>
     </style>
 
+    <style name="Theme.Worn.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_green</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/ic_launcher_background</item>
+        <item name="postSplashScreenTheme">@style/Theme.Worn</item>
+    </style>
+
     <color name="splash_green">#FF7A9468</color>
 </resources>
