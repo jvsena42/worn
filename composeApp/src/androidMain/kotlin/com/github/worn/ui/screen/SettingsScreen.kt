@@ -272,51 +272,27 @@ private fun AboutCard() {
                 Text(versionName ?: "1.0", color = WornColors.TextSecondary, fontSize = 15.sp)
             }
             HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
-            Surface(
-                onClick = { uriHandler.openUri(FEEDBACK_URL) },
-                color = Color.Transparent,
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                ) {
-                    Text(
-                        stringResource(R.string.settings_suggestions_bugs),
-                        color = WornColors.TextPrimary,
-                        fontSize = 15.sp,
-                        modifier = Modifier.weight(1f),
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                        contentDescription = null,
-                        tint = WornColors.IconMuted,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-            }
+            AboutLinkRow(stringResource(R.string.settings_suggestions_bugs)) { uriHandler.openUri(FEEDBACK_URL) }
             HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
-            Surface(
-                onClick = { uriHandler.openUri(LICENSE_URL) },
-                color = Color.Transparent,
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                ) {
-                    Text(
-                        stringResource(R.string.settings_licenses),
-                        color = WornColors.TextPrimary,
-                        fontSize = 15.sp,
-                        modifier = Modifier.weight(1f),
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                        contentDescription = null,
-                        tint = WornColors.IconMuted,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
-            }
+            AboutLinkRow(stringResource(R.string.settings_licenses)) { uriHandler.openUri(LICENSE_URL) }
+        }
+    }
+}
+
+@Composable
+private fun AboutLinkRow(label: String, onClick: () -> Unit) {
+    Surface(onClick = onClick, color = Color.Transparent) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+        ) {
+            Text(label, color = WornColors.TextPrimary, fontSize = 15.sp, modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                contentDescription = null,
+                tint = WornColors.IconMuted,
+                modifier = Modifier.size(20.dp),
+            )
         }
     }
 }
