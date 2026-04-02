@@ -13,6 +13,10 @@ complexity:
   LongParameterList:
     # Composable functions pass many state + callback params with defaults
     ignoreDefaultParameters: true
+  LongMethod:
+    # Composable functions build UI trees that are declarative and linear;
+    # the default 60-line limit is too tight for screens with multiple sections
+    ignoreAnnotated: ['Composable']
 
 style:
   MagicNumber:
@@ -24,5 +28,6 @@ style:
   NewLineAtEndOfFile:
     active: true
   UnusedParameter:
-    # Compose convention: accept `modifier: Modifier = Modifier` even if unused
-    allowedNames: 'modifier'
+    # Compose conventions: `modifier` is always accepted; `onTabSelected` is a
+    # navigation callback passed uniformly to all screens even if not yet wired
+    allowedNames: 'modifier|onTabSelected'

@@ -44,7 +44,10 @@ struct SettingsScreen: View {
                     aboutCard
                         .padding(.top, 10)
 
-                    Spacer().frame(height: 32)
+                    donationCard
+                        .padding(.top, 16)
+
+                    Spacer().frame(height: 95)
                 }
                 .padding(.horizontal, 24)
             }
@@ -134,6 +137,26 @@ struct SettingsScreen: View {
             Divider().overlay(WornColors.borderSubtle.opacity(0.5))
 
             Button {
+                if let url = URL(string: feedbackURL) {
+                    UIApplication.shared.open(url)
+                }
+            } label: {
+                HStack {
+                    Text(String(localized: "settings_suggestions_bugs"))
+                        .font(.system(size: 15))
+                        .foregroundColor(WornColors.textPrimary)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14))
+                        .foregroundColor(WornColors.iconMuted)
+                }
+                .padding(16)
+            }
+            .buttonStyle(.plain)
+
+            Divider().overlay(WornColors.borderSubtle.opacity(0.5))
+
+            Button {
                 if let url = URL(string: licenseURL) {
                     UIApplication.shared.open(url)
                 }
@@ -154,8 +177,51 @@ struct SettingsScreen: View {
         .background(WornColors.bgCard)
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
+
+    @State private var showCopied = false
+
+    private var donationCard: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(String(localized: "settings_donate_title"))
+                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(WornColors.textPrimary)
+
+            Text(String(localized: "settings_donate_subtitle"))
+                .font(.system(size: 13))
+                .foregroundColor(WornColors.textSecondary)
+
+            Button {
+                UIPasteboard.general.string = donationLNAddress
+                showCopied = true
+            } label: {
+                HStack {
+                    Text(donationLNAddress)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(WornColors.accentGreen)
+                    Spacer()
+                    Text(showCopied ? String(localized: "settings_donate_copied") : String(localized: "settings_donate_copy"))
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(WornColors.textSecondary)
+                }
+                .padding(12)
+                .background(WornColors.bgElevated)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(WornColors.borderSubtle, lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 8)
+        }
+        .padding(16)
+        .background(WornColors.bgCard)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
 }
 
+private let donationLNAddress = "jvsena42@blink.sv"
+private let feedbackURL = "https://github.com/jvsena42/worn/issues/new"
 private let licenseURL = "https://github.com/jvsena42/worn/blob/main/LICENSE"
 
 // MARK: - Profile Sheet
@@ -208,7 +274,7 @@ private struct ProfileSheet: View {
     private var bodyTypeOptions: [(BodyType, String)] {
         [(.slim, String(localized: "body_type_slim")), (.athletic, String(localized: "body_type_athletic")), (.average, String(localized: "body_type_average")),
          (.stocky, String(localized: "body_type_stocky")), (.short_, String(localized: "body_type_short")), (.tallAndSlim, String(localized: "body_type_tall_slim")),
-         (.bigAndTall, String(localized: "body_type_big_tall"))]
+         (.tallAndFit, String(localized: "body_type_tall_and_fit")), (.bigAndTall, String(localized: "body_type_big_tall"))]
     }
     private var styleOptions: [(StyleProfile, String)] {
         [(.classic, String(localized: "style_classic")), (.casual, String(localized: "style_casual")), (.streetwear, String(localized: "style_streetwear")),
@@ -392,6 +458,7 @@ private extension BodyType {
         case .stocky: return String(localized: "body_type_stocky")
         case .short_: return String(localized: "body_type_short")
         case .tallAndSlim: return String(localized: "body_type_tall_slim")
+        case .tallAndFit: return String(localized: "body_type_tall_and_fit")
         case .bigAndTall: return String(localized: "body_type_big_tall")
         default: return ""
         }

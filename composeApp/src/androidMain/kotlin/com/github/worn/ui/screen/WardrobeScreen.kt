@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -65,14 +66,13 @@ import com.github.worn.ui.components.CategoryFilterChips
 import com.github.worn.ui.components.ClothingCard
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 
 private val GRID_MIN_CELL_WIDTH = 160.dp
 private val GRID_GAP_COMPACT = 12.dp
 private val GRID_GAP_EXPANDED = 16.dp
-private val BOTTOM_BAR_HEIGHT = 95.dp
-@Suppress("UnusedParameter")
 @Composable
 fun WardrobeScreen(
     onTabSelected: (Tab) -> Unit = {},
@@ -186,7 +186,10 @@ private fun WardrobeScaffold(
     Scaffold(
         containerColor = WornColors.BgPage,
         floatingActionButton = {
-            if (!isSelectionMode) AddItemFab(onAddItemClick, Modifier.padding(bottom = BOTTOM_BAR_HEIGHT))
+            val isWardrobeEmpty = !state.isLoading && state.totalItemCount == 0
+            if (!isSelectionMode && !isWardrobeEmpty) {
+                AddItemFab(onAddItemClick, Modifier.padding(bottom = WornDimens.BottomBarClearance))
+            }
         },
     ) { paddingValues ->
         val isWardrobeEmpty = !state.isLoading && state.totalItemCount == 0
@@ -323,6 +326,7 @@ private fun WardrobeContent(
             columns = GridCells.Adaptive(minSize = GRID_MIN_CELL_WIDTH),
             horizontalArrangement = Arrangement.spacedBy(gridGap),
             verticalArrangement = Arrangement.spacedBy(gridGap),
+            contentPadding = PaddingValues(bottom = WornDimens.BottomBarClearance),
             modifier = Modifier.fillMaxSize(),
         ) {
             items(state.items, key = { it.id }) { item ->

@@ -10,28 +10,28 @@
 "common_retry" = "Tentar novamente";
 
 /* Tabs */
-"tab_wardrobe" = "GUARDA-ROUPA";
+"tab_wardrobe" = "ARMÁRIO";
 "tab_outfits" = "LOOKS";
 "tab_gaps" = "LACUNAS";
 "tab_try_it" = "TESTAR";
 "tab_settings" = "AJUSTES";
 
 /* Wardrobe Screen */
-"wardrobe_title_empty" = "Seu guarda-roupa";
+"wardrobe_title_empty" = "Seu armário";
 "wardrobe_title" = "Worn";
-"wardrobe_subtitle" = "Seu guarda-roupa cápsula · %d itens";
+"wardrobe_subtitle" = "Seu armário cápsula · %d itens";
 "wardrobe_empty_title" = "Nenhum item ainda";
-"wardrobe_empty_description" = "Adicione sua primeira peça para\ncomeçar a montar seu guarda-roupa";
+"wardrobe_empty_description" = "Adicione sua primeira peça para\ncomeçar a montar seu armário";
 "wardrobe_empty_cta" = "Adicione seu primeiro item";
 "wardrobe_category_empty" = "Nenhum item nesta categoria";
 "wardrobe_fab_add" = "Adicionar item";
-"wardrobe_delete_dialog_message" = "Esta ação não pode ser desfeita. Os itens selecionados serão removidos permanentemente do seu guarda-roupa.";
+"wardrobe_delete_dialog_message" = "Esta ação não pode ser desfeita. Os itens selecionados serão removidos permanentemente do seu armário.";
 
 /* Outfits Screen */
 "outfits_title" = "Seus looks";
 "outfits_button_create" = "Criar";
 "outfits_empty_title" = "Nenhum look ainda";
-"outfits_empty_description" = "Crie seu primeiro look combinando\nitens do seu guarda-roupa";
+"outfits_empty_description" = "Crie seu primeiro look combinando\nitens do seu armário";
 "outfits_empty_cta" = "Crie seu primeiro look";
 "outfits_delete_dialog_message" = "Esta ação não pode ser desfeita. Os looks selecionados serão removidos permanentemente.";
 
@@ -44,7 +44,7 @@
 "add_item_photo_hint" = "Toque para adicionar foto";
 "add_item_ai_badge" = "Auto-tag com IA";
 "add_item_name_hint" = "Nome do item";
-"add_item_save_to_wardrobe" = "Salvar no guarda-roupa";
+"add_item_save_to_wardrobe" = "Salvar no armário";
 
 /* Create Outfit Sheet */
 "create_outfit_title" = "Criar look";
@@ -57,7 +57,7 @@
 "item_detail_edit" = "Editar Item";
 "item_detail_delete" = "Excluir Item";
 "item_detail_delete_dialog_title" = "Excluir item?";
-"item_detail_delete_dialog_message" = "Esta ação não pode ser desfeita. \"%@\" será removido permanentemente do seu guarda-roupa.";
+"item_detail_delete_dialog_message" = "Esta ação não pode ser desfeita. \"%@\" será removido permanentemente do seu armário.";
 
 /* Outfit Detail Sheet */
 "outfit_detail_edit" = "Editar Look";
@@ -82,32 +82,37 @@
 "settings_api_get_key" = "Obtenha uma chave gratuita em console.anthropic.com →";
 "settings_save_connect" = "Salvar e conectar";
 "settings_remove_key" = "Remover chave";
+"settings_suggestions_bugs" = "Sugestões e Bugs";
 "settings_version" = "Versão";
 "settings_licenses" = "Licenças";
 "settings_multi_select" = "(seleção múltipla)";
 "settings_api_hide" = "Ocultar";
 "settings_api_show" = "Mostrar";
+"settings_donate_title" = "Me compre meias novas";
+"settings_donate_subtitle" = "Se o Worn te salvou de sair com meias descombinando, considere uma gorjeta em Bitcoin pela Lightning Network.";
+"settings_donate_copy" = "Copiar";
+"settings_donate_copied" = "Copiado!";
 
 /* Gaps Screen */
 "gaps_title" = "O que está faltando";
 "gaps_subtitle" = "Itens que mais expandiriam suas combinações";
-"gaps_complete_title" = "Seu guarda-roupa parece completo!";
+"gaps_complete_title" = "Seu armário parece completo!";
 "gaps_complete_description" = "Não encontramos nenhuma lacuna.\nVocê tem ótima cobertura em todas as categorias.";
 "gaps_banner_ai_title" = "Recomendações com IA";
 "gaps_banner_common_title" = "Sugestões Comuns";
-"gaps_banner_ai_subtitle" = "Sugestões personalizadas baseadas no seu guarda-roupa";
+"gaps_banner_ai_subtitle" = "Sugestões personalizadas baseadas no seu armário";
 "gaps_banner_common_subtitle" = "Conecte a Claude IA para sugestões personalizadas";
 "gaps_pairing_ai" = "Combinaria com %d dos seus itens";
-"gaps_pairing_common" = "Item essencial do guarda-roupa";
-"gaps_add_to_wardrobe" = "Adicionar ao guarda-roupa";
+"gaps_pairing_common" = "Item essencial do armário";
+"gaps_add_to_wardrobe" = "Adicionar ao armário";
 "gaps_dismiss" = "Dispensar";
 
 /* Try It Screen */
-"tryit_title" = "Combinaria com seu guarda-roupa?";
+"tryit_title" = "Combinaria com seu armário?";
 "tryit_upload_hint" = "Envie uma foto do item\nque você está considerando";
 "tryit_analyze" = "Analisar com Claude";
 "tryit_ai_empty_title" = "Análise com inteligência artificial";
-"tryit_ai_empty_description" = "Conecte sua chave da API Claude nos Ajustes para analisar itens com seu guarda-roupa.";
+"tryit_ai_empty_description" = "Conecte sua chave da API Claude nos Ajustes para analisar itens com seu armário.";
 "tryit_connect_cta" = "Conectar Claude IA";
 "tryit_pairs_with" = "Combinaria com…";
 "tryit_combinations_unlocked" = "Combinações desbloqueadas";
@@ -206,6 +211,7 @@
 "body_type_stocky" = "Robusto";
 "body_type_short" = "Baixo";
 "body_type_tall_and_slim" = "Alto e Magro";
+"body_type_tall_and_fit" = "Alto e Forte";
 "body_type_big_and_tall" = "Grande e Alto";
 
 /* Style Profile */

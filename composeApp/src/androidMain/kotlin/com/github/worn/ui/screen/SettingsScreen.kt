@@ -46,11 +46,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -71,6 +73,7 @@ import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -172,7 +175,10 @@ private fun SettingsScaffold(
             Spacer(Modifier.height(10.dp))
             AboutCard()
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(24.dp))
+            DonationCard()
+
+            Spacer(Modifier.height(WornDimens.BottomBarClearance))
         }
     }
 }
@@ -266,25 +272,81 @@ private fun AboutCard() {
                 Text(versionName ?: "1.0", color = WornColors.TextSecondary, fontSize = 15.sp)
             }
             HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
+            AboutLinkRow(stringResource(R.string.settings_suggestions_bugs)) { uriHandler.openUri(FEEDBACK_URL) }
+            HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
+            AboutLinkRow(stringResource(R.string.settings_licenses)) { uriHandler.openUri(LICENSE_URL) }
+        }
+    }
+}
+
+@Composable
+private fun AboutLinkRow(label: String, onClick: () -> Unit) {
+    Surface(onClick = onClick, color = Color.Transparent) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+        ) {
+            Text(label, color = WornColors.TextPrimary, fontSize = 15.sp, modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                contentDescription = null,
+                tint = WornColors.IconMuted,
+                modifier = Modifier.size(20.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun DonationCard() {
+    val clipboardManager = LocalClipboardManager.current
+    val copiedText = stringResource(R.string.settings_donate_copied)
+    var showCopied by remember { mutableStateOf(false) }
+
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = WornColors.BgCard,
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                stringResource(R.string.settings_donate_title),
+                color = WornColors.TextPrimary,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                stringResource(R.string.settings_donate_subtitle),
+                color = WornColors.TextSecondary,
+                fontSize = 13.sp,
+            )
+            Spacer(Modifier.height(12.dp))
             Surface(
-                onClick = { uriHandler.openUri(LICENSE_URL) },
-                color = Color.Transparent,
+                onClick = {
+                    clipboardManager.setText(AnnotatedString(DONATION_LN_ADDRESS))
+                    showCopied = true
+                },
+                shape = RoundedCornerShape(12.dp),
+                color = WornColors.BgElevated,
+                border = BorderStroke(1.dp, WornColors.BorderSubtle),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(12.dp),
                 ) {
                     Text(
-                        stringResource(R.string.settings_licenses),
-                        color = WornColors.TextPrimary,
-                        fontSize = 15.sp,
+                        DONATION_LN_ADDRESS,
+                        color = WornColors.AccentGreen,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
                         modifier = Modifier.weight(1f),
                     )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
-                        contentDescription = null,
-                        tint = WornColors.IconMuted,
-                        modifier = Modifier.size(20.dp),
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        if (showCopied) copiedText else stringResource(R.string.settings_donate_copy),
+                        color = WornColors.TextSecondary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
                     )
                 }
             }
@@ -656,6 +718,7 @@ private fun BodyType.displayName(): String = when (this) {
     BodyType.STOCKY -> stringResource(R.string.body_type_stocky)
     BodyType.SHORT -> stringResource(R.string.body_type_short)
     BodyType.TALL_AND_SLIM -> stringResource(R.string.body_type_tall_and_slim)
+    BodyType.TALL_AND_FIT -> stringResource(R.string.body_type_tall_and_fit)
     BodyType.BIG_AND_TALL -> stringResource(R.string.body_type_big_and_tall)
 }
 
@@ -695,6 +758,8 @@ private fun Lifestyle.displayName(): String = when (this) {
 
 // endregion
 
+private const val DONATION_LN_ADDRESS = "jvsena42@blink.sv"
+private const val FEEDBACK_URL = "https://github.com/jvsena42/worn/issues/new"
 private const val LICENSE_URL = "https://github.com/jvsena42/worn/blob/main/LICENSE"
 
 @Preview(showSystemUi = true, device = "id:pixel_8")

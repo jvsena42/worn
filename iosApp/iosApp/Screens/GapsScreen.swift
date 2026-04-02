@@ -34,7 +34,7 @@ struct GapsScreen: View {
                         gapsContent
                     }
 
-                    Spacer().frame(height: 32)
+                    Spacer().frame(height: 95)
                 }
                 .padding(.horizontal, 24)
             }

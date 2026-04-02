@@ -50,3 +50,11 @@ Or use the run configuration in Android Studio / Fleet.
 ### iOS
 
 Open `iosApp/` in Xcode and run, or use the KMP run configuration in Fleet.
+
+## Buy Me New Socks
+
+If Worn saved you from wearing mismatched socks, consider a tiny Bitcoin tip via Lightning Network:
+
+```
+jvsena42@blink.sv
+```

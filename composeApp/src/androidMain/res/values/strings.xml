@@ -85,11 +85,16 @@
     <string name="settings_api_get_key">Get a free key at console.anthropic.com →</string>
     <string name="settings_save_connect">Save &amp; Connect</string>
     <string name="settings_remove_key">Remove key</string>
+    <string name="settings_suggestions_bugs">Suggestions &amp; Bugs</string>
     <string name="settings_version">Version</string>
     <string name="settings_licenses">Licenses</string>
     <string name="settings_multi_select">(multi-select)</string>
     <string name="settings_api_hide">Hide</string>
     <string name="settings_api_show">Show</string>
+    <string name="settings_donate_title">Buy me new socks</string>
+    <string name="settings_donate_subtitle">If Worn saved you from wearing mismatched socks, consider a tiny Bitcoin tip via Lightning Network.</string>
+    <string name="settings_donate_copy">Copy</string>
+    <string name="settings_donate_copied">Copied!</string>
 
     <!-- Gaps Screen -->
     <string name="gaps_title">What\'s missing</string>
@@ -209,6 +214,7 @@
     <string name="body_type_stocky">Stocky</string>
     <string name="body_type_short">Short</string>
     <string name="body_type_tall_and_slim">Tall &amp; Slim</string>
+    <string name="body_type_tall_and_fit">Tall &amp; Fit</string>
     <string name="body_type_big_and_tall">Big &amp; Tall</string>
 
     <!-- Style Profile -->

@@ -185,7 +185,7 @@ struct TryItScreen: View {
                 }
             }
 
-            Spacer().frame(height: 32)
+            Spacer().frame(height: 95)
         }
         .padding(.horizontal, contentPadding)
     }

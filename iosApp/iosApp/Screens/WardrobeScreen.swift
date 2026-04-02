@@ -90,7 +90,7 @@ struct WardrobeContent: View {
                 scrollContent
             }
 
-            if !isSelectionMode {
+            if !isSelectionMode && !isWardrobeEmpty {
                 addItemFab
                     .padding(.trailing, contentPadding)
                     .padding(.bottom, 110)
@@ -134,6 +134,7 @@ struct WardrobeContent: View {
             }
             .padding(.horizontal, contentPadding)
             .padding(.top, 8)
+            .padding(.bottom, 95)
         }
     }
 

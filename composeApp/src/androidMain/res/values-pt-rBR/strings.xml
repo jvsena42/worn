@@ -13,28 +13,28 @@
     <string name="common_retry">Tentar novamente</string>
 
     <!-- Tabs -->
-    <string name="tab_wardrobe">GUARDA-ROUPA</string>
+    <string name="tab_wardrobe">ARMÁRIO</string>
     <string name="tab_outfits">LOOKS</string>
     <string name="tab_gaps">LACUNAS</string>
     <string name="tab_try_it">TESTAR</string>
     <string name="tab_settings">AJUSTES</string>
 
     <!-- Wardrobe Screen -->
-    <string name="wardrobe_title_empty">Seu guarda-roupa</string>
+    <string name="wardrobe_title_empty">Seu armário</string>
     <string name="wardrobe_title">Worn</string>
-    <string name="wardrobe_subtitle">Seu guarda-roupa cápsula · %d itens</string>
+    <string name="wardrobe_subtitle">Seu armário cápsula · %d itens</string>
     <string name="wardrobe_empty_title">Nenhum item ainda</string>
-    <string name="wardrobe_empty_description">Adicione sua primeira peça para\ncomeçar a montar seu guarda-roupa</string>
+    <string name="wardrobe_empty_description">Adicione sua primeira peça para\ncomeçar a montar seu armário</string>
     <string name="wardrobe_empty_cta">Adicione seu primeiro item</string>
     <string name="wardrobe_category_empty">Nenhum item nesta categoria</string>
     <string name="wardrobe_fab_add">Adicionar item</string>
-    <string name="wardrobe_delete_dialog_message">Esta ação não pode ser desfeita. Os itens selecionados serão removidos permanentemente do seu guarda-roupa.</string>
+    <string name="wardrobe_delete_dialog_message">Esta ação não pode ser desfeita. Os itens selecionados serão removidos permanentemente do seu armário.</string>
 
     <!-- Outfits Screen -->
     <string name="outfits_title">Seus looks</string>
     <string name="outfits_button_create">Criar</string>
     <string name="outfits_empty_title">Nenhum look ainda</string>
-    <string name="outfits_empty_description">Crie seu primeiro look combinando\nitens do seu guarda-roupa</string>
+    <string name="outfits_empty_description">Crie seu primeiro look combinando\nitens do seu armário</string>
     <string name="outfits_empty_cta">Crie seu primeiro look</string>
     <string name="outfits_delete_dialog_message">Esta ação não pode ser desfeita. Os looks selecionados serão removidos permanentemente.</string>
 
@@ -47,7 +47,7 @@
     <string name="add_item_photo_hint">Toque para adicionar foto</string>
     <string name="add_item_ai_badge">Auto-tag com IA</string>
     <string name="add_item_name_hint">Nome do item</string>
-    <string name="add_item_save_to_wardrobe">Salvar no guarda-roupa</string>
+    <string name="add_item_save_to_wardrobe">Salvar no armário</string>
 
     <!-- Create Outfit Sheet -->
     <string name="create_outfit_title">Criar look</string>
@@ -60,7 +60,7 @@
     <string name="item_detail_edit">Editar Item</string>
     <string name="item_detail_delete">Excluir Item</string>
     <string name="item_detail_delete_dialog_title">Excluir item?</string>
-    <string name="item_detail_delete_dialog_message">Esta ação não pode ser desfeita. \"%s\" será removido permanentemente do seu guarda-roupa.</string>
+    <string name="item_detail_delete_dialog_message">Esta ação não pode ser desfeita. \"%s\" será removido permanentemente do seu armário.</string>
 
     <!-- Outfit Detail Sheet -->
     <string name="outfit_detail_edit">Editar Look</string>
@@ -85,32 +85,37 @@
     <string name="settings_api_get_key">Obtenha uma chave gratuita em console.anthropic.com →</string>
     <string name="settings_save_connect">Salvar e conectar</string>
     <string name="settings_remove_key">Remover chave</string>
+    <string name="settings_suggestions_bugs">Sugestões e Bugs</string>
     <string name="settings_version">Versão</string>
     <string name="settings_licenses">Licenças</string>
     <string name="settings_multi_select">(seleção múltipla)</string>
     <string name="settings_api_hide">Ocultar</string>
     <string name="settings_api_show">Mostrar</string>
+    <string name="settings_donate_title">Me compre meias novas</string>
+    <string name="settings_donate_subtitle">Se o Worn te salvou de sair com meias descombinando, considere uma gorjeta em Bitcoin pela Lightning Network.</string>
+    <string name="settings_donate_copy">Copiar</string>
+    <string name="settings_donate_copied">Copiado!</string>
 
     <!-- Gaps Screen -->
     <string name="gaps_title">O que está faltando</string>
     <string name="gaps_subtitle">Itens que mais expandiriam suas combinações</string>
-    <string name="gaps_complete_title">Seu guarda-roupa parece completo!</string>
+    <string name="gaps_complete_title">Seu armário parece completo!</string>
     <string name="gaps_complete_description">Não encontramos nenhuma lacuna.\nVocê tem ótima cobertura em todas as categorias.</string>
     <string name="gaps_banner_ai_title">Recomendações com IA</string>
     <string name="gaps_banner_common_title">Sugestões Comuns</string>
-    <string name="gaps_banner_ai_subtitle">Sugestões personalizadas baseadas no seu guarda-roupa</string>
+    <string name="gaps_banner_ai_subtitle">Sugestões personalizadas baseadas no seu armário</string>
     <string name="gaps_banner_common_subtitle">Conecte a Claude IA para sugestões personalizadas</string>
     <string name="gaps_pairing_ai">Combinaria com %d dos seus itens</string>
-    <string name="gaps_pairing_common">Item essencial do guarda-roupa</string>
-    <string name="gaps_add_to_wardrobe">Adicionar ao guarda-roupa</string>
+    <string name="gaps_pairing_common">Item essencial do armário</string>
+    <string name="gaps_add_to_wardrobe">Adicionar ao armário</string>
     <string name="gaps_dismiss">Dispensar</string>
 
     <!-- Try It Screen -->
-    <string name="tryit_title">Combinaria com seu guarda-roupa?</string>
+    <string name="tryit_title">Combinaria com seu armário?</string>
     <string name="tryit_upload_hint">Envie uma foto do item\nque você está considerando</string>
     <string name="tryit_analyze">Analisar com Claude</string>
     <string name="tryit_ai_empty_title">Análise com inteligência artificial</string>
-    <string name="tryit_ai_empty_description">Conecte sua chave da API Claude nos Ajustes para analisar itens com seu guarda-roupa.</string>
+    <string name="tryit_ai_empty_description">Conecte sua chave da API Claude nos Ajustes para analisar itens com seu armário.</string>
     <string name="tryit_connect_cta">Conectar Claude IA</string>
     <string name="tryit_pairs_with">Combinaria com…</string>
     <string name="tryit_combinations_unlocked">Combinações desbloqueadas</string>
@@ -209,6 +214,7 @@
     <string name="body_type_stocky">Robusto</string>
     <string name="body_type_short">Baixo</string>
     <string name="body_type_tall_and_slim">Alto e Magro</string>
+    <string name="body_type_tall_and_fit">Alto e Forte</string>
     <string name="body_type_big_and_tall">Grande e Alto</string>
 
     <!-- Style Profile -->

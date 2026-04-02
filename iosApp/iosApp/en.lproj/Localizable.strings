@@ -82,11 +82,16 @@
 "settings_api_get_key" = "Get a free key at console.anthropic.com →";
 "settings_save_connect" = "Save & Connect";
 "settings_remove_key" = "Remove key";
+"settings_suggestions_bugs" = "Suggestions & Bugs";
 "settings_version" = "Version";
 "settings_licenses" = "Licenses";
 "settings_multi_select" = "(multi-select)";
 "settings_api_hide" = "Hide";
 "settings_api_show" = "Show";
+"settings_donate_title" = "Buy me new socks";
+"settings_donate_subtitle" = "If Worn saved you from wearing mismatched socks, consider a tiny Bitcoin tip via Lightning Network.";
+"settings_donate_copy" = "Copy";
+"settings_donate_copied" = "Copied!";
 
 /* Gaps Screen */
 "gaps_title" = "What's missing";
@@ -206,6 +211,7 @@
 "body_type_stocky" = "Stocky";
 "body_type_short" = "Short";
 "body_type_tall_and_slim" = "Tall & Slim";
+"body_type_tall_and_fit" = "Tall & Fit";
 "body_type_big_and_tall" = "Big & Tall";
 
 /* Style Profile */
