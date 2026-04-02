@@ -177,7 +177,7 @@ private fun SettingsScaffold(
             Spacer(Modifier.height(24.dp))
             DonationCard()
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(BOTTOM_BAR_CLEARANCE))
         }
     }
 }
@@ -781,6 +781,7 @@ private fun Lifestyle.displayName(): String = when (this) {
 
 // endregion
 
+private val BOTTOM_BAR_CLEARANCE = 95.dp
 private const val DONATION_LN_ADDRESS = "jvsena42@blink.sv"
 private const val FEEDBACK_URL = "https://github.com/jvsena42/worn/issues/new"
 private const val LICENSE_URL = "https://github.com/jvsena42/worn/blob/main/LICENSE"
