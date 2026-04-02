@@ -82,6 +82,7 @@
 "settings_api_get_key" = "Get a free key at console.anthropic.com →";
 "settings_save_connect" = "Save & Connect";
 "settings_remove_key" = "Remove key";
+"settings_suggestions_bugs" = "Suggestions & Bugs";
 "settings_version" = "Version";
 "settings_licenses" = "Licenses";
 "settings_multi_select" = "(multi-select)";

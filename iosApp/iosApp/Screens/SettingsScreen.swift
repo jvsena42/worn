@@ -134,6 +134,26 @@ struct SettingsScreen: View {
             Divider().overlay(WornColors.borderSubtle.opacity(0.5))
 
             Button {
+                if let url = URL(string: feedbackURL) {
+                    UIApplication.shared.open(url)
+                }
+            } label: {
+                HStack {
+                    Text(String(localized: "settings_suggestions_bugs"))
+                        .font(.system(size: 15))
+                        .foregroundColor(WornColors.textPrimary)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14))
+                        .foregroundColor(WornColors.iconMuted)
+                }
+                .padding(16)
+            }
+            .buttonStyle(.plain)
+
+            Divider().overlay(WornColors.borderSubtle.opacity(0.5))
+
+            Button {
                 if let url = URL(string: licenseURL) {
                     UIApplication.shared.open(url)
                 }
@@ -156,6 +176,7 @@ struct SettingsScreen: View {
     }
 }
 
+private let feedbackURL = "https://github.com/jvsena42/worn/issues/new"
 private let licenseURL = "https://github.com/jvsena42/worn/blob/main/LICENSE"
 
 // MARK: - Profile Sheet

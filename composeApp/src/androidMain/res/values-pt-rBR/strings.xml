@@ -85,6 +85,7 @@
     <string name="settings_api_get_key">Obtenha uma chave gratuita em console.anthropic.com →</string>
     <string name="settings_save_connect">Salvar e conectar</string>
     <string name="settings_remove_key">Remover chave</string>
+    <string name="settings_suggestions_bugs">Sugestões e Bugs</string>
     <string name="settings_version">Versão</string>
     <string name="settings_licenses">Licenças</string>
     <string name="settings_multi_select">(seleção múltipla)</string>

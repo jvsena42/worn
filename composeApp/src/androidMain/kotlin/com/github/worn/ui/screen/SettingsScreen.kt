@@ -267,6 +267,29 @@ private fun AboutCard() {
             }
             HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
             Surface(
+                onClick = { uriHandler.openUri(FEEDBACK_URL) },
+                color = Color.Transparent,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.settings_suggestions_bugs),
+                        color = WornColors.TextPrimary,
+                        fontSize = 15.sp,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = WornColors.IconMuted,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+            }
+            HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
+            Surface(
                 onClick = { uriHandler.openUri(LICENSE_URL) },
                 color = Color.Transparent,
             ) {
@@ -696,6 +719,7 @@ private fun Lifestyle.displayName(): String = when (this) {
 
 // endregion
 
+private const val FEEDBACK_URL = "https://github.com/jvsena42/worn/issues/new"
 private const val LICENSE_URL = "https://github.com/jvsena42/worn/blob/main/LICENSE"
 
 @Preview(showSystemUi = true, device = "id:pixel_8")
