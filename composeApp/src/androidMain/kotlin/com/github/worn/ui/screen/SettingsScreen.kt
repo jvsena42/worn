@@ -73,6 +73,7 @@ import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -177,7 +178,7 @@ private fun SettingsScaffold(
             Spacer(Modifier.height(24.dp))
             DonationCard()
 
-            Spacer(Modifier.height(BOTTOM_BAR_CLEARANCE))
+            Spacer(Modifier.height(WornDimens.BottomBarClearance))
         }
     }
 }
@@ -781,7 +782,6 @@ private fun Lifestyle.displayName(): String = when (this) {
 
 // endregion
 
-private val BOTTOM_BAR_CLEARANCE = 95.dp
 private const val DONATION_LN_ADDRESS = "jvsena42@blink.sv"
 private const val FEEDBACK_URL = "https://github.com/jvsena42/worn/issues/new"
 private const val LICENSE_URL = "https://github.com/jvsena42/worn/blob/main/LICENSE"

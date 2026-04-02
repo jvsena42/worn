@@ -67,6 +67,7 @@ import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
 import com.github.worn.ui.components.iconRes
 import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -174,7 +175,7 @@ private fun GapsScaffold(
                 )
             }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(WornDimens.BottomBarClearance))
         }
     }
 }

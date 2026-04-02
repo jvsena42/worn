@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -60,6 +61,7 @@ import com.github.worn.presentation.viewmodel.OutfitViewModel
 import com.github.worn.ui.components.OutfitCard
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -309,6 +311,7 @@ private fun OutfitsContent(
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(bottom = WornDimens.BottomBarClearance),
         modifier = Modifier.fillMaxSize(),
     ) {
         items(state.outfits, key = { it.id }) { outfit ->

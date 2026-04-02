@@ -141,6 +141,7 @@ struct OutfitsContent: View {
             }
             .padding(.horizontal, contentPadding)
             .padding(.top, 8)
+            .padding(.bottom, 95)
         }
     }
 

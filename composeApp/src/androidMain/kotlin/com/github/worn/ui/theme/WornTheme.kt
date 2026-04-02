@@ -3,7 +3,12 @@ package com.github.worn.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
+
+object WornDimens {
+    val BottomBarClearance = 95.dp
+}
 
 object WornColors {
     // Backgrounds

@@ -84,6 +84,7 @@ import com.github.worn.presentation.viewmodel.TryItState
 import com.github.worn.presentation.viewmodel.TryItViewModel
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 import java.io.ByteArrayOutputStream
@@ -465,7 +466,7 @@ private fun TryItTabletContent(
                 }
             }
         }
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(WornDimens.BottomBarClearance))
     }
 }
 
