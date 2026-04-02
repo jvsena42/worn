@@ -206,6 +206,7 @@
 "body_type_stocky" = "Stocky";
 "body_type_short" = "Short";
 "body_type_tall_and_slim" = "Tall & Slim";
+"body_type_tall_and_fit" = "Tall & Fit";
 "body_type_big_and_tall" = "Big & Tall";
 
 /* Style Profile */

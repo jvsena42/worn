@@ -7,6 +7,7 @@ enum class BodyType {
     STOCKY,
     SHORT,
     TALL_AND_SLIM,
+    TALL_AND_FIT,
     BIG_AND_TALL,
 }
 

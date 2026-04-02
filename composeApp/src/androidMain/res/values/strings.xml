@@ -209,6 +209,7 @@
     <string name="body_type_stocky">Stocky</string>
     <string name="body_type_short">Short</string>
     <string name="body_type_tall_and_slim">Tall &amp; Slim</string>
+    <string name="body_type_tall_and_fit">Tall &amp; Fit</string>
     <string name="body_type_big_and_tall">Big &amp; Tall</string>
 
     <!-- Style Profile -->

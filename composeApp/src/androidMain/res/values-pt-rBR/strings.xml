@@ -209,6 +209,7 @@
     <string name="body_type_stocky">Robusto</string>
     <string name="body_type_short">Baixo</string>
     <string name="body_type_tall_and_slim">Alto e Magro</string>
+    <string name="body_type_tall_and_fit">Alto e Forte</string>
     <string name="body_type_big_and_tall">Grande e Alto</string>
 
     <!-- Style Profile -->

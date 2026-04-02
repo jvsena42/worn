@@ -208,7 +208,7 @@ private struct ProfileSheet: View {
     private var bodyTypeOptions: [(BodyType, String)] {
         [(.slim, String(localized: "body_type_slim")), (.athletic, String(localized: "body_type_athletic")), (.average, String(localized: "body_type_average")),
          (.stocky, String(localized: "body_type_stocky")), (.short_, String(localized: "body_type_short")), (.tallAndSlim, String(localized: "body_type_tall_slim")),
-         (.bigAndTall, String(localized: "body_type_big_tall"))]
+         (.tallAndFit, String(localized: "body_type_tall_and_fit")), (.bigAndTall, String(localized: "body_type_big_tall"))]
     }
     private var styleOptions: [(StyleProfile, String)] {
         [(.classic, String(localized: "style_classic")), (.casual, String(localized: "style_casual")), (.streetwear, String(localized: "style_streetwear")),
@@ -392,6 +392,7 @@ private extension BodyType {
         case .stocky: return String(localized: "body_type_stocky")
         case .short_: return String(localized: "body_type_short")
         case .tallAndSlim: return String(localized: "body_type_tall_slim")
+        case .tallAndFit: return String(localized: "body_type_tall_and_fit")
         case .bigAndTall: return String(localized: "body_type_big_tall")
         default: return ""
         }

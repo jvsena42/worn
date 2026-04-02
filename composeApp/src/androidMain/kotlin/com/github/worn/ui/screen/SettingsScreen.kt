@@ -656,6 +656,7 @@ private fun BodyType.displayName(): String = when (this) {
     BodyType.STOCKY -> stringResource(R.string.body_type_stocky)
     BodyType.SHORT -> stringResource(R.string.body_type_short)
     BodyType.TALL_AND_SLIM -> stringResource(R.string.body_type_tall_and_slim)
+    BodyType.TALL_AND_FIT -> stringResource(R.string.body_type_tall_and_fit)
     BodyType.BIG_AND_TALL -> stringResource(R.string.body_type_big_and_tall)
 }
 
