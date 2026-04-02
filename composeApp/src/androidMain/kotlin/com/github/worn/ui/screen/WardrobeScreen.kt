@@ -72,7 +72,6 @@ private val GRID_MIN_CELL_WIDTH = 160.dp
 private val GRID_GAP_COMPACT = 12.dp
 private val GRID_GAP_EXPANDED = 16.dp
 private val BOTTOM_BAR_HEIGHT = 95.dp
-@Suppress("UnusedParameter")
 @Composable
 fun WardrobeScreen(
     onTabSelected: (Tab) -> Unit = {},
@@ -186,7 +185,10 @@ private fun WardrobeScaffold(
     Scaffold(
         containerColor = WornColors.BgPage,
         floatingActionButton = {
-            if (!isSelectionMode) AddItemFab(onAddItemClick, Modifier.padding(bottom = BOTTOM_BAR_HEIGHT))
+            val isWardrobeEmpty = !state.isLoading && state.totalItemCount == 0
+            if (!isSelectionMode && !isWardrobeEmpty) {
+                AddItemFab(onAddItemClick, Modifier.padding(bottom = BOTTOM_BAR_HEIGHT))
+            }
         },
     ) { paddingValues ->
         val isWardrobeEmpty = !state.isLoading && state.totalItemCount == 0
