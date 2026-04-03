@@ -58,6 +58,8 @@ import com.github.worn.presentation.viewmodel.OutfitEffect
 import com.github.worn.presentation.viewmodel.OutfitIntent
 import com.github.worn.presentation.viewmodel.OutfitState
 import com.github.worn.presentation.viewmodel.OutfitViewModel
+import com.github.worn.ui.components.DeleteConfirmationDialog
+import com.github.worn.ui.components.SelectionHeader
 import com.github.worn.ui.components.EmptyStateView
 import com.github.worn.ui.components.OutfitCard
 import com.github.worn.ui.components.WornGradientButton
@@ -219,7 +221,8 @@ private fun OutfitsScaffold(
     }
 
     if (showDeleteDialog) DeleteConfirmationDialog(
-        count = state.selectedIds.size,
+        title = pluralStringResource(R.plurals.delete_outfits_title, state.selectedIds.size, state.selectedIds.size),
+        message = stringResource(R.string.outfits_delete_dialog_message),
         isDeleting = state.isDeleting,
         onConfirm = { onDeleteSelected(); showDeleteDialog = false },
         onDismiss = { showDeleteDialog = false },
@@ -264,45 +267,6 @@ private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
     }
 }
 
-@Composable
-private fun SelectionHeader(count: Int, onCancel: () -> Unit, onDelete: () -> Unit) {
-    Spacer(modifier = Modifier.height(8.dp))
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = pluralStringResource(R.plurals.selected_count, count, count),
-            color = WornColors.TextPrimary,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Medium,
-            letterSpacing = (-0.8).sp,
-        )
-        Button(
-            onClick = onDelete,
-            colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
-            shape = RoundedCornerShape(22.dp),
-        ) {
-            Icon(Icons.Outlined.Delete, contentDescription = null, tint = Color.White)
-            Spacer(Modifier.width(6.dp))
-            Text(
-                stringResource(R.string.common_delete),
-                color = Color.White,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp,
-            )
-        }
-    }
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        text = stringResource(R.string.common_cancel),
-        color = WornColors.TextSecondary,
-        fontSize = 15.sp,
-        fontWeight = FontWeight.Medium,
-        modifier = Modifier.clickable(onClick = onCancel),
-    )
-}
 
 @Composable
 private fun OutfitsContent(
@@ -367,52 +331,6 @@ private fun EmptyState(onCreateClick: () -> Unit = {}) {
     )
 }
 
-@Composable
-private fun DeleteConfirmationDialog(
-    count: Int,
-    isDeleting: Boolean,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                pluralStringResource(R.plurals.delete_outfits_title, count, count),
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 22.sp,
-            )
-        },
-        text = {
-            Text(
-                stringResource(R.string.outfits_delete_dialog_message),
-                color = WornColors.TextSecondary,
-                fontSize = 15.sp,
-                lineHeight = 22.sp,
-            )
-        },
-        confirmButton = {
-            Button(
-                onClick = onConfirm,
-                enabled = !isDeleting,
-                colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
-                shape = RoundedCornerShape(24.dp),
-            ) {
-                Text(
-                    text = if (isDeleting) {
-                        stringResource(R.string.common_deleting)
-                    } else {
-                        stringResource(R.string.common_delete)
-                    },
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) }
-        },
-    )
-}
 
 private val previewOutfits = listOf(
     Outfit("1", "Weekend Casual", listOf("i1", "i2", "i3", "i4"), 1_710_460_800_000),

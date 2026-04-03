@@ -121,7 +121,11 @@ struct OutfitsContent: View {
         ScrollView {
             VStack(alignment: .leading, spacing: sectionGap) {
                 if isSelectionMode {
-                    selectionHeader
+                    SelectionHeader(
+                        count: Int(state.selectedIds.count),
+                        onCancel: onClearSelection,
+                        onDelete: { showDeleteDialog = true }
+                    )
                 } else {
                     normalHeader
                 }
@@ -178,35 +182,6 @@ struct OutfitsContent: View {
         }
     }
 
-    private var selectionHeader: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(String(format: String(localized: "selected_count"), state.selectedIds.count))
-                    .font(.system(size: 28, weight: .medium))
-                    .tracking(-0.8)
-                    .foregroundColor(WornColors.textPrimary)
-                Spacer()
-                Button {
-                    showDeleteDialog = true
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "trash")
-                            .font(.system(size: 15))
-                        Text(String(localized: "common_delete"))
-                            .font(.system(size: 15, weight: .semibold))
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(WornColors.deleteRed)
-                    .clipShape(Capsule())
-                }
-            }
-            Button(String(localized: "common_cancel")) { onClearSelection() }
-                .font(.system(size: 15, weight: .medium))
-                .foregroundColor(WornColors.textSecondary)
-        }
-    }
 
     private var outfitsList: some View {
         LazyVStack(spacing: 12) {
