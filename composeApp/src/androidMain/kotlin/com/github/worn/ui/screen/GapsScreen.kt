@@ -40,7 +40,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
-import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Brush
@@ -62,6 +61,7 @@ import com.github.worn.presentation.viewmodel.GapsIntent
 import com.github.worn.presentation.viewmodel.GapsState
 import com.github.worn.presentation.viewmodel.GapsViewModel
 import com.github.worn.ui.components.AiLockedSheet
+import com.github.worn.ui.components.ErrorContentView
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.Tab
@@ -165,9 +165,10 @@ private fun GapsScaffold(
 
             when {
                 state.isLoading -> LoadingContent()
-                state.error != null -> ErrorContent(
+                state.error != null -> ErrorContentView(
                     message = state.error!!,
                     onRetry = onRetry,
+                    modifier = Modifier.padding(vertical = 60.dp),
                 )
                 state.recommendations.isEmpty() -> CompleteContent()
                 else -> GapsContent(
@@ -189,51 +190,6 @@ private fun LoadingContent() {
         modifier = Modifier.fillMaxWidth().padding(vertical = 80.dp),
     ) {
         CircularProgressIndicator(color = WornColors.AccentGreen)
-    }
-}
-
-@Composable
-private fun ErrorContent(message: String, onRetry: () -> Unit) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 60.dp),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(72.dp)
-                .clip(CircleShape)
-                .background(WornColors.DeleteRed.copy(alpha = 0.1f)),
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.ErrorOutline,
-                contentDescription = null,
-                tint = WornColors.DeleteRed,
-                modifier = Modifier.size(32.dp),
-            )
-        }
-        Spacer(Modifier.height(24.dp))
-        Text(
-            text = message,
-            color = WornColors.TextSecondary,
-            fontSize = 14.sp,
-            lineHeight = 20.sp,
-            textAlign = TextAlign.Center,
-        )
-        Spacer(Modifier.height(20.dp))
-        Surface(
-            onClick = onRetry,
-            shape = RoundedCornerShape(16.dp),
-            color = WornColors.BgCard,
-        ) {
-            Text(
-                text = stringResource(R.string.common_retry),
-                color = WornColors.AccentGreen,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
-            )
-        }
     }
 }
 

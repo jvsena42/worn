@@ -135,7 +135,15 @@ struct TryItScreen: View {
             }
 
             if let error = viewModel.state.error, !viewModel.state.isLoading {
-                errorContent(message: error as String)
+                ErrorContentView(
+                    message: error as String,
+                    onRetry: {
+                        guard let data = photoData else { return }
+                        viewModel.analyzePhoto(imageData: data)
+                    },
+                    retryButtonColor: WornColors.accentIndigo
+                )
+                .padding(.vertical, 20)
             }
 
             if let result = viewModel.state.result as? TryItResult {
@@ -262,43 +270,6 @@ struct TryItScreen: View {
                 .tint(WornColors.accentIndigo)
                 .padding(.vertical, 40)
             Spacer()
-        }
-    }
-
-    private func errorContent(message: String) -> some View {
-        VStack(spacing: 0) {
-            ZStack {
-                Circle()
-                    .fill(WornColors.deleteRed.opacity(0.1))
-                    .frame(width: 72, height: 72)
-                Image(systemName: "exclamationmark.triangle")
-                    .font(.system(size: 32))
-                    .foregroundColor(WornColors.deleteRed)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.top, 20)
-
-            Text(message)
-                .font(.system(size: 14))
-                .foregroundColor(WornColors.textSecondary)
-                .multilineTextAlignment(.center)
-                .padding(.top, 20)
-
-            Button {
-                guard let data = photoData else { return }
-                viewModel.analyzePhoto(imageData: data)
-            } label: {
-                Text(String(localized: "common_retry"))
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(WornColors.accentIndigo)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
-                    .background(WornColors.bgCard)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-            }
-            .buttonStyle(.plain)
-            .padding(.top, 16)
-            .padding(.bottom, 20)
         }
     }
 
