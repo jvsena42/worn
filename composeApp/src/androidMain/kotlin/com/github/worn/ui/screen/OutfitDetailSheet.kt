@@ -53,6 +53,7 @@ import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
 import com.github.worn.domain.model.Season
+import com.github.worn.ui.components.PropertyRow
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.WornColors
@@ -175,12 +176,12 @@ private fun OutfitProperties(outfit: Outfit, items: List<ClothingItem>, isCompac
         modifier = Modifier.padding(horizontal = padding),
         verticalArrangement = Arrangement.spacedBy(propGap),
     ) {
-        OutfitPropertyRow(
+        PropertyRow(
             label = stringResource(R.string.label_items),
             value = stringResource(R.string.outfit_detail_items_count, outfit.itemIds.size),
             fontSize = propFontSize,
         )
-        OutfitPropertyRow(
+        PropertyRow(
             label = stringResource(R.string.label_season),
             value = deriveSeasonText(items),
             fontSize = propFontSize,
@@ -260,27 +261,6 @@ private fun OutfitItemCard(
     }
 }
 
-@Composable
-private fun OutfitPropertyRow(label: String, value: String, fontSize: TextUnit) {
-    androidx.compose.foundation.layout.Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = label,
-            color = WornColors.TextSecondary,
-            fontSize = fontSize,
-            fontWeight = FontWeight.Medium,
-        )
-        Text(
-            text = value,
-            color = WornColors.TextPrimary,
-            fontSize = fontSize,
-            fontWeight = FontWeight.Medium,
-        )
-    }
-}
 
 @Composable
 private fun deriveSeasonText(items: List<ClothingItem>): String {

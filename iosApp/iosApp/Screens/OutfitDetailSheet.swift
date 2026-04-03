@@ -57,8 +57,8 @@ struct OutfitDetailSheet: View {
 
                 // Properties
                 VStack(spacing: propGap) {
-                    propertyRow(label: String(localized: "label_items"), value: String(format: String(localized: "outfit_detail_items_count"), outfit.itemIds.count))
-                    propertyRow(label: String(localized: "label_season"), value: deriveSeasonText())
+                    PropertyRow(label: String(localized: "label_items"), value: String(format: String(localized: "outfit_detail_items_count"), outfit.itemIds.count), fontSize: propFontSize)
+                    PropertyRow(label: String(localized: "label_season"), value: deriveSeasonText(), fontSize: propFontSize)
                 }
                 .padding(.horizontal, contentPadding)
 
@@ -141,17 +141,6 @@ struct OutfitDetailSheet: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func propertyRow(label: String, value: String) -> some View {
-        HStack {
-            Text(label)
-                .font(.system(size: propFontSize, weight: .medium))
-                .foregroundColor(WornColors.textSecondary)
-            Spacer()
-            Text(value)
-                .font(.system(size: propFontSize, weight: .medium))
-                .foregroundColor(WornColors.textPrimary)
-        }
-    }
 
     private func deriveSeasonText() -> String {
         let allSeasons = Set(outfitItems.flatMap { $0.seasons })

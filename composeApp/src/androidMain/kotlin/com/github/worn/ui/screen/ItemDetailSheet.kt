@@ -55,6 +55,7 @@ import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.Subcategory
 import androidx.compose.ui.res.stringResource
 import com.github.worn.R
+import com.github.worn.ui.components.PropertyRow
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.addItemColorPalette
 import com.github.worn.ui.components.displayLabel
@@ -277,17 +278,6 @@ private fun ColorPropertyRow(item: ClothingItem, fontSize: TextUnit) {
     }
 }
 
-@Composable
-private fun PropertyRow(label: String, value: String, fontSize: TextUnit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(label, color = WornColors.TextSecondary, fontSize = fontSize, fontWeight = FontWeight.Medium)
-        Text(value, color = WornColors.TextPrimary, fontSize = fontSize, fontWeight = FontWeight.Medium)
-    }
-}
 
 @Composable
 internal fun DetailActionButtons(
