@@ -38,7 +38,6 @@ import com.github.worn.ui.theme.WornColors
 import java.io.File
 
 private val photoShape = RoundedCornerShape(16.dp)
-private val selectionShape = RoundedCornerShape(14.dp)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -111,26 +110,6 @@ private fun PhotoArea(
     }
 }
 
-@Composable
-private fun SelectionIndicator(isSelected: Boolean, modifier: Modifier = Modifier) {
-    Surface(
-        shape = selectionShape,
-        color = if (isSelected) WornColors.AccentGreen else WornColors.BgCard,
-        border = if (isSelected) null else BorderStroke(1.5.dp, WornColors.BorderSubtle),
-        modifier = modifier.size(28.dp),
-    ) {
-        if (isSelected) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = "Selected",
-                    tint = Color.White,
-                    modifier = Modifier.size(16.dp),
-                )
-            }
-        }
-    }
-}
 
 @Composable
 private fun ItemInfo(item: ClothingItem) {

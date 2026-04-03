@@ -310,7 +310,7 @@ private struct OutfitCardView: View {
     var body: some View {
         HStack(spacing: 12) {
             if isSelectionMode {
-                selectionIndicator
+                SelectionIndicator(isSelected: isSelected)
             }
             VStack(spacing: 12) {
                 thumbnailRow
@@ -392,25 +392,6 @@ private struct OutfitCardView: View {
         }
     }
 
-    private var selectionIndicator: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 14)
-                .fill(isSelected ? WornColors.accentGreen : WornColors.bgCard)
-                .frame(width: 28, height: 28)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(
-                            isSelected ? Color.clear : WornColors.borderSubtle,
-                            lineWidth: 1.5
-                        )
-                )
-            if isSelected {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.white)
-            }
-        }
-    }
 
     private func formatDate(_ epochMillis: Int64) -> String {
         let date = Date(timeIntervalSince1970: Double(epochMillis) / 1000.0)

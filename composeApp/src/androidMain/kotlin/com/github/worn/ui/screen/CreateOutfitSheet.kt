@@ -59,6 +59,7 @@ import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
 import com.github.worn.ui.components.CategoryFilterChips
+import com.github.worn.ui.components.SelectionIndicator
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.WornColors
@@ -218,7 +219,7 @@ private fun ItemSelectionGrid(
 }
 
 private val cellShape = RoundedCornerShape(16.dp)
-private val checkboxShape = RoundedCornerShape(10.dp)
+
 
 @Composable
 private fun SelectableItemCell(
@@ -247,7 +248,7 @@ private fun SelectableItemCell(
             fontWeight = FontWeight.Medium,
             modifier = Modifier.align(Alignment.BottomStart).padding(start = 12.dp, bottom = 8.dp),
         )
-        ItemCheckbox(isSelected = isSelected, modifier = Modifier.padding(8.dp))
+        SelectionIndicator(isSelected = isSelected, size = 20.dp, iconSize = 12.dp, modifier = Modifier.padding(8.dp))
     }
 }
 
@@ -274,26 +275,6 @@ private fun ItemThumbnail(item: ClothingItem) {
     }
 }
 
-@Composable
-private fun ItemCheckbox(isSelected: Boolean, modifier: Modifier = Modifier) {
-    Surface(
-        shape = checkboxShape,
-        color = if (isSelected) WornColors.AccentGreen else WornColors.BgCard,
-        border = if (isSelected) null else BorderStroke(1.5.dp, WornColors.BorderSubtle),
-        modifier = modifier.size(20.dp),
-    ) {
-        if (isSelected) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Icon(
-                    Icons.Default.Check,
-                    contentDescription = "Selected",
-                    tint = Color.White,
-                    modifier = Modifier.size(12.dp),
-                )
-            }
-        }
-    }
-}
 
 @Composable
 private fun SaveOutfitButton(enabled: Boolean, isSaving: Boolean, label: String? = null, onClick: () -> Unit) {

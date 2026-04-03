@@ -38,7 +38,7 @@ import java.util.Date
 import java.util.Locale
 
 private val cardShape = RoundedCornerShape(20.dp)
-private val selectionShape = RoundedCornerShape(14.dp)
+
 private val thumbnailShape = RoundedCornerShape(10.dp)
 private val badgeShape = RoundedCornerShape(8.dp)
 
@@ -168,26 +168,6 @@ private fun BottomRow(outfit: Outfit) {
     }
 }
 
-@Composable
-private fun SelectionIndicator(isSelected: Boolean) {
-    Surface(
-        shape = selectionShape,
-        color = if (isSelected) WornColors.AccentGreen else WornColors.BgCard,
-        border = if (isSelected) null else BorderStroke(1.5.dp, WornColors.BorderSubtle),
-        modifier = Modifier.size(28.dp),
-    ) {
-        if (isSelected) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = "Selected",
-                    tint = Color.White,
-                    modifier = Modifier.size(16.dp),
-                )
-            }
-        }
-    }
-}
 
 private fun formatDate(epochMillis: Long): String {
     val formatter = SimpleDateFormat("MMM d", Locale.getDefault())

@@ -160,7 +160,7 @@ private struct SelectableItemCell: View {
             )
             .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
 
-            selectionCheckbox
+            SelectionIndicator(isSelected: isSelected, size: 20, iconSize: 10)
                 .padding(8)
 
             VStack {
@@ -184,25 +184,6 @@ private struct SelectableItemCell: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private var selectionCheckbox: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(isSelected ? WornColors.accentGreen : WornColors.bgCard)
-                .frame(width: 20, height: 20)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(
-                            isSelected ? Color.clear : WornColors.borderSubtle,
-                            lineWidth: 1.5
-                        )
-                )
-            if isSelected {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundColor(.white)
-            }
-        }
-    }
 }
 
 private let previewItems: [ClothingItem] = [

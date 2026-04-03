@@ -43,31 +43,12 @@ struct ClothingCard: View {
             .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
 
             if isSelectionMode {
-                selectionIndicator
+                SelectionIndicator(isSelected: isSelected)
                     .padding(8)
             }
         }
     }
 
-    private var selectionIndicator: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 14)
-                .fill(isSelected ? WornColors.accentGreen : WornColors.bgCard)
-                .frame(width: 28, height: 28)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(
-                            isSelected ? Color.clear : WornColors.borderSubtle,
-                            lineWidth: 1.5
-                        )
-                )
-            if isSelected {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.white)
-            }
-        }
-    }
 
     private var placeholderIcon: some View {
         Image(systemName: "tshirt")
