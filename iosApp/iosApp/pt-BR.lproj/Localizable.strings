@@ -11,7 +11,7 @@
 
 /* Tabs */
 "tab_wardrobe" = "ARMÁRIO";
-"tab_outfits" = "LOOKS";
+"tab_outfits" = "COMBINAÇÕES";
 "tab_gaps" = "LACUNAS";
 "tab_try_it" = "TESTAR";
 "tab_settings" = "AJUSTES";
@@ -28,12 +28,12 @@
 "wardrobe_delete_dialog_message" = "Esta ação não pode ser desfeita. Os itens selecionados serão removidos permanentemente do seu armário.";
 
 /* Outfits Screen */
-"outfits_title" = "Seus looks";
+"outfits_title" = "Suas combinações";
 "outfits_button_create" = "Criar";
-"outfits_empty_title" = "Nenhum look ainda";
-"outfits_empty_description" = "Crie seu primeiro look combinando\nitens do seu armário";
-"outfits_empty_cta" = "Crie seu primeiro look";
-"outfits_delete_dialog_message" = "Esta ação não pode ser desfeita. Os looks selecionados serão removidos permanentemente.";
+"outfits_empty_title" = "Nenhuma combinação ainda";
+"outfits_empty_description" = "Crie sua primeira combinação\ncom itens do seu armário";
+"outfits_empty_cta" = "Crie sua primeira combinação";
+"outfits_delete_dialog_message" = "Esta ação não pode ser desfeita. As combinações selecionadas serão removidas permanentemente.";
 
 /* Add Item Sheet */
 "add_item_title" = "Adicionar novo item";
@@ -47,11 +47,11 @@
 "add_item_save_to_wardrobe" = "Salvar no armário";
 
 /* Create Outfit Sheet */
-"create_outfit_title" = "Criar look";
-"create_outfit_title_edit" = "Editar look";
-"create_outfit_name_hint" = "Nome do look";
+"create_outfit_title" = "Criar combinação";
+"create_outfit_title_edit" = "Editar combinação";
+"create_outfit_name_hint" = "Nome da combinação";
 "create_outfit_select_items" = "Selecionar itens";
-"create_outfit_save" = "Salvar look";
+"create_outfit_save" = "Salvar combinação";
 
 /* Item Detail Sheet */
 "item_detail_edit" = "Editar Item";
@@ -60,10 +60,10 @@
 "item_detail_delete_dialog_message" = "Esta ação não pode ser desfeita. \"%@\" será removido permanentemente do seu armário.";
 
 /* Outfit Detail Sheet */
-"outfit_detail_edit" = "Editar Look";
-"outfit_detail_delete" = "Excluir Look";
+"outfit_detail_edit" = "Editar Combinação";
+"outfit_detail_delete" = "Excluir Combinação";
 "outfit_detail_items_count" = "%d itens";
-"outfit_detail_delete_dialog_title" = "Excluir look?";
+"outfit_detail_delete_dialog_title" = "Excluir combinação?";
 "outfit_detail_delete_dialog_message" = "Esta ação não pode ser desfeita. \"%@\" será removido permanentemente.";
 
 /* Settings Screen */
@@ -78,7 +78,7 @@
 "settings_api_key_connected" = "Conectado";
 "settings_api_key_required" = "Necessária para funções de IA";
 "settings_connect_claude" = "Conectar Claude IA";
-"settings_api_description" = "Cole sua chave da API Anthropic para desbloquear funções de IA como auto-tag de roupas e análise de looks.";
+"settings_api_description" = "Cole sua chave da API Anthropic para desbloquear funções de IA como auto-tag de roupas e análise de combinações.";
 "settings_api_get_key" = "Obtenha uma chave gratuita em console.anthropic.com →";
 "settings_save_connect" = "Salvar e conectar";
 "settings_remove_key" = "Remover chave";
