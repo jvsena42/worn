@@ -244,55 +244,34 @@ struct WardrobeContent: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 24) {
-            Spacer().frame(height: 60)
-
-            ZStack {
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 130, height: 130)
-                    .shadow(color: WornColors.accentIndigo.opacity(0.08), radius: 15, x: 0, y: 0)
-                    .overlay(
-                        Circle()
-                            .stroke(WornColors.borderSubtle, lineWidth: 1)
-                    )
-
+        EmptyStateView(
+            icon: {
                 Image(systemName: "tshirt")
                     .font(.system(size: 42, weight: .regular))
                     .foregroundColor(WornColors.textSecondary)
+            },
+            title: String(localized: "wardrobe_empty_title"),
+            description: String(localized: "wardrobe_empty_description"),
+            action: {
+                WornGradientButton(
+                    text: String(localized: "wardrobe_empty_cta"),
+                    action: onAddItemClick,
+                    gradientColors: WornGradients.greenCta,
+                    cornerRadius: 28,
+                    shadowRadius: 10,
+                    shadowColor: WornColors.accentIndigo.opacity(0.15),
+                    shadowY: 6,
+                    icon: AnyView(
+                        Image(systemName: "plus")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(WornColors.bgPage)
+                    ),
+                    fillMaxWidth: false,
+                    fixedHeight: nil,
+                    contentPadding: EdgeInsets(top: 16, leading: 36, bottom: 16, trailing: 36)
+                )
             }
-
-            Text(String(localized: "wardrobe_empty_title"))
-                .font(.system(size: 24, weight: .semibold))
-                .tracking(-0.5)
-                .foregroundColor(WornColors.textPrimary)
-
-            Text(String(localized: "wardrobe_empty_description"))
-                .font(.system(size: 15))
-                .lineSpacing(4)
-                .multilineTextAlignment(.center)
-                .foregroundColor(WornColors.textSecondary)
-
-            WornGradientButton(
-                text: String(localized: "wardrobe_empty_cta"),
-                action: onAddItemClick,
-                gradientColors: WornGradients.greenCta,
-                cornerRadius: 28,
-                shadowRadius: 10,
-                shadowColor: WornColors.accentIndigo.opacity(0.15),
-                shadowY: 6,
-                icon: AnyView(
-                    Image(systemName: "plus")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(WornColors.bgPage)
-                ),
-                fillMaxWidth: false,
-                fixedHeight: nil,
-                contentPadding: EdgeInsets(top: 16, leading: 36, bottom: 16, trailing: 36)
-            )
-
-            Spacer()
-        }
+        )
     }
 
     private var addItemFab: some View {

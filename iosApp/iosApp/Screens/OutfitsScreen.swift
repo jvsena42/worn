@@ -234,55 +234,34 @@ struct OutfitsContent: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 24) {
-            Spacer().frame(height: 60)
-
-            ZStack {
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 130, height: 130)
-                    .shadow(color: WornColors.accentIndigo.opacity(0.08), radius: 15, x: 0, y: 0)
-                    .overlay(
-                        Circle()
-                            .stroke(WornColors.borderSubtle, lineWidth: 1)
-                    )
-
+        EmptyStateView(
+            icon: {
                 Image(systemName: "square.3.layers.3d")
                     .font(.system(size: 42, weight: .regular))
                     .foregroundColor(WornColors.textSecondary)
+            },
+            title: String(localized: "outfits_empty_title"),
+            description: String(localized: "outfits_empty_description"),
+            action: {
+                WornGradientButton(
+                    text: String(localized: "outfits_empty_cta"),
+                    action: onCreateClick,
+                    gradientColors: WornGradients.greenCta,
+                    cornerRadius: 28,
+                    shadowRadius: 10,
+                    shadowColor: WornColors.accentIndigo.opacity(0.15),
+                    shadowY: 6,
+                    icon: AnyView(
+                        Image(systemName: "plus")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(WornColors.bgPage)
+                    ),
+                    fillMaxWidth: false,
+                    fixedHeight: nil,
+                    contentPadding: EdgeInsets(top: 16, leading: 36, bottom: 16, trailing: 36)
+                )
             }
-
-            Text(String(localized: "outfits_empty_title"))
-                .font(.system(size: 24, weight: .semibold))
-                .tracking(-0.5)
-                .foregroundColor(WornColors.textPrimary)
-
-            Text(String(localized: "outfits_empty_description"))
-                .font(.system(size: 15))
-                .lineSpacing(4)
-                .multilineTextAlignment(.center)
-                .foregroundColor(WornColors.textSecondary)
-
-            WornGradientButton(
-                text: String(localized: "outfits_empty_cta"),
-                action: onCreateClick,
-                gradientColors: WornGradients.greenCta,
-                cornerRadius: 28,
-                shadowRadius: 10,
-                shadowColor: WornColors.accentIndigo.opacity(0.15),
-                shadowY: 6,
-                icon: AnyView(
-                    Image(systemName: "plus")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(WornColors.bgPage)
-                ),
-                fillMaxWidth: false,
-                fixedHeight: nil,
-                contentPadding: EdgeInsets(top: 16, leading: 36, bottom: 16, trailing: 36)
-            )
-
-            Spacer()
-        }
+        )
     }
 }
 

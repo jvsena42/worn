@@ -58,6 +58,7 @@ import com.github.worn.presentation.viewmodel.OutfitEffect
 import com.github.worn.presentation.viewmodel.OutfitIntent
 import com.github.worn.presentation.viewmodel.OutfitState
 import com.github.worn.presentation.viewmodel.OutfitViewModel
+import com.github.worn.ui.components.EmptyStateView
 import com.github.worn.ui.components.OutfitCard
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
@@ -337,56 +338,33 @@ private val CtaGradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, 
 
 @Composable
 private fun EmptyState(onCreateClick: () -> Unit = {}) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Box(
-            modifier = Modifier.size(130.dp)
-                .shadow(15.dp, CircleShape)
-                .background(WornColors.BgCard, CircleShape)
-                .border(1.dp, WornColors.BorderSubtle, CircleShape),
-            contentAlignment = Alignment.Center,
-        ) {
+    EmptyStateView(
+        icon = {
             Icon(
                 imageVector = Icons.Outlined.Layers,
                 contentDescription = null,
                 modifier = Modifier.size(52.dp),
                 tint = WornColors.TextSecondary,
             )
-        }
-        Spacer(Modifier.height(24.dp))
-        Text(
-            stringResource(R.string.outfits_empty_title),
-            color = WornColors.TextPrimary,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = (-0.5).sp,
-        )
-        Spacer(Modifier.height(24.dp))
-        Text(
-            stringResource(R.string.outfits_empty_description),
-            color = WornColors.TextSecondary,
-            fontSize = 15.sp,
-            lineHeight = 22.sp,
-            textAlign = TextAlign.Center,
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        WornGradientButton(
-            text = stringResource(R.string.outfits_empty_cta),
-            onClick = onCreateClick,
-            gradientColors = WornGradients.GreenCta,
-            shape = CtaShape,
-            elevation = 10.dp,
-            fillMaxWidth = false,
-            fixedHeight = null,
-            contentPadding = PaddingValues(horizontal = 36.dp, vertical = 16.dp),
-            icon = {
-                Icon(Icons.Default.Add, contentDescription = null, Modifier.size(18.dp), WornColors.BgPage)
-            },
-        )
-    }
+        },
+        title = stringResource(R.string.outfits_empty_title),
+        description = stringResource(R.string.outfits_empty_description),
+        action = {
+            WornGradientButton(
+                text = stringResource(R.string.outfits_empty_cta),
+                onClick = onCreateClick,
+                gradientColors = WornGradients.GreenCta,
+                shape = CtaShape,
+                elevation = 10.dp,
+                fillMaxWidth = false,
+                fixedHeight = null,
+                contentPadding = PaddingValues(horizontal = 36.dp, vertical = 16.dp),
+                icon = {
+                    Icon(Icons.Default.Add, contentDescription = null, Modifier.size(18.dp), WornColors.BgPage)
+                },
+            )
+        },
+    )
 }
 
 @Composable
