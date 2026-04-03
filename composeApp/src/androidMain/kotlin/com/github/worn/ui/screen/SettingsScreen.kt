@@ -71,6 +71,9 @@ import com.github.worn.domain.model.UserProfile
 import com.github.worn.presentation.viewmodel.SettingsIntent
 import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
+import com.github.worn.ui.components.SheetDragHandle
+import com.github.worn.ui.components.WornChip
+import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornDimens
@@ -356,21 +359,6 @@ private fun DonationCard() {
 
 // region Sheet Handle
 
-@Composable
-private fun SettingsSheetHandle() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(WornColors.IconMuted),
-        )
-    }
-}
 
 // endregion
 
@@ -390,7 +378,7 @@ private fun ProfileSheet(
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { SettingsSheetHandle() },
+        dragHandle = { SheetDragHandle() },
     ) {
         ProfileSheetContent(state = state, onIntent = onIntent, onSave = onSave)
     }
@@ -474,7 +462,7 @@ private fun ApiKeySheet(
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { SettingsSheetHandle() },
+        dragHandle = { SheetDragHandle() },
     ) {
         ApiKeySheetContent(hasApiKey = hasApiKey, onSave = onSave, onClear = onClear)
     }
@@ -601,25 +589,7 @@ private fun ApiKeyTextField(
 
 @Composable
 private fun SaveGradientButton(text: String, enabled: Boolean = true, onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(listOf(WornColors.SaveGradientStart, WornColors.SaveGradientEnd))
-    val disabledGradient = Brush.verticalGradient(listOf(WornColors.TextMuted, WornColors.IconMuted))
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
-        color = Color.Transparent,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .background(if (enabled) gradient else disabledGradient),
-        ) {
-            Text(text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-        }
-    }
+    WornGradientButton(text = text, onClick = onClick, enabled = enabled)
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -637,21 +607,11 @@ private fun <T> ChipGroup(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             options.forEach { (value, label) ->
-                val isActive = value == selected
-                Surface(
-                    onClick = { onSelected(if (isActive) null else value) },
-                    shape = RoundedCornerShape(20.dp),
-                    color = if (isActive) WornColors.AccentGreen else WornColors.BgCard,
-                    border = if (isActive) null else BorderStroke(1.dp, WornColors.BorderSubtle),
-                ) {
-                    Text(
-                        text = label,
-                        color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                }
+                WornChip(
+                    label = label,
+                    isActive = value == selected,
+                    onClick = { onSelected(if (value == selected) null else value) },
+                )
             }
         }
     }
@@ -676,21 +636,11 @@ private fun <T> MultiChipGroup(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             options.forEach { (value, label) ->
-                val isActive = value in selected
-                Surface(
+                WornChip(
+                    label = label,
+                    isActive = value in selected,
                     onClick = { onToggle(value) },
-                    shape = RoundedCornerShape(20.dp),
-                    color = if (isActive) WornColors.AccentGreen else WornColors.BgCard,
-                    border = if (isActive) null else BorderStroke(1.dp, WornColors.BorderSubtle),
-                ) {
-                    Text(
-                        text = label,
-                        color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                }
+                )
             }
         }
     }

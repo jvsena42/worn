@@ -59,6 +59,10 @@ import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
 import com.github.worn.ui.components.CategoryFilterChips
+import com.github.worn.ui.components.SelectionIndicator
+import com.github.worn.ui.components.SheetDragHandle
+import com.github.worn.ui.components.WornGradientButton
+import com.github.worn.ui.components.WornGradients
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.WornColors
 import java.io.File
@@ -83,7 +87,7 @@ fun CreateOutfitSheet(
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { SheetHandle() },
+        dragHandle = { SheetDragHandle() },
     ) {
         CreateOutfitForm(
             clothingItems = clothingItems,
@@ -94,22 +98,6 @@ fun CreateOutfitSheet(
             onCategorySelected = onCategorySelected,
             onToggleItem = onToggleItem,
             onSave = onSave,
-        )
-    }
-}
-
-@Composable
-private fun SheetHandle() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(WornColors.IconMuted),
         )
     }
 }
@@ -233,7 +221,7 @@ private fun ItemSelectionGrid(
 }
 
 private val cellShape = RoundedCornerShape(16.dp)
-private val checkboxShape = RoundedCornerShape(10.dp)
+
 
 @Composable
 private fun SelectableItemCell(
@@ -262,7 +250,7 @@ private fun SelectableItemCell(
             fontWeight = FontWeight.Medium,
             modifier = Modifier.align(Alignment.BottomStart).padding(start = 12.dp, bottom = 8.dp),
         )
-        ItemCheckbox(isSelected = isSelected, modifier = Modifier.padding(8.dp))
+        SelectionIndicator(isSelected = isSelected, size = 20.dp, iconSize = 12.dp, modifier = Modifier.padding(8.dp))
     }
 }
 
@@ -289,60 +277,19 @@ private fun ItemThumbnail(item: ClothingItem) {
     }
 }
 
-@Composable
-private fun ItemCheckbox(isSelected: Boolean, modifier: Modifier = Modifier) {
-    Surface(
-        shape = checkboxShape,
-        color = if (isSelected) WornColors.AccentGreen else WornColors.BgCard,
-        border = if (isSelected) null else BorderStroke(1.5.dp, WornColors.BorderSubtle),
-        modifier = modifier.size(20.dp),
-    ) {
-        if (isSelected) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Icon(
-                    Icons.Default.Check,
-                    contentDescription = "Selected",
-                    tint = Color.White,
-                    modifier = Modifier.size(12.dp),
-                )
-            }
-        }
-    }
-}
 
 @Composable
 private fun SaveOutfitButton(enabled: Boolean, isSaving: Boolean, label: String? = null, onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenDark))
-    val disabledGradient = Brush.verticalGradient(listOf(WornColors.TextMuted, WornColors.IconMuted))
-    Button(
+    WornGradientButton(
+        text = if (isSaving) {
+            stringResource(R.string.common_saving)
+        } else {
+            label ?: stringResource(R.string.create_outfit_save)
+        },
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-        ),
-        contentPadding = PaddingValues(),
-        modifier = Modifier.fillMaxWidth().height(52.dp),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(if (enabled) gradient else disabledGradient),
-        ) {
-            Text(
-                text = if (isSaving) {
-                    stringResource(R.string.common_saving)
-                } else {
-                    label ?: stringResource(R.string.create_outfit_save)
-                },
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-    }
+        gradientColors = WornGradients.Green,
+    )
 }
 
 private val previewItems = listOf(

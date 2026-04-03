@@ -36,7 +36,6 @@ import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Checkroom
 import androidx.compose.material.icons.outlined.PhotoLibrary
-import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.SmartToy
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -82,7 +81,10 @@ import com.github.worn.presentation.viewmodel.TryItEffect
 import com.github.worn.presentation.viewmodel.TryItIntent
 import com.github.worn.presentation.viewmodel.TryItState
 import com.github.worn.presentation.viewmodel.TryItViewModel
+import com.github.worn.ui.components.ErrorContentView
 import com.github.worn.ui.components.Tab
+import com.github.worn.ui.components.WornGradientButton
+import com.github.worn.ui.components.WornGradients
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
@@ -343,25 +345,16 @@ private fun AiEmptyContent(
 
 @Composable
 private fun IndigoCtaButton(text: String, onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(
-        listOf(WornColors.AccentIndigo, Color(0xFF556070)),
-    )
-    Button(
+    WornGradientButton(
+        text = text,
         onClick = onClick,
+        gradientColors = WornGradients.Indigo,
         shape = RoundedCornerShape(28.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-        contentPadding = PaddingValues(),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(gradient, RoundedCornerShape(28.dp))
-                .padding(horizontal = 40.dp, vertical = 14.dp),
-        ) {
-            Text(text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-        }
-    }
+        elevation = 6.dp,
+        fillMaxWidth = false,
+        fixedHeight = null,
+        contentPadding = PaddingValues(horizontal = 40.dp, vertical = 14.dp),
+    )
 }
 
 @Composable
@@ -406,7 +399,14 @@ private fun TryItPhoneContent(
             LoadingIndicator()
         }
         state.error?.let { errorMsg ->
-            if (!state.isLoading) ErrorContent(message = errorMsg, onRetry = onAnalyze)
+            if (!state.isLoading) {
+                ErrorContentView(
+                    message = errorMsg,
+                    onRetry = onAnalyze,
+                    modifier = Modifier.padding(vertical = 40.dp),
+                    retryButtonColor = WornColors.AccentIndigo,
+                )
+            }
         }
         state.result?.let { result ->
             ResultsSection(result = result, isCompact = true, onItemClick = onItemClick)
@@ -445,7 +445,14 @@ private fun TryItTabletContent(
                     LoadingIndicator()
                 }
                 state.error?.let { errorMsg ->
-                    if (!state.isLoading) ErrorContent(message = errorMsg, onRetry = onAnalyze)
+                    if (!state.isLoading) {
+                ErrorContentView(
+                    message = errorMsg,
+                    onRetry = onAnalyze,
+                    modifier = Modifier.padding(vertical = 40.dp),
+                    retryButtonColor = WornColors.AccentIndigo,
+                )
+            }
                 }
                 state.result?.let { result ->
                     PairsSection(
@@ -529,43 +536,23 @@ private fun UploadZone(
 
 @Composable
 private fun AnalyzeButton(onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(
-        listOf(WornColors.AccentIndigo, Color(0xFF556070)),
-    )
-    Button(
+    WornGradientButton(
+        text = stringResource(R.string.tryit_analyze),
         onClick = onClick,
+        gradientColors = WornGradients.Indigo,
         shape = RoundedCornerShape(28.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-        contentPadding = PaddingValues(),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(gradient, RoundedCornerShape(28.dp))
-                .padding(vertical = 14.dp),
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.SmartToy,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(20.dp),
-                )
-                Text(
-                    stringResource(R.string.tryit_analyze),
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
-        }
-    }
+        elevation = 6.dp,
+        fixedHeight = null,
+        contentPadding = PaddingValues(vertical = 14.dp),
+        icon = {
+            Icon(
+                imageVector = Icons.Outlined.SmartToy,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(20.dp),
+            )
+        },
+    )
 }
 
 @Composable
@@ -575,51 +562,6 @@ private fun LoadingIndicator() {
         modifier = Modifier.fillMaxWidth().padding(vertical = 40.dp),
     ) {
         CircularProgressIndicator(color = WornColors.AccentIndigo)
-    }
-}
-
-@Composable
-private fun ErrorContent(message: String, onRetry: () -> Unit) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 40.dp),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(72.dp)
-                .clip(CircleShape)
-                .background(WornColors.DeleteRed.copy(alpha = 0.1f)),
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.ErrorOutline,
-                contentDescription = null,
-                tint = WornColors.DeleteRed,
-                modifier = Modifier.size(32.dp),
-            )
-        }
-        Spacer(Modifier.height(20.dp))
-        Text(
-            text = message,
-            color = WornColors.TextSecondary,
-            fontSize = 14.sp,
-            lineHeight = 20.sp,
-            textAlign = TextAlign.Center,
-        )
-        Spacer(Modifier.height(16.dp))
-        Surface(
-            onClick = onRetry,
-            shape = RoundedCornerShape(16.dp),
-            color = WornColors.BgCard,
-        ) {
-            Text(
-                text = stringResource(R.string.common_retry),
-                color = WornColors.AccentIndigo,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
-            )
-        }
     }
 }
 

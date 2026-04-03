@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,25 +50,9 @@ fun AiLockedSheet(onDismiss: () -> Unit, onGoToSettings: () -> Unit = {}) {
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { SheetHandle() },
+        dragHandle = { SheetDragHandle() },
     ) {
         AiLockedContent(onGoToSettings = onGoToSettings, onDismiss = onDismiss)
-    }
-}
-
-@Composable
-private fun SheetHandle() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(WornColors.IconMuted),
-        )
     }
 }
 
@@ -120,27 +105,14 @@ internal fun AiLockedContent(
 
 @Composable
 private fun SettingsCta(onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenDark))
-    Button(
+    WornGradientButton(
+        text = stringResource(R.string.ai_locked_cta),
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(gradient, RoundedCornerShape(16.dp))
-                .padding(horizontal = 40.dp, vertical = 14.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.ai_locked_cta),
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-    }
+        gradientColors = WornGradients.Green,
+        fillMaxWidth = false,
+        fixedHeight = null,
+        contentPadding = PaddingValues(horizontal = 40.dp, vertical = 14.dp),
+    )
 }
 
 @Preview(showSystemUi = true, device = "id:pixel_8")

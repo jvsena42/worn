@@ -121,7 +121,11 @@ struct OutfitsContent: View {
         ScrollView {
             VStack(alignment: .leading, spacing: sectionGap) {
                 if isSelectionMode {
-                    selectionHeader
+                    SelectionHeader(
+                        count: Int(state.selectedIds.count),
+                        onCancel: onClearSelection,
+                        onDelete: { showDeleteDialog = true }
+                    )
                 } else {
                     normalHeader
                 }
@@ -178,35 +182,6 @@ struct OutfitsContent: View {
         }
     }
 
-    private var selectionHeader: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(String(format: String(localized: "selected_count"), state.selectedIds.count))
-                    .font(.system(size: 28, weight: .medium))
-                    .tracking(-0.8)
-                    .foregroundColor(WornColors.textPrimary)
-                Spacer()
-                Button {
-                    showDeleteDialog = true
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "trash")
-                            .font(.system(size: 15))
-                        Text(String(localized: "common_delete"))
-                            .font(.system(size: 15, weight: .semibold))
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(WornColors.deleteRed)
-                    .clipShape(Capsule())
-                }
-            }
-            Button(String(localized: "common_cancel")) { onClearSelection() }
-                .font(.system(size: 15, weight: .medium))
-                .foregroundColor(WornColors.textSecondary)
-        }
-    }
 
     private var outfitsList: some View {
         LazyVStack(spacing: 12) {
@@ -234,59 +209,34 @@ struct OutfitsContent: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 24) {
-            Spacer().frame(height: 60)
-
-            ZStack {
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 130, height: 130)
-                    .shadow(color: WornColors.accentIndigo.opacity(0.08), radius: 15, x: 0, y: 0)
-                    .overlay(
-                        Circle()
-                            .stroke(WornColors.borderSubtle, lineWidth: 1)
-                    )
-
+        EmptyStateView(
+            icon: {
                 Image(systemName: "square.3.layers.3d")
                     .font(.system(size: 42, weight: .regular))
                     .foregroundColor(WornColors.textSecondary)
-            }
-
-            Text(String(localized: "outfits_empty_title"))
-                .font(.system(size: 24, weight: .semibold))
-                .tracking(-0.5)
-                .foregroundColor(WornColors.textPrimary)
-
-            Text(String(localized: "outfits_empty_description"))
-                .font(.system(size: 15))
-                .lineSpacing(4)
-                .multilineTextAlignment(.center)
-                .foregroundColor(WornColors.textSecondary)
-
-            Button(action: onCreateClick) {
-                HStack(spacing: 8) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(WornColors.bgPage)
-                    Text(String(localized: "outfits_empty_cta"))
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(WornColors.textOnColor)
-                }
-                .padding(.horizontal, 36)
-                .padding(.vertical, 16)
-                .background(
-                    LinearGradient(
-                        colors: [WornColors.accentGreen, WornColors.accentGreenEnd],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
+            },
+            title: String(localized: "outfits_empty_title"),
+            description: String(localized: "outfits_empty_description"),
+            action: {
+                WornGradientButton(
+                    text: String(localized: "outfits_empty_cta"),
+                    action: onCreateClick,
+                    gradientColors: WornGradients.greenCta,
+                    cornerRadius: 28,
+                    shadowRadius: 10,
+                    shadowColor: WornColors.accentIndigo.opacity(0.15),
+                    shadowY: 6,
+                    icon: AnyView(
+                        Image(systemName: "plus")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(WornColors.bgPage)
+                    ),
+                    fillMaxWidth: false,
+                    fixedHeight: nil,
+                    contentPadding: EdgeInsets(top: 16, leading: 36, bottom: 16, trailing: 36)
                 )
-                .clipShape(Capsule())
-                .shadow(color: WornColors.accentIndigo.opacity(0.15), radius: 10, x: 0, y: 6)
             }
-
-            Spacer()
-        }
+        )
     }
 }
 
@@ -310,7 +260,7 @@ private struct OutfitCardView: View {
     var body: some View {
         HStack(spacing: 12) {
             if isSelectionMode {
-                selectionIndicator
+                SelectionIndicator(isSelected: isSelected)
             }
             VStack(spacing: 12) {
                 thumbnailRow
@@ -392,25 +342,6 @@ private struct OutfitCardView: View {
         }
     }
 
-    private var selectionIndicator: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 14)
-                .fill(isSelected ? WornColors.accentGreen : WornColors.bgCard)
-                .frame(width: 28, height: 28)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(
-                            isSelected ? Color.clear : WornColors.borderSubtle,
-                            lineWidth: 1.5
-                        )
-                )
-            if isSelected {
-                Image(systemName: "checkmark")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor(.white)
-            }
-        }
-    }
 
     private func formatDate(_ epochMillis: Int64) -> String {
         let date = Date(timeIntervalSince1970: Double(epochMillis) / 1000.0)

@@ -378,17 +378,9 @@ private func chipGroup<T: Equatable>(
             ForEach(Array(options.enumerated()), id: \.offset) { _, item in
                 let (value, label) = item
                 let isActive = value == selected
-                Button { onSelected(isActive ? nil : value) } label: {
-                    Text(label)
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(isActive ? WornColors.accentGreen : WornColors.bgCard)
-                        .clipShape(Capsule())
-                        .overlay(Capsule().stroke(isActive ? Color.clear : WornColors.borderSubtle, lineWidth: 1))
+                WornChip(label: label, isActive: isActive) {
+                    onSelected(isActive ? nil : value)
                 }
-                .buttonStyle(.plain)
             }
         }
     }
@@ -410,41 +402,20 @@ private func multiChipGroup<T: Hashable>(
             ForEach(Array(options.enumerated()), id: \.offset) { _, item in
                 let (value, label) = item
                 let isActive = selected.contains(value)
-                Button { onToggle(value) } label: {
-                    Text(label)
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(isActive ? WornColors.accentGreen : WornColors.bgCard)
-                        .clipShape(Capsule())
-                        .overlay(Capsule().stroke(isActive ? Color.clear : WornColors.borderSubtle, lineWidth: 1))
+                WornChip(label: label, isActive: isActive) {
+                    onToggle(value)
                 }
-                .buttonStyle(.plain)
             }
         }
     }
 }
 
 private func saveGradientButton(text: String, enabled: Bool = true, action: @escaping () -> Void) -> some View {
-    Button(action: action) {
-        Text(text)
-            .font(.system(size: 16, weight: .semibold))
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 52)
-            .background(
-                LinearGradient(
-                    colors: enabled
-                        ? [WornColors.saveGradientStart, WornColors.saveGradientEnd]
-                        : [WornColors.textMuted, WornColors.iconMuted],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-    }
-    .disabled(!enabled)
+    WornGradientButton(
+        text: text,
+        action: action,
+        enabled: enabled
+    )
 }
 
 // MARK: - Display name helpers

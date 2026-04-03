@@ -135,7 +135,15 @@ struct TryItScreen: View {
             }
 
             if let error = viewModel.state.error, !viewModel.state.isLoading {
-                errorContent(message: error as String)
+                ErrorContentView(
+                    message: error as String,
+                    onRetry: {
+                        guard let data = photoData else { return }
+                        viewModel.analyzePhoto(imageData: data)
+                    },
+                    retryButtonColor: WornColors.accentIndigo
+                )
+                .padding(.vertical, 20)
             }
 
             if let result = viewModel.state.result as? TryItResult {
@@ -234,30 +242,25 @@ struct TryItScreen: View {
     }
 
     private var analyzeButton: some View {
-        Button {
-            guard let data = photoData else { return }
-            viewModel.analyzePhoto(imageData: data)
-        } label: {
-            HStack(spacing: 8) {
+        WornGradientButton(
+            text: String(localized: "tryit_analyze"),
+            action: {
+                guard let data = photoData else { return }
+                viewModel.analyzePhoto(imageData: data)
+            },
+            gradientColors: WornGradients.indigo,
+            cornerRadius: 28,
+            shadowRadius: 10,
+            shadowColor: WornColors.accentIndigo.opacity(0.15),
+            shadowY: 6,
+            icon: AnyView(
                 Image(systemName: "cpu")
                     .font(.system(size: 18))
-                Text(String(localized: "tryit_analyze"))
-                    .font(.system(size: 16, weight: .semibold))
-            }
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .background(
-                LinearGradient(
-                    colors: [WornColors.accentIndigo, Color(hex: "556070")],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 28))
-            .shadow(color: WornColors.accentIndigo.opacity(0.15), radius: 10, y: 6)
-        }
-        .buttonStyle(.plain)
+                    .foregroundColor(.white)
+            ),
+            fixedHeight: nil,
+            contentPadding: EdgeInsets(top: 14, leading: 0, bottom: 14, trailing: 0)
+        )
     }
 
     private var loadingIndicator: some View {
@@ -267,43 +270,6 @@ struct TryItScreen: View {
                 .tint(WornColors.accentIndigo)
                 .padding(.vertical, 40)
             Spacer()
-        }
-    }
-
-    private func errorContent(message: String) -> some View {
-        VStack(spacing: 0) {
-            ZStack {
-                Circle()
-                    .fill(WornColors.deleteRed.opacity(0.1))
-                    .frame(width: 72, height: 72)
-                Image(systemName: "exclamationmark.triangle")
-                    .font(.system(size: 32))
-                    .foregroundColor(WornColors.deleteRed)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.top, 20)
-
-            Text(message)
-                .font(.system(size: 14))
-                .foregroundColor(WornColors.textSecondary)
-                .multilineTextAlignment(.center)
-                .padding(.top, 20)
-
-            Button {
-                guard let data = photoData else { return }
-                viewModel.analyzePhoto(imageData: data)
-            } label: {
-                Text(String(localized: "common_retry"))
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(WornColors.accentIndigo)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
-                    .background(WornColors.bgCard)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-            }
-            .buttonStyle(.plain)
-            .padding(.top, 16)
-            .padding(.bottom, 20)
         }
     }
 
@@ -447,23 +413,18 @@ struct TryItScreen: View {
     }
 
     private func indigoCtaButton(text: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(text)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 40)
-                .padding(.vertical, 14)
-                .background(
-                    LinearGradient(
-                        colors: [WornColors.accentIndigo, Color(hex: "556070")],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 28))
-                .shadow(color: WornColors.accentIndigo.opacity(0.15), radius: 10, y: 6)
-        }
-        .buttonStyle(.plain)
+        WornGradientButton(
+            text: text,
+            action: action,
+            gradientColors: WornGradients.indigo,
+            cornerRadius: 28,
+            shadowRadius: 10,
+            shadowColor: WornColors.accentIndigo.opacity(0.15),
+            shadowY: 6,
+            fillMaxWidth: false,
+            fixedHeight: nil,
+            contentPadding: EdgeInsets(top: 14, leading: 40, bottom: 14, trailing: 40)
+        )
     }
 }
 

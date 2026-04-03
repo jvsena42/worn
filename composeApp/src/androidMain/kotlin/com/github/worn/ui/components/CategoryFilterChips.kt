@@ -19,8 +19,6 @@ import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.ui.theme.WornColors
 
-private val chipShape = RoundedCornerShape(20.dp)
-
 @Composable
 fun CategoryFilterChips(
     activeCategory: Category?,
@@ -36,35 +34,12 @@ fun CategoryFilterChips(
         contentPadding = PaddingValues(horizontal = 0.dp),
     ) {
         items(allChips, key = { it.first?.name ?: "all" }) { (category, label) ->
-            val isActive = category == activeCategory
-            CategoryChip(
+            WornChip(
                 label = label,
-                isActive = isActive,
+                isActive = category == activeCategory,
                 onClick = { onCategorySelected(category) },
             )
         }
-    }
-}
-
-@Composable
-private fun CategoryChip(
-    label: String,
-    isActive: Boolean,
-    onClick: () -> Unit,
-) {
-    Surface(
-        onClick = onClick,
-        shape = chipShape,
-        color = if (isActive) WornColors.AccentGreen else WornColors.BgCard,
-        border = if (isActive) null else BorderStroke(1.dp, WornColors.BorderSubtle),
-    ) {
-        Text(
-            text = label,
-            color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-        )
     }
 }
 

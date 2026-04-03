@@ -40,7 +40,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
-import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Brush
@@ -62,6 +61,9 @@ import com.github.worn.presentation.viewmodel.GapsIntent
 import com.github.worn.presentation.viewmodel.GapsState
 import com.github.worn.presentation.viewmodel.GapsViewModel
 import com.github.worn.ui.components.AiLockedSheet
+import com.github.worn.ui.components.ErrorContentView
+import com.github.worn.ui.components.SheetDragHandle
+import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
@@ -163,9 +165,10 @@ private fun GapsScaffold(
 
             when {
                 state.isLoading -> LoadingContent()
-                state.error != null -> ErrorContent(
+                state.error != null -> ErrorContentView(
                     message = state.error!!,
                     onRetry = onRetry,
+                    modifier = Modifier.padding(vertical = 60.dp),
                 )
                 state.recommendations.isEmpty() -> CompleteContent()
                 else -> GapsContent(
@@ -187,51 +190,6 @@ private fun LoadingContent() {
         modifier = Modifier.fillMaxWidth().padding(vertical = 80.dp),
     ) {
         CircularProgressIndicator(color = WornColors.AccentGreen)
-    }
-}
-
-@Composable
-private fun ErrorContent(message: String, onRetry: () -> Unit) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 60.dp),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(72.dp)
-                .clip(CircleShape)
-                .background(WornColors.DeleteRed.copy(alpha = 0.1f)),
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.ErrorOutline,
-                contentDescription = null,
-                tint = WornColors.DeleteRed,
-                modifier = Modifier.size(32.dp),
-            )
-        }
-        Spacer(Modifier.height(24.dp))
-        Text(
-            text = message,
-            color = WornColors.TextSecondary,
-            fontSize = 14.sp,
-            lineHeight = 20.sp,
-            textAlign = TextAlign.Center,
-        )
-        Spacer(Modifier.height(20.dp))
-        Surface(
-            onClick = onRetry,
-            shape = RoundedCornerShape(16.dp),
-            color = WornColors.BgCard,
-        ) {
-            Text(
-                text = stringResource(R.string.common_retry),
-                color = WornColors.AccentGreen,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
-            )
-        }
     }
 }
 
@@ -421,21 +379,6 @@ private fun Category.dotColor(): Color = when (this) {
 
 // region Detail Sheet
 
-@Composable
-private fun GapSheetDragHandle() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(WornColors.BorderStrong),
-        )
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -451,7 +394,7 @@ private fun GapDetailSheet(
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { GapSheetDragHandle() },
+        dragHandle = { SheetDragHandle(color = WornColors.BorderStrong) },
     ) {
         GapDetailContent(
             recommendation = recommendation,
@@ -598,30 +541,10 @@ private fun DetailRow(label: String, value: String) {
 
 @Composable
 private fun DetailActions(onAddToWardrobe: () -> Unit, onDismiss: () -> Unit) {
-    val gradient = Brush.verticalGradient(
-        listOf(WornColors.SaveGradientStart, WornColors.SaveGradientEnd),
-    )
-    Surface(
+    WornGradientButton(
+        text = stringResource(R.string.gaps_add_to_wardrobe),
         onClick = onAddToWardrobe,
-        shape = RoundedCornerShape(16.dp),
-        color = Color.Transparent,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .background(gradient),
-        ) {
-            Text(
-                stringResource(R.string.gaps_add_to_wardrobe),
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-    }
+    )
     Spacer(Modifier.height(8.dp))
     Surface(
         onClick = onDismiss,

@@ -112,7 +112,11 @@ struct WardrobeContent: View {
         ScrollView {
             VStack(alignment: .leading, spacing: sectionGap) {
                 if isSelectionMode {
-                    selectionHeader
+                    SelectionHeader(
+                        count: Int(state.selectedIds.count),
+                        onCancel: onClearSelection,
+                        onDelete: { showDeleteDialog = true }
+                    )
                 } else {
                     normalHeader
                 }
@@ -158,35 +162,6 @@ struct WardrobeContent: View {
         }
     }
 
-    private var selectionHeader: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(String(format: String(localized: "selected_count"), state.selectedIds.count))
-                    .font(.system(size: 28, weight: .medium))
-                    .tracking(-0.8)
-                    .foregroundColor(WornColors.textPrimary)
-                Spacer()
-                Button {
-                    showDeleteDialog = true
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "trash")
-                            .font(.system(size: 15))
-                        Text(String(localized: "common_delete"))
-                            .font(.system(size: 15, weight: .semibold))
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(WornColors.deleteRed)
-                    .clipShape(Capsule())
-                }
-            }
-            Button(String(localized: "common_cancel")) { onClearSelection() }
-                .font(.system(size: 15, weight: .medium))
-                .foregroundColor(WornColors.textSecondary)
-        }
-    }
 
     private var gridSection: some View {
         Group {
@@ -244,59 +219,34 @@ struct WardrobeContent: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 24) {
-            Spacer().frame(height: 60)
-
-            ZStack {
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 130, height: 130)
-                    .shadow(color: WornColors.accentIndigo.opacity(0.08), radius: 15, x: 0, y: 0)
-                    .overlay(
-                        Circle()
-                            .stroke(WornColors.borderSubtle, lineWidth: 1)
-                    )
-
+        EmptyStateView(
+            icon: {
                 Image(systemName: "tshirt")
                     .font(.system(size: 42, weight: .regular))
                     .foregroundColor(WornColors.textSecondary)
-            }
-
-            Text(String(localized: "wardrobe_empty_title"))
-                .font(.system(size: 24, weight: .semibold))
-                .tracking(-0.5)
-                .foregroundColor(WornColors.textPrimary)
-
-            Text(String(localized: "wardrobe_empty_description"))
-                .font(.system(size: 15))
-                .lineSpacing(4)
-                .multilineTextAlignment(.center)
-                .foregroundColor(WornColors.textSecondary)
-
-            Button(action: onAddItemClick) {
-                HStack(spacing: 8) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(WornColors.bgPage)
-                    Text(String(localized: "wardrobe_empty_cta"))
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(WornColors.textOnColor)
-                }
-                .padding(.horizontal, 36)
-                .padding(.vertical, 16)
-                .background(
-                    LinearGradient(
-                        colors: [WornColors.accentGreen, WornColors.accentGreenEnd],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
+            },
+            title: String(localized: "wardrobe_empty_title"),
+            description: String(localized: "wardrobe_empty_description"),
+            action: {
+                WornGradientButton(
+                    text: String(localized: "wardrobe_empty_cta"),
+                    action: onAddItemClick,
+                    gradientColors: WornGradients.greenCta,
+                    cornerRadius: 28,
+                    shadowRadius: 10,
+                    shadowColor: WornColors.accentIndigo.opacity(0.15),
+                    shadowY: 6,
+                    icon: AnyView(
+                        Image(systemName: "plus")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(WornColors.bgPage)
+                    ),
+                    fillMaxWidth: false,
+                    fixedHeight: nil,
+                    contentPadding: EdgeInsets(top: 16, leading: 36, bottom: 16, trailing: 36)
                 )
-                .clipShape(Capsule())
-                .shadow(color: WornColors.accentIndigo.opacity(0.15), radius: 10, x: 0, y: 6)
             }
-
-            Spacer()
-        }
+        )
     }
 
     private var addItemFab: some View {

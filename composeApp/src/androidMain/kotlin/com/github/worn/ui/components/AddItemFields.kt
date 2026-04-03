@@ -309,21 +309,11 @@ fun SeasonSection(selectedSeasons: Set<Season>, onToggle: (Season) -> Unit) {
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Season.entries.forEach { season ->
-                val isActive = season in selectedSeasons
-                Surface(
+                WornChip(
+                    label = season.displayName(),
+                    isActive = season in selectedSeasons,
                     onClick = { onToggle(season) },
-                    shape = RoundedCornerShape(20.dp),
-                    color = if (isActive) WornColors.AccentGreen else WornColors.BgCard,
-                    border = if (isActive) null else BorderStroke(1.dp, WornColors.BorderSubtle),
-                ) {
-                    Text(
-                        text = season.displayName(),
-                        color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                }
+                )
             }
         }
     }
@@ -336,37 +326,15 @@ fun SaveButton(
     onClick: () -> Unit,
     label: String? = null,
 ) {
-    val gradient = Brush.verticalGradient(listOf(WornColors.SaveGradientStart, WornColors.SaveGradientEnd))
-    val disabledGradient = Brush.verticalGradient(listOf(WornColors.TextMuted, WornColors.IconMuted))
-    Button(
+    WornGradientButton(
+        text = if (isSaving) {
+            stringResource(R.string.common_saving)
+        } else {
+            label ?: stringResource(R.string.add_item_save_to_wardrobe)
+        },
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-        ),
-        contentPadding = PaddingValues(),
-        modifier = Modifier.fillMaxWidth().height(52.dp),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(if (enabled) gradient else disabledGradient),
-        ) {
-            Text(
-                text = if (isSaving) {
-                    stringResource(R.string.common_saving)
-                } else {
-                    label ?: stringResource(R.string.add_item_save_to_wardrobe)
-                },
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-    }
+    )
 }
 
 @DrawableRes
@@ -479,21 +447,11 @@ fun FitSection(selected: Fit?, onSelected: (Fit?) -> Unit) {
         )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Fit.entries.forEach { fit ->
-                val isActive = fit == selected
-                Surface(
-                    onClick = { onSelected(if (isActive) null else fit) },
-                    shape = RoundedCornerShape(20.dp),
-                    color = if (isActive) WornColors.AccentGreen else WornColors.BgCard,
-                    border = if (isActive) null else BorderStroke(1.dp, WornColors.BorderSubtle),
-                ) {
-                    Text(
-                        text = fit.displayName(),
-                        color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                }
+                WornChip(
+                    label = fit.displayName(),
+                    isActive = fit == selected,
+                    onClick = { onSelected(if (fit == selected) null else fit) },
+                )
             }
         }
     }
@@ -514,21 +472,11 @@ fun MaterialSection(selected: Material?, onSelected: (Material?) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Material.entries.forEach { material ->
-                val isActive = material == selected
-                Surface(
-                    onClick = { onSelected(if (isActive) null else material) },
-                    shape = RoundedCornerShape(20.dp),
-                    color = if (isActive) WornColors.AccentGreen else WornColors.BgCard,
-                    border = if (isActive) null else BorderStroke(1.dp, WornColors.BorderSubtle),
-                ) {
-                    Text(
-                        text = material.displayName(),
-                        color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                }
+                WornChip(
+                    label = material.displayName(),
+                    isActive = material == selected,
+                    onClick = { onSelected(if (material == selected) null else material) },
+                )
             }
         }
     }

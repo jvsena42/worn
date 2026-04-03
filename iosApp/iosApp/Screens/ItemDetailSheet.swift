@@ -129,34 +129,23 @@ struct ItemDetailSheet: View {
                 let seasonText = item.seasons.count == Season.entries.count
                     ? String(localized: "common_all_seasons")
                     : item.seasons.map { seasonDisplayName($0) }.joined(separator: ", ")
-                propertyRow(label: String(localized: "label_season"), value: seasonText)
+                PropertyRow(label: String(localized: "label_season"), value: seasonText, fontSize: propFontSize)
             }
 
             if let fit = item.fit {
-                propertyRow(label: String(localized: "label_fit"), value: fitDisplayName(fit))
+                PropertyRow(label: String(localized: "label_fit"), value: fitDisplayName(fit), fontSize: propFontSize)
             }
 
             if let subcategory = item.subcategory {
-                propertyRow(label: String(localized: "label_subcategory"), value: subcategoryDisplayName(subcategory))
+                PropertyRow(label: String(localized: "label_subcategory"), value: subcategoryDisplayName(subcategory), fontSize: propFontSize)
             }
 
             if let material = item.material {
-                propertyRow(label: String(localized: "label_material"), value: materialDisplayName(material))
+                PropertyRow(label: String(localized: "label_material"), value: materialDisplayName(material), fontSize: propFontSize)
             }
         }
     }
 
-    private func propertyRow(label: String, value: String) -> some View {
-        HStack {
-            Text(label)
-                .font(.system(size: propFontSize, weight: .medium))
-                .foregroundColor(WornColors.textSecondary)
-            Spacer()
-            Text(value)
-                .font(.system(size: propFontSize, weight: .medium))
-                .foregroundColor(WornColors.textPrimary)
-        }
-    }
 
     private var buttons: some View {
         VStack(spacing: 12) {
