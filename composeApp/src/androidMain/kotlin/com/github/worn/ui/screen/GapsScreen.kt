@@ -62,6 +62,7 @@ import com.github.worn.presentation.viewmodel.GapsIntent
 import com.github.worn.presentation.viewmodel.GapsState
 import com.github.worn.presentation.viewmodel.GapsViewModel
 import com.github.worn.ui.components.AiLockedSheet
+import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
@@ -421,21 +422,6 @@ private fun Category.dotColor(): Color = when (this) {
 
 // region Detail Sheet
 
-@Composable
-private fun GapSheetDragHandle() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(WornColors.BorderStrong),
-        )
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -451,7 +437,7 @@ private fun GapDetailSheet(
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { GapSheetDragHandle() },
+        dragHandle = { SheetDragHandle(color = WornColors.BorderStrong) },
     ) {
         GapDetailContent(
             recommendation = recommendation,

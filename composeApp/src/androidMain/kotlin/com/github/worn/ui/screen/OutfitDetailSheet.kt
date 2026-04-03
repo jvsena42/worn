@@ -53,6 +53,7 @@ import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
 import com.github.worn.domain.model.Season
+import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.WornColors
 import java.io.File
@@ -74,7 +75,7 @@ fun OutfitDetailSheet(
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { OutfitSheetDragHandle() },
+        dragHandle = { SheetDragHandle(color = WornColors.BorderStrong) },
     ) {
         OutfitDetailContent(
             outfit = outfit,
@@ -82,22 +83,6 @@ fun OutfitDetailSheet(
             isCompact = isCompact,
             onEdit = onEdit,
             onDelete = onDelete,
-        )
-    }
-}
-
-@Composable
-private fun OutfitSheetDragHandle() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(WornColors.BorderStrong),
         )
     }
 }

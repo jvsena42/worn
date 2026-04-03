@@ -71,6 +71,7 @@ import com.github.worn.domain.model.UserProfile
 import com.github.worn.presentation.viewmodel.SettingsIntent
 import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
+import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornDimens
@@ -356,21 +357,6 @@ private fun DonationCard() {
 
 // region Sheet Handle
 
-@Composable
-private fun SettingsSheetHandle() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(WornColors.IconMuted),
-        )
-    }
-}
 
 // endregion
 
@@ -390,7 +376,7 @@ private fun ProfileSheet(
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { SettingsSheetHandle() },
+        dragHandle = { SheetDragHandle() },
     ) {
         ProfileSheetContent(state = state, onIntent = onIntent, onSave = onSave)
     }
@@ -474,7 +460,7 @@ private fun ApiKeySheet(
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { SettingsSheetHandle() },
+        dragHandle = { SheetDragHandle() },
     ) {
         ApiKeySheetContent(hasApiKey = hasApiKey, onSave = onSave, onClear = onClear)
     }

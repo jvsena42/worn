@@ -49,25 +49,9 @@ fun AiLockedSheet(onDismiss: () -> Unit, onGoToSettings: () -> Unit = {}) {
         sheetState = sheetState,
         containerColor = WornColors.BgElevated,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { SheetHandle() },
+        dragHandle = { SheetDragHandle() },
     ) {
         AiLockedContent(onGoToSettings = onGoToSettings, onDismiss = onDismiss)
-    }
-}
-
-@Composable
-private fun SheetHandle() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(WornColors.IconMuted),
-        )
     }
 }
 
