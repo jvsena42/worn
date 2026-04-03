@@ -20,7 +20,7 @@ struct CategoryFilterChips: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 ForEach(allChips, id: \.label) { chip in
-                    CategoryChip(
+                    WornChip(
                         label: chip.label,
                         isActive: chip.category == activeCategory,
                         onTap: { onCategorySelected(chip.category) }
@@ -28,28 +28,5 @@ struct CategoryFilterChips: View {
                 }
             }
         }
-    }
-}
-
-private struct CategoryChip: View {
-    let label: String
-    let isActive: Bool
-    let onTap: () -> Void
-
-    var body: some View {
-        Button(action: onTap) {
-            Text(label)
-                .font(.system(size: 13, weight: .medium))
-                .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(isActive ? WornColors.accentGreen : WornColors.bgCard)
-                .clipShape(Capsule())
-                .overlay(
-                    Capsule()
-                        .stroke(isActive ? Color.clear : WornColors.borderSubtle, lineWidth: 1)
-                )
-        }
-        .buttonStyle(.plain)
     }
 }

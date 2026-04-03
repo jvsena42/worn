@@ -294,26 +294,13 @@ struct AddItemSheet: View {
             HStack(spacing: 8) {
                 ForEach(seasonOptions, id: \.0) { season, label in
                     let isActive = selectedSeasons.contains(season)
-                    Button {
+                    WornChip(label: label, isActive: isActive) {
                         if isActive {
                             selectedSeasons.remove(season)
                         } else {
                             selectedSeasons.insert(season)
                         }
-                    } label: {
-                        Text(label)
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(isActive ? WornColors.accentGreen : WornColors.bgCard)
-                            .clipShape(Capsule())
-                            .overlay(
-                                Capsule()
-                                    .stroke(isActive ? Color.clear : WornColors.borderSubtle, lineWidth: 1)
-                            )
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }
@@ -451,22 +438,9 @@ struct AddItemSheet: View {
             HStack(spacing: 8) {
                 ForEach(fitOptions, id: \.0) { fit, label in
                     let isActive = selectedFit == fit
-                    Button {
+                    WornChip(label: label, isActive: isActive) {
                         selectedFit = isActive ? nil : fit
-                    } label: {
-                        Text(label)
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(isActive ? WornColors.accentGreen : WornColors.bgCard)
-                            .clipShape(Capsule())
-                            .overlay(
-                                Capsule()
-                                    .stroke(isActive ? Color.clear : WornColors.borderSubtle, lineWidth: 1)
-                            )
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }
@@ -492,22 +466,9 @@ struct AddItemSheet: View {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
                 ForEach(materialOptions, id: \.0) { material, label in
                     let isActive = selectedMaterial == material
-                    Button {
+                    WornChip(label: label, isActive: isActive) {
                         selectedMaterial = isActive ? nil : material
-                    } label: {
-                        Text(label)
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
-                            .padding(.vertical, 8)
-                            .frame(maxWidth: .infinity)
-                            .background(isActive ? WornColors.accentGreen : WornColors.bgCard)
-                            .clipShape(Capsule())
-                            .overlay(
-                                Capsule()
-                                    .stroke(isActive ? Color.clear : WornColors.borderSubtle, lineWidth: 1)
-                            )
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }

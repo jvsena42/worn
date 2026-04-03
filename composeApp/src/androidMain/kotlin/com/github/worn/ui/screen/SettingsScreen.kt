@@ -72,6 +72,7 @@ import com.github.worn.presentation.viewmodel.SettingsIntent
 import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
 import com.github.worn.ui.components.SheetDragHandle
+import com.github.worn.ui.components.WornChip
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.theme.WornColors
@@ -606,21 +607,11 @@ private fun <T> ChipGroup(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             options.forEach { (value, label) ->
-                val isActive = value == selected
-                Surface(
-                    onClick = { onSelected(if (isActive) null else value) },
-                    shape = RoundedCornerShape(20.dp),
-                    color = if (isActive) WornColors.AccentGreen else WornColors.BgCard,
-                    border = if (isActive) null else BorderStroke(1.dp, WornColors.BorderSubtle),
-                ) {
-                    Text(
-                        text = label,
-                        color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                }
+                WornChip(
+                    label = label,
+                    isActive = value == selected,
+                    onClick = { onSelected(if (value == selected) null else value) },
+                )
             }
         }
     }
@@ -645,21 +636,11 @@ private fun <T> MultiChipGroup(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             options.forEach { (value, label) ->
-                val isActive = value in selected
-                Surface(
+                WornChip(
+                    label = label,
+                    isActive = value in selected,
                     onClick = { onToggle(value) },
-                    shape = RoundedCornerShape(20.dp),
-                    color = if (isActive) WornColors.AccentGreen else WornColors.BgCard,
-                    border = if (isActive) null else BorderStroke(1.dp, WornColors.BorderSubtle),
-                ) {
-                    Text(
-                        text = label,
-                        color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                }
+                )
             }
         }
     }
