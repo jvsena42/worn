@@ -61,6 +61,8 @@ import com.github.worn.domain.model.Outfit
 import com.github.worn.ui.components.CategoryFilterChips
 import com.github.worn.ui.components.SelectionIndicator
 import com.github.worn.ui.components.SheetDragHandle
+import com.github.worn.ui.components.WornGradientButton
+import com.github.worn.ui.components.WornGradients
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.WornColors
 import java.io.File
@@ -278,37 +280,16 @@ private fun ItemThumbnail(item: ClothingItem) {
 
 @Composable
 private fun SaveOutfitButton(enabled: Boolean, isSaving: Boolean, label: String? = null, onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenDark))
-    val disabledGradient = Brush.verticalGradient(listOf(WornColors.TextMuted, WornColors.IconMuted))
-    Button(
+    WornGradientButton(
+        text = if (isSaving) {
+            stringResource(R.string.common_saving)
+        } else {
+            label ?: stringResource(R.string.create_outfit_save)
+        },
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-        ),
-        contentPadding = PaddingValues(),
-        modifier = Modifier.fillMaxWidth().height(52.dp),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(if (enabled) gradient else disabledGradient),
-        ) {
-            Text(
-                text = if (isSaving) {
-                    stringResource(R.string.common_saving)
-                } else {
-                    label ?: stringResource(R.string.create_outfit_save)
-                },
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-    }
+        gradientColors = WornGradients.Green,
+    )
 }
 
 private val previewItems = listOf(

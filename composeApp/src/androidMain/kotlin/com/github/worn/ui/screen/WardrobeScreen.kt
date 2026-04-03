@@ -63,6 +63,8 @@ import com.github.worn.presentation.viewmodel.WardrobeIntent
 import com.github.worn.presentation.viewmodel.WardrobeState
 import com.github.worn.presentation.viewmodel.WardrobeViewModel
 import com.github.worn.ui.components.CategoryFilterChips
+import com.github.worn.ui.components.WornGradientButton
+import com.github.worn.ui.components.WornGradients
 import com.github.worn.ui.components.ClothingCard
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.theme.WornColors
@@ -410,21 +412,19 @@ private fun EmptyState(onAddItemClick: () -> Unit) {
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(24.dp))
-        Row(
-            modifier = Modifier
-                .shadow(elevation = 10.dp, shape = CtaShape)
-                .clickable(onClick = onAddItemClick)
-                .background(brush = CtaGradient, shape = CtaShape)
-                .padding(horizontal = 36.dp, vertical = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Icon(Icons.Default.Add, contentDescription = null, Modifier.size(18.dp), WornColors.BgPage)
-            Text(
-                stringResource(R.string.wardrobe_empty_cta),
-                color = WornColors.TextOnColor, fontSize = 16.sp, fontWeight = FontWeight.SemiBold,
-            )
-        }
+        WornGradientButton(
+            text = stringResource(R.string.wardrobe_empty_cta),
+            onClick = onAddItemClick,
+            gradientColors = WornGradients.GreenCta,
+            shape = CtaShape,
+            elevation = 10.dp,
+            fillMaxWidth = false,
+            fixedHeight = null,
+            contentPadding = PaddingValues(horizontal = 36.dp, vertical = 16.dp),
+            icon = {
+                Icon(Icons.Default.Add, contentDescription = null, Modifier.size(18.dp), WornColors.BgPage)
+            },
+        )
     }
 }
 

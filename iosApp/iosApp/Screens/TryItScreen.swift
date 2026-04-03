@@ -234,30 +234,25 @@ struct TryItScreen: View {
     }
 
     private var analyzeButton: some View {
-        Button {
-            guard let data = photoData else { return }
-            viewModel.analyzePhoto(imageData: data)
-        } label: {
-            HStack(spacing: 8) {
+        WornGradientButton(
+            text: String(localized: "tryit_analyze"),
+            action: {
+                guard let data = photoData else { return }
+                viewModel.analyzePhoto(imageData: data)
+            },
+            gradientColors: WornGradients.indigo,
+            cornerRadius: 28,
+            shadowRadius: 10,
+            shadowColor: WornColors.accentIndigo.opacity(0.15),
+            shadowY: 6,
+            icon: AnyView(
                 Image(systemName: "cpu")
                     .font(.system(size: 18))
-                Text(String(localized: "tryit_analyze"))
-                    .font(.system(size: 16, weight: .semibold))
-            }
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .background(
-                LinearGradient(
-                    colors: [WornColors.accentIndigo, Color(hex: "556070")],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 28))
-            .shadow(color: WornColors.accentIndigo.opacity(0.15), radius: 10, y: 6)
-        }
-        .buttonStyle(.plain)
+                    .foregroundColor(.white)
+            ),
+            fixedHeight: nil,
+            contentPadding: EdgeInsets(top: 14, leading: 0, bottom: 14, trailing: 0)
+        )
     }
 
     private var loadingIndicator: some View {
@@ -447,23 +442,18 @@ struct TryItScreen: View {
     }
 
     private func indigoCtaButton(text: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(text)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 40)
-                .padding(.vertical, 14)
-                .background(
-                    LinearGradient(
-                        colors: [WornColors.accentIndigo, Color(hex: "556070")],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 28))
-                .shadow(color: WornColors.accentIndigo.opacity(0.15), radius: 10, y: 6)
-        }
-        .buttonStyle(.plain)
+        WornGradientButton(
+            text: text,
+            action: action,
+            gradientColors: WornGradients.indigo,
+            cornerRadius: 28,
+            shadowRadius: 10,
+            shadowColor: WornColors.accentIndigo.opacity(0.15),
+            shadowY: 6,
+            fillMaxWidth: false,
+            fixedHeight: nil,
+            contentPadding: EdgeInsets(top: 14, leading: 40, bottom: 14, trailing: 40)
+        )
     }
 }
 

@@ -83,6 +83,8 @@ import com.github.worn.presentation.viewmodel.TryItIntent
 import com.github.worn.presentation.viewmodel.TryItState
 import com.github.worn.presentation.viewmodel.TryItViewModel
 import com.github.worn.ui.components.Tab
+import com.github.worn.ui.components.WornGradientButton
+import com.github.worn.ui.components.WornGradients
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
@@ -343,25 +345,16 @@ private fun AiEmptyContent(
 
 @Composable
 private fun IndigoCtaButton(text: String, onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(
-        listOf(WornColors.AccentIndigo, Color(0xFF556070)),
-    )
-    Button(
+    WornGradientButton(
+        text = text,
         onClick = onClick,
+        gradientColors = WornGradients.Indigo,
         shape = RoundedCornerShape(28.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-        contentPadding = PaddingValues(),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(gradient, RoundedCornerShape(28.dp))
-                .padding(horizontal = 40.dp, vertical = 14.dp),
-        ) {
-            Text(text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-        }
-    }
+        elevation = 6.dp,
+        fillMaxWidth = false,
+        fixedHeight = null,
+        contentPadding = PaddingValues(horizontal = 40.dp, vertical = 14.dp),
+    )
 }
 
 @Composable
@@ -529,43 +522,23 @@ private fun UploadZone(
 
 @Composable
 private fun AnalyzeButton(onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(
-        listOf(WornColors.AccentIndigo, Color(0xFF556070)),
-    )
-    Button(
+    WornGradientButton(
+        text = stringResource(R.string.tryit_analyze),
         onClick = onClick,
+        gradientColors = WornGradients.Indigo,
         shape = RoundedCornerShape(28.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-        contentPadding = PaddingValues(),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(gradient, RoundedCornerShape(28.dp))
-                .padding(vertical = 14.dp),
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.SmartToy,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(20.dp),
-                )
-                Text(
-                    stringResource(R.string.tryit_analyze),
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
-        }
-    }
+        elevation = 6.dp,
+        fixedHeight = null,
+        contentPadding = PaddingValues(vertical = 14.dp),
+        icon = {
+            Icon(
+                imageVector = Icons.Outlined.SmartToy,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(20.dp),
+            )
+        },
+    )
 }
 
 @Composable

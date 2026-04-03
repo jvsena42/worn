@@ -336,37 +336,15 @@ fun SaveButton(
     onClick: () -> Unit,
     label: String? = null,
 ) {
-    val gradient = Brush.verticalGradient(listOf(WornColors.SaveGradientStart, WornColors.SaveGradientEnd))
-    val disabledGradient = Brush.verticalGradient(listOf(WornColors.TextMuted, WornColors.IconMuted))
-    Button(
+    WornGradientButton(
+        text = if (isSaving) {
+            stringResource(R.string.common_saving)
+        } else {
+            label ?: stringResource(R.string.add_item_save_to_wardrobe)
+        },
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-        ),
-        contentPadding = PaddingValues(),
-        modifier = Modifier.fillMaxWidth().height(52.dp),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(if (enabled) gradient else disabledGradient),
-        ) {
-            Text(
-                text = if (isSaving) {
-                    stringResource(R.string.common_saving)
-                } else {
-                    label ?: stringResource(R.string.add_item_save_to_wardrobe)
-                },
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-    }
+    )
 }
 
 @DrawableRes

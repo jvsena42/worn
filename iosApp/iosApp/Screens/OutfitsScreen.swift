@@ -263,27 +263,23 @@ struct OutfitsContent: View {
                 .multilineTextAlignment(.center)
                 .foregroundColor(WornColors.textSecondary)
 
-            Button(action: onCreateClick) {
-                HStack(spacing: 8) {
+            WornGradientButton(
+                text: String(localized: "outfits_empty_cta"),
+                action: onCreateClick,
+                gradientColors: WornGradients.greenCta,
+                cornerRadius: 28,
+                shadowRadius: 10,
+                shadowColor: WornColors.accentIndigo.opacity(0.15),
+                shadowY: 6,
+                icon: AnyView(
                     Image(systemName: "plus")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(WornColors.bgPage)
-                    Text(String(localized: "outfits_empty_cta"))
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(WornColors.textOnColor)
-                }
-                .padding(.horizontal, 36)
-                .padding(.vertical, 16)
-                .background(
-                    LinearGradient(
-                        colors: [WornColors.accentGreen, WornColors.accentGreenEnd],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .clipShape(Capsule())
-                .shadow(color: WornColors.accentIndigo.opacity(0.15), radius: 10, x: 0, y: 6)
-            }
+                ),
+                fillMaxWidth: false,
+                fixedHeight: nil,
+                contentPadding: EdgeInsets(top: 16, leading: 36, bottom: 16, trailing: 36)
+            )
 
             Spacer()
         }

@@ -427,24 +427,11 @@ private func multiChipGroup<T: Hashable>(
 }
 
 private func saveGradientButton(text: String, enabled: Bool = true, action: @escaping () -> Void) -> some View {
-    Button(action: action) {
-        Text(text)
-            .font(.system(size: 16, weight: .semibold))
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 52)
-            .background(
-                LinearGradient(
-                    colors: enabled
-                        ? [WornColors.saveGradientStart, WornColors.saveGradientEnd]
-                        : [WornColors.textMuted, WornColors.iconMuted],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-    }
-    .disabled(!enabled)
+    WornGradientButton(
+        text: text,
+        action: action,
+        enabled: enabled
+    )
 }
 
 // MARK: - Display name helpers

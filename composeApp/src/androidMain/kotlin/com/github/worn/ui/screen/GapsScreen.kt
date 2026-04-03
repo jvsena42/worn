@@ -63,6 +63,7 @@ import com.github.worn.presentation.viewmodel.GapsState
 import com.github.worn.presentation.viewmodel.GapsViewModel
 import com.github.worn.ui.components.AiLockedSheet
 import com.github.worn.ui.components.SheetDragHandle
+import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
@@ -584,30 +585,10 @@ private fun DetailRow(label: String, value: String) {
 
 @Composable
 private fun DetailActions(onAddToWardrobe: () -> Unit, onDismiss: () -> Unit) {
-    val gradient = Brush.verticalGradient(
-        listOf(WornColors.SaveGradientStart, WornColors.SaveGradientEnd),
-    )
-    Surface(
+    WornGradientButton(
+        text = stringResource(R.string.gaps_add_to_wardrobe),
         onClick = onAddToWardrobe,
-        shape = RoundedCornerShape(16.dp),
-        color = Color.Transparent,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .background(gradient),
-        ) {
-            Text(
-                stringResource(R.string.gaps_add_to_wardrobe),
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-    }
+    )
     Spacer(Modifier.height(8.dp))
     Surface(
         onClick = onDismiss,

@@ -72,6 +72,7 @@ import com.github.worn.presentation.viewmodel.SettingsIntent
 import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
 import com.github.worn.ui.components.SheetDragHandle
+import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornDimens
@@ -587,25 +588,7 @@ private fun ApiKeyTextField(
 
 @Composable
 private fun SaveGradientButton(text: String, enabled: Boolean = true, onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(listOf(WornColors.SaveGradientStart, WornColors.SaveGradientEnd))
-    val disabledGradient = Brush.verticalGradient(listOf(WornColors.TextMuted, WornColors.IconMuted))
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
-        color = Color.Transparent,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .background(if (enabled) gradient else disabledGradient),
-        ) {
-            Text(text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-        }
-    }
+    WornGradientButton(text = text, onClick = onClick, enabled = enabled)
 }
 
 @OptIn(ExperimentalLayoutApi::class)

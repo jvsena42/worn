@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -104,27 +105,14 @@ internal fun AiLockedContent(
 
 @Composable
 private fun SettingsCta(onClick: () -> Unit) {
-    val gradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenDark))
-    Button(
+    WornGradientButton(
+        text = stringResource(R.string.ai_locked_cta),
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .background(gradient, RoundedCornerShape(16.dp))
-                .padding(horizontal = 40.dp, vertical = 14.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.ai_locked_cta),
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-    }
+        gradientColors = WornGradients.Green,
+        fillMaxWidth = false,
+        fixedHeight = null,
+        contentPadding = PaddingValues(horizontal = 40.dp, vertical = 14.dp),
+    )
 }
 
 @Preview(showSystemUi = true, device = "id:pixel_8")

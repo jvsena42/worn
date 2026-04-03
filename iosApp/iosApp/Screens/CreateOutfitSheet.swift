@@ -100,27 +100,15 @@ struct CreateOutfitSheet: View {
     }
 
     private var saveButton: some View {
-        Button {
-            onSave(name)
-        } label: {
-            Text(isSaving ? String(localized: "common_saving") : (existingOutfit != nil ? String(localized: "common_save_changes") : String(localized: "create_outfit_save")))
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 52)
-                .background(
-                    LinearGradient(
-                        colors: canSave
-                            ? [WornColors.accentGreen, WornColors.accentGreenDark]
-                            : [WornColors.textMuted, WornColors.iconMuted],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .shadow(color: WornColors.saveGradientStart.opacity(0.2), radius: 12, x: 0, y: 8)
-        }
-        .disabled(!canSave)
+        WornGradientButton(
+            text: isSaving ? String(localized: "common_saving") : (existingOutfit != nil ? String(localized: "common_save_changes") : String(localized: "create_outfit_save")),
+            action: { onSave(name) },
+            enabled: canSave,
+            gradientColors: WornGradients.green,
+            shadowRadius: 12,
+            shadowColor: WornColors.saveGradientStart.opacity(0.2),
+            shadowY: 8
+        )
     }
 }
 

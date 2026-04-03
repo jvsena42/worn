@@ -320,30 +320,19 @@ struct AddItemSheet: View {
     }
 
     private var saveButton: some View {
-        Button {
-            guard let cat = selectedCategory else { return }
-            let data = photoData ?? Data()
-            onSave(data, name, cat, Array(selectedColors), Array(selectedSeasons),
-                   selectedSubcategory, selectedFit, selectedMaterial)
-        } label: {
-            Text(isSaving ? String(localized: "common_saving") : (isEditing ? String(localized: "common_save_changes") : String(localized: "add_item_save_to_wardrobe")))
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 52)
-                .background(
-                    LinearGradient(
-                        colors: canSave
-                            ? [WornColors.saveGradientStart, WornColors.saveGradientEnd]
-                            : [WornColors.textMuted, WornColors.iconMuted],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .shadow(color: WornColors.saveGradientStart.opacity(0.2), radius: 12, x: 0, y: 8)
-        }
-        .disabled(!canSave)
+        WornGradientButton(
+            text: isSaving ? String(localized: "common_saving") : (isEditing ? String(localized: "common_save_changes") : String(localized: "add_item_save_to_wardrobe")),
+            action: {
+                guard let cat = selectedCategory else { return }
+                let data = photoData ?? Data()
+                onSave(data, name, cat, Array(selectedColors), Array(selectedSeasons),
+                       selectedSubcategory, selectedFit, selectedMaterial)
+            },
+            enabled: canSave,
+            shadowRadius: 12,
+            shadowColor: WornColors.saveGradientStart.opacity(0.2),
+            shadowY: 8
+        )
     }
 
     private var categoryOptions: [(Category, String)] {

@@ -36,25 +36,20 @@ struct AiLockedSheet: View {
                 .lineSpacing(7)
                 .frame(maxWidth: 280)
 
-            Button {
-                onGoToSettings()
-                onDismiss()
-            } label: {
-                Text(String(localized: "ai_locked_cta"))
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 40)
-                    .padding(.vertical, 14)
-                    .background(
-                        LinearGradient(
-                            colors: [WornColors.accentGreen, WornColors.accentGreenDark],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: WornColors.accentGreen.opacity(0.2), radius: 6, x: 0, y: 4)
-            }
+            WornGradientButton(
+                text: String(localized: "ai_locked_cta"),
+                action: {
+                    onGoToSettings()
+                    onDismiss()
+                },
+                gradientColors: WornGradients.green,
+                shadowRadius: 6,
+                shadowColor: WornColors.accentGreen.opacity(0.2),
+                shadowY: 4,
+                fillMaxWidth: false,
+                fixedHeight: nil,
+                contentPadding: EdgeInsets(top: 14, leading: 40, bottom: 14, trailing: 40)
+            )
         }
         .padding(.horizontal, 24)
         .padding(.top, 24)
