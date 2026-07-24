@@ -2,7 +2,7 @@ package com.github.worn.fake
 
 import com.github.worn.domain.model.Outfit
 import com.github.worn.domain.repository.OutfitRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 class FakeOutfitRepository : OutfitRepository {
 

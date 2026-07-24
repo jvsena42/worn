@@ -4,8 +4,8 @@ import com.github.worn.data.source.local.db.WardrobeDatabase
 import com.github.worn.domain.model.Outfit
 import com.github.worn.domain.repository.OutfitRepository
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Clock
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 

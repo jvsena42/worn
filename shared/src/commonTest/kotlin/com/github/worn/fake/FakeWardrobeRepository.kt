@@ -9,7 +9,7 @@ import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.Subcategory
 import com.github.worn.domain.model.TryItResult
 import com.github.worn.domain.repository.WardrobeRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 class FakeWardrobeRepository : WardrobeRepository {
 
