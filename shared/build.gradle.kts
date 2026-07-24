@@ -59,9 +59,11 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.kotlinx.coroutines.play.services)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.android)
             implementation(libs.koin.android)
+            implementation(libs.mlkit.subject.segmentation)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
