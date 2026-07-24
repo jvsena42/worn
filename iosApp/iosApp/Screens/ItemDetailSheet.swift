@@ -36,6 +36,7 @@ struct ItemDetailSheet: View {
             .padding(.bottom, 36)
         }
         .background(WornColors.bgElevated)
+        .accessibilityIdentifier(WornTestTags.itemDetailSheet)
         .alert(String(localized: "item_detail_delete_dialog_title"), isPresented: $showDeleteAlert) {
             Button(String(localized: "common_cancel"), role: .cancel) {}
             Button(String(localized: "common_delete"), role: .destructive) { onDelete(item.id) }
@@ -162,6 +163,7 @@ struct ItemDetailSheet: View {
                             .stroke(WornColors.borderSubtle, lineWidth: 1)
                     )
             }
+            .accessibilityIdentifier(WornTestTags.itemDetailEdit)
 
             Button { showDeleteAlert = true } label: {
                 Text(String(localized: "item_detail_delete"))
@@ -172,6 +174,7 @@ struct ItemDetailSheet: View {
                     .background(WornColors.deleteRed)
                     .clipShape(RoundedRectangle(cornerRadius: 24))
             }
+            .accessibilityIdentifier(WornTestTags.itemDetailDelete)
         }
     }
 

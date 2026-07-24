@@ -26,6 +26,16 @@ enum WornTab: String, CaseIterable {
         case .settings: return String(localized: "tab_settings")
         }
     }
+
+    var testTag: String {
+        switch self {
+        case .wardrobe: return WornTestTags.tabWardrobe
+        case .outfits: return WornTestTags.tabOutfits
+        case .gaps: return WornTestTags.tabGaps
+        case .tryIt: return WornTestTags.tabTryIt
+        case .settings: return WornTestTags.tabSettings
+        }
+    }
 }
 
 struct WornBottomBar: View {
@@ -42,6 +52,7 @@ struct WornBottomBar: View {
                     TabItem(tab: tab, isActive: tab == activeTab) {
                         onTabSelected(tab)
                     }
+                    .accessibilityIdentifier(tab.testTag)
                 }
             }
             .frame(maxWidth: isCompact ? .infinity : 480)
@@ -53,6 +64,7 @@ struct WornBottomBar: View {
                 RoundedRectangle(cornerRadius: 36)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
+            .accessibilityIdentifier(WornTestTags.bottomBar)
 
             if !isCompact { Spacer() }
         }

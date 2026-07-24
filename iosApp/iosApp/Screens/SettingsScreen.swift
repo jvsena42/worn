@@ -27,6 +27,7 @@ struct SettingsScreen: View {
                         action: { showProfileSheet = true }
                     )
                     .padding(.top, 10)
+                    .accessibilityIdentifier(WornTestTags.settingsProfileCard)
 
                     sectionLabel(String(localized: "settings_section_ai"))
                         .padding(.top, 24)
@@ -38,6 +39,7 @@ struct SettingsScreen: View {
                         action: { showApiKeySheet = true }
                     )
                     .padding(.top, 10)
+                    .accessibilityIdentifier(WornTestTags.settingsApiKeyCard)
 
                     sectionLabel(String(localized: "settings_section_about"))
                         .padding(.top, 24)
@@ -53,6 +55,7 @@ struct SettingsScreen: View {
             }
             .background(WornColors.bgPage)
         }
+        .accessibilityIdentifier(WornTestTags.settingsScreen)
         .sheet(isPresented: $showProfileSheet) {
             ProfileSheet(viewModel: viewModel)
                 .presentationDetents([.large])
@@ -263,12 +266,14 @@ private struct ProfileSheet: View {
                     }
 
                     saveGradientButton(text: String(localized: "common_save")) { dismiss() }
+                        .accessibilityIdentifier(WornTestTags.profileSaveButton)
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
             .background(WornColors.bgElevated)
         }
+        .accessibilityIdentifier(WornTestTags.profileSheet)
     }
 
     private var bodyTypeOptions: [(BodyType, String)] {
@@ -338,12 +343,14 @@ private struct ApiKeySheet: View {
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
+            .accessibilityIdentifier(WornTestTags.apiKeyField)
 
             saveGradientButton(text: String(localized: "settings_save_connect"), enabled: !hasApiKey && !keyInput.isEmpty) {
                 onSave(keyInput)
                 keyInput = ""
                 dismiss()
             }
+            .accessibilityIdentifier(WornTestTags.apiKeySaveButton)
 
             if hasApiKey {
                 HStack {
@@ -356,12 +363,14 @@ private struct ApiKeySheet: View {
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(WornColors.textSecondary)
                     }
+                    .accessibilityIdentifier(WornTestTags.apiKeyRemoveButton)
                     Spacer()
                 }
             }
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 24)
+        .accessibilityIdentifier(WornTestTags.apiKeySheet)
     }
 }
 
