@@ -19,6 +19,6 @@ detekt {
         "shared/src/commonMain/kotlin",
         "shared/src/androidMain/kotlin",
         "shared/src/iosMain/kotlin",
-        "composeApp/src/androidMain/kotlin"
+        "composeApp/src/main/kotlin"
     )
 }
