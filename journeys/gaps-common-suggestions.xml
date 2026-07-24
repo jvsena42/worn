@@ -1,0 +1,28 @@
+<journey name="Gaps common suggestions">
+    <description>
+        Verifies the Gaps tab shows common suggestions when no API key is configured, and that the
+        common-suggestions banner opens the AI-locked sheet. Start state: fresh install with no API
+        key configured.
+    </description>
+    <actions>
+        <action>
+            Tap the "GAPS" tab in the bottom navigation bar.
+        </action>
+        <action>
+            Verify the Gaps screen shows the "What's missing" heading and a "Common Suggestions"
+            banner.
+        </action>
+        <action>
+            Tap the "Common Suggestions" banner.
+        </action>
+        <action>
+            Verify the "Unlock AI features" sheet is shown with a "Go to Settings" button.
+        </action>
+        <action>
+            Tap the "Go to Settings" button.
+        </action>
+        <action>
+            Verify the app navigates to the Settings screen showing the "Settings" heading.
+        </action>
+    </actions>
+</journey>

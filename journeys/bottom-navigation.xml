@@ -1,0 +1,44 @@
+<journey name="Bottom navigation">
+    <description>
+        Launches the app and switches through every bottom-bar tab, verifying that each
+        destination screen is shown. Start state: fresh install (app opens on the Wardrobe tab).
+    </description>
+    <actions>
+        <action>
+            Verify the app is on the Wardrobe screen: the bottom navigation bar is visible with
+            the WARDROBE tab selected, and the "Your wardrobe" heading is shown.
+        </action>
+        <action>
+            Tap the "OUTFITS" tab in the bottom navigation bar.
+        </action>
+        <action>
+            Verify the Outfits screen is shown with the "Your outfits" heading.
+        </action>
+        <action>
+            Tap the "GAPS" tab in the bottom navigation bar.
+        </action>
+        <action>
+            Verify the Gaps screen is shown with the "What's missing" heading.
+        </action>
+        <action>
+            Tap the "TRY IT" tab in the bottom navigation bar.
+        </action>
+        <action>
+            Verify the Try It screen is shown (either the "Would it fit your wardrobe?" heading
+            or the "AI powered analysis" locked state is visible).
+        </action>
+        <action>
+            Tap the "SETTINGS" tab in the bottom navigation bar.
+        </action>
+        <action>
+            Verify the Settings screen is shown with the "Settings" heading and a "Claude API Key"
+            row.
+        </action>
+        <action>
+            Tap the "WARDROBE" tab in the bottom navigation bar.
+        </action>
+        <action>
+            Verify the app has returned to the Wardrobe screen.
+        </action>
+    </actions>
+</journey>
