@@ -2,6 +2,7 @@ package com.github.worn.ui.screen
 
 import android.Manifest
 import android.graphics.BitmapFactory
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
+import com.github.worn.data.source.image.BackgroundRemover
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Fit
@@ -63,11 +66,14 @@ import com.github.worn.ui.components.FitSection
 import com.github.worn.ui.components.ItemNameField
 import com.github.worn.ui.components.MaterialSection
 import com.github.worn.ui.components.PhotoUploadZone
+import com.github.worn.ui.components.RemoveBackgroundToggle
 import com.github.worn.ui.components.SaveButton
 import com.github.worn.ui.components.SeasonSection
 import com.github.worn.ui.components.SubcategoryDropdown
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.WornColors
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import java.io.ByteArrayOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,19 +116,60 @@ internal fun AddItemForm(
         { _, _, _, _, _, _, _, _ -> },
 ) {
     val formState = rememberAddItemFormState(existingItem)
+    val backgroundRemover = koinInject<BackgroundRemover>()
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     PhotoSourceChooser(
         show = formState.showSourceChooser,
         onDismiss = { formState.showSourceChooser = false },
-        onPhoto = { bytes, bitmap -> formState.photoBytes = bytes; formState.photoBitmap = bitmap },
+        onPhoto = { bytes, bitmap ->
+            formState.photoBytes = bytes
+            formState.originalPhotoBytes = bytes
+            formState.photoBitmap = bitmap
+            formState.bgRemoved = false
+        },
     )
 
     if (formState.showAiLockedSheet) {
         AiLockedSheet(onDismiss = { formState.showAiLockedSheet = false })
     }
 
+    fun onRemoveBackgroundChange(enabled: Boolean) {
+        val original = formState.originalPhotoBytes ?: return
+        if (!enabled) {
+            formState.photoBytes = original
+            formState.photoBitmap = BitmapFactory.decodeByteArray(original, 0, original.size)?.asImageBitmap()
+            formState.bgRemoved = false
+            return
+        }
+        formState.isProcessingBg = true
+        scope.launch {
+            runCatching { backgroundRemover.removeBackground(original) }
+                .onSuccess { processed ->
+                    formState.photoBytes = processed
+                    BitmapFactory.decodeByteArray(processed, 0, processed.size)?.asImageBitmap()
+                        ?.let { formState.photoBitmap = it }
+                    formState.bgRemoved = true
+                }
+                .onFailure {
+                    formState.bgRemoved = false
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.add_item_bg_removal_failed),
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+            formState.isProcessingBg = false
+        }
+    }
+
     AddItemFormContent(
         photoBitmap = formState.photoBitmap ?: formState.existingPhotoBitmap,
+        canRemoveBackground = formState.photoBytes != null,
+        bgRemoved = formState.bgRemoved,
+        isProcessingBg = formState.isProcessingBg,
+        onRemoveBackgroundChange = ::onRemoveBackgroundChange,
         name = formState.name,
         onNameChange = { formState.name = it },
         selectedCategory = formState.selectedCategory,
@@ -157,7 +204,10 @@ private class AddItemFormState(
     val existingPhotoBitmap: ImageBitmap?,
 ) {
     var photoBytes by mutableStateOf<ByteArray?>(null)
+    var originalPhotoBytes by mutableStateOf<ByteArray?>(null)
     var photoBitmap by mutableStateOf<ImageBitmap?>(null)
+    var bgRemoved by mutableStateOf(false)
+    var isProcessingBg by mutableStateOf(false)
     var name by mutableStateOf(existingItem?.name ?: "")
     var selectedCategory by mutableStateOf(existingItem?.category)
     var selectedColors by mutableStateOf(existingItem?.colors?.toSet() ?: emptySet())
@@ -238,6 +288,10 @@ private fun PhotoSourceChooser(
 @Composable
 private fun AddItemFormContent(
     photoBitmap: ImageBitmap?,
+    canRemoveBackground: Boolean,
+    bgRemoved: Boolean,
+    isProcessingBg: Boolean,
+    onRemoveBackgroundChange: (Boolean) -> Unit,
     name: String,
     onNameChange: (String) -> Unit,
     selectedCategory: Category?,
@@ -278,8 +332,17 @@ private fun AddItemFormContent(
         PhotoUploadZone(
             bitmap = photoBitmap,
             onClick = onPhotoClick,
+            isProcessing = isProcessingBg,
             modifier = Modifier.testTag("add_item_photo_zone"),
         )
+        if (canRemoveBackground) {
+            RemoveBackgroundToggle(
+                checked = bgRemoved,
+                enabled = !isProcessingBg,
+                onCheckedChange = onRemoveBackgroundChange,
+                modifier = Modifier.testTag("add_item_remove_bg_toggle"),
+            )
+        }
         if (!isEditing) {
             AiBadge(onClick = onAiBadgeClick, modifier = Modifier.testTag("add_item_ai_badge"))
         }

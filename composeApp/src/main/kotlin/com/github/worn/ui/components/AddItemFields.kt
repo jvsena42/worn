@@ -31,9 +31,12 @@ import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -82,7 +85,12 @@ val addItemColorPalette = listOf(
 )
 
 @Composable
-fun PhotoUploadZone(bitmap: ImageBitmap?, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun PhotoUploadZone(
+    bitmap: ImageBitmap?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isProcessing: Boolean = false,
+) {
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
@@ -90,34 +98,77 @@ fun PhotoUploadZone(bitmap: ImageBitmap?, onClick: () -> Unit, modifier: Modifie
         border = BorderStroke(1.5.dp, WornColors.BorderStrong),
         modifier = modifier.fillMaxWidth().height(140.dp),
     ) {
-        if (bitmap != null) {
-            androidx.compose.foundation.Image(
-                bitmap = bitmap,
-                contentDescription = "Selected photo",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.clip(RoundedCornerShape(16.dp)),
-            )
-        } else {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(16.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.CameraAlt,
-                    contentDescription = null,
-                    tint = WornColors.IconMuted,
-                    modifier = Modifier.size(32.dp),
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            if (bitmap != null) {
+                androidx.compose.foundation.Image(
+                    bitmap = bitmap,
+                    contentDescription = "Selected photo",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),
                 )
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.add_item_photo_hint),
-                    color = WornColors.TextSecondary,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                )
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(16.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.CameraAlt,
+                        contentDescription = null,
+                        tint = WornColors.IconMuted,
+                        modifier = Modifier.size(32.dp),
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(R.string.add_item_photo_hint),
+                        color = WornColors.TextSecondary,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
+            }
+            if (isProcessing) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(WornColors.BgElevated.copy(alpha = 0.6f)),
+                ) {
+                    CircularProgressIndicator(color = WornColors.AccentGreen, modifier = Modifier.size(28.dp))
+                }
             }
         }
+    }
+}
+
+@Composable
+fun RemoveBackgroundToggle(
+    checked: Boolean,
+    enabled: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Text(
+            text = stringResource(R.string.add_item_remove_background),
+            color = WornColors.TextPrimary,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f),
+        )
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            enabled = enabled,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                checkedTrackColor = WornColors.AccentGreen,
+            ),
+        )
     }
 }
 
