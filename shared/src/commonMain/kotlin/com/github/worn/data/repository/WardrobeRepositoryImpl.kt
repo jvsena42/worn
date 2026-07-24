@@ -15,8 +15,8 @@ import com.github.worn.domain.repository.SettingsRepository
 import com.github.worn.domain.repository.WardrobeRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Clock
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import com.github.worn.data.source.local.db.ClothingItem as DbClothingItem
