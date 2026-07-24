@@ -61,7 +61,6 @@ import com.github.worn.domain.model.Season
 import com.github.worn.presentation.viewmodel.GapsIntent
 import com.github.worn.presentation.viewmodel.GapsState
 import com.github.worn.presentation.viewmodel.GapsViewModel
-import com.github.worn.ui.WornTestTags
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.AiLockedSheet
 import com.github.worn.ui.components.ErrorContentView
@@ -142,7 +141,7 @@ private fun GapsScaffold(
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
     Scaffold(
-        modifier = Modifier.testTag(WornTestTags.GAPS_SCREEN),
+        modifier = Modifier.testTag("gaps_screen"),
         containerColor = WornColors.BgPage,
     ) { paddingValues ->
         Column(
@@ -266,7 +265,7 @@ private fun GapsBanner(isAiMode: Boolean, onClick: () -> Unit) {
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         color = bgColor,
-        modifier = Modifier.testTag(WornTestTags.GAPS_BANNER),
+        modifier = Modifier.testTag("gaps_banner"),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -550,14 +549,14 @@ private fun DetailActions(onAddToWardrobe: () -> Unit, onDismiss: () -> Unit) {
     WornGradientButton(
         text = stringResource(R.string.gaps_add_to_wardrobe),
         onClick = onAddToWardrobe,
-        modifier = Modifier.testTag(WornTestTags.GAP_ADD_TO_WARDROBE),
+        modifier = Modifier.testTag("gap_add_to_wardrobe"),
     )
     Spacer(Modifier.height(8.dp))
     Surface(
         onClick = onDismiss,
         shape = RoundedCornerShape(16.dp),
         color = WornColors.BgCard,
-        modifier = Modifier.fillMaxWidth().testTag(WornTestTags.GAP_DISMISS),
+        modifier = Modifier.fillMaxWidth().testTag("gap_dismiss"),
     ) {
         Box(
             contentAlignment = Alignment.Center,

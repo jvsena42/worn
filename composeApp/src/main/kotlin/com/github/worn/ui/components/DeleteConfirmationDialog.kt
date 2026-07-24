@@ -15,7 +15,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
-import com.github.worn.ui.WornTestTags
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
 
@@ -50,7 +49,7 @@ fun DeleteConfirmationDialog(
                 enabled = !isDeleting,
                 colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
                 shape = RoundedCornerShape(24.dp),
-                modifier = Modifier.testTag(WornTestTags.DELETE_DIALOG_CONFIRM),
+                modifier = Modifier.testTag("delete_dialog_confirm"),
             ) {
                 Text(
                     text = if (isDeleting) {
@@ -65,7 +64,7 @@ fun DeleteConfirmationDialog(
         dismissButton = {
             TextButton(
                 onClick = onDismiss,
-                modifier = Modifier.testTag(WornTestTags.DELETE_DIALOG_CANCEL),
+                modifier = Modifier.testTag("delete_dialog_cancel"),
             ) { Text(stringResource(R.string.common_cancel)) }
         },
     )

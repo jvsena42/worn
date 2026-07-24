@@ -54,7 +54,6 @@ import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
 import com.github.worn.domain.model.Season
-import com.github.worn.ui.WornTestTags
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.PropertyRow
 import com.github.worn.ui.components.SheetDragHandle
@@ -109,7 +108,7 @@ internal fun OutfitDetailContent(
     Column(
         modifier = Modifier
             .exposeTestTagsAsResourceId()
-            .testTag(WornTestTags.OUTFIT_DETAIL_SHEET)
+            .testTag("outfit_detail_sheet")
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(bottom = 36.dp),
@@ -132,8 +131,8 @@ internal fun OutfitDetailContent(
                 buttonFontSize = if (isCompact) 15.sp else 16.sp,
                 onEdit = { onEdit(outfit) },
                 onDelete = { showDeleteDialog = true },
-                editTestTag = WornTestTags.OUTFIT_DETAIL_EDIT,
-                deleteTestTag = WornTestTags.OUTFIT_DETAIL_DELETE,
+                editTestTag = "outfit_detail_edit",
+                deleteTestTag = "outfit_detail_delete",
             )
         }
     }

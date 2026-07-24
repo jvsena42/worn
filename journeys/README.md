@@ -12,10 +12,11 @@ action cannot be performed as written, the journey **fails**.
 
 Interactive and assertable components carry stable test identifiers so steps can target them
 unambiguously. On Android these are Compose `Modifier.testTag(...)` values surfaced as
-`resource-id` in the layout tree (`testTagsAsResourceId = true`); the registry lives in
-`composeApp/src/main/kotlin/com/github/worn/ui/WornTestTags.kt`. iOS mirrors the same string
-values as `accessibilityIdentifier` (`iosApp/iosApp/WornTestTags.swift`). Steps below reference
-the visible text a user sees; the identifiers are the fallback the evaluator uses to disambiguate.
+`resource-id` in the layout tree (`testTagsAsResourceId = true`); iOS mirrors the same string
+values as `accessibilityIdentifier`. The identifiers are plain snake_case strings applied at each
+component's call site (e.g. `tab_wardrobe`, `add_item_save_button`, `api_key_field`). Steps below
+reference the visible text a user sees; the identifiers are the fallback the evaluator uses to
+disambiguate.
 
 ## Preconditions
 

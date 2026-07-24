@@ -59,7 +59,6 @@ import com.github.worn.presentation.viewmodel.OutfitEffect
 import com.github.worn.presentation.viewmodel.OutfitIntent
 import com.github.worn.presentation.viewmodel.OutfitState
 import com.github.worn.presentation.viewmodel.OutfitViewModel
-import com.github.worn.ui.WornTestTags
 import com.github.worn.ui.components.DeleteConfirmationDialog
 import com.github.worn.ui.components.SelectionHeader
 import com.github.worn.ui.components.EmptyStateView
@@ -186,7 +185,7 @@ private fun OutfitsScaffold(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Scaffold(
-        modifier = Modifier.testTag(WornTestTags.OUTFITS_SCREEN),
+        modifier = Modifier.testTag("outfits_screen"),
         containerColor = WornColors.BgPage,
     ) { paddingValues ->
         val isEmpty = !state.isLoading && state.outfits.isEmpty()
@@ -252,7 +251,7 @@ private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
                 onClick = onCreateClick,
                 colors = ButtonDefaults.buttonColors(containerColor = WornColors.AccentGreen),
                 shape = RoundedCornerShape(20.dp),
-                modifier = Modifier.testTag(WornTestTags.OUTFITS_CREATE_BUTTON),
+                modifier = Modifier.testTag("outfits_create_button"),
             ) {
                 Icon(Icons.Default.Add, contentDescription = null, Modifier.size(16.dp))
                 Spacer(Modifier.width(4.dp))
@@ -296,7 +295,7 @@ private fun OutfitsContent(
                     if (isSelectionMode) onToggleSelection(outfit.id) else onOutfitClick(outfit)
                 },
                 modifier = Modifier
-                    .testTag(WornTestTags.OUTFIT_CARD)
+                    .testTag("outfit_card")
                     .animateItem(),
             )
         }
@@ -323,7 +322,7 @@ private fun EmptyState(onCreateClick: () -> Unit = {}) {
             WornGradientButton(
                 text = stringResource(R.string.outfits_empty_cta),
                 onClick = onCreateClick,
-                modifier = Modifier.testTag(WornTestTags.OUTFITS_EMPTY_CTA),
+                modifier = Modifier.testTag("outfits_empty_cta"),
                 gradientColors = WornGradients.GreenCta,
                 shape = CtaShape,
                 elevation = 10.dp,

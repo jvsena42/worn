@@ -35,7 +35,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
-import com.github.worn.ui.WornTestTags
 import com.github.worn.ui.theme.WornColors
 
 enum class Tab(
@@ -44,11 +43,11 @@ enum class Tab(
     val icon: ImageVector? = null,
     @DrawableRes val iconRes: Int? = null,
 ) {
-    WARDROBE(R.string.tab_wardrobe, WornTestTags.TAB_WARDROBE, iconRes = R.drawable.ic_shirt),
-    OUTFITS(R.string.tab_outfits, WornTestTags.TAB_OUTFITS, icon = Icons.Outlined.Layers),
-    GAPS(R.string.tab_gaps, WornTestTags.TAB_GAPS, icon = Icons.Outlined.Extension),
-    TRY_IT(R.string.tab_try_it, WornTestTags.TAB_TRY_IT, icon = Icons.Outlined.QrCodeScanner),
-    SETTINGS(R.string.tab_settings, WornTestTags.TAB_SETTINGS, icon = Icons.Outlined.Settings),
+    WARDROBE(R.string.tab_wardrobe, "tab_wardrobe", iconRes = R.drawable.ic_shirt),
+    OUTFITS(R.string.tab_outfits, "tab_outfits", icon = Icons.Outlined.Layers),
+    GAPS(R.string.tab_gaps, "tab_gaps", icon = Icons.Outlined.Extension),
+    TRY_IT(R.string.tab_try_it, "tab_try_it", icon = Icons.Outlined.QrCodeScanner),
+    SETTINGS(R.string.tab_settings, "tab_settings", icon = Icons.Outlined.Settings),
 }
 
 @Composable
@@ -79,7 +78,7 @@ fun WornBottomBar(
                     else Modifier.widthIn(max = 480.dp).fillMaxWidth(),
                 )
                 .height(62.dp)
-                .testTag(WornTestTags.BOTTOM_BAR),
+                .testTag("bottom_bar"),
         ) {
             Row(
                 modifier = Modifier.padding(4.dp),

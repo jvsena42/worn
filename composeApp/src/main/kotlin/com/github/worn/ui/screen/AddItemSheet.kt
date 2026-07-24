@@ -53,7 +53,6 @@ import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.Subcategory
-import com.github.worn.ui.WornTestTags
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.AiBadge
 import com.github.worn.ui.components.SheetDragHandle
@@ -263,7 +262,7 @@ private fun AddItemFormContent(
     Column(
         modifier = Modifier
             .exposeTestTagsAsResourceId()
-            .testTag(WornTestTags.ADD_ITEM_SHEET)
+            .testTag("add_item_sheet")
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
@@ -279,20 +278,20 @@ private fun AddItemFormContent(
         PhotoUploadZone(
             bitmap = photoBitmap,
             onClick = onPhotoClick,
-            modifier = Modifier.testTag(WornTestTags.ADD_ITEM_PHOTO_ZONE),
+            modifier = Modifier.testTag("add_item_photo_zone"),
         )
         if (!isEditing) {
-            AiBadge(onClick = onAiBadgeClick, modifier = Modifier.testTag(WornTestTags.ADD_ITEM_AI_BADGE))
+            AiBadge(onClick = onAiBadgeClick, modifier = Modifier.testTag("add_item_ai_badge"))
         }
         ItemNameField(
             value = name,
             onValueChange = onNameChange,
-            modifier = Modifier.testTag(WornTestTags.ADD_ITEM_NAME_FIELD),
+            modifier = Modifier.testTag("add_item_name_field"),
         )
         CategoryDropdown(
             selected = selectedCategory,
             onSelected = onCategorySelected,
-            modifier = Modifier.testTag(WornTestTags.ADD_ITEM_CATEGORY_DROPDOWN),
+            modifier = Modifier.testTag("add_item_category_dropdown"),
         )
         if (selectedCategory != null) {
             SubcategoryDropdown(
@@ -310,7 +309,7 @@ private fun AddItemFormContent(
             isSaving = isSaving,
             onClick = onSave,
             label = if (isEditing) stringResource(R.string.common_save_changes) else null,
-            modifier = Modifier.testTag(WornTestTags.ADD_ITEM_SAVE_BUTTON),
+            modifier = Modifier.testTag("add_item_save_button"),
         )
     }
 }
@@ -327,11 +326,11 @@ private fun PhotoSourceDialog(
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.exposeTestTagsAsResourceId().testTag(WornTestTags.PHOTO_DIALOG),
+                modifier = Modifier.exposeTestTagsAsResourceId().testTag("photo_source_dialog"),
             ) {
                 TextButton(
                     onClick = onCamera,
-                    modifier = Modifier.fillMaxWidth().testTag(WornTestTags.PHOTO_DIALOG_CAMERA),
+                    modifier = Modifier.fillMaxWidth().testTag("photo_source_camera"),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -345,7 +344,7 @@ private fun PhotoSourceDialog(
                 }
                 TextButton(
                     onClick = onGallery,
-                    modifier = Modifier.fillMaxWidth().testTag(WornTestTags.PHOTO_DIALOG_GALLERY),
+                    modifier = Modifier.fillMaxWidth().testTag("photo_source_gallery"),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,

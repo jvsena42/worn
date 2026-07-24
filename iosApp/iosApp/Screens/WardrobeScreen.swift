@@ -97,7 +97,7 @@ struct WardrobeContent: View {
             }
         }
         .background(WornColors.bgPage)
-        .accessibilityIdentifier(WornTestTags.wardrobeScreen)
+        .accessibilityIdentifier("wardrobe_screen")
         .alert(String(format: String(localized: "delete_items_title"), state.selectedIds.count), isPresented: $showDeleteDialog) {
             Button(String(localized: "common_cancel"), role: .cancel) {}
             Button(String(localized: "common_delete"), role: .destructive) { onDeleteSelected() }
@@ -246,7 +246,7 @@ struct WardrobeContent: View {
                     fixedHeight: nil,
                     contentPadding: EdgeInsets(top: 16, leading: 36, bottom: 16, trailing: 36)
                 )
-                .accessibilityIdentifier(WornTestTags.wardrobeEmptyAddCta)
+                .accessibilityIdentifier("wardrobe_empty_add_cta")
             }
         )
     }
@@ -266,7 +266,7 @@ struct WardrobeContent: View {
             .clipShape(Capsule())
             .shadow(color: WornColors.saveGradientStart.opacity(0.2), radius: 12, x: 0, y: 8)
         }
-        .accessibilityIdentifier(WornTestTags.wardrobeAddFab)
+        .accessibilityIdentifier("wardrobe_add_fab")
     }
 }
 

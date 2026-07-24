@@ -28,12 +28,12 @@ struct TryItScreen: View {
 
         }
         .background(WornColors.bgPage)
-        .accessibilityIdentifier(WornTestTags.tryItScreen)
+        .accessibilityIdentifier("try_it_screen")
         .confirmationDialog(String(localized: "add_item_photo_dialog_title"), isPresented: $showSourceChooser) {
             Button(String(localized: "add_item_take_photo")) { showCamera = true }
-                .accessibilityIdentifier(WornTestTags.photoSourceCamera)
+                .accessibilityIdentifier("photo_source_camera")
             Button(String(localized: "add_item_choose_gallery")) { showPhotoPicker = true }
-                .accessibilityIdentifier(WornTestTags.photoSourceGallery)
+                .accessibilityIdentifier("photo_source_gallery")
             Button(String(localized: "common_cancel"), role: .cancel) {}
         }
         .photosPicker(isPresented: $showPhotoPicker, selection: $selectedPhotoItem, matching: .images)
@@ -105,7 +105,7 @@ struct TryItScreen: View {
             indigoCtaButton(text: String(localized: "tryit_connect_cta")) {
                 onTabSelected(.settings)
             }
-            .accessibilityIdentifier(WornTestTags.tryItConnectCta)
+            .accessibilityIdentifier("try_it_connect_cta")
 
             Spacer()
         }
@@ -243,7 +243,7 @@ struct TryItScreen: View {
             .shadow(color: .black.opacity(0.03), radius: 2, y: 1)
         }
         .buttonStyle(.plain)
-        .accessibilityIdentifier(WornTestTags.tryItUploadZone)
+        .accessibilityIdentifier("try_it_upload_zone")
     }
 
     private var analyzeButton: some View {
@@ -266,7 +266,7 @@ struct TryItScreen: View {
             fixedHeight: nil,
             contentPadding: EdgeInsets(top: 14, leading: 0, bottom: 14, trailing: 0)
         )
-        .accessibilityIdentifier(WornTestTags.tryItAnalyzeButton)
+        .accessibilityIdentifier("try_it_analyze_button")
     }
 
     private var loadingIndicator: some View {

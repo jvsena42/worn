@@ -63,7 +63,6 @@ import com.github.worn.presentation.viewmodel.WardrobeEffect
 import com.github.worn.presentation.viewmodel.WardrobeIntent
 import com.github.worn.presentation.viewmodel.WardrobeState
 import com.github.worn.presentation.viewmodel.WardrobeViewModel
-import com.github.worn.ui.WornTestTags
 import com.github.worn.ui.components.CategoryFilterChips
 import com.github.worn.ui.components.DeleteConfirmationDialog
 import com.github.worn.ui.components.SelectionHeader
@@ -191,7 +190,7 @@ private fun WardrobeScaffold(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Scaffold(
-        modifier = Modifier.testTag(WornTestTags.WARDROBE_SCREEN),
+        modifier = Modifier.testTag("wardrobe_screen"),
         containerColor = WornColors.BgPage,
         floatingActionButton = {
             val isWardrobeEmpty = !state.isLoading && state.totalItemCount == 0
@@ -199,7 +198,7 @@ private fun WardrobeScaffold(
                 AddItemFab(
                     onAddItemClick,
                     Modifier
-                        .testTag(WornTestTags.WARDROBE_ADD_FAB)
+                        .testTag("wardrobe_add_fab")
                         .padding(bottom = WornDimens.BottomBarClearance),
                 )
             }
@@ -315,7 +314,7 @@ private fun WardrobeContent(
                         if (isSelectionMode) onToggleSelection(item.id) else onItemClick(item)
                     },
                     modifier = Modifier
-                        .testTag(WornTestTags.CLOTHING_CARD)
+                        .testTag("clothing_card")
                         .animateItem(),
                 )
             }
@@ -366,7 +365,7 @@ private fun EmptyState(onAddItemClick: () -> Unit) {
             WornGradientButton(
                 text = stringResource(R.string.wardrobe_empty_cta),
                 onClick = onAddItemClick,
-                modifier = Modifier.testTag(WornTestTags.WARDROBE_EMPTY_ADD_CTA),
+                modifier = Modifier.testTag("wardrobe_empty_add_cta"),
                 gradientColors = WornGradients.GreenCta,
                 shape = CtaShape,
                 elevation = 10.dp,

@@ -82,7 +82,6 @@ import com.github.worn.presentation.viewmodel.TryItEffect
 import com.github.worn.presentation.viewmodel.TryItIntent
 import com.github.worn.presentation.viewmodel.TryItState
 import com.github.worn.presentation.viewmodel.TryItViewModel
-import com.github.worn.ui.WornTestTags
 import com.github.worn.ui.components.ErrorContentView
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
@@ -261,7 +260,7 @@ private fun TryItScaffold(
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
     Scaffold(
-        modifier = Modifier.testTag(WornTestTags.TRY_IT_SCREEN),
+        modifier = Modifier.testTag("try_it_screen"),
         containerColor = WornColors.BgPage,
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
@@ -345,7 +344,7 @@ private fun AiEmptyContent(
         IndigoCtaButton(
             text = stringResource(R.string.tryit_connect_cta),
             onClick = onGoToSettings,
-            modifier = Modifier.testTag(WornTestTags.TRY_IT_CONNECT_CTA),
+            modifier = Modifier.testTag("try_it_connect_cta"),
         )
     }
 }
@@ -508,7 +507,7 @@ private fun UploadZone(
         color = WornColors.BgCard,
         border = BorderStroke(1.5.dp, WornColors.BorderStrong),
         shadowElevation = 1.dp,
-        modifier = Modifier.fillMaxWidth().height(height).testTag(WornTestTags.TRY_IT_UPLOAD_ZONE),
+        modifier = Modifier.fillMaxWidth().height(height).testTag("try_it_upload_zone"),
     ) {
         if (photoBitmap != null) {
             androidx.compose.foundation.Image(
@@ -547,7 +546,7 @@ private fun AnalyzeButton(onClick: () -> Unit) {
     WornGradientButton(
         text = stringResource(R.string.tryit_analyze),
         onClick = onClick,
-        modifier = Modifier.testTag(WornTestTags.TRY_IT_ANALYZE_BUTTON),
+        modifier = Modifier.testTag("try_it_analyze_button"),
         gradientColors = WornGradients.Indigo,
         shape = RoundedCornerShape(28.dp),
         elevation = 6.dp,

@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.github.worn.ui.WornTestTags
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
@@ -111,7 +110,7 @@ internal fun ItemDetailContent(
     Column(
         modifier = Modifier
             .exposeTestTagsAsResourceId()
-            .testTag(WornTestTags.ITEM_DETAIL_SHEET)
+            .testTag("item_detail_sheet")
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = dims.contentPadding)
@@ -130,8 +129,8 @@ internal fun ItemDetailContent(
                 buttonFontSize = dims.buttonFontSize,
                 onEdit = { onEdit(item) },
                 onDelete = { showDeleteDialog = true },
-                editTestTag = WornTestTags.ITEM_DETAIL_EDIT,
-                deleteTestTag = WornTestTags.ITEM_DETAIL_DELETE,
+                editTestTag = "item_detail_edit",
+                deleteTestTag = "item_detail_delete",
             )
         }
     }

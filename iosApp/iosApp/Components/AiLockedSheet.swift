@@ -50,13 +50,13 @@ struct AiLockedSheet: View {
                 fixedHeight: nil,
                 contentPadding: EdgeInsets(top: 14, leading: 40, bottom: 14, trailing: 40)
             )
-            .accessibilityIdentifier(WornTestTags.aiLockedCta)
+            .accessibilityIdentifier("ai_locked_cta")
         }
         .padding(.horizontal, 24)
         .padding(.top, 24)
         .padding(.bottom, 32)
         .background(WornColors.bgElevated)
-        .accessibilityIdentifier(WornTestTags.aiLockedSheet)
+        .accessibilityIdentifier("ai_locked_sheet")
     }
 }
 

@@ -72,7 +72,6 @@ import com.github.worn.domain.model.UserProfile
 import com.github.worn.presentation.viewmodel.SettingsIntent
 import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
-import com.github.worn.ui.WornTestTags
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.WornChip
@@ -136,7 +135,7 @@ private fun SettingsScaffold(
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
     Scaffold(
-        modifier = Modifier.testTag(WornTestTags.SETTINGS_SCREEN),
+        modifier = Modifier.testTag("settings_screen"),
         containerColor = WornColors.BgPage,
     ) { paddingValues ->
         Column(
@@ -163,7 +162,7 @@ private fun SettingsScaffold(
                 title = stringResource(R.string.settings_your_profile),
                 subtitle = state.userProfile.summaryText(),
                 onClick = onProfileClick,
-                modifier = Modifier.testTag(WornTestTags.SETTINGS_PROFILE_CARD),
+                modifier = Modifier.testTag("settings_profile_card"),
             )
 
             Spacer(Modifier.height(24.dp))
@@ -176,7 +175,7 @@ private fun SettingsScaffold(
                     if (state.hasApiKey) R.string.settings_api_key_connected else R.string.settings_api_key_required,
                 ),
                 onClick = onApiKeyClick,
-                modifier = Modifier.testTag(WornTestTags.SETTINGS_API_KEY_CARD),
+                modifier = Modifier.testTag("settings_api_key_card"),
             )
 
             Spacer(Modifier.height(24.dp))
@@ -403,7 +402,7 @@ private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent)
     Column(
         modifier = Modifier
             .exposeTestTagsAsResourceId()
-            .testTag(WornTestTags.PROFILE_SHEET)
+            .testTag("profile_sheet")
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
@@ -453,7 +452,7 @@ private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent)
         SaveGradientButton(
             text = stringResource(R.string.common_save),
             onClick = onSave,
-            modifier = Modifier.testTag(WornTestTags.PROFILE_SAVE_BUTTON),
+            modifier = Modifier.testTag("profile_save_button"),
         )
     }
 }
@@ -494,7 +493,7 @@ private fun ApiKeySheetContent(
     Column(
         modifier = Modifier
             .exposeTestTagsAsResourceId()
-            .testTag(WornTestTags.API_KEY_SHEET)
+            .testTag("api_key_sheet")
             .fillMaxWidth()
             .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -506,7 +505,7 @@ private fun ApiKeySheetContent(
             enabled = !hasApiKey,
             passwordVisible = passwordVisible,
             onToggleVisibility = { passwordVisible = !passwordVisible },
-            modifier = Modifier.testTag(WornTestTags.API_KEY_FIELD),
+            modifier = Modifier.testTag("api_key_field"),
         )
         SaveGradientButton(
             text = stringResource(R.string.settings_save_connect),
@@ -515,14 +514,14 @@ private fun ApiKeySheetContent(
                 onSave(keyInput)
                 keyInput = ""
             },
-            modifier = Modifier.testTag(WornTestTags.API_KEY_SAVE_BUTTON),
+            modifier = Modifier.testTag("api_key_save_button"),
         )
         if (hasApiKey) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                 Surface(
                     onClick = onClear,
                     color = Color.Transparent,
-                    modifier = Modifier.testTag(WornTestTags.API_KEY_REMOVE_BUTTON),
+                    modifier = Modifier.testTag("api_key_remove_button"),
                 ) {
                     Text(
                         text = stringResource(R.string.settings_remove_key),

@@ -36,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
-import com.github.worn.ui.WornTestTags
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.WornColors
@@ -69,7 +68,7 @@ internal fun AiLockedContent(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = Modifier
             .exposeTestTagsAsResourceId()
-            .testTag(WornTestTags.AI_LOCKED_SHEET)
+            .testTag("ai_locked_sheet")
             .fillMaxWidth()
             .padding(start = 24.dp, end = 24.dp, bottom = 32.dp),
     ) {
@@ -115,7 +114,7 @@ private fun SettingsCta(onClick: () -> Unit) {
     WornGradientButton(
         text = stringResource(R.string.ai_locked_cta),
         onClick = onClick,
-        modifier = Modifier.testTag(WornTestTags.AI_LOCKED_CTA),
+        modifier = Modifier.testTag("ai_locked_cta"),
         gradientColors = WornGradients.Green,
         fillMaxWidth = false,
         fixedHeight = null,
