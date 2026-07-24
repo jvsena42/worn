@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -62,6 +63,7 @@ import com.github.worn.presentation.viewmodel.WardrobeEffect
 import com.github.worn.presentation.viewmodel.WardrobeIntent
 import com.github.worn.presentation.viewmodel.WardrobeState
 import com.github.worn.presentation.viewmodel.WardrobeViewModel
+import com.github.worn.ui.WornTestTags
 import com.github.worn.ui.components.CategoryFilterChips
 import com.github.worn.ui.components.DeleteConfirmationDialog
 import com.github.worn.ui.components.SelectionHeader
@@ -189,11 +191,17 @@ private fun WardrobeScaffold(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Scaffold(
+        modifier = Modifier.testTag(WornTestTags.WARDROBE_SCREEN),
         containerColor = WornColors.BgPage,
         floatingActionButton = {
             val isWardrobeEmpty = !state.isLoading && state.totalItemCount == 0
             if (!isSelectionMode && !isWardrobeEmpty) {
-                AddItemFab(onAddItemClick, Modifier.padding(bottom = WornDimens.BottomBarClearance))
+                AddItemFab(
+                    onAddItemClick,
+                    Modifier
+                        .testTag(WornTestTags.WARDROBE_ADD_FAB)
+                        .padding(bottom = WornDimens.BottomBarClearance),
+                )
             }
         },
     ) { paddingValues ->
@@ -306,7 +314,9 @@ private fun WardrobeContent(
                     onClick = {
                         if (isSelectionMode) onToggleSelection(item.id) else onItemClick(item)
                     },
-                    modifier = Modifier.animateItem(),
+                    modifier = Modifier
+                        .testTag(WornTestTags.CLOTHING_CARD)
+                        .animateItem(),
                 )
             }
         }
@@ -356,6 +366,7 @@ private fun EmptyState(onAddItemClick: () -> Unit) {
             WornGradientButton(
                 text = stringResource(R.string.wardrobe_empty_cta),
                 onClick = onAddItemClick,
+                modifier = Modifier.testTag(WornTestTags.WARDROBE_EMPTY_ADD_CTA),
                 gradientColors = WornGradients.GreenCta,
                 shape = CtaShape,
                 elevation = 10.dp,
