@@ -35,7 +35,6 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
@@ -53,6 +52,10 @@ kotlin {
         }
         getByName("androidHostTest").dependencies {
             implementation(libs.mockk)
+            // Align kotlin-reflect with the project's Kotlin version. MockK pulls an older
+            // kotlin-reflect transitively, which cannot read value-class metadata (e.g.
+            // SQLDelight's QueryResult<Long>) compiled by a newer Kotlin, causing NPEs.
+            implementation(libs.kotlin.reflect)
         }
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
