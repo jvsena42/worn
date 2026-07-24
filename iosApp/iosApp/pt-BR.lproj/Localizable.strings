@@ -8,6 +8,7 @@
 "common_all_seasons" = "Todas as estações";
 "common_not_specified" = "Não especificado";
 "common_retry" = "Tentar novamente";
+"common_ok" = "OK";
 
 /* Tabs */
 "tab_wardrobe" = "ARMÁRIO";
@@ -42,6 +43,9 @@
 "add_item_take_photo" = "Tirar foto";
 "add_item_choose_gallery" = "Escolher da galeria";
 "add_item_photo_hint" = "Toque para adicionar foto";
+"add_item_remove_background" = "Remover fundo";
+"add_item_removing_background" = "Removendo fundo…";
+"add_item_bg_removal_failed" = "Não foi possível remover o fundo. Usando a foto original.";
 "add_item_ai_badge" = "Auto-tag com IA";
 "add_item_name_hint" = "Nome do item";
 "add_item_save_to_wardrobe" = "Salvar no armário";

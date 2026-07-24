@@ -11,6 +11,7 @@
     <string name="common_all_seasons">All seasons</string>
     <string name="common_not_specified">Not specified</string>
     <string name="common_retry">Retry</string>
+    <string name="common_ok">OK</string>
 
     <!-- Tabs -->
     <string name="tab_wardrobe">WARDROBE</string>
@@ -45,6 +46,9 @@
     <string name="add_item_take_photo">Take photo</string>
     <string name="add_item_choose_gallery">Choose from gallery</string>
     <string name="add_item_photo_hint">Tap to add photo</string>
+    <string name="add_item_remove_background">Remove background</string>
+    <string name="add_item_removing_background">Removing background…</string>
+    <string name="add_item_bg_removal_failed">Couldn\'t remove the background. Using the original photo.</string>
     <string name="add_item_ai_badge">Auto-tag with AI</string>
     <string name="add_item_name_hint">Item name</string>
     <string name="add_item_save_to_wardrobe">Save to wardrobe</string>
