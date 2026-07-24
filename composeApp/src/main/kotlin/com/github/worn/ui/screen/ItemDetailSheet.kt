@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -47,6 +48,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Fit
@@ -107,6 +109,8 @@ internal fun ItemDetailContent(
 
     Column(
         modifier = Modifier
+            .exposeTestTagsAsResourceId()
+            .testTag("item_detail_sheet")
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = dims.contentPadding)
@@ -125,6 +129,8 @@ internal fun ItemDetailContent(
                 buttonFontSize = dims.buttonFontSize,
                 onEdit = { onEdit(item) },
                 onDelete = { showDeleteDialog = true },
+                editTestTag = "item_detail_edit",
+                deleteTestTag = "item_detail_delete",
             )
         }
     }
@@ -287,6 +293,8 @@ internal fun DetailActionButtons(
     buttonFontSize: TextUnit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
+    editTestTag: String,
+    deleteTestTag: String,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Surface(
@@ -294,7 +302,7 @@ internal fun DetailActionButtons(
             shape = RoundedCornerShape(24.dp),
             color = WornColors.BgCard,
             border = BorderStroke(1.dp, WornColors.BorderSubtle),
-            modifier = Modifier.fillMaxWidth().height(buttonHeight),
+            modifier = Modifier.fillMaxWidth().height(buttonHeight).testTag(editTestTag),
         ) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 Text(
@@ -307,7 +315,7 @@ internal fun DetailActionButtons(
             onClick = onDelete,
             shape = RoundedCornerShape(24.dp),
             color = WornColors.DeleteRed,
-            modifier = Modifier.fillMaxWidth().height(buttonHeight),
+            modifier = Modifier.fillMaxWidth().height(buttonHeight).testTag(deleteTestTag),
         ) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 Text(deleteLabel, color = Color.White, fontSize = buttonFontSize, fontWeight = FontWeight.SemiBold)

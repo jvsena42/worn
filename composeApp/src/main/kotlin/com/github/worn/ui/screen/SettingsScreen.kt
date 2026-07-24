@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -71,6 +72,7 @@ import com.github.worn.domain.model.UserProfile
 import com.github.worn.presentation.viewmodel.SettingsIntent
 import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
+import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.WornChip
 import com.github.worn.ui.components.WornGradientButton
@@ -133,6 +135,7 @@ private fun SettingsScaffold(
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
     Scaffold(
+        modifier = Modifier.testTag("settings_screen"),
         containerColor = WornColors.BgPage,
     ) { paddingValues ->
         Column(
@@ -159,6 +162,7 @@ private fun SettingsScaffold(
                 title = stringResource(R.string.settings_your_profile),
                 subtitle = state.userProfile.summaryText(),
                 onClick = onProfileClick,
+                modifier = Modifier.testTag("settings_profile_card"),
             )
 
             Spacer(Modifier.height(24.dp))
@@ -171,6 +175,7 @@ private fun SettingsScaffold(
                     if (state.hasApiKey) R.string.settings_api_key_connected else R.string.settings_api_key_required,
                 ),
                 onClick = onApiKeyClick,
+                modifier = Modifier.testTag("settings_api_key_card"),
             )
 
             Spacer(Modifier.height(24.dp))
@@ -221,11 +226,13 @@ private fun SettingsCard(
     title: String,
     subtitle: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         color = WornColors.BgCard,
+        modifier = modifier,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -394,6 +401,8 @@ private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent)
 
     Column(
         modifier = Modifier
+            .exposeTestTagsAsResourceId()
+            .testTag("profile_sheet")
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
@@ -440,7 +449,11 @@ private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent)
             selected = state.userProfile.lifestyles,
             onToggle = { onIntent(SettingsIntent.ToggleLifestyle(it)) },
         )
-        SaveGradientButton(text = stringResource(R.string.common_save), onClick = onSave)
+        SaveGradientButton(
+            text = stringResource(R.string.common_save),
+            onClick = onSave,
+            modifier = Modifier.testTag("profile_save_button"),
+        )
     }
 }
 
@@ -479,6 +492,8 @@ private fun ApiKeySheetContent(
 
     Column(
         modifier = Modifier
+            .exposeTestTagsAsResourceId()
+            .testTag("api_key_sheet")
             .fillMaxWidth()
             .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -490,6 +505,7 @@ private fun ApiKeySheetContent(
             enabled = !hasApiKey,
             passwordVisible = passwordVisible,
             onToggleVisibility = { passwordVisible = !passwordVisible },
+            modifier = Modifier.testTag("api_key_field"),
         )
         SaveGradientButton(
             text = stringResource(R.string.settings_save_connect),
@@ -498,10 +514,15 @@ private fun ApiKeySheetContent(
                 onSave(keyInput)
                 keyInput = ""
             },
+            modifier = Modifier.testTag("api_key_save_button"),
         )
         if (hasApiKey) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-                Surface(onClick = onClear, color = Color.Transparent) {
+                Surface(
+                    onClick = onClear,
+                    color = Color.Transparent,
+                    modifier = Modifier.testTag("api_key_remove_button"),
+                ) {
                     Text(
                         text = stringResource(R.string.settings_remove_key),
                         color = WornColors.TextSecondary,
@@ -543,6 +564,7 @@ private fun ApiKeyTextField(
     enabled: Boolean,
     passwordVisible: Boolean,
     onToggleVisibility: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val transformation = if (passwordVisible) {
         VisualTransformation.None
@@ -578,7 +600,7 @@ private fun ApiKeyTextField(
             disabledIndicatorColor = Color.Transparent,
         ),
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         singleLine = true,
     )
 }
@@ -588,8 +610,13 @@ private fun ApiKeyTextField(
 // region Shared components
 
 @Composable
-private fun SaveGradientButton(text: String, enabled: Boolean = true, onClick: () -> Unit) {
-    WornGradientButton(text = text, onClick = onClick, enabled = enabled)
+private fun SaveGradientButton(
+    text: String,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    WornGradientButton(text = text, onClick = onClick, modifier = modifier, enabled = enabled)
 }
 
 @OptIn(ExperimentalLayoutApi::class)

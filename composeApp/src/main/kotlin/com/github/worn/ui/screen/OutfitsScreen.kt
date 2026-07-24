@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -184,6 +185,7 @@ private fun OutfitsScaffold(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Scaffold(
+        modifier = Modifier.testTag("outfits_screen"),
         containerColor = WornColors.BgPage,
     ) { paddingValues ->
         val isEmpty = !state.isLoading && state.outfits.isEmpty()
@@ -249,6 +251,7 @@ private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
                 onClick = onCreateClick,
                 colors = ButtonDefaults.buttonColors(containerColor = WornColors.AccentGreen),
                 shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.testTag("outfits_create_button"),
             ) {
                 Icon(Icons.Default.Add, contentDescription = null, Modifier.size(16.dp))
                 Spacer(Modifier.width(4.dp))
@@ -291,7 +294,9 @@ private fun OutfitsContent(
                 onClick = {
                     if (isSelectionMode) onToggleSelection(outfit.id) else onOutfitClick(outfit)
                 },
-                modifier = Modifier.animateItem(),
+                modifier = Modifier
+                    .testTag("outfit_card")
+                    .animateItem(),
             )
         }
     }
@@ -317,6 +322,7 @@ private fun EmptyState(onCreateClick: () -> Unit = {}) {
             WornGradientButton(
                 text = stringResource(R.string.outfits_empty_cta),
                 onClick = onCreateClick,
+                modifier = Modifier.testTag("outfits_empty_cta"),
                 gradientColors = WornGradients.GreenCta,
                 shape = CtaShape,
                 elevation = 10.dp,

@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -38,14 +39,15 @@ import com.github.worn.ui.theme.WornColors
 
 enum class Tab(
     @StringRes val labelRes: Int,
+    val testTag: String,
     val icon: ImageVector? = null,
     @DrawableRes val iconRes: Int? = null,
 ) {
-    WARDROBE(R.string.tab_wardrobe, iconRes = R.drawable.ic_shirt),
-    OUTFITS(R.string.tab_outfits, icon = Icons.Outlined.Layers),
-    GAPS(R.string.tab_gaps, icon = Icons.Outlined.Extension),
-    TRY_IT(R.string.tab_try_it, icon = Icons.Outlined.QrCodeScanner),
-    SETTINGS(R.string.tab_settings, icon = Icons.Outlined.Settings),
+    WARDROBE(R.string.tab_wardrobe, "tab_wardrobe", iconRes = R.drawable.ic_shirt),
+    OUTFITS(R.string.tab_outfits, "tab_outfits", icon = Icons.Outlined.Layers),
+    GAPS(R.string.tab_gaps, "tab_gaps", icon = Icons.Outlined.Extension),
+    TRY_IT(R.string.tab_try_it, "tab_try_it", icon = Icons.Outlined.QrCodeScanner),
+    SETTINGS(R.string.tab_settings, "tab_settings", icon = Icons.Outlined.Settings),
 }
 
 @Composable
@@ -75,7 +77,8 @@ fun WornBottomBar(
                     if (isCompact) Modifier.fillMaxWidth()
                     else Modifier.widthIn(max = 480.dp).fillMaxWidth(),
                 )
-                .height(62.dp),
+                .height(62.dp)
+                .testTag("bottom_bar"),
         ) {
             Row(
                 modifier = Modifier.padding(4.dp),
@@ -105,7 +108,7 @@ private fun TabItem(
         onClick = onClick,
         shape = RoundedCornerShape(26.dp),
         color = if (isActive) WornColors.AccentGreen else WornColors.BgElevated,
-        modifier = modifier,
+        modifier = modifier.testTag(tab.testTag),
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

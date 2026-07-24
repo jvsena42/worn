@@ -44,6 +44,7 @@ struct GapsScreen: View {
             }
             .background(WornColors.bgPage)
         }
+        .accessibilityIdentifier("gaps_screen")
         .sheet(item: $selectedGap) { gap in
             GapDetailSheet(
                 recommendation: gap,
@@ -174,6 +175,7 @@ struct GapsScreen: View {
             .clipShape(RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("gaps_banner")
     }
 
     private func sectionLabel(_ text: String) -> some View {
@@ -368,6 +370,7 @@ private struct GapDetailSheet: View {
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
+            .accessibilityIdentifier("gap_add_to_wardrobe")
 
             Button(action: onDismiss) {
                 Text(String(localized: "gaps_dismiss"))
@@ -378,6 +381,7 @@ private struct GapDetailSheet: View {
                     .background(WornColors.bgCard)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             }
+            .accessibilityIdentifier("gap_dismiss")
         }
     }
 

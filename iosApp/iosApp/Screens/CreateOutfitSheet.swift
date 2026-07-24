@@ -54,6 +54,7 @@ struct CreateOutfitSheet: View {
                 }
             }
         }
+        .accessibilityIdentifier("create_outfit_sheet")
     }
 
     private var nameField: some View {
@@ -66,6 +67,7 @@ struct CreateOutfitSheet: View {
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
+            .accessibilityIdentifier("create_outfit_name_field")
     }
 
     private var selectItemsHeader: some View {
@@ -109,6 +111,7 @@ struct CreateOutfitSheet: View {
             shadowColor: WornColors.saveGradientStart.opacity(0.2),
             shadowY: 8
         )
+        .accessibilityIdentifier("create_outfit_save_button")
     }
 }
 

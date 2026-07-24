@@ -12,6 +12,7 @@ struct ClothingCard: View {
             photoArea
             itemInfo
         }
+        .accessibilityIdentifier("clothing_card")
     }
 
     private var photoArea: some View {

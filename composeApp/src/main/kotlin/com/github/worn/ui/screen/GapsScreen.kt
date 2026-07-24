@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -60,6 +61,7 @@ import com.github.worn.domain.model.Season
 import com.github.worn.presentation.viewmodel.GapsIntent
 import com.github.worn.presentation.viewmodel.GapsState
 import com.github.worn.presentation.viewmodel.GapsViewModel
+import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.AiLockedSheet
 import com.github.worn.ui.components.ErrorContentView
 import com.github.worn.ui.components.SheetDragHandle
@@ -139,6 +141,7 @@ private fun GapsScaffold(
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
     Scaffold(
+        modifier = Modifier.testTag("gaps_screen"),
         containerColor = WornColors.BgPage,
     ) { paddingValues ->
         Column(
@@ -262,6 +265,7 @@ private fun GapsBanner(isAiMode: Boolean, onClick: () -> Unit) {
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         color = bgColor,
+        modifier = Modifier.testTag("gaps_banner"),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -414,6 +418,7 @@ private fun GapDetailContent(
 ) {
     Column(
         modifier = Modifier
+            .exposeTestTagsAsResourceId()
             .fillMaxWidth()
             .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
     ) {
@@ -544,13 +549,14 @@ private fun DetailActions(onAddToWardrobe: () -> Unit, onDismiss: () -> Unit) {
     WornGradientButton(
         text = stringResource(R.string.gaps_add_to_wardrobe),
         onClick = onAddToWardrobe,
+        modifier = Modifier.testTag("gap_add_to_wardrobe"),
     )
     Spacer(Modifier.height(8.dp))
     Surface(
         onClick = onDismiss,
         shape = RoundedCornerShape(16.dp),
         color = WornColors.BgCard,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().testTag("gap_dismiss"),
     ) {
         Box(
             contentAlignment = Alignment.Center,

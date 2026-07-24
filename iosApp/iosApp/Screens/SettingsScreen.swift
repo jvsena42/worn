@@ -27,6 +27,7 @@ struct SettingsScreen: View {
                         action: { showProfileSheet = true }
                     )
                     .padding(.top, 10)
+                    .accessibilityIdentifier("settings_profile_card")
 
                     sectionLabel(String(localized: "settings_section_ai"))
                         .padding(.top, 24)
@@ -38,6 +39,7 @@ struct SettingsScreen: View {
                         action: { showApiKeySheet = true }
                     )
                     .padding(.top, 10)
+                    .accessibilityIdentifier("settings_api_key_card")
 
                     sectionLabel(String(localized: "settings_section_about"))
                         .padding(.top, 24)
@@ -53,6 +55,7 @@ struct SettingsScreen: View {
             }
             .background(WornColors.bgPage)
         }
+        .accessibilityIdentifier("settings_screen")
         .sheet(isPresented: $showProfileSheet) {
             ProfileSheet(viewModel: viewModel)
                 .presentationDetents([.large])
@@ -263,12 +266,14 @@ private struct ProfileSheet: View {
                     }
 
                     saveGradientButton(text: String(localized: "common_save")) { dismiss() }
+                        .accessibilityIdentifier("profile_save_button")
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
             .background(WornColors.bgElevated)
         }
+        .accessibilityIdentifier("profile_sheet")
     }
 
     private var bodyTypeOptions: [(BodyType, String)] {
@@ -338,12 +343,14 @@ private struct ApiKeySheet: View {
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
+            .accessibilityIdentifier("api_key_field")
 
             saveGradientButton(text: String(localized: "settings_save_connect"), enabled: !hasApiKey && !keyInput.isEmpty) {
                 onSave(keyInput)
                 keyInput = ""
                 dismiss()
             }
+            .accessibilityIdentifier("api_key_save_button")
 
             if hasApiKey {
                 HStack {
@@ -356,12 +363,14 @@ private struct ApiKeySheet: View {
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(WornColors.textSecondary)
                     }
+                    .accessibilityIdentifier("api_key_remove_button")
                     Spacer()
                 }
             }
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 24)
+        .accessibilityIdentifier("api_key_sheet")
     }
 }
 

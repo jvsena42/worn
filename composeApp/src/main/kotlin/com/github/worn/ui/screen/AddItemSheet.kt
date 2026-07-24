@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,6 +53,7 @@ import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.Subcategory
+import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.AiBadge
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.AiLockedSheet
@@ -259,6 +261,8 @@ private fun AddItemFormContent(
 ) {
     Column(
         modifier = Modifier
+            .exposeTestTagsAsResourceId()
+            .testTag("add_item_sheet")
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
@@ -271,10 +275,24 @@ private fun AddItemFormContent(
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.5).sp,
         )
-        PhotoUploadZone(bitmap = photoBitmap, onClick = onPhotoClick)
-        if (!isEditing) AiBadge(onClick = onAiBadgeClick)
-        ItemNameField(value = name, onValueChange = onNameChange)
-        CategoryDropdown(selected = selectedCategory, onSelected = onCategorySelected)
+        PhotoUploadZone(
+            bitmap = photoBitmap,
+            onClick = onPhotoClick,
+            modifier = Modifier.testTag("add_item_photo_zone"),
+        )
+        if (!isEditing) {
+            AiBadge(onClick = onAiBadgeClick, modifier = Modifier.testTag("add_item_ai_badge"))
+        }
+        ItemNameField(
+            value = name,
+            onValueChange = onNameChange,
+            modifier = Modifier.testTag("add_item_name_field"),
+        )
+        CategoryDropdown(
+            selected = selectedCategory,
+            onSelected = onCategorySelected,
+            modifier = Modifier.testTag("add_item_category_dropdown"),
+        )
         if (selectedCategory != null) {
             SubcategoryDropdown(
                 category = selectedCategory,
@@ -291,6 +309,7 @@ private fun AddItemFormContent(
             isSaving = isSaving,
             onClick = onSave,
             label = if (isEditing) stringResource(R.string.common_save_changes) else null,
+            modifier = Modifier.testTag("add_item_save_button"),
         )
     }
 }
@@ -305,8 +324,14 @@ private fun PhotoSourceDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.add_item_photo_dialog_title)) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                TextButton(onClick = onCamera, modifier = Modifier.fillMaxWidth()) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.exposeTestTagsAsResourceId().testTag("photo_source_dialog"),
+            ) {
+                TextButton(
+                    onClick = onCamera,
+                    modifier = Modifier.fillMaxWidth().testTag("photo_source_camera"),
+                ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Start,
@@ -317,7 +342,10 @@ private fun PhotoSourceDialog(
                         Text(stringResource(R.string.add_item_take_photo), fontSize = 16.sp)
                     }
                 }
-                TextButton(onClick = onGallery, modifier = Modifier.fillMaxWidth()) {
+                TextButton(
+                    onClick = onGallery,
+                    modifier = Modifier.fillMaxWidth().testTag("photo_source_gallery"),
+                ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Start,

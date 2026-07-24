@@ -77,6 +77,7 @@ struct OutfitDetailSheet: View {
                                     .stroke(WornColors.borderSubtle, lineWidth: 1)
                             )
                     }
+                    .accessibilityIdentifier("outfit_detail_edit")
 
                     Button { showDeleteAlert = true } label: {
                         Text(String(localized: "outfit_detail_delete"))
@@ -87,12 +88,14 @@ struct OutfitDetailSheet: View {
                             .background(WornColors.deleteRed)
                             .clipShape(RoundedRectangle(cornerRadius: 24))
                     }
+                    .accessibilityIdentifier("outfit_detail_delete")
                 }
                 .padding(.horizontal, contentPadding)
             }
             .padding(.bottom, 36)
         }
         .background(WornColors.bgElevated)
+        .accessibilityIdentifier("outfit_detail_sheet")
         .alert(String(localized: "outfit_detail_delete_dialog_title"), isPresented: $showDeleteAlert) {
             Button(String(localized: "common_cancel"), role: .cancel) {}
             Button(String(localized: "common_delete"), role: .destructive) { onDelete(outfit.id) }

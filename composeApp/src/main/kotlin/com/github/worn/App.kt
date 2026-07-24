@@ -10,7 +10,10 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornBottomBar
@@ -25,6 +28,7 @@ import kotlinx.coroutines.launch
 
 private val tabs = Tab.entries.toList()
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Suppress("FunctionNaming")
 @Composable
 fun App() {
@@ -41,7 +45,12 @@ fun App() {
             }
         }
 
-        Box(modifier = Modifier.fillMaxSize().background(WornColors.BgPage)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(WornColors.BgPage)
+                .semantics { testTagsAsResourceId = true },
+        ) {
             HorizontalPager(
                 state = pagerState,
                 beyondViewportPageCount = 1,

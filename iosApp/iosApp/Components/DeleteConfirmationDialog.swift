@@ -10,7 +10,9 @@ struct DeleteConfirmationAlert: ViewModifier {
         content
             .alert(title, isPresented: $isPresented) {
                 Button(String(localized: "common_cancel"), role: .cancel) {}
+                    .accessibilityIdentifier("delete_dialog_cancel")
                 Button(String(localized: "common_delete"), role: .destructive) { onConfirm() }
+                    .accessibilityIdentifier("delete_dialog_confirm")
             } message: {
                 Text(message)
             }

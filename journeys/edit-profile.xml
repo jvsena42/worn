@@ -1,0 +1,30 @@
+<journey name="Edit style profile">
+    <description>
+        Opens Settings and reaches the Your-Profile sheet, verifying its chip groups and save
+        action. Start state: fresh install with an unset profile.
+    </description>
+    <actions>
+        <action>
+            Tap the "SETTINGS" tab in the bottom navigation bar.
+        </action>
+        <action>
+            Verify the Settings screen shows a "Your Profile" row with the subtitle "Tap to set up".
+        </action>
+        <action>
+            Tap the "Your Profile" row.
+        </action>
+        <action>
+            Verify the "Your Profile" sheet is shown with a "Body Type" chip group and a
+            "Style Profile" chip group.
+        </action>
+        <action>
+            Tap the "Athletic" chip in the Body Type group.
+        </action>
+        <action>
+            Verify the "Athletic" chip appears selected.
+        </action>
+        <action>
+            Verify a "Save" button is present in the sheet.
+        </action>
+    </actions>
+</journey>

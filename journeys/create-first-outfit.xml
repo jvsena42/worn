@@ -1,0 +1,25 @@
+<journey name="Create first outfit">
+    <description>
+        From the empty Outfits tab, opens the Create-outfit sheet and verifies its fields. Start
+        state: fresh install with no saved outfits.
+    </description>
+    <actions>
+        <action>
+            Tap the "OUTFITS" tab in the bottom navigation bar.
+        </action>
+        <action>
+            Verify the Outfits screen shows the empty state: the "No outfits yet" title and a
+            "Create your first outfit" button.
+        </action>
+        <action>
+            Tap the "Create your first outfit" button.
+        </action>
+        <action>
+            Verify the "Create outfit" sheet is shown with an "Outfit name" field and a
+            "Select items" section.
+        </action>
+        <action>
+            Verify the "Save outfit" button is present in the sheet.
+        </action>
+    </actions>
+</journey>

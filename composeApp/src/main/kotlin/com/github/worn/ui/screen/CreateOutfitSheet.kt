@@ -47,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +59,7 @@ import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
+import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.CategoryFilterChips
 import com.github.worn.ui.components.SelectionIndicator
 import com.github.worn.ui.components.SheetDragHandle
@@ -119,6 +121,8 @@ internal fun CreateOutfitForm(
 
     Column(
         modifier = Modifier
+            .exposeTestTagsAsResourceId()
+            .testTag("create_outfit_sheet")
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
@@ -131,7 +135,11 @@ internal fun CreateOutfitForm(
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.5).sp,
         )
-        OutfitNameField(name = name, onNameChange = { name = it })
+        OutfitNameField(
+            name = name,
+            onNameChange = { name = it },
+            modifier = Modifier.testTag("create_outfit_name_field"),
+        )
         SelectItemsHeader(selectedCount = selectedItemIds.size)
         CategoryFilterChips(activeCategory = activeCategory, onCategorySelected = onCategorySelected)
         ItemSelectionGrid(
@@ -144,12 +152,13 @@ internal fun CreateOutfitForm(
             isSaving = isSaving,
             label = if (isEditing) stringResource(R.string.common_save_changes) else null,
             onClick = { onSave(name) },
+            modifier = Modifier.testTag("create_outfit_save_button"),
         )
     }
 }
 
 @Composable
-private fun OutfitNameField(name: String, onNameChange: (String) -> Unit) {
+private fun OutfitNameField(name: String, onNameChange: (String) -> Unit, modifier: Modifier = Modifier) {
     TextField(
         value = name,
         onValueChange = onNameChange,
@@ -167,7 +176,7 @@ private fun OutfitNameField(name: String, onNameChange: (String) -> Unit) {
             unfocusedIndicatorColor = Color.Transparent,
         ),
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .border(1.dp, WornColors.BorderSubtle, RoundedCornerShape(12.dp)),
     )
@@ -279,7 +288,13 @@ private fun ItemThumbnail(item: ClothingItem) {
 
 
 @Composable
-private fun SaveOutfitButton(enabled: Boolean, isSaving: Boolean, label: String? = null, onClick: () -> Unit) {
+private fun SaveOutfitButton(
+    enabled: Boolean,
+    isSaving: Boolean,
+    label: String? = null,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     WornGradientButton(
         text = if (isSaving) {
             stringResource(R.string.common_saving)
@@ -287,6 +302,7 @@ private fun SaveOutfitButton(enabled: Boolean, isSaving: Boolean, label: String?
             label ?: stringResource(R.string.create_outfit_save)
         },
         onClick = onClick,
+        modifier = modifier,
         enabled = enabled,
         gradientColors = WornGradients.Green,
     )

@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -53,6 +54,7 @@ import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
 import com.github.worn.domain.model.Season
+import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.PropertyRow
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.theme.SheetPreview
@@ -105,6 +107,8 @@ internal fun OutfitDetailContent(
 
     Column(
         modifier = Modifier
+            .exposeTestTagsAsResourceId()
+            .testTag("outfit_detail_sheet")
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(bottom = 36.dp),
@@ -127,6 +131,8 @@ internal fun OutfitDetailContent(
                 buttonFontSize = if (isCompact) 15.sp else 16.sp,
                 onEdit = { onEdit(outfit) },
                 onDelete = { showDeleteDialog = true },
+                editTestTag = "outfit_detail_edit",
+                deleteTestTag = "outfit_detail_delete",
             )
         }
     }

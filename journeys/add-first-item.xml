@@ -1,0 +1,33 @@
+<journey name="Add first item">
+    <description>
+        From an empty wardrobe, opens the Add-item sheet and the photo-source dialog, verifying the
+        form and its fields are present. Start state: fresh install with an empty wardrobe.
+    </description>
+    <actions>
+        <action>
+            Verify the Wardrobe screen shows the empty state: the "No items yet" title and an
+            "Add your first item" button.
+        </action>
+        <action>
+            Tap the "Add your first item" button.
+        </action>
+        <action>
+            Verify the "Add new item" sheet is shown with a "Tap to add photo" photo area, an
+            "Item name" field, and a "Category" selector.
+        </action>
+        <action>
+            Tap the "Tap to add photo" area.
+        </action>
+        <action>
+            Verify the "Add photo" dialog is shown with "Take photo" and "Choose from gallery"
+            options.
+        </action>
+        <action>
+            Tap "Cancel" to dismiss the photo dialog.
+        </action>
+        <action>
+            Verify the "Add new item" sheet is still shown and the "Save to wardrobe" button is
+            present.
+        </action>
+    </actions>
+</journey>

@@ -65,6 +65,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -259,6 +260,7 @@ private fun TryItScaffold(
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
     Scaffold(
+        modifier = Modifier.testTag("try_it_screen"),
         containerColor = WornColors.BgPage,
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
@@ -339,15 +341,20 @@ private fun AiEmptyContent(
             modifier = Modifier.widthIn(max = descWidth),
         )
         Spacer(Modifier.height(24.dp))
-        IndigoCtaButton(text = stringResource(R.string.tryit_connect_cta), onClick = onGoToSettings)
+        IndigoCtaButton(
+            text = stringResource(R.string.tryit_connect_cta),
+            onClick = onGoToSettings,
+            modifier = Modifier.testTag("try_it_connect_cta"),
+        )
     }
 }
 
 @Composable
-private fun IndigoCtaButton(text: String, onClick: () -> Unit) {
+private fun IndigoCtaButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     WornGradientButton(
         text = text,
         onClick = onClick,
+        modifier = modifier,
         gradientColors = WornGradients.Indigo,
         shape = RoundedCornerShape(28.dp),
         elevation = 6.dp,
@@ -500,7 +507,7 @@ private fun UploadZone(
         color = WornColors.BgCard,
         border = BorderStroke(1.5.dp, WornColors.BorderStrong),
         shadowElevation = 1.dp,
-        modifier = Modifier.fillMaxWidth().height(height),
+        modifier = Modifier.fillMaxWidth().height(height).testTag("try_it_upload_zone"),
     ) {
         if (photoBitmap != null) {
             androidx.compose.foundation.Image(
@@ -539,6 +546,7 @@ private fun AnalyzeButton(onClick: () -> Unit) {
     WornGradientButton(
         text = stringResource(R.string.tryit_analyze),
         onClick = onClick,
+        modifier = Modifier.testTag("try_it_analyze_button"),
         gradientColors = WornGradients.Indigo,
         shape = RoundedCornerShape(28.dp),
         elevation = 6.dp,

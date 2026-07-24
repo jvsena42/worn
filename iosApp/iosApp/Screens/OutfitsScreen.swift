@@ -104,6 +104,7 @@ struct OutfitsContent: View {
             scrollContent
         }
         .background(WornColors.bgPage)
+        .accessibilityIdentifier("outfits_screen")
         .alert(
             String(format: String(localized: "delete_outfits_title"), state.selectedIds.count),
             isPresented: $showDeleteDialog
@@ -171,6 +172,7 @@ struct OutfitsContent: View {
                         .background(WornColors.accentGreen)
                         .clipShape(Capsule())
                     }
+                    .accessibilityIdentifier("outfits_create_button")
                 }
             }
 
@@ -235,6 +237,7 @@ struct OutfitsContent: View {
                     fixedHeight: nil,
                     contentPadding: EdgeInsets(top: 16, leading: 36, bottom: 16, trailing: 36)
                 )
+                .accessibilityIdentifier("outfits_empty_cta")
             }
         )
     }
@@ -280,6 +283,7 @@ private struct OutfitCardView: View {
                 )
         )
         .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+        .accessibilityIdentifier("outfit_card")
     }
 
     private var thumbnailRow: some View {

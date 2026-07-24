@@ -1,0 +1,26 @@
+<journey name="Connect Claude API key">
+    <description>
+        Opens Settings and reaches the Claude API key entry sheet, verifying the key field and
+        connect action. Start state: fresh install with no API key configured. Stops before
+        entering a real key.
+    </description>
+    <actions>
+        <action>
+            Tap the "SETTINGS" tab in the bottom navigation bar.
+        </action>
+        <action>
+            Verify the Settings screen shows a "Claude API Key" row with the subtitle
+            "Required for AI features".
+        </action>
+        <action>
+            Tap the "Claude API Key" row.
+        </action>
+        <action>
+            Verify the "Connect Claude AI" sheet is shown with an API key input field and a
+            "Save &amp; Connect" button.
+        </action>
+        <action>
+            Verify the "Save &amp; Connect" button is disabled while the key field is empty.
+        </action>
+    </actions>
+</journey>

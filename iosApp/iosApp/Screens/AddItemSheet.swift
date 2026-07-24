@@ -79,7 +79,9 @@ struct AddItemSheet: View {
             }
             .confirmationDialog(String(localized: "add_item_photo_dialog_title"), isPresented: $showSourceChooser) {
                 Button(String(localized: "add_item_take_photo")) { showCamera = true }
+                    .accessibilityIdentifier("photo_source_camera")
                 Button(String(localized: "add_item_choose_gallery")) { showPhotoPicker = true }
+                    .accessibilityIdentifier("photo_source_gallery")
                 Button(String(localized: "common_cancel"), role: .cancel) {}
             }
             .photosPicker(isPresented: $showPhotoPicker, selection: $selectedPhotoItem, matching: .images)
@@ -118,6 +120,7 @@ struct AddItemSheet: View {
                 }
             }
         }
+        .accessibilityIdentifier("add_item_sheet")
     }
 
     private var photoUploadZone: some View {
@@ -149,6 +152,7 @@ struct AddItemSheet: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("add_item_photo_zone")
     }
 
     private var aiBadge: some View {
@@ -169,6 +173,7 @@ struct AddItemSheet: View {
             .clipShape(Capsule())
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("add_item_ai_badge")
         .sheet(isPresented: $showAiLockedSheet) {
             AiLockedSheet(onDismiss: { showAiLockedSheet = false })
                 .presentationDetents([.medium])
@@ -185,6 +190,7 @@ struct AddItemSheet: View {
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
+            .accessibilityIdentifier("add_item_name_field")
     }
 
     @State private var categoryExpanded = false
@@ -246,6 +252,7 @@ struct AddItemSheet: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(WornColors.borderSubtle, lineWidth: 1)
         )
+        .accessibilityIdentifier("add_item_category_dropdown")
     }
 
     private var colorSection: some View {
@@ -320,6 +327,7 @@ struct AddItemSheet: View {
             shadowColor: WornColors.saveGradientStart.opacity(0.2),
             shadowY: 8
         )
+        .accessibilityIdentifier("add_item_save_button")
     }
 
     private var categoryOptions: [(Category, String)] {

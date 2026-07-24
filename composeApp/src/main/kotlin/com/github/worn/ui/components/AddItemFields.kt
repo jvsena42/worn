@@ -82,13 +82,13 @@ val addItemColorPalette = listOf(
 )
 
 @Composable
-fun PhotoUploadZone(bitmap: ImageBitmap?, onClick: () -> Unit) {
+fun PhotoUploadZone(bitmap: ImageBitmap?, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         color = Color.Transparent,
         border = BorderStroke(1.5.dp, WornColors.BorderStrong),
-        modifier = Modifier.fillMaxWidth().height(140.dp),
+        modifier = modifier.fillMaxWidth().height(140.dp),
     ) {
         if (bitmap != null) {
             androidx.compose.foundation.Image(
@@ -122,11 +122,12 @@ fun PhotoUploadZone(bitmap: ImageBitmap?, onClick: () -> Unit) {
 }
 
 @Composable
-fun AiBadge(onClick: () -> Unit = {}) {
+fun AiBadge(onClick: () -> Unit = {}, modifier: Modifier = Modifier) {
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(28.dp),
         color = WornColors.AccentIndigo,
+        modifier = modifier,
     ) {
         Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)) {
             Text("✦ ", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
@@ -141,7 +142,7 @@ fun AiBadge(onClick: () -> Unit = {}) {
 }
 
 @Composable
-fun ItemNameField(value: String, onValueChange: (String) -> Unit) {
+fun ItemNameField(value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
     TextField(
         value = value,
         onValueChange = onValueChange,
@@ -159,18 +160,18 @@ fun ItemNameField(value: String, onValueChange: (String) -> Unit) {
             unfocusedIndicatorColor = Color.Transparent,
         ),
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth().border(1.dp, WornColors.BorderSubtle, RoundedCornerShape(12.dp)),
+        modifier = modifier.fillMaxWidth().border(1.dp, WornColors.BorderSubtle, RoundedCornerShape(12.dp)),
     )
 }
 
 @Composable
-fun CategoryDropdown(selected: Category?, onSelected: (Category) -> Unit) {
+fun CategoryDropdown(selected: Category?, onSelected: (Category) -> Unit, modifier: Modifier = Modifier) {
     var expanded by remember { mutableStateOf(false) }
     Surface(
         shape = RoundedCornerShape(12.dp),
         color = WornColors.BgCard,
         border = BorderStroke(1.dp, WornColors.BorderSubtle),
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Column {
             Surface(
@@ -325,6 +326,7 @@ fun SaveButton(
     isSaving: Boolean,
     onClick: () -> Unit,
     label: String? = null,
+    modifier: Modifier = Modifier,
 ) {
     WornGradientButton(
         text = if (isSaving) {
@@ -333,6 +335,7 @@ fun SaveButton(
             label ?: stringResource(R.string.add_item_save_to_wardrobe)
         },
         onClick = onClick,
+        modifier = modifier,
         enabled = enabled,
     )
 }

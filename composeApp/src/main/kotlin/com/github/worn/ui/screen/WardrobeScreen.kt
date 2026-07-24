@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -189,11 +190,17 @@ private fun WardrobeScaffold(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Scaffold(
+        modifier = Modifier.testTag("wardrobe_screen"),
         containerColor = WornColors.BgPage,
         floatingActionButton = {
             val isWardrobeEmpty = !state.isLoading && state.totalItemCount == 0
             if (!isSelectionMode && !isWardrobeEmpty) {
-                AddItemFab(onAddItemClick, Modifier.padding(bottom = WornDimens.BottomBarClearance))
+                AddItemFab(
+                    onAddItemClick,
+                    Modifier
+                        .testTag("wardrobe_add_fab")
+                        .padding(bottom = WornDimens.BottomBarClearance),
+                )
             }
         },
     ) { paddingValues ->
@@ -306,7 +313,9 @@ private fun WardrobeContent(
                     onClick = {
                         if (isSelectionMode) onToggleSelection(item.id) else onItemClick(item)
                     },
-                    modifier = Modifier.animateItem(),
+                    modifier = Modifier
+                        .testTag("clothing_card")
+                        .animateItem(),
                 )
             }
         }
@@ -356,6 +365,7 @@ private fun EmptyState(onAddItemClick: () -> Unit) {
             WornGradientButton(
                 text = stringResource(R.string.wardrobe_empty_cta),
                 onClick = onAddItemClick,
+                modifier = Modifier.testTag("wardrobe_empty_add_cta"),
                 gradientColors = WornGradients.GreenCta,
                 shape = CtaShape,
                 elevation = 10.dp,
