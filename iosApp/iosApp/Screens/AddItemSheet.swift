@@ -11,7 +11,11 @@ struct AddItemSheet: View {
 
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var photoData: Data?
+    @State private var originalPhotoData: Data?
     @State private var photoImage: UIImage?
+    @State private var bgRemoved = false
+    @State private var isProcessingBg = false
+    @State private var showBgError = false
     @State private var name = ""
     @State private var selectedCategory: Category?
     @State private var selectedColors: Set<String> = []
@@ -54,6 +58,7 @@ struct AddItemSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     photoUploadZone
+                    if photoData != nil { removeBackgroundToggle }
                     if !isEditing { aiBadge }
                     nameField
                     categoryField
@@ -89,7 +94,10 @@ struct AddItemSheet: View {
                 CameraView(
                     onImageCaptured: { image in
                         photoImage = image
-                        photoData = image.jpegData(compressionQuality: 0.9)
+                        let data = image.jpegData(compressionQuality: 0.9)
+                        photoData = data
+                        originalPhotoData = data
+                        bgRemoved = false
                     },
                     onDismiss: { showCamera = false }
                 )
@@ -115,9 +123,14 @@ struct AddItemSheet: View {
                 Task {
                     if let data = try? await newItem?.loadTransferable(type: Data.self) {
                         photoData = data
+                        originalPhotoData = data
                         photoImage = UIImage(data: data)
+                        bgRemoved = false
                     }
                 }
+            }
+            .alert(String(localized: "add_item_bg_removal_failed"), isPresented: $showBgError) {
+                Button(String(localized: "common_ok"), role: .cancel) {}
             }
         }
         .accessibilityIdentifier("add_item_sheet")
@@ -142,6 +155,10 @@ struct AddItemSheet: View {
                             .foregroundColor(WornColors.textSecondary)
                     }
                 }
+                if isProcessingBg {
+                    WornColors.bgElevated.opacity(0.6)
+                    ProgressView().tint(WornColors.accentGreen)
+                }
             }
             .frame(maxWidth: .infinity)
             .frame(height: 140)
@@ -152,7 +169,45 @@ struct AddItemSheet: View {
             )
         }
         .buttonStyle(.plain)
+        .disabled(isProcessingBg)
         .accessibilityIdentifier("add_item_photo_zone")
+    }
+
+    private var removeBackgroundToggle: some View {
+        Toggle(isOn: Binding(
+            get: { bgRemoved },
+            set: { onRemoveBackgroundChange($0) }
+        )) {
+            Text(String(localized: "add_item_remove_background"))
+                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(WornColors.textPrimary)
+        }
+        .tint(WornColors.accentGreen)
+        .disabled(isProcessingBg)
+        .accessibilityIdentifier("add_item_remove_bg_toggle")
+    }
+
+    private func onRemoveBackgroundChange(_ enabled: Bool) {
+        guard let original = originalPhotoData else { return }
+        if !enabled {
+            photoData = original
+            photoImage = UIImage(data: original)
+            bgRemoved = false
+            return
+        }
+        isProcessingBg = true
+        Task {
+            do {
+                let processed = try await BackgroundRemoverService.removeBackground(original)
+                photoData = processed
+                photoImage = UIImage(data: processed)
+                bgRemoved = true
+            } catch {
+                bgRemoved = false
+                showBgError = true
+            }
+            isProcessingBg = false
+        }
     }
 
     private var aiBadge: some View {
