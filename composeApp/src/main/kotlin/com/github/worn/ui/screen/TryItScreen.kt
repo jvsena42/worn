@@ -88,6 +88,8 @@ import com.github.worn.presentation.viewmodel.TryItEffect
 import com.github.worn.presentation.viewmodel.TryItIntent
 import com.github.worn.presentation.viewmodel.TryItState
 import com.github.worn.presentation.viewmodel.TryItViewModel
+import com.github.worn.ui.components.CropEditorDialog
+import com.github.worn.ui.components.CropPhotoButton
 import com.github.worn.ui.components.ErrorContentView
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
@@ -110,6 +112,8 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
     var photoBytes by remember { mutableStateOf<ByteArray?>(null) }
     var showSourceChooser by remember { mutableStateOf(false) }
     var showPersonSourceChooser by remember { mutableStateOf(false) }
+    var showCropEditor by remember { mutableStateOf(false) }
+    var showPersonCropEditor by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<ClothingItem?>(null) }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -138,6 +142,36 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
         onPhoto = { bytes, _ -> viewModel.onIntent(TryItIntent.SetPersonPhoto(bytes)) },
     )
 
+    if (showCropEditor) {
+        photoBytes?.let { bytes ->
+            CropEditorDialog(
+                imageBytes = bytes,
+                onCancel = { showCropEditor = false },
+                onCropped = { cropped ->
+                    photoBytes = cropped
+                    photoBitmap = BitmapFactory.decodeByteArray(cropped, 0, cropped.size)?.asImageBitmap()
+                    // The previous analysis described the uncropped photo.
+                    viewModel.onIntent(TryItIntent.Reset)
+                    showCropEditor = false
+                },
+            )
+        }
+    }
+
+    if (showPersonCropEditor) {
+        state.personImage?.let { bytes ->
+            CropEditorDialog(
+                imageBytes = bytes,
+                onCancel = { showPersonCropEditor = false },
+                onCropped = { cropped ->
+                    // Round-tripping through the intent also persists the cropped model photo.
+                    viewModel.onIntent(TryItIntent.SetPersonPhoto(cropped))
+                    showPersonCropEditor = false
+                },
+            )
+        }
+    }
+
     TryItScaffold(
         state = state,
         isCompact = isCompact,
@@ -145,9 +179,11 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
         hasPhoto = photoBytes != null,
         snackbarHostState = snackbarHostState,
         onPhotoClick = { showSourceChooser = true },
+        onCropClick = { showCropEditor = true },
         onAnalyze = { photoBytes?.let { viewModel.onIntent(TryItIntent.AnalyzePhoto(it)) } },
         onSelectCategory = { viewModel.onIntent(TryItIntent.SelectCategory(it)) },
         onPersonPhotoClick = { showPersonSourceChooser = true },
+        onPersonCropClick = { showPersonCropEditor = true },
         onGenerateTryOn = { photoBytes?.let { viewModel.onIntent(TryItIntent.GenerateTryOn(it)) } },
         onItemClick = { selectedItem = it },
         onGoToSettings = { onTabSelected(Tab.SETTINGS) },
@@ -269,9 +305,11 @@ private fun TryItScaffold(
     hasPhoto: Boolean,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onPhotoClick: () -> Unit = {},
+    onCropClick: () -> Unit = {},
     onAnalyze: () -> Unit = {},
     onSelectCategory: (GarmentCategory) -> Unit = {},
     onPersonPhotoClick: () -> Unit = {},
+    onPersonCropClick: () -> Unit = {},
     onGenerateTryOn: () -> Unit = {},
     onItemClick: (ClothingItem) -> Unit = {},
     onGoToSettings: () -> Unit = {},
@@ -299,9 +337,11 @@ private fun TryItScaffold(
                 photoBitmap = photoBitmap,
                 hasPhoto = hasPhoto,
                 onPhotoClick = onPhotoClick,
+                onCropClick = onCropClick,
                 onAnalyze = onAnalyze,
                 onSelectCategory = onSelectCategory,
                 onPersonPhotoClick = onPersonPhotoClick,
+                onPersonCropClick = onPersonCropClick,
                 onGenerateTryOn = onGenerateTryOn,
                 onItemClick = onItemClick,
                 modifier = Modifier
@@ -393,9 +433,11 @@ private fun TryItContent(
     photoBitmap: ImageBitmap?,
     hasPhoto: Boolean,
     onPhotoClick: () -> Unit,
+    onCropClick: () -> Unit,
     onAnalyze: () -> Unit,
     onSelectCategory: (GarmentCategory) -> Unit,
     onPersonPhotoClick: () -> Unit,
+    onPersonCropClick: () -> Unit,
     onGenerateTryOn: () -> Unit,
     onItemClick: (ClothingItem) -> Unit,
     modifier: Modifier = Modifier,
@@ -406,9 +448,11 @@ private fun TryItContent(
             photoBitmap = photoBitmap,
             hasPhoto = hasPhoto,
             onPhotoClick = onPhotoClick,
+            onCropClick = onCropClick,
             onAnalyze = onAnalyze,
             onSelectCategory = onSelectCategory,
             onPersonPhotoClick = onPersonPhotoClick,
+            onPersonCropClick = onPersonCropClick,
             onGenerateTryOn = onGenerateTryOn,
             onItemClick = onItemClick,
             modifier = modifier,
@@ -419,9 +463,11 @@ private fun TryItContent(
             photoBitmap = photoBitmap,
             hasPhoto = hasPhoto,
             onPhotoClick = onPhotoClick,
+            onCropClick = onCropClick,
             onAnalyze = onAnalyze,
             onSelectCategory = onSelectCategory,
             onPersonPhotoClick = onPersonPhotoClick,
+            onPersonCropClick = onPersonCropClick,
             onGenerateTryOn = onGenerateTryOn,
             onItemClick = onItemClick,
             modifier = modifier,
@@ -435,9 +481,11 @@ private fun TryItPhoneContent(
     photoBitmap: ImageBitmap?,
     hasPhoto: Boolean,
     onPhotoClick: () -> Unit,
+    onCropClick: () -> Unit,
     onAnalyze: () -> Unit,
     onSelectCategory: (GarmentCategory) -> Unit,
     onPersonPhotoClick: () -> Unit,
+    onPersonCropClick: () -> Unit,
     onGenerateTryOn: () -> Unit,
     onItemClick: (ClothingItem) -> Unit,
     modifier: Modifier = Modifier,
@@ -449,6 +497,9 @@ private fun TryItPhoneContent(
         Spacer(Modifier.height(4.dp))
         TryItTitle(fontSize = 28.sp)
         UploadZone(photoBitmap = photoBitmap, height = 200.dp, onClick = onPhotoClick)
+        if (hasPhoto) {
+            CropPhotoButton(onClick = onCropClick, modifier = Modifier.testTag("try_it_crop_button"))
+        }
         if (state.hasApiKey) {
             if (hasPhoto && state.result == null && !state.isLoading) {
                 AnalyzeButton(onClick = onAnalyze)
@@ -477,6 +528,7 @@ private fun TryItPhoneContent(
                 isCompact = true,
                 onSelectCategory = onSelectCategory,
                 onPersonPhotoClick = onPersonPhotoClick,
+                onPersonCropClick = onPersonCropClick,
                 onGenerateTryOn = onGenerateTryOn,
             )
         }
@@ -490,9 +542,11 @@ private fun TryItTabletContent(
     photoBitmap: ImageBitmap?,
     hasPhoto: Boolean,
     onPhotoClick: () -> Unit,
+    onCropClick: () -> Unit,
     onAnalyze: () -> Unit,
     onSelectCategory: (GarmentCategory) -> Unit,
     onPersonPhotoClick: () -> Unit,
+    onPersonCropClick: () -> Unit,
     onGenerateTryOn: () -> Unit,
     onItemClick: (ClothingItem) -> Unit,
     modifier: Modifier = Modifier,
@@ -510,6 +564,9 @@ private fun TryItTabletContent(
                 modifier = Modifier.weight(1f),
             ) {
                 UploadZone(photoBitmap = photoBitmap, height = 300.dp, onClick = onPhotoClick)
+                if (hasPhoto) {
+                    CropPhotoButton(onClick = onCropClick, modifier = Modifier.testTag("try_it_crop_button"))
+                }
                 if (state.hasApiKey) {
                     if (hasPhoto && state.result == null && !state.isLoading) {
                         AnalyzeButton(onClick = onAnalyze)
@@ -542,6 +599,7 @@ private fun TryItTabletContent(
                         isCompact = false,
                         onSelectCategory = onSelectCategory,
                         onPersonPhotoClick = onPersonPhotoClick,
+                        onPersonCropClick = onPersonCropClick,
                         onGenerateTryOn = onGenerateTryOn,
                     )
                 }
@@ -843,6 +901,7 @@ private fun TryOnSection(
     isCompact: Boolean,
     onSelectCategory: (GarmentCategory) -> Unit,
     onPersonPhotoClick: () -> Unit,
+    onPersonCropClick: () -> Unit,
     onGenerateTryOn: () -> Unit,
 ) {
     Column(
@@ -861,6 +920,12 @@ private fun TryOnSection(
             height = if (isCompact) 200.dp else 260.dp,
             onClick = onPersonPhotoClick,
         )
+        if (state.personImage != null) {
+            CropPhotoButton(
+                onClick = onPersonCropClick,
+                modifier = Modifier.testTag("try_on_person_crop_button"),
+            )
+        }
         Text(
             text = stringResource(R.string.tryit_tryon_category_title),
             color = WornColors.TextPrimary,
