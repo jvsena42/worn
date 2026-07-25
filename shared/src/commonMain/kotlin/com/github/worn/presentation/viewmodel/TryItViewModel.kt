@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 sealed interface TryItIntent {
     data class AnalyzePhoto(val imageBytes: ByteArray) : TryItIntent
     data class SelectCategory(val category: GarmentCategory) : TryItIntent
+    data class SetPersonPhoto(val imageBytes: ByteArray) : TryItIntent
     data class GenerateTryOn(val garmentBytes: ByteArray) : TryItIntent
     data object ResetTryOn : TryItIntent
     data object Reset : TryItIntent
@@ -32,7 +33,7 @@ data class TryItState(
     val error: String? = null,
     // Virtual try-on (YouCam)
     val hasYouCamKey: Boolean = false,
-    val hasModelPhoto: Boolean = false,
+    val personImage: ByteArray? = null,
     val selectedCategory: GarmentCategory? = null,
     val tryOnLoading: Boolean = false,
     val tryOnImage: ByteArray? = null,
@@ -64,8 +65,8 @@ class TryItViewModel(
             )
         }
         viewModelScope.launch {
-            settingsRepository.hasModelPhoto().collect { has ->
-                _state.update { it.copy(hasModelPhoto = has) }
+            settingsRepository.getModelPhoto().onSuccess { bytes ->
+                _state.update { it.copy(personImage = bytes) }
             }
         }
     }
@@ -75,10 +76,20 @@ class TryItViewModel(
             is TryItIntent.AnalyzePhoto -> analyzePhoto(intent.imageBytes)
             is TryItIntent.SelectCategory ->
                 _state.update { it.copy(selectedCategory = intent.category, tryOnError = null) }
+            is TryItIntent.SetPersonPhoto -> setPersonPhoto(intent.imageBytes)
             is TryItIntent.GenerateTryOn -> generateTryOn(intent.garmentBytes)
             is TryItIntent.ResetTryOn ->
                 _state.update { it.copy(tryOnImage = null, tryOnError = null) }
             is TryItIntent.Reset -> reset()
+        }
+    }
+
+    private fun setPersonPhoto(imageBytes: ByteArray) {
+        _state.update { it.copy(personImage = imageBytes, tryOnError = null) }
+        viewModelScope.launch {
+            settingsRepository.saveModelPhoto(imageBytes).onFailure { error ->
+                _effects.send(TryItEffect.ShowError(error.message ?: "Failed to save photo"))
+            }
         }
     }
 

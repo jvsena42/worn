@@ -30,8 +30,6 @@ sealed interface SettingsIntent {
     data object ClearApiKey : SettingsIntent
     data class SaveYouCamCredentials(val clientId: String, val clientSecret: String) : SettingsIntent
     data object ClearYouCamCredentials : SettingsIntent
-    data class SaveModelPhoto(val bytes: ByteArray) : SettingsIntent
-    data object ClearModelPhoto : SettingsIntent
 }
 
 data class SettingsState(
@@ -39,7 +37,6 @@ data class SettingsState(
     val isLoading: Boolean = false,
     val hasApiKey: Boolean = false,
     val hasYouCamKey: Boolean = false,
-    val hasModelPhoto: Boolean = false,
     val error: String? = null,
 )
 
@@ -49,8 +46,6 @@ sealed interface SettingsEffect {
     data object ApiKeyCleared : SettingsEffect
     data object YouCamCredentialsSaved : SettingsEffect
     data object YouCamCredentialsCleared : SettingsEffect
-    data object ModelPhotoSaved : SettingsEffect
-    data object ModelPhotoCleared : SettingsEffect
 }
 
 @Suppress("TooManyFunctions")
@@ -73,11 +68,6 @@ class SettingsViewModel(
             )
         }
         onIntent(SettingsIntent.LoadProfile)
-        viewModelScope.launch {
-            settingsRepository.hasModelPhoto().collect { has ->
-                _state.update { it.copy(hasModelPhoto = has) }
-            }
-        }
     }
 
     fun onIntent(intent: SettingsIntent) {
@@ -92,8 +82,6 @@ class SettingsViewModel(
             is SettingsIntent.ClearApiKey -> clearApiKey()
             is SettingsIntent.SaveYouCamCredentials -> saveYouCamCredentials(intent.clientId, intent.clientSecret)
             is SettingsIntent.ClearYouCamCredentials -> clearYouCamCredentials()
-            is SettingsIntent.SaveModelPhoto -> saveModelPhoto(intent.bytes)
-            is SettingsIntent.ClearModelPhoto -> clearModelPhoto()
         }
     }
 
@@ -179,26 +167,6 @@ class SettingsViewModel(
         _state.update { it.copy(hasYouCamKey = false) }
         viewModelScope.launch {
             _effects.send(SettingsEffect.YouCamCredentialsCleared)
-        }
-    }
-
-    private fun saveModelPhoto(bytes: ByteArray) {
-        viewModelScope.launch {
-            settingsRepository.saveModelPhoto(bytes)
-                .onSuccess { _effects.send(SettingsEffect.ModelPhotoSaved) }
-                .onFailure { error ->
-                    _effects.send(SettingsEffect.ShowError(error.message ?: "Failed to save photo"))
-                }
-        }
-    }
-
-    private fun clearModelPhoto() {
-        viewModelScope.launch {
-            settingsRepository.clearModelPhoto()
-                .onSuccess { _effects.send(SettingsEffect.ModelPhotoCleared) }
-                .onFailure { error ->
-                    _effects.send(SettingsEffect.ShowError(error.message ?: "Failed to remove photo"))
-                }
         }
     }
 

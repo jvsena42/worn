@@ -16,8 +16,7 @@ interface SettingsRepository {
     suspend fun updateClimate(climate: Climate?): Result<Unit>
     suspend fun updateLifestyles(lifestyles: Set<Lifestyle>): Result<Unit>
 
-    /** Emits whether a reusable "model photo" (used for virtual try-on) is saved. */
-    fun hasModelPhoto(): Flow<Boolean>
+    /** The reusable "person photo" used for virtual try-on, entered from the Try-It screen. */
     suspend fun saveModelPhoto(bytes: ByteArray): Result<Unit>
     suspend fun getModelPhoto(): Result<ByteArray?>
     suspend fun clearModelPhoto(): Result<Unit>

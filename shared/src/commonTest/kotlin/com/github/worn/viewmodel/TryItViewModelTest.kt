@@ -72,10 +72,21 @@ class TryItViewModelTest {
     }
 
     @Test
-    fun `hasModelPhoto reflects the settings repository`() {
+    fun `init loads the saved person photo`() {
         settings.modelPhoto.value = byteArrayOf(1, 2)
         val vm = createViewModel()
-        assertTrue(vm.state.value.hasModelPhoto)
+        assertContentEquals(byteArrayOf(1, 2), vm.state.value.personImage)
+    }
+
+    @Test
+    fun `SetPersonPhoto updates state and persists the photo`() = runTest {
+        val vm = createViewModel()
+        val photo = byteArrayOf(5, 5)
+
+        vm.onIntent(TryItIntent.SetPersonPhoto(photo))
+
+        assertContentEquals(photo, vm.state.value.personImage)
+        assertContentEquals(photo, settings.modelPhoto.value)
     }
 
     @Test

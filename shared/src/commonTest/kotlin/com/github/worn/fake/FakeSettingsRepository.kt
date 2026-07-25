@@ -9,7 +9,6 @@ import com.github.worn.domain.model.UserProfile
 import com.github.worn.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
 
 class FakeSettingsRepository : SettingsRepository {
     val profile = MutableStateFlow(UserProfile())
@@ -23,7 +22,6 @@ class FakeSettingsRepository : SettingsRepository {
     override suspend fun updateClimate(climate: Climate?): Result<Unit> = Result.success(Unit)
     override suspend fun updateLifestyles(lifestyles: Set<Lifestyle>): Result<Unit> = Result.success(Unit)
 
-    override fun hasModelPhoto(): Flow<Boolean> = modelPhoto.map { it != null }
     override suspend fun saveModelPhoto(bytes: ByteArray): Result<Unit> {
         modelPhoto.value = bytes
         return Result.success(Unit)

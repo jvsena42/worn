@@ -108,10 +108,6 @@ class SettingsRepositoryImpl(
         }
     }
 
-    override fun hasModelPhoto(): Flow<Boolean> = dataStore.data.map { prefs ->
-        prefs[KEY_MODEL_PHOTO_PATH] != null
-    }
-
     override suspend fun saveModelPhoto(bytes: ByteArray): Result<Unit> = runCatching {
         withContext(dispatcher) {
             val path = fileStorage.write(MODEL_PHOTO_FILE, bytes)
