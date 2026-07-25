@@ -8,4 +8,7 @@ interface TryOnRepository {
      * JPEG. Fails if no model photo is saved or the remote call errors.
      */
     suspend fun generateTryOn(garmentBytes: ByteArray, category: GarmentCategory): Result<ByteArray>
+
+    /** Checks the given YouCam credentials against the server, without saving them. */
+    suspend fun verifyCredentials(clientId: String, clientSecret: String): Result<Unit>
 }

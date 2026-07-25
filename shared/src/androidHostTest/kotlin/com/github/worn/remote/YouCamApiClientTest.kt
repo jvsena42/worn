@@ -77,6 +77,23 @@ class YouCamApiClientTest {
     }
 
     @Test
+    fun `verifyCredentials succeeds when auth returns a token`() = runTest {
+        val engine = MockEngine { respond("""{"result":{"access_token":"tok"}}""", HttpStatusCode.OK, jsonHeaders()) }
+        val client = YouCamApiClient(HttpClient(engine), FakeSecretStore(), RsaEncryptor())
+        // Throws on failure; reaching the end means success.
+        client.verifyCredentials("client-123", rsaPublicKeyBase64())
+    }
+
+    @Test
+    fun `verifyCredentials gives a friendly error for an unparseable secret key`() = runTest {
+        val engine = MockEngine { respond("", HttpStatusCode.OK) }
+        val client = YouCamApiClient(HttpClient(engine), FakeSecretStore(), RsaEncryptor())
+        val error = runCatching { client.verifyCredentials("client-123", "not-a-valid-key!!!") }
+            .exceptionOrNull()
+        assertTrue(error?.message?.contains("Secret Key", ignoreCase = true) == true)
+    }
+
+    @Test
     fun `tryOn surfaces a friendly message on auth failure`() = runTest {
         val engine = MockEngine { respond("nope", HttpStatusCode.Unauthorized) }
         val error = runCatching { client(engine).tryOn(byteArrayOf(1), byteArrayOf(2), GarmentCategory.TOP) }

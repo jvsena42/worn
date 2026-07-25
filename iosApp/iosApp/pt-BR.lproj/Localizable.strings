@@ -90,6 +90,7 @@
 "settings_youcam_client_id_hint" = "Chave de API (mais curta)";
 "settings_youcam_client_secret_hint" = "Chave secreta (mais longa)";
 "settings_youcam_save" = "Salvar credenciais";
+"settings_youcam_verifying" = "Verificando…";
 "settings_youcam_remove" = "Remover credenciais";
 "settings_suggestions_bugs" = "Sugestões e Bugs";
 "settings_version" = "Versão";

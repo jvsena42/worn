@@ -39,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,6 +71,7 @@ import com.github.worn.domain.model.Climate
 import com.github.worn.domain.model.Lifestyle
 import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
+import com.github.worn.presentation.viewmodel.SettingsEffect
 import com.github.worn.presentation.viewmodel.SettingsIntent
 import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
@@ -94,6 +96,14 @@ fun SettingsScreen(onTabSelected: (Tab) -> Unit) {
     var showProfileSheet by remember { mutableStateOf(false) }
     var showApiKeySheet by remember { mutableStateOf(false) }
     var showYouCamSheet by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.effects.collect { effect ->
+            if (effect is SettingsEffect.YouCamCredentialsSaved) {
+                showYouCamSheet = false
+            }
+        }
+    }
 
     SettingsScaffold(
         state = state,
@@ -130,9 +140,10 @@ fun SettingsScreen(onTabSelected: (Tab) -> Unit) {
     if (showYouCamSheet) {
         YouCamCredentialsSheet(
             hasCredentials = state.hasYouCamKey,
+            verifying = state.verifyingYouCam,
+            errorMessage = state.youCamError,
             onSave = { clientId, clientSecret ->
                 viewModel.onIntent(SettingsIntent.SaveYouCamCredentials(clientId, clientSecret))
-                showYouCamSheet = false
             },
             onClear = {
                 viewModel.onIntent(SettingsIntent.ClearYouCamCredentials)
@@ -642,6 +653,8 @@ private fun ApiKeyTextField(
 @Composable
 private fun YouCamCredentialsSheet(
     hasCredentials: Boolean,
+    verifying: Boolean,
+    errorMessage: String?,
     onSave: (String, String) -> Unit,
     onClear: () -> Unit,
     onDismiss: () -> Unit,
@@ -654,13 +667,21 @@ private fun YouCamCredentialsSheet(
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
         dragHandle = { SheetDragHandle() },
     ) {
-        YouCamCredentialsSheetContent(hasCredentials = hasCredentials, onSave = onSave, onClear = onClear)
+        YouCamCredentialsSheetContent(
+            hasCredentials = hasCredentials,
+            verifying = verifying,
+            errorMessage = errorMessage,
+            onSave = onSave,
+            onClear = onClear,
+        )
     }
 }
 
 @Composable
 private fun YouCamCredentialsSheetContent(
     hasCredentials: Boolean,
+    verifying: Boolean,
+    errorMessage: String?,
     onSave: (String, String) -> Unit,
     onClear: () -> Unit,
 ) {
@@ -713,15 +734,21 @@ private fun YouCamCredentialsSheetContent(
             modifier = Modifier.testTag("youcam_client_secret_field"),
         )
         SaveGradientButton(
-            text = stringResource(R.string.settings_youcam_save),
-            enabled = !hasCredentials && clientId.isNotBlank() && clientSecret.isNotBlank(),
-            onClick = {
-                onSave(clientId, clientSecret)
-                clientId = ""
-                clientSecret = ""
-            },
+            text = stringResource(
+                if (verifying) R.string.settings_youcam_verifying else R.string.settings_youcam_save,
+            ),
+            enabled = !hasCredentials && !verifying && clientId.isNotBlank() && clientSecret.isNotBlank(),
+            onClick = { onSave(clientId, clientSecret) },
             modifier = Modifier.testTag("youcam_save_button"),
         )
+        if (errorMessage != null && !verifying) {
+            Text(
+                text = errorMessage,
+                color = WornColors.DeleteRed,
+                fontSize = 13.sp,
+                modifier = Modifier.testTag("youcam_error"),
+            )
+        }
         if (hasCredentials) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                 Surface(

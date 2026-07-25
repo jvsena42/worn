@@ -9,6 +9,7 @@ import com.github.worn.domain.model.Lifestyle
 import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
 import com.github.worn.domain.repository.SettingsRepository
+import com.github.worn.domain.repository.TryOnRepository
 import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -37,6 +38,8 @@ data class SettingsState(
     val isLoading: Boolean = false,
     val hasApiKey: Boolean = false,
     val hasYouCamKey: Boolean = false,
+    val verifyingYouCam: Boolean = false,
+    val youCamError: String? = null,
     val error: String? = null,
 )
 
@@ -51,6 +54,7 @@ sealed interface SettingsEffect {
 @Suppress("TooManyFunctions")
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
+    private val tryOnRepository: TryOnRepository,
     private val secretStore: SecretStore,
 ) : ViewModel() {
 
@@ -153,11 +157,20 @@ class SettingsViewModel(
     }
 
     private fun saveYouCamCredentials(clientId: String, clientSecret: String) {
-        secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_ID, clientId)
-        secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_SECRET, clientSecret)
-        _state.update { it.copy(hasYouCamKey = true) }
+        _state.update { it.copy(verifyingYouCam = true, youCamError = null) }
         viewModelScope.launch {
-            _effects.send(SettingsEffect.YouCamCredentialsSaved)
+            tryOnRepository.verifyCredentials(clientId, clientSecret)
+                .onSuccess {
+                    secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_ID, clientId)
+                    secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_SECRET, clientSecret)
+                    _state.update { it.copy(hasYouCamKey = true, verifyingYouCam = false) }
+                    _effects.send(SettingsEffect.YouCamCredentialsSaved)
+                }
+                .onFailure { error ->
+                    val message = error.message ?: "Could not verify credentials"
+                    _state.update { it.copy(verifyingYouCam = false, youCamError = message) }
+                    _effects.send(SettingsEffect.ShowError(message))
+                }
         }
     }
 

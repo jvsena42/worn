@@ -82,10 +82,15 @@ struct SettingsScreen: View {
         .sheet(isPresented: $showYouCamSheet) {
             YouCamCredentialsSheet(
                 hasCredentials: viewModel.state.hasYouCamKey,
+                verifying: viewModel.state.verifyingYouCam,
+                errorMessage: viewModel.state.youCamError,
                 onSave: { viewModel.saveYouCamCredentials(clientId: $0, clientSecret: $1) },
                 onClear: { viewModel.clearYouCamCredentials() }
             )
             .presentationDetents([.medium, .large])
+        }
+        .onChange(of: viewModel.state.hasYouCamKey) { _, has in
+            if has { showYouCamSheet = false }
         }
     }
 
@@ -397,6 +402,8 @@ private struct ApiKeySheet: View {
 
 private struct YouCamCredentialsSheet: View {
     let hasCredentials: Bool
+    let verifying: Bool
+    let errorMessage: String?
     let onSave: (String, String) -> Void
     let onClear: () -> Void
     @Environment(\.dismiss) private var dismiss
@@ -427,15 +434,19 @@ private struct YouCamCredentialsSheet: View {
                     .accessibilityIdentifier("youcam_client_secret_field")
 
                 saveGradientButton(
-                    text: String(localized: "settings_youcam_save"),
-                    enabled: !hasCredentials && !clientId.isEmpty && !clientSecret.isEmpty
+                    text: String(localized: verifying ? "settings_youcam_verifying" : "settings_youcam_save"),
+                    enabled: !hasCredentials && !verifying && !clientId.isEmpty && !clientSecret.isEmpty
                 ) {
                     onSave(clientId, clientSecret)
-                    clientId = ""
-                    clientSecret = ""
-                    dismiss()
                 }
                 .accessibilityIdentifier("youcam_save_button")
+
+                if let errorMessage, !verifying {
+                    Text(errorMessage)
+                        .font(.system(size: 13))
+                        .foregroundColor(WornColors.deleteRed)
+                        .accessibilityIdentifier("youcam_error")
+                }
 
                 if hasCredentials {
                     HStack {

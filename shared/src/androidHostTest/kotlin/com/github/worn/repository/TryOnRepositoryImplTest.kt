@@ -51,7 +51,7 @@ class TryOnRepositoryImplTest {
         val result = repository.generateTryOn(garmentBytes, GarmentCategory.TOP)
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull()?.message?.contains("model photo", ignoreCase = true) == true)
+        assertTrue(result.exceptionOrNull()?.message?.contains("photo", ignoreCase = true) == true)
         coVerify(exactly = 0) { youCamClient.tryOn(any(), any(), any()) }
     }
 
@@ -63,5 +63,24 @@ class TryOnRepositoryImplTest {
         repository.generateTryOn(garmentBytes, GarmentCategory.SHOES)
 
         coVerify { youCamClient.tryOn(personBytes, garmentBytes, GarmentCategory.SHOES) }
+    }
+
+    @Test
+    fun `verifyCredentials succeeds when the client accepts them`() = runTest {
+        coEvery { youCamClient.verifyCredentials("a", "b") } returns Unit
+
+        val result = repository.verifyCredentials("a", "b")
+
+        assertTrue(result.isSuccess)
+        coVerify { youCamClient.verifyCredentials("a", "b") }
+    }
+
+    @Test
+    fun `verifyCredentials fails when the client rejects them`() = runTest {
+        coEvery { youCamClient.verifyCredentials(any(), any()) } throws IllegalStateException("Invalid YouCam credentials.")
+
+        val result = repository.verifyCredentials("a", "b")
+
+        assertTrue(result.isFailure)
     }
 }

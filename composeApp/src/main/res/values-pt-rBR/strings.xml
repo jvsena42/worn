@@ -93,6 +93,7 @@
     <string name="settings_youcam_client_id_hint">Chave de API (mais curta)</string>
     <string name="settings_youcam_client_secret_hint">Chave secreta (mais longa)</string>
     <string name="settings_youcam_save">Salvar credenciais</string>
+    <string name="settings_youcam_verifying">Verificando…</string>
     <string name="settings_youcam_remove">Remover credenciais</string>
     <string name="settings_suggestions_bugs">Sugestões e Bugs</string>
     <string name="settings_version">Versão</string>

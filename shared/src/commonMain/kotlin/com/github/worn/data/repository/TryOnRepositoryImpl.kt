@@ -19,8 +19,15 @@ class TryOnRepositoryImpl(
     ): Result<ByteArray> = runCatching {
         withContext(dispatcher) {
             val personBytes = settingsRepository.getModelPhoto().getOrThrow()
-                ?: error("Save a model photo in Settings to try items on.")
+                ?: error("Add a photo of yourself to try items on.")
             youCamClient.tryOn(personBytes, garmentBytes, category)
         }
     }
+
+    override suspend fun verifyCredentials(clientId: String, clientSecret: String): Result<Unit> =
+        runCatching {
+            withContext(dispatcher) {
+                youCamClient.verifyCredentials(clientId, clientSecret)
+            }
+        }
 }

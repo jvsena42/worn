@@ -90,6 +90,7 @@
 "settings_youcam_client_id_hint" = "API Key (shorter)";
 "settings_youcam_client_secret_hint" = "Secret Key (longer)";
 "settings_youcam_save" = "Save credentials";
+"settings_youcam_verifying" = "Checking…";
 "settings_youcam_remove" = "Remove credentials";
 "settings_suggestions_bugs" = "Suggestions & Bugs";
 "settings_version" = "Version";

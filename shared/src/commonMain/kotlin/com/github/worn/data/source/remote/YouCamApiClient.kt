@@ -26,6 +26,7 @@ import kotlin.time.Clock
  * a try-on task, polls it, and returns the generated JPEG bytes. Errors are surfaced as user-facing
  * messages via [error]; the repository wraps calls in `runCatching`.
  */
+@Suppress("TooManyFunctions")
 class YouCamApiClient(
     private val httpClient: HttpClient,
     private val secretStore: SecretStore,
@@ -50,6 +51,11 @@ class YouCamApiClient(
         return downloadResult(resultUrl)
     }
 
+    /** Performs an auth handshake to check the credentials work; throws a friendly message otherwise. */
+    suspend fun verifyCredentials(clientId: String, clientSecret: String) {
+        requestToken(clientId, clientSecret)
+    }
+
     private suspend fun authenticate(): String {
         val now = Clock.System.now().toEpochMilliseconds()
         cachedToken?.let { if (now < tokenExpiryMillis) return it }
@@ -60,7 +66,19 @@ class YouCamApiClient(
             error("YouCam credentials not configured. Add them in Settings.")
         }
 
-        val idToken = rsaEncryptor.encrypt("client_id=$clientId&timestamp=$now", clientSecret)
+        val token = requestToken(clientId, clientSecret)
+        cachedToken = token
+        tokenExpiryMillis = now + TOKEN_TTL_MILLIS - TOKEN_REFRESH_MARGIN_MILLIS
+        return token
+    }
+
+    private suspend fun requestToken(clientId: String, clientSecret: String): String {
+        val timestamp = Clock.System.now().toEpochMilliseconds()
+        val idToken = runCatching {
+            rsaEncryptor.encrypt("client_id=$clientId&timestamp=$timestamp", clientSecret)
+        }.getOrElse {
+            error("Invalid Secret Key. Paste the long key without the -----BEGIN/END----- lines.")
+        }
         val response = request("$BASE_URL/s2s/v1.0/client/auth") {
             contentType(ContentType.Application.Json)
             setBody(
@@ -71,10 +89,7 @@ class YouCamApiClient(
             )
         }
         ensureSuccess(response)
-        val token = json.decodeFromString<YouCamAuthResponse>(response.bodyAsText()).result.accessToken
-        cachedToken = token
-        tokenExpiryMillis = now + TOKEN_TTL_MILLIS - TOKEN_REFRESH_MARGIN_MILLIS
-        return token
+        return json.decodeFromString<YouCamAuthResponse>(response.bodyAsText()).result.accessToken
     }
 
     private suspend fun uploadImage(token: String, feature: Feature, bytes: ByteArray): String {
