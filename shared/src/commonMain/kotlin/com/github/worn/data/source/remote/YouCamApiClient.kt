@@ -18,6 +18,7 @@ import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.delay
 import kotlinx.serialization.json.Json
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 
 /**
@@ -94,7 +95,9 @@ class YouCamApiClient(
             setBody(body)
         }
         ensureSuccess(response, "auth")
-        return json.decodeFromString<YouCamAuthResponse>(response.bodyAsText()).result.accessToken
+        val token = json.decodeFromString<YouCamAuthResponse>(response.bodyAsText()).result.accessToken
+        log("auth: ok, requesting upload slots")
+        return token
     }
 
     private suspend fun uploadImage(token: String, feature: Feature, bytes: ByteArray): String {
@@ -187,9 +190,12 @@ class YouCamApiClient(
             HttpMethod.POST -> httpClient.post(url, block)
             HttpMethod.PUT -> httpClient.put(url, block)
         }
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: IllegalStateException) {
         throw e
-    } catch (@Suppress("TooGenericExceptionCaught") _: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+        log("HTTP $method $url failed: ${e::class.simpleName}: ${e.message}")
         error("Network error. Check your connection.")
     }
 
