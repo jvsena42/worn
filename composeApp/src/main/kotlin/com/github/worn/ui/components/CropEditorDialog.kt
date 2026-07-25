@@ -223,9 +223,16 @@ private class CropSelectionState {
 
     val isReady: Boolean get() = bounds != null && selection != null
 
-    /** Resetting on resize/rotation keeps the selection inside the newly fitted image. */
+    /**
+     * Resetting on resize/rotation keeps the selection inside the newly fitted image.
+     *
+     * Guarded on the bounds actually changing: the callback this runs from is re-invoked on
+     * remeasure, and every drag recomposes the canvas, so an unconditional reset would snap the
+     * selection back to the full image on the very next frame.
+     */
     fun fitTo(imageWidth: Int, imageHeight: Int, viewWidth: Float, viewHeight: Float) {
         val fitted = CropGeometry.fitBounds(imageWidth, imageHeight, viewWidth, viewHeight)
+        if (fitted == bounds) return
         bounds = fitted
         selection = fitted
     }
