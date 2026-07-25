@@ -402,13 +402,29 @@ private fun TryItContent(
 ) {
     if (isCompact) {
         TryItPhoneContent(
-            state, photoBitmap, hasPhoto, onPhotoClick, onAnalyze,
-            onSelectCategory, onPersonPhotoClick, onGenerateTryOn, onItemClick, modifier,
+            state = state,
+            photoBitmap = photoBitmap,
+            hasPhoto = hasPhoto,
+            onPhotoClick = onPhotoClick,
+            onAnalyze = onAnalyze,
+            onSelectCategory = onSelectCategory,
+            onPersonPhotoClick = onPersonPhotoClick,
+            onGenerateTryOn = onGenerateTryOn,
+            onItemClick = onItemClick,
+            modifier = modifier,
         )
     } else {
         TryItTabletContent(
-            state, photoBitmap, hasPhoto, onPhotoClick, onAnalyze,
-            onSelectCategory, onPersonPhotoClick, onGenerateTryOn, onItemClick, modifier,
+            state = state,
+            photoBitmap = photoBitmap,
+            hasPhoto = hasPhoto,
+            onPhotoClick = onPhotoClick,
+            onAnalyze = onAnalyze,
+            onSelectCategory = onSelectCategory,
+            onPersonPhotoClick = onPersonPhotoClick,
+            onGenerateTryOn = onGenerateTryOn,
+            onItemClick = onItemClick,
+            modifier = modifier,
         )
     }
 }
