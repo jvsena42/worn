@@ -464,7 +464,7 @@ private fun TryItPhoneContent(
                 onGenerateTryOn = onGenerateTryOn,
             )
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(WornDimens.BottomBarClearance))
     }
 }
 

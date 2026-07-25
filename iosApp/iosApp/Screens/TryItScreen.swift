@@ -165,7 +165,7 @@ struct TryItScreen: View {
                 tryOnSection(isCompact: true)
             }
 
-            Spacer().frame(height: 12)
+            Spacer().frame(height: 95)
         }
         .padding(.horizontal, contentPadding)
     }
