@@ -835,9 +835,9 @@ private fun TryOnSection(
                 letterSpacing = (-0.2).sp,
             )
             GarmentCategorySelector(selected = state.selectedCategory, onSelect = onSelectCategory)
-            if (hasPhoto && state.selectedCategory != null &&
-                state.tryOnImage == null && !state.tryOnLoading
-            ) {
+            val readyToGenerate = hasPhoto && state.selectedCategory != null
+            val idle = state.tryOnImage == null && !state.tryOnLoading
+            if (readyToGenerate && idle) {
                 SeeItOnMeButton(onClick = onGenerateTryOn)
             }
             if (state.tryOnLoading) {

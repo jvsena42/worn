@@ -53,6 +53,7 @@ sealed interface SettingsEffect {
     data object ModelPhotoCleared : SettingsEffect
 }
 
+@Suppress("TooManyFunctions")
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val secretStore: SecretStore,

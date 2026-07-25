@@ -52,6 +52,7 @@ kotlin {
         }
         getByName("androidHostTest").dependencies {
             implementation(libs.mockk)
+            implementation(libs.ktor.client.mock)
             // Align kotlin-reflect with the project's Kotlin version. MockK pulls an older
             // kotlin-reflect transitively, which cannot read value-class metadata (e.g.
             // SQLDelight's QueryResult<Long>) compiled by a newer Kotlin, causing NPEs.
