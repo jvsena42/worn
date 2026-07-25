@@ -67,21 +67,18 @@ internal data class YouCamTaskResponse(@SerialName("data") val data: Payload) {
 }
 
 // Poll: `task_status` is "running" until the task finishes as "success" / "error". While running,
-// `results` is null; on success it holds one entry per output, each with a `data` array of URLs.
+// `results` is null; on success it is an object holding the generated image `url` (a presigned URL).
 @Serializable
 internal data class YouCamPollResponse(@SerialName("data") val data: Payload) {
     @Serializable
     data class Payload(
         @SerialName("task_status") val status: String,
-        val results: List<TaskResult>? = null,
+        val results: Results? = null,
         val error: String? = null,
     )
 
     @Serializable
-    data class TaskResult(val data: List<Output>? = null)
-
-    @Serializable
-    data class Output(val url: String)
+    data class Results(val url: String)
 }
 
 // Errors ----------------------------------------------------------------------------------------

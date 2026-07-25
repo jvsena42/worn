@@ -172,7 +172,7 @@ class YouCamApiClient(
             val result = json.decodeFromString<YouCamPollResponse>(pollBody).data
             when (result.status.lowercase()) {
                 STATUS_SUCCESS ->
-                    return result.results?.firstOrNull()?.data?.firstOrNull()?.url
+                    return result.results?.url
                         ?: error("Try-on finished but returned no image.")
                 STATUS_ERROR, STATUS_FAILED -> error("Try-on failed. Please try again.")
                 else -> delay(POLL_INTERVAL_MILLIS)
