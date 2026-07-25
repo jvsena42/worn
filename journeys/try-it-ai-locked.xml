@@ -1,19 +1,19 @@
-<journey name="Try It AI-locked routes to Settings">
+<journey name="Try It locked routes to Settings">
     <description>
-        Verifies that the Try It tab shows the AI-locked empty state when no API key is configured,
-        and that its call-to-action navigates to Settings. Start state: fresh install with no API
-        key configured.
+        Verifies that the Try It tab shows the locked empty state when neither the Claude API key nor
+        YouCam credentials are configured, and that its call-to-action navigates to Settings. The
+        locked copy now mentions both providers. Start state: fresh install with no keys configured.
     </description>
     <actions>
         <action>
             Tap the "TRY IT" tab in the bottom navigation bar.
         </action>
         <action>
-            Verify the Try It screen shows the locked state: the "AI powered analysis" title and a
-            "Connect Claude AI" button.
+            Verify the Try It screen shows the locked state: the "Analyze &amp; try things on" title,
+            a description mentioning connecting Claude or YouCam, and an "Open Settings" button.
         </action>
         <action>
-            Tap the "Connect Claude AI" button.
+            Tap the "Open Settings" button.
         </action>
         <action>
             Verify the app navigates to the Settings screen, showing the "Settings" heading and the

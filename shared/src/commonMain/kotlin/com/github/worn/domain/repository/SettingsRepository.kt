@@ -15,4 +15,9 @@ interface SettingsRepository {
     suspend fun updateAgeRange(ageRange: AgeRange?): Result<Unit>
     suspend fun updateClimate(climate: Climate?): Result<Unit>
     suspend fun updateLifestyles(lifestyles: Set<Lifestyle>): Result<Unit>
+
+    /** The reusable "person photo" used for virtual try-on, entered from the Try-It screen. */
+    suspend fun saveModelPhoto(bytes: ByteArray): Result<Unit>
+    suspend fun getModelPhoto(): Result<ByteArray?>
+    suspend fun clearModelPhoto(): Result<Unit>
 }

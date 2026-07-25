@@ -6,6 +6,7 @@ import com.github.worn.data.source.image.BackgroundRemover
 import com.github.worn.data.source.local.DatabaseDriverFactory
 import com.github.worn.data.source.local.PhotoFileStorage
 import com.github.worn.data.source.local.createDataStore
+import com.github.worn.util.crypto.RsaEncryptor
 import com.github.worn.util.secret.AndroidSecretStore
 import com.github.worn.util.secret.SecretStore
 import io.ktor.client.HttpClient
@@ -20,6 +21,7 @@ val androidModule = module {
     single { PhotoFileStorage(get()) }
     single { BackgroundRemover(get()) }
     single<SecretStore> { AndroidSecretStore(get()) }
+    single { RsaEncryptor() }
     single { HttpClient(OkHttp) }
     single<CoroutineContext> { Dispatchers.IO }
     single<DataStore<Preferences>> { createDataStore(context = get()) }

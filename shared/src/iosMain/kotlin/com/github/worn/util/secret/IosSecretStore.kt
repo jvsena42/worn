@@ -36,8 +36,8 @@ import platform.Security.kSecClass
 
 class IosSecretStore : SecretStore {
 
-    override fun getApiKey(): String? = memScoped {
-        val query = createQuery()
+    override fun getSecret(name: String): String? = memScoped {
+        val query = createQuery(name)
         CFDictionaryAddValue(query, kSecReturnData, kCFBooleanTrue)
         CFDictionaryAddValue(query, kSecMatchLimit, kSecMatchLimitOne)
 
@@ -52,37 +52,37 @@ class IosSecretStore : SecretStore {
         }
     }
 
-    override fun saveApiKey(key: String) {
-        val keyData = (key as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: return
+    override fun saveSecret(name: String, value: String) {
+        val valueData = (value as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: return
 
         // Try to update existing item first
-        val query = createQuery()
+        val query = createQuery(name)
         val update = CFDictionaryCreateMutable(null, 1, null, null)
-        CFDictionaryAddValue(update, kSecValueData, CFBridgingRetain(keyData))
+        CFDictionaryAddValue(update, kSecValueData, CFBridgingRetain(valueData))
 
         val updateStatus = SecItemUpdate(query, update)
         if (updateStatus == errSecItemNotFound) {
             // Item doesn't exist, add it
-            val addQuery = createQuery()
-            CFDictionaryAddValue(addQuery, kSecValueData, CFBridgingRetain(keyData))
+            val addQuery = createQuery(name)
+            CFDictionaryAddValue(addQuery, kSecValueData, CFBridgingRetain(valueData))
             SecItemAdd(addQuery, null)
         }
     }
 
-    override fun clearApiKey() {
-        val query = createQuery()
+    override fun clearSecret(name: String) {
+        val query = createQuery(name)
         SecItemDelete(query)
     }
 
-    private fun createQuery() = CFDictionaryCreateMutable(null, QUERY_CAPACITY, null, null).also {
-        CFDictionaryAddValue(it, kSecClass, kSecClassGenericPassword)
-        CFDictionaryAddValue(it, kSecAttrService, CFBridgingRetain(SERVICE as NSString))
-        CFDictionaryAddValue(it, kSecAttrAccount, CFBridgingRetain(ACCOUNT as NSString))
-    }
+    private fun createQuery(account: String) =
+        CFDictionaryCreateMutable(null, QUERY_CAPACITY, null, null).also {
+            CFDictionaryAddValue(it, kSecClass, kSecClassGenericPassword)
+            CFDictionaryAddValue(it, kSecAttrService, CFBridgingRetain(SERVICE as NSString))
+            CFDictionaryAddValue(it, kSecAttrAccount, CFBridgingRetain(account as NSString))
+        }
 
     companion object {
         private const val SERVICE = "com.github.worn"
-        private const val ACCOUNT = "claude_api_key"
         private const val QUERY_CAPACITY = 5L
     }
 }

@@ -86,6 +86,16 @@
 "settings_api_get_key" = "Obtenha uma chave gratuita em console.anthropic.com →";
 "settings_save_connect" = "Salvar e conectar";
 "settings_remove_key" = "Remover chave";
+"settings_youcam_title" = "Provar com YouCam";
+"settings_youcam_connected" = "Conectado";
+"settings_youcam_required" = "Necessário para a prova virtual";
+"settings_youcam_description" = "Cole suas credenciais do YouCam da Perfect Corp para renderizar roupas sobre a sua foto. Cada prova consome unidades do YouCam da sua conta.";
+"settings_youcam_get_key" = "Obtenha credenciais em yce.perfectcorp.com →";
+"settings_youcam_client_id_hint" = "Chave de API (mais curta)";
+"settings_youcam_client_secret_hint" = "Chave secreta (mais longa)";
+"settings_youcam_save" = "Salvar credenciais";
+"settings_youcam_verifying" = "Verificando…";
+"settings_youcam_remove" = "Remover credenciais";
 "settings_suggestions_bugs" = "Sugestões e Bugs";
 "settings_version" = "Versão";
 "settings_licenses" = "Licenças";
@@ -123,6 +133,21 @@
 "tryit_gaps_filled" = "Lacunas que preenche";
 "tryit_worth_adding" = "Vale adicionar";
 "tryit_skip" = "Pule esse";
+"tryit_locked_title" = "Analise e experimente";
+"tryit_locked_description" = "Conecte o Claude para analisar peças com base no seu guarda-roupa, ou o YouCam para vê-las em você. Adicione um dos dois em Configurações.";
+"tryit_open_settings" = "Abrir Configurações";
+"tryit_connect_youcam" = "Conectar YouCam";
+"tryit_your_photo_title" = "Sua foto";
+"tryit_your_photo_hint" = "Toque para adicionar uma foto sua de corpo inteiro";
+"tryit_see_on_me" = "Ver em mim";
+"tryit_tryon_generating" = "Renderizando sua prova…";
+"tryit_tryon_category_title" = "O que é?";
+"tryit_category_top" = "Superior";
+"tryit_category_bottom" = "Inferior";
+"tryit_category_full" = "Look completo";
+"tryit_category_shoes" = "Calçados";
+"tryit_tryon_result_title" = "Em você";
+"tryit_tryon_cost_note" = "Cada prova consome unidades do YouCam.";
 
 /* AI Locked Sheet */
 "ai_locked_title" = "Desbloquear funções de IA";

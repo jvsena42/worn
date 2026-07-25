@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.Checkroom
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
@@ -38,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -69,6 +71,7 @@ import com.github.worn.domain.model.Climate
 import com.github.worn.domain.model.Lifestyle
 import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
+import com.github.worn.presentation.viewmodel.SettingsEffect
 import com.github.worn.presentation.viewmodel.SettingsIntent
 import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
@@ -92,12 +95,22 @@ fun SettingsScreen(onTabSelected: (Tab) -> Unit) {
 
     var showProfileSheet by remember { mutableStateOf(false) }
     var showApiKeySheet by remember { mutableStateOf(false) }
+    var showYouCamSheet by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.effects.collect { effect ->
+            if (effect is SettingsEffect.YouCamCredentialsSaved) {
+                showYouCamSheet = false
+            }
+        }
+    }
 
     SettingsScaffold(
         state = state,
         isCompact = isCompact,
         onProfileClick = { showProfileSheet = true },
         onApiKeyClick = { showApiKeySheet = true },
+        onYouCamClick = { showYouCamSheet = true },
     )
 
     if (showProfileSheet) {
@@ -123,6 +136,22 @@ fun SettingsScreen(onTabSelected: (Tab) -> Unit) {
             onDismiss = { showApiKeySheet = false },
         )
     }
+
+    if (showYouCamSheet) {
+        YouCamCredentialsSheet(
+            hasCredentials = state.hasYouCamKey,
+            verifying = state.verifyingYouCam,
+            errorMessage = state.youCamError,
+            onSave = { clientId, clientSecret ->
+                viewModel.onIntent(SettingsIntent.SaveYouCamCredentials(clientId, clientSecret))
+            },
+            onClear = {
+                viewModel.onIntent(SettingsIntent.ClearYouCamCredentials)
+                showYouCamSheet = false
+            },
+            onDismiss = { showYouCamSheet = false },
+        )
+    }
 }
 
 @Composable
@@ -131,6 +160,7 @@ private fun SettingsScaffold(
     isCompact: Boolean = true,
     onProfileClick: () -> Unit = {},
     onApiKeyClick: () -> Unit = {},
+    onYouCamClick: () -> Unit = {},
 ) {
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
@@ -176,6 +206,16 @@ private fun SettingsScaffold(
                 ),
                 onClick = onApiKeyClick,
                 modifier = Modifier.testTag("settings_api_key_card"),
+            )
+            Spacer(Modifier.height(10.dp))
+            SettingsCard(
+                icon = { SettingsIcon(color = WornColors.AccentIndigo, icon = Icons.Outlined.Checkroom) },
+                title = stringResource(R.string.settings_youcam_title),
+                subtitle = stringResource(
+                    if (state.hasYouCamKey) R.string.settings_youcam_connected else R.string.settings_youcam_required,
+                ),
+                onClick = onYouCamClick,
+                modifier = Modifier.testTag("settings_youcam_card"),
             )
 
             Spacer(Modifier.height(24.dp))
@@ -603,6 +643,135 @@ private fun ApiKeyTextField(
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
     )
+}
+
+// endregion
+
+// region YouCam Credentials Sheet
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun YouCamCredentialsSheet(
+    hasCredentials: Boolean,
+    verifying: Boolean,
+    errorMessage: String?,
+    onSave: (String, String) -> Unit,
+    onClear: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = WornColors.BgElevated,
+        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        dragHandle = { SheetDragHandle() },
+    ) {
+        YouCamCredentialsSheetContent(
+            hasCredentials = hasCredentials,
+            verifying = verifying,
+            errorMessage = errorMessage,
+            onSave = onSave,
+            onClear = onClear,
+        )
+    }
+}
+
+@Composable
+private fun YouCamCredentialsSheetContent(
+    hasCredentials: Boolean,
+    verifying: Boolean,
+    errorMessage: String?,
+    onSave: (String, String) -> Unit,
+    onClear: () -> Unit,
+) {
+    var clientId by remember { mutableStateOf("") }
+    var clientSecret by remember { mutableStateOf("") }
+    var idVisible by remember { mutableStateOf(false) }
+    var secretVisible by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .exposeTestTagsAsResourceId()
+            .testTag("youcam_sheet")
+            .fillMaxWidth()
+            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.settings_youcam_title),
+            color = WornColors.TextPrimary,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
+        Text(
+            text = stringResource(R.string.settings_youcam_description),
+            color = WornColors.TextSecondary,
+            fontSize = 14.sp,
+        )
+        Text(
+            text = stringResource(R.string.settings_youcam_get_key),
+            color = WornColors.AccentGreen,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Medium,
+        )
+        FieldLabel(stringResource(R.string.settings_youcam_client_id_hint))
+        ApiKeyTextField(
+            value = if (hasCredentials) "••••••••••••••••" else clientId,
+            onValueChange = { if (!hasCredentials) clientId = it },
+            enabled = !hasCredentials,
+            passwordVisible = idVisible,
+            onToggleVisibility = { idVisible = !idVisible },
+            modifier = Modifier.testTag("youcam_client_id_field"),
+        )
+        FieldLabel(stringResource(R.string.settings_youcam_client_secret_hint))
+        ApiKeyTextField(
+            value = if (hasCredentials) "••••••••••••••••" else clientSecret,
+            onValueChange = { if (!hasCredentials) clientSecret = it },
+            enabled = !hasCredentials,
+            passwordVisible = secretVisible,
+            onToggleVisibility = { secretVisible = !secretVisible },
+            modifier = Modifier.testTag("youcam_client_secret_field"),
+        )
+        SaveGradientButton(
+            text = stringResource(
+                if (verifying) R.string.settings_youcam_verifying else R.string.settings_youcam_save,
+            ),
+            enabled = !hasCredentials && !verifying && clientId.isNotBlank() && clientSecret.isNotBlank(),
+            onClick = { onSave(clientId, clientSecret) },
+            modifier = Modifier.testTag("youcam_save_button"),
+        )
+        if (errorMessage != null && !verifying) {
+            Text(
+                text = errorMessage,
+                color = WornColors.DeleteRed,
+                fontSize = 13.sp,
+                modifier = Modifier.testTag("youcam_error"),
+            )
+        }
+        if (hasCredentials) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+                Surface(
+                    onClick = onClear,
+                    color = Color.Transparent,
+                    modifier = Modifier.testTag("youcam_remove_button"),
+                ) {
+                    Text(
+                        text = stringResource(R.string.settings_youcam_remove),
+                        color = WornColors.TextSecondary,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(vertical = 8.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FieldLabel(text: String) {
+    Text(text, color = WornColors.TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
 }
 
 // endregion

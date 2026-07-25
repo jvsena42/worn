@@ -9,6 +9,7 @@ import com.github.worn.domain.model.Lifestyle
 import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
 import com.github.worn.domain.repository.SettingsRepository
+import com.github.worn.domain.repository.TryOnRepository
 import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -28,12 +29,17 @@ sealed interface SettingsIntent {
     data class ToggleLifestyle(val lifestyle: Lifestyle) : SettingsIntent
     data class SaveApiKey(val key: String) : SettingsIntent
     data object ClearApiKey : SettingsIntent
+    data class SaveYouCamCredentials(val clientId: String, val clientSecret: String) : SettingsIntent
+    data object ClearYouCamCredentials : SettingsIntent
 }
 
 data class SettingsState(
     val userProfile: UserProfile = UserProfile(),
     val isLoading: Boolean = false,
     val hasApiKey: Boolean = false,
+    val hasYouCamKey: Boolean = false,
+    val verifyingYouCam: Boolean = false,
+    val youCamError: String? = null,
     val error: String? = null,
 )
 
@@ -41,10 +47,14 @@ sealed interface SettingsEffect {
     data class ShowError(val message: String) : SettingsEffect
     data object ApiKeySaved : SettingsEffect
     data object ApiKeyCleared : SettingsEffect
+    data object YouCamCredentialsSaved : SettingsEffect
+    data object YouCamCredentialsCleared : SettingsEffect
 }
 
+@Suppress("TooManyFunctions")
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
+    private val tryOnRepository: TryOnRepository,
     private val secretStore: SecretStore,
 ) : ViewModel() {
 
@@ -55,7 +65,12 @@ class SettingsViewModel(
     val effects: Flow<SettingsEffect> = _effects.receiveAsFlow()
 
     init {
-        _state.update { it.copy(hasApiKey = secretStore.getApiKey() != null) }
+        _state.update {
+            it.copy(
+                hasApiKey = secretStore.getApiKey() != null,
+                hasYouCamKey = hasYouCamCredentials(),
+            )
+        }
         onIntent(SettingsIntent.LoadProfile)
     }
 
@@ -69,6 +84,8 @@ class SettingsViewModel(
             is SettingsIntent.ToggleLifestyle -> toggleLifestyle(intent.lifestyle)
             is SettingsIntent.SaveApiKey -> saveApiKey(intent.key)
             is SettingsIntent.ClearApiKey -> clearApiKey()
+            is SettingsIntent.SaveYouCamCredentials -> saveYouCamCredentials(intent.clientId, intent.clientSecret)
+            is SettingsIntent.ClearYouCamCredentials -> clearYouCamCredentials()
         }
     }
 
@@ -138,4 +155,35 @@ class SettingsViewModel(
             _effects.send(SettingsEffect.ApiKeyCleared)
         }
     }
+
+    private fun saveYouCamCredentials(clientId: String, clientSecret: String) {
+        _state.update { it.copy(verifyingYouCam = true, youCamError = null) }
+        viewModelScope.launch {
+            tryOnRepository.verifyCredentials(clientId, clientSecret)
+                .onSuccess {
+                    secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_ID, clientId)
+                    secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_SECRET, clientSecret)
+                    _state.update { it.copy(hasYouCamKey = true, verifyingYouCam = false) }
+                    _effects.send(SettingsEffect.YouCamCredentialsSaved)
+                }
+                .onFailure { error ->
+                    val message = error.message ?: "Could not verify credentials"
+                    _state.update { it.copy(verifyingYouCam = false, youCamError = message) }
+                    _effects.send(SettingsEffect.ShowError(message))
+                }
+        }
+    }
+
+    private fun clearYouCamCredentials() {
+        secretStore.clearSecret(SecretStore.YOUCAM_CLIENT_ID)
+        secretStore.clearSecret(SecretStore.YOUCAM_CLIENT_SECRET)
+        _state.update { it.copy(hasYouCamKey = false) }
+        viewModelScope.launch {
+            _effects.send(SettingsEffect.YouCamCredentialsCleared)
+        }
+    }
+
+    private fun hasYouCamCredentials(): Boolean =
+        !secretStore.getSecret(SecretStore.YOUCAM_CLIENT_ID).isNullOrBlank() &&
+            !secretStore.getSecret(SecretStore.YOUCAM_CLIENT_SECRET).isNullOrBlank()
 }

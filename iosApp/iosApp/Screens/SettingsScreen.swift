@@ -7,6 +7,7 @@ struct SettingsScreen: View {
 
     @State private var showProfileSheet = false
     @State private var showApiKeySheet = false
+    @State private var showYouCamSheet = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -41,6 +42,16 @@ struct SettingsScreen: View {
                     .padding(.top, 10)
                     .accessibilityIdentifier("settings_api_key_card")
 
+                    settingsCard(
+                        iconColor: WornColors.accentIndigo,
+                        iconName: "tshirt",
+                        title: String(localized: "settings_youcam_title"),
+                        subtitle: viewModel.state.hasYouCamKey ? String(localized: "settings_youcam_connected") : String(localized: "settings_youcam_required"),
+                        action: { showYouCamSheet = true }
+                    )
+                    .padding(.top, 10)
+                    .accessibilityIdentifier("settings_youcam_card")
+
                     sectionLabel(String(localized: "settings_section_about"))
                         .padding(.top, 24)
                     aboutCard
@@ -67,6 +78,19 @@ struct SettingsScreen: View {
                 onClear: { viewModel.clearApiKey() }
             )
             .presentationDetents([.medium])
+        }
+        .sheet(isPresented: $showYouCamSheet) {
+            YouCamCredentialsSheet(
+                hasCredentials: viewModel.state.hasYouCamKey,
+                verifying: viewModel.state.verifyingYouCam,
+                errorMessage: viewModel.state.youCamError,
+                onSave: { viewModel.saveYouCamCredentials(clientId: $0, clientSecret: $1) },
+                onClear: { viewModel.clearYouCamCredentials() }
+            )
+            .presentationDetents([.medium, .large])
+        }
+        .onChange(of: viewModel.state.hasYouCamKey) { _, has in
+            if has { showYouCamSheet = false }
         }
     }
 
@@ -371,6 +395,112 @@ private struct ApiKeySheet: View {
         .padding(.horizontal, 24)
         .padding(.vertical, 24)
         .accessibilityIdentifier("api_key_sheet")
+    }
+}
+
+// MARK: - YouCam Credentials Sheet
+
+private struct YouCamCredentialsSheet: View {
+    let hasCredentials: Bool
+    let verifying: Bool
+    let errorMessage: String?
+    let onSave: (String, String) -> Void
+    let onClear: () -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var clientId = ""
+    @State private var clientSecret = ""
+    @State private var idVisible = false
+    @State private var secretVisible = false
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                Text(String(localized: "settings_youcam_title"))
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundColor(WornColors.textPrimary)
+                Text(String(localized: "settings_youcam_description"))
+                    .font(.system(size: 14))
+                    .foregroundColor(WornColors.textSecondary)
+                Text(String(localized: "settings_youcam_get_key"))
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(WornColors.accentGreen)
+
+                fieldLabel(String(localized: "settings_youcam_client_id_hint"))
+                credentialField(text: hasCredentials ? .constant("••••••••••••") : $clientId, visible: $idVisible, enabled: !hasCredentials)
+                    .accessibilityIdentifier("youcam_client_id_field")
+                fieldLabel(String(localized: "settings_youcam_client_secret_hint"))
+                credentialField(text: hasCredentials ? .constant("••••••••••••") : $clientSecret, visible: $secretVisible, enabled: !hasCredentials)
+                    .accessibilityIdentifier("youcam_client_secret_field")
+
+                saveGradientButton(
+                    text: String(localized: verifying ? "settings_youcam_verifying" : "settings_youcam_save"),
+                    enabled: !hasCredentials && !verifying && !clientId.isEmpty && !clientSecret.isEmpty
+                ) {
+                    onSave(clientId, clientSecret)
+                }
+                .accessibilityIdentifier("youcam_save_button")
+
+                if let errorMessage, !verifying {
+                    Text(errorMessage)
+                        .font(.system(size: 13))
+                        .foregroundColor(WornColors.deleteRed)
+                        .accessibilityIdentifier("youcam_error")
+                }
+
+                if hasCredentials {
+                    HStack {
+                        Spacer()
+                        Button {
+                            onClear()
+                            dismiss()
+                        } label: {
+                            Text(String(localized: "settings_youcam_remove"))
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(WornColors.textSecondary)
+                        }
+                        .accessibilityIdentifier("youcam_remove_button")
+                        Spacer()
+                    }
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 24)
+        }
+        .background(WornColors.bgElevated)
+        .accessibilityIdentifier("youcam_sheet")
+    }
+
+    private func fieldLabel(_ text: String) -> some View {
+        Text(text)
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundColor(WornColors.textPrimary)
+    }
+
+    private func credentialField(text: Binding<String>, visible: Binding<Bool>, enabled: Bool) -> some View {
+        HStack {
+            Group {
+                if visible.wrappedValue {
+                    TextField("", text: text)
+                } else {
+                    SecureField("", text: text)
+                }
+            }
+            .disabled(!enabled)
+            .font(.system(size: 15))
+
+            Button { visible.wrappedValue.toggle() } label: {
+                Image(systemName: visible.wrappedValue ? "eye" : "eye.slash")
+                    .foregroundColor(WornColors.iconMuted)
+            }
+        }
+        .padding(14)
+        .background(WornColors.bgCard)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(WornColors.borderSubtle, lineWidth: 1)
+        )
     }
 }
 

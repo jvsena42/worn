@@ -86,6 +86,16 @@
 "settings_api_get_key" = "Get a free key at console.anthropic.com →";
 "settings_save_connect" = "Save & Connect";
 "settings_remove_key" = "Remove key";
+"settings_youcam_title" = "YouCam Try-On";
+"settings_youcam_connected" = "Connected";
+"settings_youcam_required" = "Required for virtual try-on";
+"settings_youcam_description" = "Paste your Perfect Corp YouCam credentials to render clothes onto your photo. Each try-on spends YouCam units from your account.";
+"settings_youcam_get_key" = "Get credentials at yce.perfectcorp.com →";
+"settings_youcam_client_id_hint" = "API Key (shorter)";
+"settings_youcam_client_secret_hint" = "Secret Key (longer)";
+"settings_youcam_save" = "Save credentials";
+"settings_youcam_verifying" = "Checking…";
+"settings_youcam_remove" = "Remove credentials";
 "settings_suggestions_bugs" = "Suggestions & Bugs";
 "settings_version" = "Version";
 "settings_licenses" = "Licenses";
@@ -123,6 +133,21 @@
 "tryit_gaps_filled" = "Wardrobe gaps it fills";
 "tryit_worth_adding" = "Worth adding";
 "tryit_skip" = "Skip this one";
+"tryit_locked_title" = "Analyze & try things on";
+"tryit_locked_description" = "Connect Claude to analyze items against your wardrobe, or YouCam to see them on you. Add either in Settings.";
+"tryit_open_settings" = "Open Settings";
+"tryit_connect_youcam" = "Connect YouCam";
+"tryit_your_photo_title" = "Your photo";
+"tryit_your_photo_hint" = "Tap to add a full-body photo of yourself";
+"tryit_see_on_me" = "See it on me";
+"tryit_tryon_generating" = "Rendering your try-on…";
+"tryit_tryon_category_title" = "What is it?";
+"tryit_category_top" = "Top";
+"tryit_category_bottom" = "Bottom";
+"tryit_category_full" = "Full outfit";
+"tryit_category_shoes" = "Shoes";
+"tryit_tryon_result_title" = "On you";
+"tryit_tryon_cost_note" = "Each try-on spends YouCam units.";
 
 /* AI Locked Sheet */
 "ai_locked_title" = "Unlock AI features";
