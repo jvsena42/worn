@@ -13,6 +13,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +33,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -41,6 +44,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -77,6 +82,7 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import coil3.compose.AsyncImage
 import com.github.worn.R
 import com.github.worn.domain.model.ClothingItem
+import com.github.worn.domain.model.GarmentCategory
 import com.github.worn.domain.model.TryItResult
 import com.github.worn.presentation.viewmodel.TryItEffect
 import com.github.worn.presentation.viewmodel.TryItIntent
@@ -133,6 +139,8 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
         snackbarHostState = snackbarHostState,
         onPhotoClick = { showSourceChooser = true },
         onAnalyze = { photoBytes?.let { viewModel.onIntent(TryItIntent.AnalyzePhoto(it)) } },
+        onSelectCategory = { viewModel.onIntent(TryItIntent.SelectCategory(it)) },
+        onGenerateTryOn = { photoBytes?.let { viewModel.onIntent(TryItIntent.GenerateTryOn(it)) } },
         onItemClick = { selectedItem = it },
         onGoToSettings = { onTabSelected(Tab.SETTINGS) },
     )
@@ -254,6 +262,8 @@ private fun TryItScaffold(
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     onPhotoClick: () -> Unit = {},
     onAnalyze: () -> Unit = {},
+    onSelectCategory: (GarmentCategory) -> Unit = {},
+    onGenerateTryOn: () -> Unit = {},
     onItemClick: (ClothingItem) -> Unit = {},
     onGoToSettings: () -> Unit = {},
 ) {
@@ -264,7 +274,7 @@ private fun TryItScaffold(
         containerColor = WornColors.BgPage,
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
-        if (!state.hasApiKey) {
+        if (!state.hasApiKey && !state.hasYouCamKey) {
             AiEmptyContent(
                 isCompact = isCompact,
                 onGoToSettings = onGoToSettings,
@@ -281,7 +291,10 @@ private fun TryItScaffold(
                 hasPhoto = hasPhoto,
                 onPhotoClick = onPhotoClick,
                 onAnalyze = onAnalyze,
+                onSelectCategory = onSelectCategory,
+                onGenerateTryOn = onGenerateTryOn,
                 onItemClick = onItemClick,
+                onGoToSettings = onGoToSettings,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
@@ -325,7 +338,7 @@ private fun AiEmptyContent(
         }
         Spacer(Modifier.height(24.dp))
         Text(
-            text = stringResource(R.string.tryit_ai_empty_title),
+            text = stringResource(R.string.tryit_locked_title),
             color = WornColors.TextPrimary,
             fontSize = titleSize,
             fontWeight = FontWeight.Medium,
@@ -333,7 +346,7 @@ private fun AiEmptyContent(
         )
         Spacer(Modifier.height(12.dp))
         Text(
-            text = stringResource(R.string.tryit_ai_empty_description),
+            text = stringResource(R.string.tryit_locked_description),
             color = WornColors.TextSecondary,
             fontSize = if (isCompact) 15.sp else 16.sp,
             lineHeight = if (isCompact) 22.sp else 24.sp,
@@ -342,7 +355,7 @@ private fun AiEmptyContent(
         )
         Spacer(Modifier.height(24.dp))
         IndigoCtaButton(
-            text = stringResource(R.string.tryit_connect_cta),
+            text = stringResource(R.string.tryit_open_settings),
             onClick = onGoToSettings,
             modifier = Modifier.testTag("try_it_connect_cta"),
         )
@@ -372,13 +385,22 @@ private fun TryItContent(
     hasPhoto: Boolean,
     onPhotoClick: () -> Unit,
     onAnalyze: () -> Unit,
+    onSelectCategory: (GarmentCategory) -> Unit,
+    onGenerateTryOn: () -> Unit,
     onItemClick: (ClothingItem) -> Unit,
+    onGoToSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (isCompact) {
-        TryItPhoneContent(state, photoBitmap, hasPhoto, onPhotoClick, onAnalyze, onItemClick, modifier)
+        TryItPhoneContent(
+            state, photoBitmap, hasPhoto, onPhotoClick, onAnalyze,
+            onSelectCategory, onGenerateTryOn, onItemClick, onGoToSettings, modifier,
+        )
     } else {
-        TryItTabletContent(state, photoBitmap, hasPhoto, onPhotoClick, onAnalyze, onItemClick, modifier)
+        TryItTabletContent(
+            state, photoBitmap, hasPhoto, onPhotoClick, onAnalyze,
+            onSelectCategory, onGenerateTryOn, onItemClick, onGoToSettings, modifier,
+        )
     }
 }
 
@@ -389,7 +411,10 @@ private fun TryItPhoneContent(
     hasPhoto: Boolean,
     onPhotoClick: () -> Unit,
     onAnalyze: () -> Unit,
+    onSelectCategory: (GarmentCategory) -> Unit,
+    onGenerateTryOn: () -> Unit,
     onItemClick: (ClothingItem) -> Unit,
+    onGoToSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -399,24 +424,36 @@ private fun TryItPhoneContent(
         Spacer(Modifier.height(4.dp))
         TryItTitle(fontSize = 28.sp)
         UploadZone(photoBitmap = photoBitmap, height = 200.dp, onClick = onPhotoClick)
-        if (hasPhoto && state.result == null && !state.isLoading) {
-            AnalyzeButton(onClick = onAnalyze)
-        }
-        if (state.isLoading) {
-            LoadingIndicator()
-        }
-        state.error?.let { errorMsg ->
-            if (!state.isLoading) {
-                ErrorContentView(
-                    message = errorMsg,
-                    onRetry = onAnalyze,
-                    modifier = Modifier.padding(vertical = 40.dp),
-                    retryButtonColor = WornColors.AccentIndigo,
-                )
+        if (state.hasApiKey) {
+            if (hasPhoto && state.result == null && !state.isLoading) {
+                AnalyzeButton(onClick = onAnalyze)
+            }
+            if (state.isLoading) {
+                LoadingIndicator()
+            }
+            state.error?.let { errorMsg ->
+                if (!state.isLoading) {
+                    ErrorContentView(
+                        message = errorMsg,
+                        onRetry = onAnalyze,
+                        modifier = Modifier.padding(vertical = 40.dp),
+                        retryButtonColor = WornColors.AccentIndigo,
+                    )
+                }
+            }
+            state.result?.let { result ->
+                ResultsSection(result = result, isCompact = true, onItemClick = onItemClick)
             }
         }
-        state.result?.let { result ->
-            ResultsSection(result = result, isCompact = true, onItemClick = onItemClick)
+        if (state.hasYouCamKey) {
+            TryOnSection(
+                state = state,
+                hasPhoto = hasPhoto,
+                isCompact = true,
+                onSelectCategory = onSelectCategory,
+                onGenerateTryOn = onGenerateTryOn,
+                onGoToSettings = onGoToSettings,
+            )
         }
         Spacer(Modifier.height(12.dp))
     }
@@ -429,7 +466,10 @@ private fun TryItTabletContent(
     hasPhoto: Boolean,
     onPhotoClick: () -> Unit,
     onAnalyze: () -> Unit,
+    onSelectCategory: (GarmentCategory) -> Unit,
+    onGenerateTryOn: () -> Unit,
     onItemClick: (ClothingItem) -> Unit,
+    onGoToSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
@@ -445,38 +485,52 @@ private fun TryItTabletContent(
                 modifier = Modifier.weight(1f),
             ) {
                 UploadZone(photoBitmap = photoBitmap, height = 300.dp, onClick = onPhotoClick)
-                if (hasPhoto && state.result == null && !state.isLoading) {
-                    AnalyzeButton(onClick = onAnalyze)
+                if (state.hasApiKey) {
+                    if (hasPhoto && state.result == null && !state.isLoading) {
+                        AnalyzeButton(onClick = onAnalyze)
+                    }
+                    if (state.isLoading) {
+                        LoadingIndicator()
+                    }
+                    state.error?.let { errorMsg ->
+                        if (!state.isLoading) {
+                            ErrorContentView(
+                                message = errorMsg,
+                                onRetry = onAnalyze,
+                                modifier = Modifier.padding(vertical = 40.dp),
+                                retryButtonColor = WornColors.AccentIndigo,
+                            )
+                        }
+                    }
+                    state.result?.let { result ->
+                        PairsSection(
+                            matchingItems = result.matchingItems,
+                            thumbSize = 90.dp,
+                            onItemClick = onItemClick,
+                        )
+                    }
                 }
-                if (state.isLoading) {
-                    LoadingIndicator()
-                }
-                state.error?.let { errorMsg ->
-                    if (!state.isLoading) {
-                ErrorContentView(
-                    message = errorMsg,
-                    onRetry = onAnalyze,
-                    modifier = Modifier.padding(vertical = 40.dp),
-                    retryButtonColor = WornColors.AccentIndigo,
-                )
-            }
-                }
-                state.result?.let { result ->
-                    PairsSection(
-                        matchingItems = result.matchingItems,
-                        thumbSize = 90.dp,
-                        onItemClick = onItemClick,
+                if (state.hasYouCamKey) {
+                    TryOnSection(
+                        state = state,
+                        hasPhoto = hasPhoto,
+                        isCompact = false,
+                        onSelectCategory = onSelectCategory,
+                        onGenerateTryOn = onGenerateTryOn,
+                        onGoToSettings = onGoToSettings,
                     )
                 }
             }
             state.result?.let { result ->
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
-                    modifier = Modifier.weight(1f),
-                ) {
-                    CombinationsCard(count = result.combinationsUnlocked, isCompact = false)
-                    GapsFilledSection(gaps = result.gapsFilled, isCompact = false)
-                    DecisionBanner(worthAdding = result.worthAdding, isCompact = false)
+                if (state.hasApiKey) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(24.dp),
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        CombinationsCard(count = result.combinationsUnlocked, isCompact = false)
+                        GapsFilledSection(gaps = result.gapsFilled, isCompact = false)
+                        DecisionBanner(worthAdding = result.worthAdding, isCompact = false)
+                    }
                 }
             }
         }
@@ -757,6 +811,194 @@ private fun DecisionBanner(worthAdding: Boolean, isCompact: Boolean) {
     }
 }
 
+@Composable
+private fun TryOnSection(
+    state: TryItState,
+    hasPhoto: Boolean,
+    isCompact: Boolean,
+    onSelectCategory: (GarmentCategory) -> Unit,
+    onGenerateTryOn: () -> Unit,
+    onGoToSettings: () -> Unit,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.testTag("try_on_section"),
+    ) {
+        if (!state.hasModelPhoto) {
+            ModelPhotoPrompt(onGoToSettings = onGoToSettings)
+        } else {
+            Text(
+                text = stringResource(R.string.tryit_tryon_category_title),
+                color = WornColors.TextPrimary,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = (-0.2).sp,
+            )
+            GarmentCategorySelector(selected = state.selectedCategory, onSelect = onSelectCategory)
+            if (hasPhoto && state.selectedCategory != null &&
+                state.tryOnImage == null && !state.tryOnLoading
+            ) {
+                SeeItOnMeButton(onClick = onGenerateTryOn)
+            }
+            if (state.tryOnLoading) {
+                TryOnLoadingIndicator()
+            }
+            state.tryOnError?.let { errorMsg ->
+                if (!state.tryOnLoading) {
+                    ErrorContentView(
+                        message = errorMsg,
+                        onRetry = onGenerateTryOn,
+                        modifier = Modifier.padding(vertical = 24.dp),
+                        retryButtonColor = WornColors.AccentIndigo,
+                    )
+                }
+            }
+            state.tryOnImage?.let { image ->
+                TryOnResultView(imageBytes = image, height = if (isCompact) 320.dp else 400.dp)
+            }
+            Text(
+                text = stringResource(R.string.tryit_tryon_cost_note),
+                color = WornColors.TextSecondary,
+                fontSize = 12.sp,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun GarmentCategorySelector(
+    selected: GarmentCategory?,
+    onSelect: (GarmentCategory) -> Unit,
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth().testTag("try_on_category_selector"),
+    ) {
+        GarmentCategory.entries.forEach { category ->
+            FilterChip(
+                selected = selected == category,
+                onClick = { onSelect(category) },
+                label = { Text(stringResource(categoryLabelRes(category))) },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = WornColors.AccentIndigo,
+                    selectedLabelColor = Color.White,
+                ),
+            )
+        }
+    }
+}
+
+private fun categoryLabelRes(category: GarmentCategory): Int = when (category) {
+    GarmentCategory.TOP -> R.string.tryit_category_top
+    GarmentCategory.BOTTOM -> R.string.tryit_category_bottom
+    GarmentCategory.FULL_BODY -> R.string.tryit_category_full
+    GarmentCategory.SHOES -> R.string.tryit_category_shoes
+}
+
+@Composable
+private fun SeeItOnMeButton(onClick: () -> Unit) {
+    WornGradientButton(
+        text = stringResource(R.string.tryit_see_on_me),
+        onClick = onClick,
+        modifier = Modifier.testTag("try_on_generate_button"),
+        gradientColors = WornGradients.Indigo,
+        shape = RoundedCornerShape(28.dp),
+        elevation = 6.dp,
+        fixedHeight = null,
+        contentPadding = PaddingValues(vertical = 14.dp),
+        icon = {
+            Icon(
+                imageVector = Icons.Outlined.AutoAwesome,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size(20.dp),
+            )
+        },
+    )
+}
+
+@Composable
+private fun TryOnLoadingIndicator() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
+    ) {
+        CircularProgressIndicator(color = WornColors.AccentIndigo)
+        Text(
+            text = stringResource(R.string.tryit_tryon_generating),
+            color = WornColors.TextSecondary,
+            fontSize = 14.sp,
+        )
+    }
+}
+
+@Composable
+private fun TryOnResultView(imageBytes: ByteArray, height: Dp) {
+    val bitmap = remember(imageBytes) {
+        BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)?.asImageBitmap()
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            text = stringResource(R.string.tryit_tryon_result_title),
+            color = WornColors.TextPrimary,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = (-0.2).sp,
+        )
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = WornColors.BgCard,
+            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            shadowElevation = 2.dp,
+            modifier = Modifier.fillMaxWidth().height(height).testTag("try_on_result"),
+        ) {
+            if (bitmap != null) {
+                androidx.compose.foundation.Image(
+                    bitmap = bitmap,
+                    contentDescription = stringResource(R.string.tryit_tryon_result_title),
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ModelPhotoPrompt(onGoToSettings: () -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+        color = WornColors.BgCard,
+        border = BorderStroke(1.dp, WornColors.BorderSubtle),
+        modifier = Modifier.fillMaxWidth().testTag("try_on_model_photo_prompt"),
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(24.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.AutoAwesome,
+                contentDescription = null,
+                tint = WornColors.AccentIndigo,
+                modifier = Modifier.size(36.dp),
+            )
+            Text(
+                text = stringResource(R.string.tryit_set_model_photo),
+                color = WornColors.TextSecondary,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+            )
+            IndigoCtaButton(
+                text = stringResource(R.string.tryit_set_model_photo_cta),
+                onClick = onGoToSettings,
+            )
+        }
+    }
+}
+
 private const val JPEG_QUALITY = 90
 
 // region Previews
@@ -817,6 +1059,36 @@ private fun TryItResultsTabletPreview() {
         TryItScaffold(
             state = TryItState(hasApiKey = true, result = previewResult),
             isCompact = false,
+            photoBitmap = null,
+            hasPhoto = true,
+        )
+    }
+}
+
+@Preview(showSystemUi = true, device = "id:pixel_8")
+@Composable
+private fun TryItTryOnPhonePreview() {
+    WornTheme {
+        TryItScaffold(
+            state = TryItState(
+                hasYouCamKey = true,
+                hasModelPhoto = true,
+                selectedCategory = GarmentCategory.TOP,
+            ),
+            isCompact = true,
+            photoBitmap = null,
+            hasPhoto = true,
+        )
+    }
+}
+
+@Preview(showSystemUi = true, device = "id:pixel_8")
+@Composable
+private fun TryItTryOnNoModelPhotoPreview() {
+    WornTheme {
+        TryItScaffold(
+            state = TryItState(hasYouCamKey = true, hasModelPhoto = false),
+            isCompact = true,
             photoBitmap = null,
             hasPhoto = true,
         )
