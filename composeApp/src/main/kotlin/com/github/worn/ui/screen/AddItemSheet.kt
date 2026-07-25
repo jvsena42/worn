@@ -62,6 +62,8 @@ import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.AiLockedSheet
 import com.github.worn.ui.components.CategoryDropdown
 import com.github.worn.ui.components.ColorSection
+import com.github.worn.ui.components.CropEditorDialog
+import com.github.worn.ui.components.CropPhotoButton
 import com.github.worn.ui.components.FitSection
 import com.github.worn.ui.components.ItemNameField
 import com.github.worn.ui.components.MaterialSection
@@ -131,6 +133,25 @@ internal fun AddItemForm(
         },
     )
 
+    if (formState.showCropEditor) {
+        formState.photoBytes?.let { bytes ->
+            CropEditorDialog(
+                imageBytes = bytes,
+                onCancel = { formState.showCropEditor = false },
+                onCropped = { cropped ->
+                    formState.photoBytes = cropped
+                    // Rebase the background-removal baseline so toggling it off reverts to the
+                    // cropped photo rather than resurrecting the pre-crop frame.
+                    formState.originalPhotoBytes = cropped
+                    formState.photoBitmap =
+                        BitmapFactory.decodeByteArray(cropped, 0, cropped.size)?.asImageBitmap()
+                    formState.bgRemoved = false
+                    formState.showCropEditor = false
+                },
+            )
+        }
+    }
+
     if (formState.showAiLockedSheet) {
         AiLockedSheet(onDismiss = { formState.showAiLockedSheet = false })
     }
@@ -166,6 +187,8 @@ internal fun AddItemForm(
 
     AddItemFormContent(
         photoBitmap = formState.photoBitmap ?: formState.existingPhotoBitmap,
+        canCrop = formState.photoBytes != null,
+        onCropClick = { formState.showCropEditor = true },
         canRemoveBackground = formState.photoBytes != null,
         bgRemoved = formState.bgRemoved,
         isProcessingBg = formState.isProcessingBg,
@@ -216,6 +239,7 @@ private class AddItemFormState(
     var selectedFit by mutableStateOf(existingItem?.fit)
     var selectedMaterial by mutableStateOf(existingItem?.material)
     var showSourceChooser by mutableStateOf(false)
+    var showCropEditor by mutableStateOf(false)
     var showAiLockedSheet by mutableStateOf(false)
     val hasPhoto: Boolean get() = photoBytes != null || existingPhotoBitmap != null
 }
@@ -288,6 +312,8 @@ private fun PhotoSourceChooser(
 @Composable
 private fun AddItemFormContent(
     photoBitmap: ImageBitmap?,
+    canCrop: Boolean,
+    onCropClick: () -> Unit,
     canRemoveBackground: Boolean,
     bgRemoved: Boolean,
     isProcessingBg: Boolean,
@@ -335,6 +361,13 @@ private fun AddItemFormContent(
             isProcessing = isProcessingBg,
             modifier = Modifier.testTag("add_item_photo_zone"),
         )
+        if (canCrop) {
+            CropPhotoButton(
+                onClick = onCropClick,
+                enabled = !isProcessingBg,
+                modifier = Modifier.testTag("add_item_crop_button"),
+            )
+        }
         if (canRemoveBackground) {
             RemoveBackgroundToggle(
                 checked = bgRemoved,

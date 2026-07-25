@@ -46,6 +46,13 @@
 "add_item_remove_background" = "Remove background";
 "add_item_removing_background" = "Removing background…";
 "add_item_bg_removal_failed" = "Couldn't remove the background. Using the original photo.";
+
+/* Crop */
+"crop_photo_button" = "Crop";
+"crop_title" = "Crop photo";
+"crop_apply" = "Apply";
+"crop_reset" = "Reset";
+"crop_failed" = "Could not crop the photo";
 "add_item_ai_badge" = "Auto-tag with AI";
 "add_item_name_hint" = "Item name";
 "add_item_save_to_wardrobe" = "Save to wardrobe";
