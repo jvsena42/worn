@@ -666,7 +666,7 @@ private fun YouCamCredentialsSheetContent(
 ) {
     var clientId by remember { mutableStateOf("") }
     var clientSecret by remember { mutableStateOf("") }
-    var idVisible by remember { mutableStateOf(true) }
+    var idVisible by remember { mutableStateOf(false) }
     var secretVisible by remember { mutableStateOf(false) }
 
     Column(

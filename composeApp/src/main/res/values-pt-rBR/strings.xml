@@ -90,8 +90,8 @@
     <string name="settings_youcam_required">Necessário para a prova virtual</string>
     <string name="settings_youcam_description">Cole suas credenciais do YouCam da Perfect Corp para renderizar roupas sobre a sua foto. Cada prova consome unidades do YouCam da sua conta.</string>
     <string name="settings_youcam_get_key">Obtenha credenciais em yce.perfectcorp.com →</string>
-    <string name="settings_youcam_client_id_hint">Client ID</string>
-    <string name="settings_youcam_client_secret_hint">Client secret</string>
+    <string name="settings_youcam_client_id_hint">Chave de API (mais curta)</string>
+    <string name="settings_youcam_client_secret_hint">Chave secreta (mais longa)</string>
     <string name="settings_youcam_save">Salvar credenciais</string>
     <string name="settings_youcam_remove">Remover credenciais</string>
     <string name="settings_suggestions_bugs">Sugestões e Bugs</string>

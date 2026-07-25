@@ -87,8 +87,8 @@
 "settings_youcam_required" = "Necessário para a prova virtual";
 "settings_youcam_description" = "Cole suas credenciais do YouCam da Perfect Corp para renderizar roupas sobre a sua foto. Cada prova consome unidades do YouCam da sua conta.";
 "settings_youcam_get_key" = "Obtenha credenciais em yce.perfectcorp.com →";
-"settings_youcam_client_id_hint" = "Client ID";
-"settings_youcam_client_secret_hint" = "Client secret";
+"settings_youcam_client_id_hint" = "Chave de API (mais curta)";
+"settings_youcam_client_secret_hint" = "Chave secreta (mais longa)";
 "settings_youcam_save" = "Salvar credenciais";
 "settings_youcam_remove" = "Remover credenciais";
 "settings_suggestions_bugs" = "Sugestões e Bugs";

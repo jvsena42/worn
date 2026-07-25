@@ -87,8 +87,8 @@
 "settings_youcam_required" = "Required for virtual try-on";
 "settings_youcam_description" = "Paste your Perfect Corp YouCam credentials to render clothes onto your photo. Each try-on spends YouCam units from your account.";
 "settings_youcam_get_key" = "Get credentials at yce.perfectcorp.com →";
-"settings_youcam_client_id_hint" = "Client ID";
-"settings_youcam_client_secret_hint" = "Client secret";
+"settings_youcam_client_id_hint" = "API Key (shorter)";
+"settings_youcam_client_secret_hint" = "Secret Key (longer)";
 "settings_youcam_save" = "Save credentials";
 "settings_youcam_remove" = "Remove credentials";
 "settings_suggestions_bugs" = "Suggestions & Bugs";

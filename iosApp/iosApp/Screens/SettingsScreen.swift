@@ -403,7 +403,7 @@ private struct YouCamCredentialsSheet: View {
 
     @State private var clientId = ""
     @State private var clientSecret = ""
-    @State private var idVisible = true
+    @State private var idVisible = false
     @State private var secretVisible = false
 
     var body: some View {
