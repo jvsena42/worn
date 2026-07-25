@@ -1,5 +1,4 @@
 import SwiftUI
-import PhotosUI
 import Shared
 
 struct SettingsScreen: View {
@@ -9,10 +8,6 @@ struct SettingsScreen: View {
     @State private var showProfileSheet = false
     @State private var showApiKeySheet = false
     @State private var showYouCamSheet = false
-    @State private var showModelPhotoDialog = false
-    @State private var showModelPhotoPicker = false
-    @State private var showModelCamera = false
-    @State private var selectedModelPhotoItem: PhotosPickerItem?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -57,16 +52,6 @@ struct SettingsScreen: View {
                     .padding(.top, 10)
                     .accessibilityIdentifier("settings_youcam_card")
 
-                    settingsCard(
-                        iconColor: WornColors.accentIndigo,
-                        iconName: "camera",
-                        title: String(localized: "settings_model_photo_title"),
-                        subtitle: viewModel.state.hasModelPhoto ? String(localized: "settings_model_photo_saved") : String(localized: "settings_model_photo_required"),
-                        action: { showModelPhotoDialog = true }
-                    )
-                    .padding(.top, 10)
-                    .accessibilityIdentifier("settings_model_photo_card")
-
                     sectionLabel(String(localized: "settings_section_about"))
                         .padding(.top, 24)
                     aboutCard
@@ -101,35 +86,6 @@ struct SettingsScreen: View {
                 onClear: { viewModel.clearYouCamCredentials() }
             )
             .presentationDetents([.medium, .large])
-        }
-        .confirmationDialog(String(localized: "settings_model_photo_title"), isPresented: $showModelPhotoDialog, titleVisibility: .visible) {
-            Button(String(localized: "settings_model_photo_add")) { showModelCamera = true }
-            Button(String(localized: "settings_model_photo_change")) { showModelPhotoPicker = true }
-            if viewModel.state.hasModelPhoto {
-                Button(String(localized: "settings_model_photo_remove"), role: .destructive) { viewModel.clearModelPhoto() }
-            }
-            Button(String(localized: "common_cancel"), role: .cancel) {}
-        } message: {
-            Text(String(localized: "settings_model_photo_description"))
-        }
-        .photosPicker(isPresented: $showModelPhotoPicker, selection: $selectedModelPhotoItem, matching: .images)
-        .fullScreenCover(isPresented: $showModelCamera) {
-            CameraView(
-                onImageCaptured: { image in
-                    if let data = image.jpegData(compressionQuality: 0.9) {
-                        viewModel.saveModelPhoto(data)
-                    }
-                },
-                onDismiss: { showModelCamera = false }
-            )
-            .ignoresSafeArea()
-        }
-        .onChange(of: selectedModelPhotoItem) { _, newItem in
-            Task {
-                if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                    viewModel.saveModelPhoto(data)
-                }
-            }
         }
     }
 

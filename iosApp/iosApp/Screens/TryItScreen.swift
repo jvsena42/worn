@@ -14,6 +14,11 @@ struct TryItScreen: View {
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var selectedItem: ClothingItem?
 
+    @State private var showPersonSourceChooser = false
+    @State private var showPersonPhotoPicker = false
+    @State private var showPersonCamera = false
+    @State private var selectedPersonPhotoItem: PhotosPickerItem?
+
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isCompact: Bool { sizeClass == .compact }
     private var contentPadding: CGFloat { isCompact ? 24 : 32 }
@@ -459,45 +464,107 @@ struct TryItScreen: View {
     @ViewBuilder
     private func tryOnSection(isCompact: Bool) -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            if !viewModel.state.hasModelPhoto {
-                modelPhotoPrompt
-            } else {
-                Text(String(localized: "tryit_tryon_category_title"))
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(WornColors.textPrimary)
-                    .tracking(-0.2)
+            Text(String(localized: "tryit_your_photo_title"))
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(WornColors.textPrimary)
+                .tracking(-0.2)
 
-                categorySelector
+            personPhotoZone(height: isCompact ? 200 : 260)
 
-                if photoData != nil && viewModel.state.selectedCategory != nil
-                    && viewModel.state.tryOnImage == nil && !viewModel.state.tryOnLoading {
-                    seeItOnMeButton
-                }
+            Text(String(localized: "tryit_tryon_category_title"))
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(WornColors.textPrimary)
+                .tracking(-0.2)
 
-                if viewModel.state.tryOnLoading {
-                    tryOnLoadingIndicator
-                }
+            categorySelector
 
-                if let error = viewModel.state.tryOnError, !viewModel.state.tryOnLoading {
-                    ErrorContentView(
-                        message: error as String,
-                        onRetry: { generateTryOn() },
-                        retryButtonColor: WornColors.accentIndigo
-                    )
-                    .padding(.vertical, 16)
-                }
-
-                if let imageData = viewModel.tryOnImageData {
-                    tryOnResultView(imageData: imageData, height: isCompact ? 320 : 400)
-                }
-
-                Text(String(localized: "tryit_tryon_cost_note"))
-                    .font(.system(size: 12))
-                    .foregroundColor(WornColors.textSecondary)
+            if photoData != nil && viewModel.state.selectedCategory != nil
+                && viewModel.personImageData != nil
+                && viewModel.state.tryOnImage == nil && !viewModel.state.tryOnLoading {
+                seeItOnMeButton
             }
+
+            if viewModel.state.tryOnLoading {
+                tryOnLoadingIndicator
+            }
+
+            if let error = viewModel.state.tryOnError, !viewModel.state.tryOnLoading {
+                ErrorContentView(
+                    message: error as String,
+                    onRetry: { generateTryOn() },
+                    retryButtonColor: WornColors.accentIndigo
+                )
+                .padding(.vertical, 16)
+            }
+
+            if let imageData = viewModel.tryOnImageData {
+                tryOnResultView(imageData: imageData, height: isCompact ? 320 : 400)
+            }
+
+            Text(String(localized: "tryit_tryon_cost_note"))
+                .font(.system(size: 12))
+                .foregroundColor(WornColors.textSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityIdentifier("try_on_section")
+        .confirmationDialog(String(localized: "add_item_photo_dialog_title"), isPresented: $showPersonSourceChooser) {
+            Button(String(localized: "add_item_take_photo")) { showPersonCamera = true }
+            Button(String(localized: "add_item_choose_gallery")) { showPersonPhotoPicker = true }
+            Button(String(localized: "common_cancel"), role: .cancel) {}
+        }
+        .photosPicker(isPresented: $showPersonPhotoPicker, selection: $selectedPersonPhotoItem, matching: .images)
+        .fullScreenCover(isPresented: $showPersonCamera) {
+            CameraView(
+                onImageCaptured: { image in
+                    if let data = image.jpegData(compressionQuality: 0.9) {
+                        viewModel.setPersonPhoto(imageData: data)
+                    }
+                },
+                onDismiss: { showPersonCamera = false }
+            )
+            .ignoresSafeArea()
+        }
+        .onChange(of: selectedPersonPhotoItem) { _, newItem in
+            Task {
+                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                    viewModel.setPersonPhoto(imageData: data)
+                }
+            }
+        }
+    }
+
+    private func personPhotoZone(height: CGFloat) -> some View {
+        Button { showPersonSourceChooser = true } label: {
+            ZStack {
+                if let data = viewModel.personImageData, let image = UIImage(data: data) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(maxWidth: .infinity, maxHeight: height)
+                        .clipped()
+                } else {
+                    VStack(spacing: 12) {
+                        Image(systemName: "camera")
+                            .font(.system(size: 44))
+                            .foregroundColor(WornColors.iconMuted)
+                        Text(String(localized: "tryit_your_photo_hint"))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(WornColors.textSecondary)
+                            .multilineTextAlignment(.center)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: height)
+            .background(WornColors.bgCard)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(WornColors.borderStrong, lineWidth: 1.5)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("try_on_person_zone")
     }
 
     private var categorySelector: some View {
@@ -579,30 +646,6 @@ struct TryItScreen: View {
             )
             .accessibilityIdentifier("try_on_result")
         }
-    }
-
-    private var modelPhotoPrompt: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "sparkles")
-                .font(.system(size: 36))
-                .foregroundColor(WornColors.accentIndigo)
-            Text(String(localized: "tryit_set_model_photo"))
-                .font(.system(size: 14))
-                .foregroundColor(WornColors.textSecondary)
-                .multilineTextAlignment(.center)
-            indigoCtaButton(text: String(localized: "tryit_set_model_photo_cta")) {
-                onTabSelected(.settings)
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(24)
-        .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(WornColors.borderSubtle, lineWidth: 1)
-        )
-        .accessibilityIdentifier("try_on_model_photo_prompt")
     }
 
     private func generateTryOn() {

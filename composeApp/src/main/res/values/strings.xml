@@ -94,13 +94,6 @@
     <string name="settings_youcam_client_secret_hint">Client secret</string>
     <string name="settings_youcam_save">Save credentials</string>
     <string name="settings_youcam_remove">Remove credentials</string>
-    <string name="settings_model_photo_title">Model photo</string>
-    <string name="settings_model_photo_saved">Saved</string>
-    <string name="settings_model_photo_required">A full-body photo for try-on</string>
-    <string name="settings_model_photo_description">Save a clear, full-body photo of yourself. Virtual try-on renders clothes onto it, and it is uploaded to YouCam each time you generate a try-on.</string>
-    <string name="settings_model_photo_add">Add photo</string>
-    <string name="settings_model_photo_change">Change photo</string>
-    <string name="settings_model_photo_remove">Remove photo</string>
     <string name="settings_suggestions_bugs">Suggestions &amp; Bugs</string>
     <string name="settings_version">Version</string>
     <string name="settings_licenses">Licenses</string>
@@ -142,6 +135,8 @@
     <string name="tryit_locked_description">Connect Claude to analyze items against your wardrobe, or YouCam to see them on you. Add either in Settings.</string>
     <string name="tryit_open_settings">Open Settings</string>
     <string name="tryit_connect_youcam">Connect YouCam</string>
+    <string name="tryit_your_photo_title">Your photo</string>
+    <string name="tryit_your_photo_hint">Tap to add a full-body\nphoto of yourself</string>
     <string name="tryit_see_on_me">See it on me</string>
     <string name="tryit_tryon_generating">Rendering your try-on…</string>
     <string name="tryit_tryon_category_title">What is it?</string>
@@ -150,8 +145,6 @@
     <string name="tryit_category_full">Full outfit</string>
     <string name="tryit_category_shoes">Shoes</string>
     <string name="tryit_tryon_result_title">On you</string>
-    <string name="tryit_set_model_photo">Save a model photo in Settings to try items on.</string>
-    <string name="tryit_set_model_photo_cta">Set model photo</string>
     <string name="tryit_tryon_cost_note">Each try-on spends YouCam units.</string>
 
     <!-- AI Locked Sheet -->

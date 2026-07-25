@@ -63,14 +63,6 @@ class SettingsViewModelWrapper: ObservableObject {
         viewModel.onIntent(intent: SettingsIntent.ClearYouCamCredentials())
     }
 
-    func saveModelPhoto(_ imageData: Data) {
-        viewModel.onIntent(intent: SettingsIntent.SaveModelPhoto(bytes: imageData.toKotlinByteArray()))
-    }
-
-    func clearModelPhoto() {
-        viewModel.onIntent(intent: SettingsIntent.ClearModelPhoto())
-    }
-
     deinit {
         cancellable?.cancel()
     }

@@ -109,6 +109,7 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
     var photoBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     var photoBytes by remember { mutableStateOf<ByteArray?>(null) }
     var showSourceChooser by remember { mutableStateOf(false) }
+    var showPersonSourceChooser by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf<ClothingItem?>(null) }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -131,6 +132,12 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
         },
     )
 
+    PhotoSourceChooser(
+        show = showPersonSourceChooser,
+        onDismiss = { showPersonSourceChooser = false },
+        onPhoto = { bytes, _ -> viewModel.onIntent(TryItIntent.SetPersonPhoto(bytes)) },
+    )
+
     TryItScaffold(
         state = state,
         isCompact = isCompact,
@@ -140,6 +147,7 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
         onPhotoClick = { showSourceChooser = true },
         onAnalyze = { photoBytes?.let { viewModel.onIntent(TryItIntent.AnalyzePhoto(it)) } },
         onSelectCategory = { viewModel.onIntent(TryItIntent.SelectCategory(it)) },
+        onPersonPhotoClick = { showPersonSourceChooser = true },
         onGenerateTryOn = { photoBytes?.let { viewModel.onIntent(TryItIntent.GenerateTryOn(it)) } },
         onItemClick = { selectedItem = it },
         onGoToSettings = { onTabSelected(Tab.SETTINGS) },
@@ -263,6 +271,7 @@ private fun TryItScaffold(
     onPhotoClick: () -> Unit = {},
     onAnalyze: () -> Unit = {},
     onSelectCategory: (GarmentCategory) -> Unit = {},
+    onPersonPhotoClick: () -> Unit = {},
     onGenerateTryOn: () -> Unit = {},
     onItemClick: (ClothingItem) -> Unit = {},
     onGoToSettings: () -> Unit = {},
@@ -292,9 +301,9 @@ private fun TryItScaffold(
                 onPhotoClick = onPhotoClick,
                 onAnalyze = onAnalyze,
                 onSelectCategory = onSelectCategory,
+                onPersonPhotoClick = onPersonPhotoClick,
                 onGenerateTryOn = onGenerateTryOn,
                 onItemClick = onItemClick,
-                onGoToSettings = onGoToSettings,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
@@ -386,20 +395,20 @@ private fun TryItContent(
     onPhotoClick: () -> Unit,
     onAnalyze: () -> Unit,
     onSelectCategory: (GarmentCategory) -> Unit,
+    onPersonPhotoClick: () -> Unit,
     onGenerateTryOn: () -> Unit,
     onItemClick: (ClothingItem) -> Unit,
-    onGoToSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (isCompact) {
         TryItPhoneContent(
             state, photoBitmap, hasPhoto, onPhotoClick, onAnalyze,
-            onSelectCategory, onGenerateTryOn, onItemClick, onGoToSettings, modifier,
+            onSelectCategory, onPersonPhotoClick, onGenerateTryOn, onItemClick, modifier,
         )
     } else {
         TryItTabletContent(
             state, photoBitmap, hasPhoto, onPhotoClick, onAnalyze,
-            onSelectCategory, onGenerateTryOn, onItemClick, onGoToSettings, modifier,
+            onSelectCategory, onPersonPhotoClick, onGenerateTryOn, onItemClick, modifier,
         )
     }
 }
@@ -412,9 +421,9 @@ private fun TryItPhoneContent(
     onPhotoClick: () -> Unit,
     onAnalyze: () -> Unit,
     onSelectCategory: (GarmentCategory) -> Unit,
+    onPersonPhotoClick: () -> Unit,
     onGenerateTryOn: () -> Unit,
     onItemClick: (ClothingItem) -> Unit,
-    onGoToSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -451,8 +460,8 @@ private fun TryItPhoneContent(
                 hasPhoto = hasPhoto,
                 isCompact = true,
                 onSelectCategory = onSelectCategory,
+                onPersonPhotoClick = onPersonPhotoClick,
                 onGenerateTryOn = onGenerateTryOn,
-                onGoToSettings = onGoToSettings,
             )
         }
         Spacer(Modifier.height(12.dp))
@@ -467,9 +476,9 @@ private fun TryItTabletContent(
     onPhotoClick: () -> Unit,
     onAnalyze: () -> Unit,
     onSelectCategory: (GarmentCategory) -> Unit,
+    onPersonPhotoClick: () -> Unit,
     onGenerateTryOn: () -> Unit,
     onItemClick: (ClothingItem) -> Unit,
-    onGoToSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
@@ -516,8 +525,8 @@ private fun TryItTabletContent(
                         hasPhoto = hasPhoto,
                         isCompact = false,
                         onSelectCategory = onSelectCategory,
+                        onPersonPhotoClick = onPersonPhotoClick,
                         onGenerateTryOn = onGenerateTryOn,
-                        onGoToSettings = onGoToSettings,
                     )
                 }
             }
@@ -817,50 +826,103 @@ private fun TryOnSection(
     hasPhoto: Boolean,
     isCompact: Boolean,
     onSelectCategory: (GarmentCategory) -> Unit,
+    onPersonPhotoClick: () -> Unit,
     onGenerateTryOn: () -> Unit,
-    onGoToSettings: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.testTag("try_on_section"),
     ) {
-        if (!state.hasModelPhoto) {
-            ModelPhotoPrompt(onGoToSettings = onGoToSettings)
+        Text(
+            text = stringResource(R.string.tryit_your_photo_title),
+            color = WornColors.TextPrimary,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = (-0.2).sp,
+        )
+        PersonPhotoZone(
+            personImage = state.personImage,
+            height = if (isCompact) 200.dp else 260.dp,
+            onClick = onPersonPhotoClick,
+        )
+        Text(
+            text = stringResource(R.string.tryit_tryon_category_title),
+            color = WornColors.TextPrimary,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = (-0.2).sp,
+        )
+        GarmentCategorySelector(selected = state.selectedCategory, onSelect = onSelectCategory)
+        val readyToGenerate = hasPhoto && state.selectedCategory != null && state.personImage != null
+        val idle = state.tryOnImage == null && !state.tryOnLoading
+        if (readyToGenerate && idle) {
+            SeeItOnMeButton(onClick = onGenerateTryOn)
+        }
+        if (state.tryOnLoading) {
+            TryOnLoadingIndicator()
+        }
+        state.tryOnError?.let { errorMsg ->
+            if (!state.tryOnLoading) {
+                ErrorContentView(
+                    message = errorMsg,
+                    onRetry = onGenerateTryOn,
+                    modifier = Modifier.padding(vertical = 24.dp),
+                    retryButtonColor = WornColors.AccentIndigo,
+                )
+            }
+        }
+        state.tryOnImage?.let { image ->
+            TryOnResultView(imageBytes = image, height = if (isCompact) 320.dp else 400.dp)
+        }
+        Text(
+            text = stringResource(R.string.tryit_tryon_cost_note),
+            color = WornColors.TextSecondary,
+            fontSize = 12.sp,
+        )
+    }
+}
+
+@Composable
+private fun PersonPhotoZone(personImage: ByteArray?, height: Dp, onClick: () -> Unit) {
+    val bitmap = remember(personImage) {
+        personImage?.let { BitmapFactory.decodeByteArray(it, 0, it.size)?.asImageBitmap() }
+    }
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(20.dp),
+        color = WornColors.BgCard,
+        border = BorderStroke(1.5.dp, WornColors.BorderStrong),
+        shadowElevation = 1.dp,
+        modifier = Modifier.fillMaxWidth().height(height).testTag("try_on_person_zone"),
+    ) {
+        if (bitmap != null) {
+            androidx.compose.foundation.Image(
+                bitmap = bitmap,
+                contentDescription = stringResource(R.string.tryit_your_photo_title),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
+            )
         } else {
-            Text(
-                text = stringResource(R.string.tryit_tryon_category_title),
-                color = WornColors.TextPrimary,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = (-0.2).sp,
-            )
-            GarmentCategorySelector(selected = state.selectedCategory, onSelect = onSelectCategory)
-            val readyToGenerate = hasPhoto && state.selectedCategory != null
-            val idle = state.tryOnImage == null && !state.tryOnLoading
-            if (readyToGenerate && idle) {
-                SeeItOnMeButton(onClick = onGenerateTryOn)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.CameraAlt,
+                    contentDescription = null,
+                    tint = WornColors.IconMuted,
+                    modifier = Modifier.size(44.dp),
+                )
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = stringResource(R.string.tryit_your_photo_hint),
+                    color = WornColors.TextSecondary,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                )
             }
-            if (state.tryOnLoading) {
-                TryOnLoadingIndicator()
-            }
-            state.tryOnError?.let { errorMsg ->
-                if (!state.tryOnLoading) {
-                    ErrorContentView(
-                        message = errorMsg,
-                        onRetry = onGenerateTryOn,
-                        modifier = Modifier.padding(vertical = 24.dp),
-                        retryButtonColor = WornColors.AccentIndigo,
-                    )
-                }
-            }
-            state.tryOnImage?.let { image ->
-                TryOnResultView(imageBytes = image, height = if (isCompact) 320.dp else 400.dp)
-            }
-            Text(
-                text = stringResource(R.string.tryit_tryon_cost_note),
-                color = WornColors.TextSecondary,
-                fontSize = 12.sp,
-            )
         }
     }
 }
@@ -966,39 +1028,6 @@ private fun TryOnResultView(imageBytes: ByteArray, height: Dp) {
     }
 }
 
-@Composable
-private fun ModelPhotoPrompt(onGoToSettings: () -> Unit) {
-    Surface(
-        shape = RoundedCornerShape(20.dp),
-        color = WornColors.BgCard,
-        border = BorderStroke(1.dp, WornColors.BorderSubtle),
-        modifier = Modifier.fillMaxWidth().testTag("try_on_model_photo_prompt"),
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(24.dp),
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.AutoAwesome,
-                contentDescription = null,
-                tint = WornColors.AccentIndigo,
-                modifier = Modifier.size(36.dp),
-            )
-            Text(
-                text = stringResource(R.string.tryit_set_model_photo),
-                color = WornColors.TextSecondary,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-            )
-            IndigoCtaButton(
-                text = stringResource(R.string.tryit_set_model_photo_cta),
-                onClick = onGoToSettings,
-            )
-        }
-    }
-}
-
 private const val JPEG_QUALITY = 90
 
 // region Previews
@@ -1072,22 +1101,8 @@ private fun TryItTryOnPhonePreview() {
         TryItScaffold(
             state = TryItState(
                 hasYouCamKey = true,
-                hasModelPhoto = true,
                 selectedCategory = GarmentCategory.TOP,
             ),
-            isCompact = true,
-            photoBitmap = null,
-            hasPhoto = true,
-        )
-    }
-}
-
-@Preview(showSystemUi = true, device = "id:pixel_8")
-@Composable
-private fun TryItTryOnNoModelPhotoPreview() {
-    WornTheme {
-        TryItScaffold(
-            state = TryItState(hasYouCamKey = true, hasModelPhoto = false),
             isCompact = true,
             photoBitmap = null,
             hasPhoto = true,

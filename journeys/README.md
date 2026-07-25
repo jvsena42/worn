@@ -50,7 +50,6 @@ Each journey is self-contained; evaluate them independently.
 | `create-first-outfit.xml` | From the empty Outfits tab, open the Create-outfit sheet. |
 | `connect-api-key.xml` | Open Settings and reach the Claude API key entry sheet. |
 | `connect-youcam.xml` | Open Settings and reach the YouCam try-on credentials sheet. |
-| `model-photo.xml` | Open Settings and reach the model-photo picker used by virtual try-on. |
 | `edit-profile.xml` | Open Settings and reach the Your-Profile sheet with its chip groups. |
 | `try-it-ai-locked.xml` | Verify the Try It locked state (neither key) routes to Settings. |
 | `gaps-common-suggestions.xml` | Verify the Gaps common-suggestions banner opens the AI-locked sheet. |

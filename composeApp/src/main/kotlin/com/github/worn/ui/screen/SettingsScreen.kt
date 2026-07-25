@@ -2,10 +2,6 @@
 
 package com.github.worn.ui.screen
 
-import android.Manifest
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,14 +23,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.AutoAwesome
-import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Checkroom
-import androidx.compose.material.icons.outlined.PhotoCamera
-import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -43,7 +35,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -91,7 +82,6 @@ import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
-import java.io.ByteArrayOutputStream
 
 @Suppress("UnusedParameter")
 @Composable
@@ -104,7 +94,6 @@ fun SettingsScreen(onTabSelected: (Tab) -> Unit) {
     var showProfileSheet by remember { mutableStateOf(false) }
     var showApiKeySheet by remember { mutableStateOf(false) }
     var showYouCamSheet by remember { mutableStateOf(false) }
-    var showModelPhotoDialog by remember { mutableStateOf(false) }
 
     SettingsScaffold(
         state = state,
@@ -112,7 +101,6 @@ fun SettingsScreen(onTabSelected: (Tab) -> Unit) {
         onProfileClick = { showProfileSheet = true },
         onApiKeyClick = { showApiKeySheet = true },
         onYouCamClick = { showYouCamSheet = true },
-        onModelPhotoClick = { showModelPhotoDialog = true },
     )
 
     if (showProfileSheet) {
@@ -153,20 +141,6 @@ fun SettingsScreen(onTabSelected: (Tab) -> Unit) {
             onDismiss = { showYouCamSheet = false },
         )
     }
-
-    ModelPhotoDialog(
-        show = showModelPhotoDialog,
-        hasModelPhoto = state.hasModelPhoto,
-        onDismiss = { showModelPhotoDialog = false },
-        onPhoto = {
-            viewModel.onIntent(SettingsIntent.SaveModelPhoto(it))
-            showModelPhotoDialog = false
-        },
-        onRemove = {
-            viewModel.onIntent(SettingsIntent.ClearModelPhoto)
-            showModelPhotoDialog = false
-        },
-    )
 }
 
 @Composable
@@ -176,7 +150,6 @@ private fun SettingsScaffold(
     onProfileClick: () -> Unit = {},
     onApiKeyClick: () -> Unit = {},
     onYouCamClick: () -> Unit = {},
-    onModelPhotoClick: () -> Unit = {},
 ) {
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
@@ -232,20 +205,6 @@ private fun SettingsScaffold(
                 ),
                 onClick = onYouCamClick,
                 modifier = Modifier.testTag("settings_youcam_card"),
-            )
-            Spacer(Modifier.height(10.dp))
-            SettingsCard(
-                icon = { SettingsIcon(color = WornColors.AccentIndigo, icon = Icons.Outlined.PhotoCamera) },
-                title = stringResource(R.string.settings_model_photo_title),
-                subtitle = stringResource(
-                    if (state.hasModelPhoto) {
-                        R.string.settings_model_photo_saved
-                    } else {
-                        R.string.settings_model_photo_required
-                    },
-                ),
-                onClick = onModelPhotoClick,
-                modifier = Modifier.testTag("settings_model_photo_card"),
             )
 
             Spacer(Modifier.height(24.dp))
@@ -790,108 +749,6 @@ private fun FieldLabel(text: String) {
 
 // endregion
 
-// region Model Photo Dialog
-
-@Composable
-private fun ModelPhotoDialog(
-    show: Boolean,
-    hasModelPhoto: Boolean,
-    onDismiss: () -> Unit,
-    onPhoto: (ByteArray) -> Unit,
-    onRemove: () -> Unit,
-) {
-    val context = LocalContext.current
-
-    val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-    ) { uri ->
-        uri?.let {
-            context.contentResolver.openInputStream(it)?.readBytes()?.let(onPhoto)
-        }
-    }
-
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicturePreview(),
-    ) { bitmap ->
-        bitmap?.let {
-            val stream = ByteArrayOutputStream()
-            it.compress(android.graphics.Bitmap.CompressFormat.JPEG, MODEL_PHOTO_JPEG_QUALITY, stream)
-            onPhoto(stream.toByteArray())
-        }
-    }
-
-    val cameraPermission = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-    ) { granted ->
-        if (granted) cameraLauncher.launch(null)
-    }
-
-    if (!show) return
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.settings_model_photo_title)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    stringResource(R.string.settings_model_photo_description),
-                    color = WornColors.TextSecondary,
-                    fontSize = 13.sp,
-                )
-                Spacer(Modifier.height(8.dp))
-                ModelPhotoOption(
-                    icon = Icons.Outlined.CameraAlt,
-                    label = stringResource(R.string.settings_model_photo_add),
-                    onClick = {
-                        onDismiss()
-                        cameraPermission.launch(Manifest.permission.CAMERA)
-                    },
-                )
-                ModelPhotoOption(
-                    icon = Icons.Outlined.PhotoLibrary,
-                    label = stringResource(R.string.settings_model_photo_change),
-                    onClick = {
-                        onDismiss()
-                        galleryLauncher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
-                        )
-                    },
-                )
-                if (hasModelPhoto) {
-                    ModelPhotoOption(
-                        icon = Icons.Outlined.PhotoCamera,
-                        label = stringResource(R.string.settings_model_photo_remove),
-                        onClick = onRemove,
-                    )
-                }
-            }
-        },
-        confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
-    )
-}
-
-@Composable
-private fun ModelPhotoOption(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    label: String,
-    onClick: () -> Unit,
-) {
-    TextButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(22.dp))
-            Spacer(Modifier.width(12.dp))
-            Text(label, fontSize = 15.sp)
-        }
-    }
-}
-
-// endregion
-
 // region Shared components
 
 @Composable
@@ -1020,7 +877,6 @@ private fun Lifestyle.displayName(): String = when (this) {
 
 // endregion
 
-private const val MODEL_PHOTO_JPEG_QUALITY = 90
 private const val DONATION_LN_ADDRESS = "jvsena42@blink.sv"
 private const val FEEDBACK_URL = "https://github.com/jvsena42/worn/issues/new"
 private const val LICENSE_URL = "https://github.com/jvsena42/worn/blob/main/LICENSE"

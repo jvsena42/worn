@@ -91,13 +91,6 @@
 "settings_youcam_client_secret_hint" = "Client secret";
 "settings_youcam_save" = "Salvar credenciais";
 "settings_youcam_remove" = "Remover credenciais";
-"settings_model_photo_title" = "Foto de modelo";
-"settings_model_photo_saved" = "Salva";
-"settings_model_photo_required" = "Uma foto de corpo inteiro para a prova";
-"settings_model_photo_description" = "Salve uma foto nítida de corpo inteiro sua. A prova virtual renderiza as roupas sobre ela, e a foto é enviada ao YouCam cada vez que você gera uma prova.";
-"settings_model_photo_add" = "Adicionar foto";
-"settings_model_photo_change" = "Trocar foto";
-"settings_model_photo_remove" = "Remover foto";
 "settings_suggestions_bugs" = "Sugestões e Bugs";
 "settings_version" = "Versão";
 "settings_licenses" = "Licenças";
@@ -139,6 +132,8 @@
 "tryit_locked_description" = "Conecte o Claude para analisar peças com base no seu guarda-roupa, ou o YouCam para vê-las em você. Adicione um dos dois em Configurações.";
 "tryit_open_settings" = "Abrir Configurações";
 "tryit_connect_youcam" = "Conectar YouCam";
+"tryit_your_photo_title" = "Sua foto";
+"tryit_your_photo_hint" = "Toque para adicionar uma foto sua de corpo inteiro";
 "tryit_see_on_me" = "Ver em mim";
 "tryit_tryon_generating" = "Renderizando sua prova…";
 "tryit_tryon_category_title" = "O que é?";
@@ -147,8 +142,6 @@
 "tryit_category_full" = "Look completo";
 "tryit_category_shoes" = "Calçados";
 "tryit_tryon_result_title" = "Em você";
-"tryit_set_model_photo" = "Salve uma foto de modelo em Configurações para experimentar peças.";
-"tryit_set_model_photo_cta" = "Definir foto de modelo";
 "tryit_tryon_cost_note" = "Cada prova consome unidades do YouCam.";
 
 /* AI Locked Sheet */

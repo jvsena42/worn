@@ -45,6 +45,15 @@ class TryItViewModelWrapper: ObservableObject {
         viewModel.onIntent(intent: TryItIntent.ResetTryOn())
     }
 
+    func setPersonPhoto(imageData: Data) {
+        viewModel.onIntent(intent: TryItIntent.SetPersonPhoto(imageBytes: imageData.toKotlinByteArray()))
+    }
+
+    /// The saved person photo, if any, as displayable `Data`.
+    var personImageData: Data? {
+        state.personImage?.toData()
+    }
+
     /// The generated try-on image, if any, as displayable `Data`.
     var tryOnImageData: Data? {
         state.tryOnImage?.toData()

@@ -91,13 +91,6 @@
 "settings_youcam_client_secret_hint" = "Client secret";
 "settings_youcam_save" = "Save credentials";
 "settings_youcam_remove" = "Remove credentials";
-"settings_model_photo_title" = "Model photo";
-"settings_model_photo_saved" = "Saved";
-"settings_model_photo_required" = "A full-body photo for try-on";
-"settings_model_photo_description" = "Save a clear, full-body photo of yourself. Virtual try-on renders clothes onto it, and it is uploaded to YouCam each time you generate a try-on.";
-"settings_model_photo_add" = "Add photo";
-"settings_model_photo_change" = "Change photo";
-"settings_model_photo_remove" = "Remove photo";
 "settings_suggestions_bugs" = "Suggestions & Bugs";
 "settings_version" = "Version";
 "settings_licenses" = "Licenses";
@@ -139,6 +132,8 @@
 "tryit_locked_description" = "Connect Claude to analyze items against your wardrobe, or YouCam to see them on you. Add either in Settings.";
 "tryit_open_settings" = "Open Settings";
 "tryit_connect_youcam" = "Connect YouCam";
+"tryit_your_photo_title" = "Your photo";
+"tryit_your_photo_hint" = "Tap to add a full-body photo of yourself";
 "tryit_see_on_me" = "See it on me";
 "tryit_tryon_generating" = "Rendering your try-on…";
 "tryit_tryon_category_title" = "What is it?";
@@ -147,8 +142,6 @@
 "tryit_category_full" = "Full outfit";
 "tryit_category_shoes" = "Shoes";
 "tryit_tryon_result_title" = "On you";
-"tryit_set_model_photo" = "Save a model photo in Settings to try items on.";
-"tryit_set_model_photo_cta" = "Set model photo";
 "tryit_tryon_cost_note" = "Each try-on spends YouCam units.";
 
 /* AI Locked Sheet */
