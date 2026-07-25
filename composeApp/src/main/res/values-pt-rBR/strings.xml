@@ -11,6 +11,7 @@
     <string name="common_all_seasons">Todas as estações</string>
     <string name="common_not_specified">Não especificado</string>
     <string name="common_retry">Tentar novamente</string>
+    <string name="common_ok">OK</string>
 
     <!-- Tabs -->
     <string name="tab_wardrobe">ARMÁRIO</string>
@@ -45,6 +46,9 @@
     <string name="add_item_take_photo">Tirar foto</string>
     <string name="add_item_choose_gallery">Escolher da galeria</string>
     <string name="add_item_photo_hint">Toque para adicionar foto</string>
+    <string name="add_item_remove_background">Remover fundo</string>
+    <string name="add_item_removing_background">Removendo fundo…</string>
+    <string name="add_item_bg_removal_failed">Não foi possível remover o fundo. Usando a foto original.</string>
     <string name="add_item_ai_badge">Auto-tag com IA</string>
     <string name="add_item_name_hint">Nome do item</string>
     <string name="add_item_save_to_wardrobe">Salvar no armário</string>

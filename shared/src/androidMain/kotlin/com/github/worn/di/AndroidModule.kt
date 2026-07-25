@@ -2,6 +2,7 @@ package com.github.worn.di
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import com.github.worn.data.source.image.BackgroundRemover
 import com.github.worn.data.source.local.DatabaseDriverFactory
 import com.github.worn.data.source.local.PhotoFileStorage
 import com.github.worn.data.source.local.createDataStore
@@ -17,6 +18,7 @@ val androidModule = module {
     single { DatabaseDriverFactory(get()) }
     single { get<DatabaseDriverFactory>().create() }
     single { PhotoFileStorage(get()) }
+    single { BackgroundRemover(get()) }
     single<SecretStore> { AndroidSecretStore(get()) }
     single { HttpClient(OkHttp) }
     single<CoroutineContext> { Dispatchers.IO }
