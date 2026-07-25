@@ -28,12 +28,18 @@ sealed interface SettingsIntent {
     data class ToggleLifestyle(val lifestyle: Lifestyle) : SettingsIntent
     data class SaveApiKey(val key: String) : SettingsIntent
     data object ClearApiKey : SettingsIntent
+    data class SaveYouCamCredentials(val clientId: String, val clientSecret: String) : SettingsIntent
+    data object ClearYouCamCredentials : SettingsIntent
+    data class SaveModelPhoto(val bytes: ByteArray) : SettingsIntent
+    data object ClearModelPhoto : SettingsIntent
 }
 
 data class SettingsState(
     val userProfile: UserProfile = UserProfile(),
     val isLoading: Boolean = false,
     val hasApiKey: Boolean = false,
+    val hasYouCamKey: Boolean = false,
+    val hasModelPhoto: Boolean = false,
     val error: String? = null,
 )
 
@@ -41,6 +47,10 @@ sealed interface SettingsEffect {
     data class ShowError(val message: String) : SettingsEffect
     data object ApiKeySaved : SettingsEffect
     data object ApiKeyCleared : SettingsEffect
+    data object YouCamCredentialsSaved : SettingsEffect
+    data object YouCamCredentialsCleared : SettingsEffect
+    data object ModelPhotoSaved : SettingsEffect
+    data object ModelPhotoCleared : SettingsEffect
 }
 
 class SettingsViewModel(
@@ -55,8 +65,18 @@ class SettingsViewModel(
     val effects: Flow<SettingsEffect> = _effects.receiveAsFlow()
 
     init {
-        _state.update { it.copy(hasApiKey = secretStore.getApiKey() != null) }
+        _state.update {
+            it.copy(
+                hasApiKey = secretStore.getApiKey() != null,
+                hasYouCamKey = hasYouCamCredentials(),
+            )
+        }
         onIntent(SettingsIntent.LoadProfile)
+        viewModelScope.launch {
+            settingsRepository.hasModelPhoto().collect { has ->
+                _state.update { it.copy(hasModelPhoto = has) }
+            }
+        }
     }
 
     fun onIntent(intent: SettingsIntent) {
@@ -69,6 +89,10 @@ class SettingsViewModel(
             is SettingsIntent.ToggleLifestyle -> toggleLifestyle(intent.lifestyle)
             is SettingsIntent.SaveApiKey -> saveApiKey(intent.key)
             is SettingsIntent.ClearApiKey -> clearApiKey()
+            is SettingsIntent.SaveYouCamCredentials -> saveYouCamCredentials(intent.clientId, intent.clientSecret)
+            is SettingsIntent.ClearYouCamCredentials -> clearYouCamCredentials()
+            is SettingsIntent.SaveModelPhoto -> saveModelPhoto(intent.bytes)
+            is SettingsIntent.ClearModelPhoto -> clearModelPhoto()
         }
     }
 
@@ -138,4 +162,46 @@ class SettingsViewModel(
             _effects.send(SettingsEffect.ApiKeyCleared)
         }
     }
+
+    private fun saveYouCamCredentials(clientId: String, clientSecret: String) {
+        secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_ID, clientId)
+        secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_SECRET, clientSecret)
+        _state.update { it.copy(hasYouCamKey = true) }
+        viewModelScope.launch {
+            _effects.send(SettingsEffect.YouCamCredentialsSaved)
+        }
+    }
+
+    private fun clearYouCamCredentials() {
+        secretStore.clearSecret(SecretStore.YOUCAM_CLIENT_ID)
+        secretStore.clearSecret(SecretStore.YOUCAM_CLIENT_SECRET)
+        _state.update { it.copy(hasYouCamKey = false) }
+        viewModelScope.launch {
+            _effects.send(SettingsEffect.YouCamCredentialsCleared)
+        }
+    }
+
+    private fun saveModelPhoto(bytes: ByteArray) {
+        viewModelScope.launch {
+            settingsRepository.saveModelPhoto(bytes)
+                .onSuccess { _effects.send(SettingsEffect.ModelPhotoSaved) }
+                .onFailure { error ->
+                    _effects.send(SettingsEffect.ShowError(error.message ?: "Failed to save photo"))
+                }
+        }
+    }
+
+    private fun clearModelPhoto() {
+        viewModelScope.launch {
+            settingsRepository.clearModelPhoto()
+                .onSuccess { _effects.send(SettingsEffect.ModelPhotoCleared) }
+                .onFailure { error ->
+                    _effects.send(SettingsEffect.ShowError(error.message ?: "Failed to remove photo"))
+                }
+        }
+    }
+
+    private fun hasYouCamCredentials(): Boolean =
+        !secretStore.getSecret(SecretStore.YOUCAM_CLIENT_ID).isNullOrBlank() &&
+            !secretStore.getSecret(SecretStore.YOUCAM_CLIENT_SECRET).isNullOrBlank()
 }

@@ -2,7 +2,10 @@ package com.github.worn.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.worn.domain.model.GarmentCategory
 import com.github.worn.domain.model.TryItResult
+import com.github.worn.domain.repository.SettingsRepository
+import com.github.worn.domain.repository.TryOnRepository
 import com.github.worn.domain.repository.WardrobeRepository
 import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.channels.Channel
@@ -16,6 +19,9 @@ import kotlinx.coroutines.launch
 
 sealed interface TryItIntent {
     data class AnalyzePhoto(val imageBytes: ByteArray) : TryItIntent
+    data class SelectCategory(val category: GarmentCategory) : TryItIntent
+    data class GenerateTryOn(val garmentBytes: ByteArray) : TryItIntent
+    data object ResetTryOn : TryItIntent
     data object Reset : TryItIntent
 }
 
@@ -24,6 +30,13 @@ data class TryItState(
     val hasApiKey: Boolean = false,
     val result: TryItResult? = null,
     val error: String? = null,
+    // Virtual try-on (YouCam)
+    val hasYouCamKey: Boolean = false,
+    val hasModelPhoto: Boolean = false,
+    val selectedCategory: GarmentCategory? = null,
+    val tryOnLoading: Boolean = false,
+    val tryOnImage: ByteArray? = null,
+    val tryOnError: String? = null,
 )
 
 sealed interface TryItEffect {
@@ -32,6 +45,8 @@ sealed interface TryItEffect {
 
 class TryItViewModel(
     private val wardrobeRepository: WardrobeRepository,
+    private val tryOnRepository: TryOnRepository,
+    private val settingsRepository: SettingsRepository,
     private val secretStore: SecretStore,
 ) : ViewModel() {
 
@@ -42,12 +57,27 @@ class TryItViewModel(
     val effects: Flow<TryItEffect> = _effects.receiveAsFlow()
 
     init {
-        _state.update { it.copy(hasApiKey = secretStore.getApiKey() != null) }
+        _state.update {
+            it.copy(
+                hasApiKey = secretStore.getApiKey() != null,
+                hasYouCamKey = hasYouCamCredentials(),
+            )
+        }
+        viewModelScope.launch {
+            settingsRepository.hasModelPhoto().collect { has ->
+                _state.update { it.copy(hasModelPhoto = has) }
+            }
+        }
     }
 
     fun onIntent(intent: TryItIntent) {
         when (intent) {
             is TryItIntent.AnalyzePhoto -> analyzePhoto(intent.imageBytes)
+            is TryItIntent.SelectCategory ->
+                _state.update { it.copy(selectedCategory = intent.category, tryOnError = null) }
+            is TryItIntent.GenerateTryOn -> generateTryOn(intent.garmentBytes)
+            is TryItIntent.ResetTryOn ->
+                _state.update { it.copy(tryOnImage = null, tryOnError = null) }
             is TryItIntent.Reset -> reset()
         }
     }
@@ -68,7 +98,30 @@ class TryItViewModel(
         }
     }
 
-    private fun reset() {
-        _state.update { it.copy(result = null, error = null) }
+    private fun generateTryOn(garmentBytes: ByteArray) {
+        val category = _state.value.selectedCategory ?: return
+        viewModelScope.launch {
+            _state.update { it.copy(tryOnLoading = true, tryOnError = null, tryOnImage = null) }
+            tryOnRepository.generateTryOn(garmentBytes, category)
+                .onSuccess { image ->
+                    _state.update { it.copy(tryOnImage = image, tryOnLoading = false) }
+                }
+                .onFailure { error ->
+                    _state.update { it.copy(tryOnLoading = false, tryOnError = error.message) }
+                    _effects.send(
+                        TryItEffect.ShowError(error.message ?: "Failed to generate try-on"),
+                    )
+                }
+        }
     }
+
+    private fun reset() {
+        _state.update {
+            it.copy(result = null, error = null, tryOnImage = null, tryOnError = null)
+        }
+    }
+
+    private fun hasYouCamCredentials(): Boolean =
+        !secretStore.getSecret(SecretStore.YOUCAM_CLIENT_ID).isNullOrBlank() &&
+            !secretStore.getSecret(SecretStore.YOUCAM_CLIENT_SECRET).isNullOrBlank()
 }
