@@ -56,7 +56,7 @@ class YouCamApiClientTest {
                     respond("""{"data":{"task_id":"task-1"}}""", HttpStatusCode.OK, jsonHeaders())
                 path.contains("/task/") && request.method == HttpMethod.Get ->
                     respond(
-                        """{"data":{"status":"success","results":[{"url":"https://cdn.example/r.jpg"}]}}""",
+                        """{"data":{"task_status":"success","results":[{"data":[{"url":"https://cdn.example/r.jpg"}]}]}}""",
                         HttpStatusCode.OK,
                         jsonHeaders(),
                     )

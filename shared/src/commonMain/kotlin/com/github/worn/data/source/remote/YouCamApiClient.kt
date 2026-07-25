@@ -172,9 +172,9 @@ class YouCamApiClient(
             val result = json.decodeFromString<YouCamPollResponse>(pollBody).data
             when (result.status.lowercase()) {
                 STATUS_SUCCESS ->
-                    return result.outputs.firstOrNull()?.url
+                    return result.results?.firstOrNull()?.data?.firstOrNull()?.url
                         ?: error("Try-on finished but returned no image.")
-                STATUS_ERROR -> error("Try-on failed. Please try again.")
+                STATUS_ERROR, STATUS_FAILED -> error("Try-on failed. Please try again.")
                 else -> delay(POLL_INTERVAL_MILLIS)
             }
         }
@@ -256,6 +256,7 @@ class YouCamApiClient(
         const val MAX_POLL_ATTEMPTS = 60
         const val STATUS_SUCCESS = "success"
         const val STATUS_ERROR = "error"
+        const val STATUS_FAILED = "failed"
         const val HTTP_UNAUTHORIZED = 401
         const val HTTP_FORBIDDEN = 403
         const val HTTP_TOO_MANY_REQUESTS = 429

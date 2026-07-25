@@ -3,6 +3,9 @@ package com.github.worn.data.source.remote
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+// Field names confirmed against live cloth-v3 responses. Note the wrapper differs by endpoint:
+// auth wraps its payload in "result", while file/task/poll wrap in "data".
+
 // Auth ------------------------------------------------------------------------------------------
 
 @Serializable
@@ -49,10 +52,6 @@ internal data class YouCamFileResponse(@SerialName("data") val data: Payload) {
 }
 
 // Task creation + polling -----------------------------------------------------------------------
-// NOTE: the exact task request/response wire format should be confirmed against
-// docs.perfectcorp.com/reference/ai_clothes before shipping; it is isolated here so only these
-// DTOs change. The documented fields (src_file_id, ref_file_id, garment_category, task_id, status)
-// are modelled below.
 
 @Serializable
 internal data class YouCamTaskRequest(
@@ -67,23 +66,29 @@ internal data class YouCamTaskResponse(@SerialName("data") val data: Payload) {
     data class Payload(@SerialName("task_id") val taskId: String)
 }
 
+// Poll: `task_status` is "running" until the task finishes as "success" / "error". While running,
+// `results` is null; on success it holds one entry per output, each with a `data` array of URLs.
 @Serializable
 internal data class YouCamPollResponse(@SerialName("data") val data: Payload) {
     @Serializable
     data class Payload(
-        val status: String,
-        @SerialName("results") val outputs: List<Output> = emptyList(),
+        @SerialName("task_status") val status: String,
+        val results: List<TaskResult>? = null,
         val error: String? = null,
     )
+
+    @Serializable
+    data class TaskResult(val data: List<Output>? = null)
 
     @Serializable
     data class Output(val url: String)
 }
 
 // Errors ----------------------------------------------------------------------------------------
+// e.g. {"status":400,"error":"...","error_code":"InvalidParameters"}
 
 @Serializable
 internal data class YouCamErrorResponse(
     val error: String? = null,
-    @SerialName("error_message") val errorMessage: String? = null,
+    @SerialName("error_code") val errorCode: String? = null,
 )
