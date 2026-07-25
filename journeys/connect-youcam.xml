@@ -1,0 +1,27 @@
+<journey name="Connect YouCam credentials">
+    <description>
+        Opens Settings and reaches the YouCam try-on credentials sheet, verifying the client id and
+        client secret fields and the save action. Start state: fresh install with no YouCam
+        credentials configured. Stops before entering real credentials.
+    </description>
+    <actions>
+        <action>
+            Tap the "SETTINGS" tab in the bottom navigation bar.
+        </action>
+        <action>
+            Verify the Settings screen shows a "YouCam Try-On" row with the subtitle
+            "Required for virtual try-on".
+        </action>
+        <action>
+            Tap the "YouCam Try-On" row.
+        </action>
+        <action>
+            Verify the YouCam credentials sheet is shown with a "Client ID" field
+            (youcam_client_id_field), a "Client secret" field (youcam_client_secret_field), and a
+            "Save credentials" button.
+        </action>
+        <action>
+            Verify the "Save credentials" button is disabled while both fields are empty.
+        </action>
+    </actions>
+</journey>

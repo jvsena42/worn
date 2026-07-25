@@ -20,11 +20,11 @@ disambiguate.
 
 ## Preconditions
 
-These journeys assume a **fresh install**: an empty wardrobe, no saved outfits, and no Claude API
-key configured. That state exercises the empty-state and AI-locked flows without needing a real
-photo, network access, or an API key. Journeys that would require capturing a photo or calling the
-Claude API stop at the point where that external input is needed and verify the UI is in the
-expected state.
+These journeys assume a **fresh install**: an empty wardrobe, no saved outfits, and no credentials
+configured (neither the Claude API key nor YouCam try-on credentials, and no saved model photo).
+That state exercises the empty-state and locked flows without needing a real photo, network access,
+or credentials. Journeys that would require capturing a photo or calling an external API stop at the
+point where that external input is needed and verify the UI is in the expected state.
 
 ## Running
 
@@ -49,6 +49,8 @@ Each journey is self-contained; evaluate them independently.
 | `add-first-item.xml` | From the empty wardrobe, open the Add-item sheet and the photo-source dialog. |
 | `create-first-outfit.xml` | From the empty Outfits tab, open the Create-outfit sheet. |
 | `connect-api-key.xml` | Open Settings and reach the Claude API key entry sheet. |
+| `connect-youcam.xml` | Open Settings and reach the YouCam try-on credentials sheet. |
+| `model-photo.xml` | Open Settings and reach the model-photo picker used by virtual try-on. |
 | `edit-profile.xml` | Open Settings and reach the Your-Profile sheet with its chip groups. |
-| `try-it-ai-locked.xml` | Verify the Try It AI-locked state routes to Settings. |
+| `try-it-ai-locked.xml` | Verify the Try It locked state (neither key) routes to Settings. |
 | `gaps-common-suggestions.xml` | Verify the Gaps common-suggestions banner opens the AI-locked sheet. |
