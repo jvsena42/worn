@@ -16,7 +16,9 @@ import io.ktor.client.statement.readRawBytes
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.json.Json
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
@@ -101,6 +103,7 @@ class YouCamApiClient(
     }
 
     private suspend fun uploadImage(token: String, feature: Feature, bytes: ByteArray): String {
+        log("upload: creating slot (${bytes.size}b) at /s2s/${feature.version}/file/${feature.type}")
         val createResponse = request("$BASE_URL/s2s/${feature.version}/file/${feature.type}") {
             authorized(token)
             contentType(ContentType.Application.Json)
@@ -114,16 +117,19 @@ class YouCamApiClient(
             )
         }
         ensureSuccess(createResponse, "upload/create")
-        val entry = json.decodeFromString<YouCamFileResponse>(createResponse.bodyAsText())
+        val createBody = createResponse.bodyAsText()
+        log("upload/create ok: ${createBody.take(BODY_PREVIEW_LEN)}")
+        val entry = json.decodeFromString<YouCamFileResponse>(createBody)
             .result.files.firstOrNull() ?: error("Upload could not be prepared. Please try again.")
         val upload = entry.requests.firstOrNull() ?: error("Upload could not be prepared. Please try again.")
 
+        log("upload: PUT ${bytes.size}b to storage")
         val uploadResponse = request(upload.url, method = HttpMethod.PUT) {
             upload.headers.forEach { (name, value) -> header(name, value) }
             setBody(bytes)
         }
         ensureSuccess(uploadResponse, "upload/put")
-        log("upload: ok file_id=${entry.fileId} (${bytes.size} bytes)")
+        log("upload: ok file_id=${entry.fileId}")
         return entry.fileId
     }
 
@@ -180,16 +186,22 @@ class YouCamApiClient(
         return response.readRawBytes()
     }
 
+    @Suppress("SwallowedException")
     private suspend fun request(
         url: String,
         method: HttpMethod = HttpMethod.POST,
         block: HttpRequestBuilder.() -> Unit = {},
     ): HttpResponse = try {
-        when (method) {
-            HttpMethod.GET -> httpClient.get(url, block)
-            HttpMethod.POST -> httpClient.post(url, block)
-            HttpMethod.PUT -> httpClient.put(url, block)
+        withTimeout(REQUEST_TIMEOUT_MILLIS) {
+            when (method) {
+                HttpMethod.GET -> httpClient.get(url, block)
+                HttpMethod.POST -> httpClient.post(url, block)
+                HttpMethod.PUT -> httpClient.put(url, block)
+            }
         }
+    } catch (e: TimeoutCancellationException) {
+        log("HTTP $method $url timed out after ${REQUEST_TIMEOUT_MILLIS}ms")
+        error("YouCam request timed out. Please try again.")
     } catch (e: CancellationException) {
         throw e
     } catch (e: IllegalStateException) {
@@ -241,6 +253,7 @@ class YouCamApiClient(
     private companion object {
         const val LOG_TAG = "YouCam"
         const val BODY_PREVIEW_LEN = 300
+        const val REQUEST_TIMEOUT_MILLIS = 30_000L
         const val BASE_URL = "https://yce-api-01.perfectcorp.com"
         const val CONTENT_TYPE_JPEG = "image/jpeg"
         const val TOKEN_TTL_MILLIS = 2 * 60 * 60 * 1000L
