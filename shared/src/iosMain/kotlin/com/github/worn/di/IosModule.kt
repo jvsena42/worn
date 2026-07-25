@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import com.github.worn.data.source.local.DatabaseDriverFactory
 import com.github.worn.data.source.local.PhotoFileStorage
 import com.github.worn.data.source.local.createIosDataStore
+import com.github.worn.util.crypto.RsaEncryptor
 import com.github.worn.util.secret.IosSecretStore
 import com.github.worn.util.secret.SecretStore
 import io.ktor.client.HttpClient
@@ -19,6 +20,7 @@ val iosModule = module {
     single { get<DatabaseDriverFactory>().create() }
     single { PhotoFileStorage() }
     single<SecretStore> { IosSecretStore() }
+    single { RsaEncryptor() }
     single { HttpClient(Darwin) }
     single<CoroutineContext> { Dispatchers.IO }
     single<DataStore<Preferences>> { createIosDataStore() }
