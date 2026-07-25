@@ -85,6 +85,22 @@
     <string name="settings_api_get_key">Obtenha uma chave gratuita em console.anthropic.com →</string>
     <string name="settings_save_connect">Salvar e conectar</string>
     <string name="settings_remove_key">Remover chave</string>
+    <string name="settings_youcam_title">Provar com YouCam</string>
+    <string name="settings_youcam_connected">Conectado</string>
+    <string name="settings_youcam_required">Necessário para a prova virtual</string>
+    <string name="settings_youcam_description">Cole suas credenciais do YouCam da Perfect Corp para renderizar roupas sobre a sua foto. Cada prova consome unidades do YouCam da sua conta.</string>
+    <string name="settings_youcam_get_key">Obtenha credenciais em yce.perfectcorp.com →</string>
+    <string name="settings_youcam_client_id_hint">Client ID</string>
+    <string name="settings_youcam_client_secret_hint">Client secret</string>
+    <string name="settings_youcam_save">Salvar credenciais</string>
+    <string name="settings_youcam_remove">Remover credenciais</string>
+    <string name="settings_model_photo_title">Foto de modelo</string>
+    <string name="settings_model_photo_saved">Salva</string>
+    <string name="settings_model_photo_required">Uma foto de corpo inteiro para a prova</string>
+    <string name="settings_model_photo_description">Salve uma foto nítida de corpo inteiro sua. A prova virtual renderiza as roupas sobre ela, e a foto é enviada ao YouCam cada vez que você gera uma prova.</string>
+    <string name="settings_model_photo_add">Adicionar foto</string>
+    <string name="settings_model_photo_change">Trocar foto</string>
+    <string name="settings_model_photo_remove">Remover foto</string>
     <string name="settings_suggestions_bugs">Sugestões e Bugs</string>
     <string name="settings_version">Versão</string>
     <string name="settings_licenses">Licenças</string>
@@ -122,6 +138,21 @@
     <string name="tryit_gaps_filled">Lacunas que preenche</string>
     <string name="tryit_worth_adding">Vale adicionar</string>
     <string name="tryit_skip">Pule esse</string>
+    <string name="tryit_locked_title">Analise e experimente</string>
+    <string name="tryit_locked_description">Conecte o Claude para analisar peças com base no seu guarda-roupa, ou o YouCam para vê-las em você. Adicione um dos dois em Configurações.</string>
+    <string name="tryit_open_settings">Abrir Configurações</string>
+    <string name="tryit_connect_youcam">Conectar YouCam</string>
+    <string name="tryit_see_on_me">Ver em mim</string>
+    <string name="tryit_tryon_generating">Renderizando sua prova…</string>
+    <string name="tryit_tryon_category_title">O que é?</string>
+    <string name="tryit_category_top">Superior</string>
+    <string name="tryit_category_bottom">Inferior</string>
+    <string name="tryit_category_full">Look completo</string>
+    <string name="tryit_category_shoes">Calçados</string>
+    <string name="tryit_tryon_result_title">Em você</string>
+    <string name="tryit_set_model_photo">Salve uma foto de modelo em Configurações para experimentar peças.</string>
+    <string name="tryit_set_model_photo_cta">Definir foto de modelo</string>
+    <string name="tryit_tryon_cost_note">Cada prova consome unidades do YouCam.</string>
 
     <!-- AI Locked Sheet -->
     <string name="ai_locked_title">Desbloquear funções de IA</string>

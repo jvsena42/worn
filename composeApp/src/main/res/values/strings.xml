@@ -85,6 +85,22 @@
     <string name="settings_api_get_key">Get a free key at console.anthropic.com →</string>
     <string name="settings_save_connect">Save &amp; Connect</string>
     <string name="settings_remove_key">Remove key</string>
+    <string name="settings_youcam_title">YouCam Try-On</string>
+    <string name="settings_youcam_connected">Connected</string>
+    <string name="settings_youcam_required">Required for virtual try-on</string>
+    <string name="settings_youcam_description">Paste your Perfect Corp YouCam credentials to render clothes onto your photo. Each try-on spends YouCam units from your account.</string>
+    <string name="settings_youcam_get_key">Get credentials at yce.perfectcorp.com →</string>
+    <string name="settings_youcam_client_id_hint">Client ID</string>
+    <string name="settings_youcam_client_secret_hint">Client secret</string>
+    <string name="settings_youcam_save">Save credentials</string>
+    <string name="settings_youcam_remove">Remove credentials</string>
+    <string name="settings_model_photo_title">Model photo</string>
+    <string name="settings_model_photo_saved">Saved</string>
+    <string name="settings_model_photo_required">A full-body photo for try-on</string>
+    <string name="settings_model_photo_description">Save a clear, full-body photo of yourself. Virtual try-on renders clothes onto it, and it is uploaded to YouCam each time you generate a try-on.</string>
+    <string name="settings_model_photo_add">Add photo</string>
+    <string name="settings_model_photo_change">Change photo</string>
+    <string name="settings_model_photo_remove">Remove photo</string>
     <string name="settings_suggestions_bugs">Suggestions &amp; Bugs</string>
     <string name="settings_version">Version</string>
     <string name="settings_licenses">Licenses</string>
@@ -122,6 +138,21 @@
     <string name="tryit_gaps_filled">Wardrobe gaps it fills</string>
     <string name="tryit_worth_adding">Worth adding</string>
     <string name="tryit_skip">Skip this one</string>
+    <string name="tryit_locked_title">Analyze &amp; try things on</string>
+    <string name="tryit_locked_description">Connect Claude to analyze items against your wardrobe, or YouCam to see them on you. Add either in Settings.</string>
+    <string name="tryit_open_settings">Open Settings</string>
+    <string name="tryit_connect_youcam">Connect YouCam</string>
+    <string name="tryit_see_on_me">See it on me</string>
+    <string name="tryit_tryon_generating">Rendering your try-on…</string>
+    <string name="tryit_tryon_category_title">What is it?</string>
+    <string name="tryit_category_top">Top</string>
+    <string name="tryit_category_bottom">Bottom</string>
+    <string name="tryit_category_full">Full outfit</string>
+    <string name="tryit_category_shoes">Shoes</string>
+    <string name="tryit_tryon_result_title">On you</string>
+    <string name="tryit_set_model_photo">Save a model photo in Settings to try items on.</string>
+    <string name="tryit_set_model_photo_cta">Set model photo</string>
+    <string name="tryit_tryon_cost_note">Each try-on spends YouCam units.</string>
 
     <!-- AI Locked Sheet -->
     <string name="ai_locked_title">Unlock AI features</string>
