@@ -1,0 +1,40 @@
+<journey name="Crop photo button">
+    <description>
+        From an empty wardrobe, opens the Add-item sheet and verifies the "Crop" button is
+        correctly gated on a photo being present: it is absent before any photo is chosen and
+        only the photo-source flow is reachable. Start state: fresh install with an empty
+        wardrobe. A fresh install has no photo and no camera/gallery input, so this journey
+        stops at the photo-source dialog — the point where external photo input would be
+        required for the Crop button, and the crop editor behind it, to appear.
+    </description>
+    <actions>
+        <action>
+            Verify the Wardrobe screen shows the empty state: the "No items yet" title and an
+            "Add your first item" button.
+        </action>
+        <action>
+            Tap the "Add your first item" button.
+        </action>
+        <action>
+            Verify the "Add new item" sheet is shown with a "Tap to add photo" photo area.
+        </action>
+        <action>
+            Verify that no "Crop" button (add_item_crop_button) is shown while no photo has been
+            selected — it must only appear once a photo is present.
+        </action>
+        <action>
+            Tap the "Tap to add photo" area.
+        </action>
+        <action>
+            Verify the "Add photo" dialog is shown with "Take photo" and "Choose from gallery"
+            options.
+        </action>
+        <action>
+            Tap "Cancel" to dismiss the photo dialog.
+        </action>
+        <action>
+            Verify the "Add new item" sheet is still shown, the "Crop" button is still absent (no
+            photo was selected), and the "Save to wardrobe" button is present.
+        </action>
+    </actions>
+</journey>

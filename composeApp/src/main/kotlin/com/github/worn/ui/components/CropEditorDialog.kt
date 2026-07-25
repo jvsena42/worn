@@ -129,13 +129,7 @@ internal fun CropEditorContent(
     onCancel: () -> Unit = {},
     onApply: (selection: CropViewRect, bounds: CropViewRect) -> Unit = { _, _ -> },
 ) {
-    val density = LocalDensity.current
-    val touchRadiusPx = with(density) { HANDLE_TOUCH_RADIUS.toPx() }
-    val minEdgePx = with(density) { MIN_CROP_EDGE.toPx() }
-
-    var bounds by remember { mutableStateOf<CropViewRect?>(null) }
-    var selection by remember { mutableStateOf<CropViewRect?>(null) }
-    var activeCorner by remember { mutableStateOf<CropCorner?>(null) }
+    val state = remember { CropSelectionState() }
 
     Column(
         modifier = Modifier
@@ -146,70 +140,115 @@ internal fun CropEditorContent(
             .systemBarsPadding(),
     ) {
         CropEditorTopBar(
-            canApply = selection != null && bounds != null && !isProcessing,
+            canApply = state.isReady && !isProcessing,
             onCancel = onCancel,
             onApply = {
-                val currentSelection = selection ?: return@CropEditorTopBar
-                val currentBounds = bounds ?: return@CropEditorTopBar
-                onApply(currentSelection, currentBounds)
+                val selection = state.selection ?: return@CropEditorTopBar
+                val bounds = state.bounds ?: return@CropEditorTopBar
+                onApply(selection, bounds)
             },
         )
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .testTag("crop_editor_canvas")
-                .fillMaxWidth()
-                .weight(1f)
-                .onSizeChanged { size ->
-                    // Pointer offsets are in px, so the whole geometry stays in px.
-                    val fitted = CropGeometry.fitBounds(
-                        imageWidth = bitmap.width,
-                        imageHeight = bitmap.height,
-                        viewWidth = size.width.toFloat(),
-                        viewHeight = size.height.toFloat(),
-                    )
-                    // Resetting on resize/rotation keeps the selection inside the newly fitted image.
-                    bounds = fitted
-                    selection = fitted
-                }
-                .pointerInput(bounds) {
-                    val currentBounds = bounds ?: return@pointerInput
-                    detectDragGestures(
-                        onDragStart = { offset ->
-                            activeCorner = selection?.let { cornerAt(offset, it, touchRadiusPx) }
-                        },
-                        onDrag = { change, dragAmount ->
-                            change.consume()
-                            val base = selection ?: return@detectDragGestures
-                            // Compose reports incremental drags, so the base is the live selection.
-                            selection = activeCorner?.let { corner ->
-                                CropGeometry.resizeSelection(
-                                    base, corner, dragAmount.x, dragAmount.y, currentBounds, minEdgePx,
-                                )
-                            } ?: CropGeometry.moveSelection(base, dragAmount.x, dragAmount.y, currentBounds)
-                        },
-                        onDragEnd = { activeCorner = null },
-                        onDragCancel = { activeCorner = null },
-                    )
-                },
-        ) {
-            Image(
-                bitmap = bitmap,
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxSize(),
-            )
-            selection?.let { current ->
-                Canvas(modifier = Modifier.fillMaxSize()) { drawCropOverlay(current) }
-            }
-            if (isProcessing) {
-                CircularProgressIndicator(color = WornColors.AccentGreen, modifier = Modifier.size(36.dp))
-            }
-        }
-        CropEditorBottomBar(
-            enabled = bounds != null && !isProcessing,
-            onReset = { selection = bounds },
+        CropCanvas(
+            bitmap = bitmap,
+            state = state,
+            isProcessing = isProcessing,
+            modifier = Modifier.fillMaxWidth().weight(1f),
         )
+        CropEditorBottomBar(
+            enabled = state.isReady && !isProcessing,
+            onReset = state::reset,
+        )
+    }
+}
+
+@Composable
+private fun CropCanvas(
+    bitmap: ImageBitmap,
+    state: CropSelectionState,
+    isProcessing: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val density = LocalDensity.current
+    val touchRadiusPx = with(density) { HANDLE_TOUCH_RADIUS.toPx() }
+    val minEdgePx = with(density) { MIN_CROP_EDGE.toPx() }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .testTag("crop_editor_canvas")
+            // Pointer offsets are in px, so the whole geometry stays in px.
+            .onSizeChanged { size ->
+                state.fitTo(bitmap.width, bitmap.height, size.width.toFloat(), size.height.toFloat())
+            }
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDragStart = { offset -> state.startDrag(offset, touchRadiusPx) },
+                    onDrag = { change, dragAmount ->
+                        change.consume()
+                        state.drag(dragAmount, minEdgePx)
+                    },
+                    onDragEnd = state::endDrag,
+                    onDragCancel = state::endDrag,
+                )
+            },
+    ) {
+        Image(
+            bitmap = bitmap,
+            contentDescription = null,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.fillMaxSize(),
+        )
+        state.selection?.let { current ->
+            Canvas(modifier = Modifier.fillMaxSize()) { drawCropOverlay(current) }
+        }
+        if (isProcessing) {
+            CircularProgressIndicator(color = WornColors.AccentGreen, modifier = Modifier.size(36.dp))
+        }
+    }
+}
+
+/**
+ * The live crop selection, in view-space px.
+ *
+ * Holding it here rather than in local composable state keeps the drag callbacks reading the
+ * current bounds instead of a value captured when the gesture detector was launched.
+ */
+private class CropSelectionState {
+    var bounds by mutableStateOf<CropViewRect?>(null)
+        private set
+    var selection by mutableStateOf<CropViewRect?>(null)
+        private set
+
+    private var activeCorner: CropCorner? = null
+
+    val isReady: Boolean get() = bounds != null && selection != null
+
+    /** Resetting on resize/rotation keeps the selection inside the newly fitted image. */
+    fun fitTo(imageWidth: Int, imageHeight: Int, viewWidth: Float, viewHeight: Float) {
+        val fitted = CropGeometry.fitBounds(imageWidth, imageHeight, viewWidth, viewHeight)
+        bounds = fitted
+        selection = fitted
+    }
+
+    fun startDrag(offset: Offset, touchRadius: Float) {
+        activeCorner = selection?.let { cornerAt(offset, it, touchRadius) }
+    }
+
+    fun drag(dragAmount: Offset, minEdge: Float) {
+        val base = selection ?: return
+        val currentBounds = bounds ?: return
+        // Compose reports incremental drags, so the base is the live selection.
+        selection = activeCorner?.let { corner ->
+            CropGeometry.resizeSelection(base, corner, dragAmount.x, dragAmount.y, currentBounds, minEdge)
+        } ?: CropGeometry.moveSelection(base, dragAmount.x, dragAmount.y, currentBounds)
+    }
+
+    fun endDrag() {
+        activeCorner = null
+    }
+
+    fun reset() {
+        selection = bounds
     }
 }
 

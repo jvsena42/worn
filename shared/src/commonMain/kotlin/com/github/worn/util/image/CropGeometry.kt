@@ -60,7 +60,9 @@ object CropGeometry {
      * [viewWidth] x [viewHeight], preserving aspect ratio. This is also the maximum selection.
      */
     fun fitBounds(imageWidth: Int, imageHeight: Int, viewWidth: Float, viewHeight: Float): CropViewRect {
-        if (imageWidth <= 0 || imageHeight <= 0 || viewWidth <= 0f || viewHeight <= 0f) {
+        val hasImage = imageWidth > 0 && imageHeight > 0
+        val hasView = viewWidth > 0f && viewHeight > 0f
+        if (!hasImage || !hasView) {
             return CropViewRect(0f, 0f, viewWidth, viewHeight)
         }
         val scale = min(viewWidth / imageWidth, viewHeight / imageHeight)
@@ -127,7 +129,9 @@ object CropGeometry {
         imageWidth: Int,
         imageHeight: Int,
     ): CropRect {
-        if (imageWidth <= 0 || imageHeight <= 0 || bounds.width <= 0f || bounds.height <= 0f) {
+        val hasImage = imageWidth > 0 && imageHeight > 0
+        val hasBounds = bounds.width > 0f && bounds.height > 0f
+        if (!hasImage || !hasBounds) {
             return CropRect(0, 0, max(1, imageWidth), max(1, imageHeight))
         }
         val scaleX = imageWidth / bounds.width

@@ -48,6 +48,7 @@ Each journey is self-contained; evaluate them independently.
 | `bottom-navigation.xml` | Switch through all five bottom-bar tabs and verify each screen. |
 | `add-first-item.xml` | From the empty wardrobe, open the Add-item sheet and the photo-source dialog. |
 | `remove-background.xml` | Verify the Add-item "Remove background" toggle is gated on a photo being present (absent until one is chosen). |
+| `crop-photo.xml` | Verify the Add-item "Crop" button is gated on a photo being present (absent until one is chosen). |
 | `create-first-outfit.xml` | From the empty Outfits tab, open the Create-outfit sheet. |
 | `connect-api-key.xml` | Open Settings and reach the Claude API key entry sheet. |
 | `connect-youcam.xml` | Open Settings and reach the YouCam try-on credentials sheet. |
