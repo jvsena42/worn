@@ -46,6 +46,13 @@
 "add_item_remove_background" = "Remover fundo";
 "add_item_removing_background" = "Removendo fundo…";
 "add_item_bg_removal_failed" = "Não foi possível remover o fundo. Usando a foto original.";
+
+/* Crop */
+"crop_photo_button" = "Recortar";
+"crop_title" = "Recortar foto";
+"crop_apply" = "Aplicar";
+"crop_reset" = "Redefinir";
+"crop_failed" = "Não foi possível recortar a foto";
 "add_item_ai_badge" = "Auto-tag com IA";
 "add_item_name_hint" = "Nome do item";
 "add_item_save_to_wardrobe" = "Salvar no armário";

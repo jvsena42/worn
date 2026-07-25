@@ -49,6 +49,13 @@
     <string name="add_item_remove_background">Remove background</string>
     <string name="add_item_removing_background">Removing background…</string>
     <string name="add_item_bg_removal_failed">Couldn\'t remove the background. Using the original photo.</string>
+
+    <!-- Crop -->
+    <string name="crop_photo_button">Crop</string>
+    <string name="crop_title">Crop photo</string>
+    <string name="crop_apply">Apply</string>
+    <string name="crop_reset">Reset</string>
+    <string name="crop_failed">Could not crop the photo</string>
     <string name="add_item_ai_badge">Auto-tag with AI</string>
     <string name="add_item_name_hint">Item name</string>
     <string name="add_item_save_to_wardrobe">Save to wardrobe</string>
