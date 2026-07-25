@@ -46,17 +46,17 @@ class YouCamApiClientTest {
                     respond("", HttpStatusCode.OK)
                 path.contains("/file/") ->
                     respond(
-                        """{"result":{"files":[{"file_id":"fid","requests":[""" +
+                        """{"data":{"files":[{"file_id":"fid","requests":[""" +
                             """{"url":"https://upload.example/put","method":"PUT",""" +
                             """"headers":{"Content-Type":"image/jpeg"}}]}]}}""",
                         HttpStatusCode.OK,
                         jsonHeaders(),
                     )
                 path.contains("/task/") && request.method == HttpMethod.Post ->
-                    respond("""{"result":{"task_id":"task-1"}}""", HttpStatusCode.OK, jsonHeaders())
+                    respond("""{"data":{"task_id":"task-1"}}""", HttpStatusCode.OK, jsonHeaders())
                 path.contains("/task/") && request.method == HttpMethod.Get ->
                     respond(
-                        """{"result":{"status":"success","results":[{"url":"https://cdn.example/r.jpg"}]}}""",
+                        """{"data":{"status":"success","results":[{"url":"https://cdn.example/r.jpg"}]}}""",
                         HttpStatusCode.OK,
                         jsonHeaders(),
                     )

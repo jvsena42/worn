@@ -30,9 +30,9 @@ internal data class YouCamFileRequest(val files: List<Spec>) {
 }
 
 @Serializable
-internal data class YouCamFileResponse(val result: Result) {
+internal data class YouCamFileResponse(@SerialName("data") val data: Payload) {
     @Serializable
-    data class Result(val files: List<Entry>)
+    data class Payload(val files: List<Entry>)
 
     @Serializable
     data class Entry(
@@ -62,15 +62,15 @@ internal data class YouCamTaskRequest(
 )
 
 @Serializable
-internal data class YouCamTaskResponse(val result: Result) {
+internal data class YouCamTaskResponse(@SerialName("data") val data: Payload) {
     @Serializable
-    data class Result(@SerialName("task_id") val taskId: String)
+    data class Payload(@SerialName("task_id") val taskId: String)
 }
 
 @Serializable
-internal data class YouCamPollResponse(val result: Result) {
+internal data class YouCamPollResponse(@SerialName("data") val data: Payload) {
     @Serializable
-    data class Result(
+    data class Payload(
         val status: String,
         @SerialName("results") val outputs: List<Output> = emptyList(),
         val error: String? = null,
