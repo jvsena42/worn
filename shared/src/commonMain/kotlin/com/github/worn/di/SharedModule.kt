@@ -2,11 +2,14 @@ package com.github.worn.di
 
 import com.github.worn.data.repository.OutfitRepositoryImpl
 import com.github.worn.data.repository.SettingsRepositoryImpl
+import com.github.worn.data.repository.TryOnRepositoryImpl
 import com.github.worn.data.repository.WardrobeRepositoryImpl
 import com.github.worn.data.source.local.createDatabase
 import com.github.worn.data.source.remote.ClaudeApiClient
+import com.github.worn.data.source.remote.YouCamApiClient
 import com.github.worn.domain.repository.OutfitRepository
 import com.github.worn.domain.repository.SettingsRepository
+import com.github.worn.domain.repository.TryOnRepository
 import com.github.worn.domain.repository.WardrobeRepository
 import com.github.worn.presentation.viewmodel.GapsViewModel
 import com.github.worn.presentation.viewmodel.OutfitViewModel
@@ -20,8 +23,12 @@ import org.koin.dsl.module
 val sharedModule = module {
     single { createDatabase(get()) }
     singleOf(::ClaudeApiClient)
+    singleOf(::YouCamApiClient)
     single<SettingsRepository> {
         SettingsRepositoryImpl(dataStore = get(), fileStorage = get(), dispatcher = get())
+    }
+    single<TryOnRepository> {
+        TryOnRepositoryImpl(youCamClient = get(), settingsRepository = get(), dispatcher = get())
     }
     single<WardrobeRepository> {
         WardrobeRepositoryImpl(
