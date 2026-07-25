@@ -115,19 +115,16 @@ class YouCamApiClient(
             )
         }
         ensureSuccess(createResponse, "upload/create")
-        val createBody = createResponse.bodyAsText()
-        log("upload/create ok: ${createBody.take(BODY_PREVIEW_LEN)}")
-        val entry = json.decodeFromString<YouCamFileResponse>(createBody)
+        val entry = json.decodeFromString<YouCamFileResponse>(createResponse.bodyAsText())
             .data.files.firstOrNull() ?: error("Upload could not be prepared. Please try again.")
         val upload = entry.requests.firstOrNull() ?: error("Upload could not be prepared. Please try again.")
 
-        log("upload: PUT ${bytes.size}b to storage")
         val uploadResponse = request(upload.url, method = HttpMethod.PUT) {
             upload.headers.forEach { (name, value) -> header(name, value) }
             setBody(bytes)
         }
         ensureSuccess(uploadResponse, "upload/put")
-        log("upload: ok file_id=${entry.fileId}")
+        log("upload: ok (${bytes.size}b)")
         return entry.fileId
     }
 
@@ -153,10 +150,8 @@ class YouCamApiClient(
             )
         }
         ensureSuccess(response, "task/create")
-        val taskBody = response.bodyAsText()
-        log("task/create ok: ${taskBody.take(BODY_PREVIEW_LEN)}")
-        val taskId = json.decodeFromString<YouCamTaskResponse>(taskBody).data.taskId
-        log("task: created task_id=$taskId")
+        val taskId = json.decodeFromString<YouCamTaskResponse>(response.bodyAsText()).data.taskId
+        log("task: created")
         return taskId
     }
 
@@ -167,9 +162,8 @@ class YouCamApiClient(
                 method = HttpMethod.GET,
             ) { authorized(token) }
             ensureSuccess(response, "task/poll")
-            val pollBody = response.bodyAsText()
-            log("poll: attempt ${attempt + 1} body=${pollBody.take(BODY_PREVIEW_LEN)}")
-            val result = json.decodeFromString<YouCamPollResponse>(pollBody).data
+            val result = json.decodeFromString<YouCamPollResponse>(response.bodyAsText()).data
+            log("poll: attempt ${attempt + 1} status=${result.status}")
             when (result.status.lowercase()) {
                 STATUS_SUCCESS ->
                     return result.results?.url
