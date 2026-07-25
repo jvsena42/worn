@@ -7,6 +7,7 @@ import Foundation
 /// stacking separate boolean flags.
 enum PhotoCover: Int, Identifiable {
     case camera
+    case crop
 
     var id: Int { rawValue }
 }

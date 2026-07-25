@@ -54,6 +54,20 @@ struct TryItScreen: View {
                     onDismiss: { garmentCover = nil }
                 )
                 .ignoresSafeArea()
+            case .crop:
+                if let data = photoData {
+                    CropEditorView(
+                        imageData: data,
+                        onCropped: { cropped in
+                            photoData = cropped
+                            photoImage = UIImage(data: cropped)
+                            // The previous analysis described the uncropped photo.
+                            viewModel.reset()
+                            garmentCover = nil
+                        },
+                        onCancel: { garmentCover = nil }
+                    )
+                }
             }
         }
         .onChange(of: selectedPhotoItem) { _, newItem in
@@ -137,6 +151,7 @@ struct TryItScreen: View {
         VStack(alignment: .leading, spacing: 20) {
             tryItTitle(fontSize: 28)
             uploadZone(height: 200)
+            if photoData != nil { garmentCropButton }
 
             if viewModel.state.hasApiKey {
                 if photoData != nil && viewModel.state.result == nil && !viewModel.state.isLoading {
@@ -181,6 +196,7 @@ struct TryItScreen: View {
                 // Left column
                 VStack(alignment: .leading, spacing: 24) {
                     uploadZone(height: 300)
+                    if photoData != nil { garmentCropButton }
 
                     if viewModel.state.hasApiKey {
                         if photoData != nil && viewModel.state.result == nil && !viewModel.state.isLoading {
@@ -229,6 +245,11 @@ struct TryItScreen: View {
             .font(.system(size: fontSize, weight: .semibold))
             .foregroundColor(WornColors.textPrimary)
             .tracking(-0.8)
+    }
+
+    private var garmentCropButton: some View {
+        CropPhotoButton(action: { garmentCover = .crop })
+            .accessibilityIdentifier("try_it_crop_button")
     }
 
     private func uploadZone(height: CGFloat) -> some View {
@@ -474,6 +495,11 @@ struct TryItScreen: View {
 
             personPhotoZone(height: isCompact ? 200 : 260)
 
+            if viewModel.personImageData != nil {
+                CropPhotoButton(action: { personCover = .crop })
+                    .accessibilityIdentifier("try_on_person_crop_button")
+            }
+
             Text(String(localized: "tryit_tryon_category_title"))
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(WornColors.textPrimary)
@@ -528,6 +554,18 @@ struct TryItScreen: View {
                     onDismiss: { personCover = nil }
                 )
                 .ignoresSafeArea()
+            case .crop:
+                if let data = viewModel.personImageData {
+                    CropEditorView(
+                        imageData: data,
+                        onCropped: { cropped in
+                            // Round-tripping through the view model also persists the crop.
+                            viewModel.setPersonPhoto(imageData: cropped)
+                            personCover = nil
+                        },
+                        onCancel: { personCover = nil }
+                    )
+                }
             }
         }
         .onChange(of: selectedPersonPhotoItem) { _, newItem in

@@ -58,6 +58,7 @@ struct AddItemSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     photoUploadZone
+                    if photoData != nil { cropPhotoButton }
                     if photoData != nil { removeBackgroundToggle }
                     if !isEditing { aiBadge }
                     nameField
@@ -104,6 +105,22 @@ struct AddItemSheet: View {
                         onDismiss: { cover = nil }
                     )
                     .ignoresSafeArea()
+                case .crop:
+                    if let data = photoData {
+                        CropEditorView(
+                            imageData: data,
+                            onCropped: { cropped in
+                                photoData = cropped
+                                // Rebase the background-removal baseline so turning it off
+                                // reverts to the cropped photo, not the pre-crop frame.
+                                originalPhotoData = cropped
+                                photoImage = UIImage(data: cropped)
+                                bgRemoved = false
+                                cover = nil
+                            },
+                            onCancel: { cover = nil }
+                        )
+                    }
                 }
             }
             .onAppear {
@@ -174,6 +191,12 @@ struct AddItemSheet: View {
         .buttonStyle(.plain)
         .disabled(isProcessingBg)
         .accessibilityIdentifier("add_item_photo_zone")
+    }
+
+    private var cropPhotoButton: some View {
+        CropPhotoButton(action: { cover = .crop })
+            .disabled(isProcessingBg)
+            .accessibilityIdentifier("add_item_crop_button")
     }
 
     private var removeBackgroundToggle: some View {
