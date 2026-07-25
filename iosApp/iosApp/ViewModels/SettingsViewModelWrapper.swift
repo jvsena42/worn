@@ -53,6 +53,24 @@ class SettingsViewModelWrapper: ObservableObject {
         viewModel.onIntent(intent: SettingsIntent.ClearApiKey())
     }
 
+    func saveYouCamCredentials(clientId: String, clientSecret: String) {
+        viewModel.onIntent(
+            intent: SettingsIntent.SaveYouCamCredentials(clientId: clientId, clientSecret: clientSecret)
+        )
+    }
+
+    func clearYouCamCredentials() {
+        viewModel.onIntent(intent: SettingsIntent.ClearYouCamCredentials())
+    }
+
+    func saveModelPhoto(_ imageData: Data) {
+        viewModel.onIntent(intent: SettingsIntent.SaveModelPhoto(bytes: imageData.toKotlinByteArray()))
+    }
+
+    func clearModelPhoto() {
+        viewModel.onIntent(intent: SettingsIntent.ClearModelPhoto())
+    }
+
     deinit {
         cancellable?.cancel()
     }
