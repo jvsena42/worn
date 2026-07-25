@@ -11,13 +11,16 @@ import com.github.worn.domain.model.Lifestyle
 import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
 import com.github.worn.domain.repository.SettingsRepository
+import com.github.worn.data.source.local.PhotoFileStorage
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 class SettingsRepositoryImpl(
     private val dataStore: DataStore<Preferences>,
+    private val fileStorage: PhotoFileStorage,
     private val dispatcher: CoroutineContext,
 ) : SettingsRepository {
 
@@ -105,11 +108,38 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override fun hasModelPhoto(): Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[KEY_MODEL_PHOTO_PATH] != null
+    }
+
+    override suspend fun saveModelPhoto(bytes: ByteArray): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            val path = fileStorage.write(MODEL_PHOTO_FILE, bytes)
+            dataStore.edit { prefs -> prefs[KEY_MODEL_PHOTO_PATH] = path }
+        }
+    }
+
+    override suspend fun getModelPhoto(): Result<ByteArray?> = runCatching {
+        withContext(dispatcher) {
+            val path = dataStore.data.map { it[KEY_MODEL_PHOTO_PATH] }.first() ?: return@withContext null
+            fileStorage.read(path)
+        }
+    }
+
+    override suspend fun clearModelPhoto(): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            dataStore.data.map { it[KEY_MODEL_PHOTO_PATH] }.first()?.let { fileStorage.delete(it) }
+            dataStore.edit { prefs -> prefs.remove(KEY_MODEL_PHOTO_PATH) }
+        }
+    }
+
     companion object {
         private val KEY_BODY_TYPE = stringPreferencesKey("body_type")
         private val KEY_STYLE_PROFILE = stringPreferencesKey("style_profile")
         private val KEY_AGE_RANGE = stringPreferencesKey("age_range")
         private val KEY_CLIMATE = stringPreferencesKey("climate")
         private val KEY_LIFESTYLES = stringPreferencesKey("lifestyles")
+        private val KEY_MODEL_PHOTO_PATH = stringPreferencesKey("model_photo_path")
+        private const val MODEL_PHOTO_FILE = "model_photo.jpg"
     }
 }

@@ -21,7 +21,7 @@ val sharedModule = module {
     single { createDatabase(get()) }
     singleOf(::ClaudeApiClient)
     single<SettingsRepository> {
-        SettingsRepositoryImpl(dataStore = get(), dispatcher = get())
+        SettingsRepositoryImpl(dataStore = get(), fileStorage = get(), dispatcher = get())
     }
     single<WardrobeRepository> {
         WardrobeRepositoryImpl(
