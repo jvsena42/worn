@@ -25,7 +25,7 @@ struct AddItemSheet: View {
     @State private var selectedMaterial: Material?
     @State private var showSourceChooser = false
     @State private var showPhotoPicker = false
-    @State private var showCamera = false
+    @State private var cover: PhotoCover?
     @State private var showAiLockedSheet = false
     @State private var didInitFromExisting = false
 
@@ -83,25 +83,28 @@ struct AddItemSheet: View {
                 }
             }
             .confirmationDialog(String(localized: "add_item_photo_dialog_title"), isPresented: $showSourceChooser) {
-                Button(String(localized: "add_item_take_photo")) { showCamera = true }
+                Button(String(localized: "add_item_take_photo")) { cover = .camera }
                     .accessibilityIdentifier("photo_source_camera")
                 Button(String(localized: "add_item_choose_gallery")) { showPhotoPicker = true }
                     .accessibilityIdentifier("photo_source_gallery")
                 Button(String(localized: "common_cancel"), role: .cancel) {}
             }
             .photosPicker(isPresented: $showPhotoPicker, selection: $selectedPhotoItem, matching: .images)
-            .fullScreenCover(isPresented: $showCamera) {
-                CameraView(
-                    onImageCaptured: { image in
-                        photoImage = image
-                        let data = image.jpegData(compressionQuality: 0.9)
-                        photoData = data
-                        originalPhotoData = data
-                        bgRemoved = false
-                    },
-                    onDismiss: { showCamera = false }
-                )
-                .ignoresSafeArea()
+            .fullScreenCover(item: $cover) { presented in
+                switch presented {
+                case .camera:
+                    CameraView(
+                        onImageCaptured: { image in
+                            photoImage = image
+                            let data = image.jpegData(compressionQuality: 0.9)
+                            photoData = data
+                            originalPhotoData = data
+                            bgRemoved = false
+                        },
+                        onDismiss: { cover = nil }
+                    )
+                    .ignoresSafeArea()
+                }
             }
             .onAppear {
                 if let item = existingItem, !didInitFromExisting {

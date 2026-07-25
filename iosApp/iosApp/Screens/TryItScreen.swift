@@ -8,7 +8,7 @@ struct TryItScreen: View {
 
     @State private var showSourceChooser = false
     @State private var showPhotoPicker = false
-    @State private var showCamera = false
+    @State private var garmentCover: PhotoCover?
     @State private var photoData: Data?
     @State private var photoImage: UIImage?
     @State private var selectedPhotoItem: PhotosPickerItem?
@@ -16,7 +16,7 @@ struct TryItScreen: View {
 
     @State private var showPersonSourceChooser = false
     @State private var showPersonPhotoPicker = false
-    @State private var showPersonCamera = false
+    @State private var personCover: PhotoCover?
     @State private var selectedPersonPhotoItem: PhotosPickerItem?
 
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -35,23 +35,26 @@ struct TryItScreen: View {
         .background(WornColors.bgPage)
         .accessibilityIdentifier("try_it_screen")
         .confirmationDialog(String(localized: "add_item_photo_dialog_title"), isPresented: $showSourceChooser) {
-            Button(String(localized: "add_item_take_photo")) { showCamera = true }
+            Button(String(localized: "add_item_take_photo")) { garmentCover = .camera }
                 .accessibilityIdentifier("photo_source_camera")
             Button(String(localized: "add_item_choose_gallery")) { showPhotoPicker = true }
                 .accessibilityIdentifier("photo_source_gallery")
             Button(String(localized: "common_cancel"), role: .cancel) {}
         }
         .photosPicker(isPresented: $showPhotoPicker, selection: $selectedPhotoItem, matching: .images)
-        .fullScreenCover(isPresented: $showCamera) {
-            CameraView(
-                onImageCaptured: { image in
-                    photoImage = image
-                    photoData = image.jpegData(compressionQuality: 0.9)
-                    viewModel.reset()
-                },
-                onDismiss: { showCamera = false }
-            )
-            .ignoresSafeArea()
+        .fullScreenCover(item: $garmentCover) { presented in
+            switch presented {
+            case .camera:
+                CameraView(
+                    onImageCaptured: { image in
+                        photoImage = image
+                        photoData = image.jpegData(compressionQuality: 0.9)
+                        viewModel.reset()
+                    },
+                    onDismiss: { garmentCover = nil }
+                )
+                .ignoresSafeArea()
+            }
         }
         .onChange(of: selectedPhotoItem) { _, newItem in
             Task {
@@ -508,21 +511,24 @@ struct TryItScreen: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityIdentifier("try_on_section")
         .confirmationDialog(String(localized: "add_item_photo_dialog_title"), isPresented: $showPersonSourceChooser) {
-            Button(String(localized: "add_item_take_photo")) { showPersonCamera = true }
+            Button(String(localized: "add_item_take_photo")) { personCover = .camera }
             Button(String(localized: "add_item_choose_gallery")) { showPersonPhotoPicker = true }
             Button(String(localized: "common_cancel"), role: .cancel) {}
         }
         .photosPicker(isPresented: $showPersonPhotoPicker, selection: $selectedPersonPhotoItem, matching: .images)
-        .fullScreenCover(isPresented: $showPersonCamera) {
-            CameraView(
-                onImageCaptured: { image in
-                    if let data = image.jpegData(compressionQuality: 0.9) {
-                        viewModel.setPersonPhoto(imageData: data)
-                    }
-                },
-                onDismiss: { showPersonCamera = false }
-            )
-            .ignoresSafeArea()
+        .fullScreenCover(item: $personCover) { presented in
+            switch presented {
+            case .camera:
+                CameraView(
+                    onImageCaptured: { image in
+                        if let data = image.jpegData(compressionQuality: 0.9) {
+                            viewModel.setPersonPhoto(imageData: data)
+                        }
+                    },
+                    onDismiss: { personCover = nil }
+                )
+                .ignoresSafeArea()
+            }
         }
         .onChange(of: selectedPersonPhotoItem) { _, newItem in
             Task {
