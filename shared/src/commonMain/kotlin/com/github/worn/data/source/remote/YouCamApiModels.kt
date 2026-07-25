@@ -25,6 +25,7 @@ internal data class YouCamFileRequest(val files: List<Spec>) {
     data class Spec(
         @SerialName("content_type") val contentType: String,
         @SerialName("file_name") val fileName: String,
+        @SerialName("file_size") val fileSize: Int,
     )
 }
 

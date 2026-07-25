@@ -104,7 +104,9 @@ class YouCamApiClient(
             setBody(
                 json.encodeToString(
                     YouCamFileRequest.serializer(),
-                    YouCamFileRequest(listOf(YouCamFileRequest.Spec(CONTENT_TYPE_JPEG, "image.jpg"))),
+                    YouCamFileRequest(
+                        listOf(YouCamFileRequest.Spec(CONTENT_TYPE_JPEG, "image.jpg", bytes.size)),
+                    ),
                 ),
             )
         }
