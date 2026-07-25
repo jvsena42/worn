@@ -50,14 +50,14 @@ class WardrobeViewModelTest {
 
     @Test
     fun `init sets hasApiKey true when key exists`() {
-        secretStore.storedKey = "test-key"
+        secretStore.saveApiKey("test-key")
         val vm = createViewModel()
         assertTrue(vm.state.value.hasApiKey)
     }
 
     @Test
     fun `init sets hasApiKey false when key is null`() {
-        secretStore.storedKey = null
+        secretStore.clearApiKey()
         val vm = createViewModel()
         assertFalse(vm.state.value.hasApiKey)
     }

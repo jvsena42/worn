@@ -14,8 +14,8 @@ class AndroidSecretStore(private val context: Context) : SecretStore {
 
     private val keyStore: KeyStore = KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null) }
 
-    override fun getApiKey(): String? {
-        val contents = secretFile().takeIf { it.exists() }?.readBytes()
+    override fun getSecret(name: String): String? {
+        val contents = secretFile(name).takeIf { it.exists() }?.readBytes()
             ?.takeIf { it.size > GCM_IV_LENGTH }
             ?: return null
         val iv = contents.copyOfRange(0, GCM_IV_LENGTH)
@@ -23,16 +23,21 @@ class AndroidSecretStore(private val context: Context) : SecretStore {
         return decrypt(ciphertext, iv)
     }
 
-    override fun saveApiKey(key: String) {
-        val (ciphertext, iv) = encrypt(key.encodeToByteArray())
-        secretFile().writeBytes(iv + ciphertext)
+    override fun saveSecret(name: String, value: String) {
+        val (ciphertext, iv) = encrypt(value.encodeToByteArray())
+        secretFile(name).writeBytes(iv + ciphertext)
     }
 
-    override fun clearApiKey() {
-        secretFile().delete()
+    override fun clearSecret(name: String) {
+        secretFile(name).delete()
     }
 
-    private fun secretFile(): File = File(context.filesDir, SECRET_FILE_NAME)
+    // The Claude key predates named secrets and was stored in a fixed file; keep that path so an
+    // already-saved key survives the upgrade. New named secrets get their own per-name file.
+    private fun secretFile(name: String): File {
+        val fileName = if (name == SecretStore.CLAUDE_KEY) LEGACY_SECRET_FILE else "worn_secret_$name.enc"
+        return File(context.filesDir, fileName)
+    }
 
     private fun getOrCreateKey(): SecretKey {
         keyStore.getEntry(KEY_ALIAS, null)?.let { entry ->
@@ -71,7 +76,7 @@ class AndroidSecretStore(private val context: Context) : SecretStore {
     companion object {
         private const val KEYSTORE_PROVIDER = "AndroidKeyStore"
         private const val KEY_ALIAS = "worn_api_key"
-        private const val SECRET_FILE_NAME = "worn_secret.enc"
+        private const val LEGACY_SECRET_FILE = "worn_secret.enc"
         private const val TRANSFORMATION = "AES/GCM/NoPadding"
         private const val KEY_SIZE = 256
         private const val GCM_IV_LENGTH = 12
