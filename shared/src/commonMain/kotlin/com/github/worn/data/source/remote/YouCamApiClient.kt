@@ -43,6 +43,7 @@ class YouCamApiClient(
         category: GarmentCategory,
     ): ByteArray {
         val feature = category.feature()
+        log("tryOn: start category=$category feature=${feature.type}")
         val token = authenticate()
         val personFileId = uploadImage(token, feature, personBytes)
         val garmentFileId = uploadImage(token, feature, garmentBytes)
@@ -53,7 +54,9 @@ class YouCamApiClient(
 
     /** Performs an auth handshake to check the credentials work; throws a friendly message otherwise. */
     suspend fun verifyCredentials(clientId: String, clientSecret: String) {
+        log("verifyCredentials: start")
         requestToken(clientId, clientSecret)
+        log("verifyCredentials: ok")
     }
 
     private suspend fun authenticate(): String {
@@ -74,21 +77,23 @@ class YouCamApiClient(
 
     private suspend fun requestToken(clientId: String, clientSecret: String): String {
         val timestamp = Clock.System.now().toEpochMilliseconds()
+        log("auth: id_token from client_id(len=${clientId.length}) secret(len=${clientSecret.length}) ts=$timestamp")
         val idToken = runCatching {
             rsaEncryptor.encrypt("client_id=$clientId&timestamp=$timestamp", clientSecret)
         }.getOrElse {
+            log("auth: RSA encrypt failed: ${it.message}")
             error("Invalid Secret Key. Paste the long key without the -----BEGIN/END----- lines.")
         }
+        val body = json.encodeToString(
+            YouCamAuthRequest.serializer(),
+            YouCamAuthRequest(clientId = clientId, idToken = idToken),
+        )
+        log("auth: POST /s2s/v1.0/client/auth body=$body")
         val response = request("$BASE_URL/s2s/v1.0/client/auth") {
             contentType(ContentType.Application.Json)
-            setBody(
-                json.encodeToString(
-                    YouCamAuthRequest.serializer(),
-                    YouCamAuthRequest(clientId = clientId, idToken = idToken),
-                ),
-            )
+            setBody(body)
         }
-        ensureSuccess(response)
+        ensureSuccess(response, "auth")
         return json.decodeFromString<YouCamAuthResponse>(response.bodyAsText()).result.accessToken
     }
 
@@ -103,7 +108,7 @@ class YouCamApiClient(
                 ),
             )
         }
-        ensureSuccess(createResponse)
+        ensureSuccess(createResponse, "upload/create")
         val entry = json.decodeFromString<YouCamFileResponse>(createResponse.bodyAsText())
             .result.files.firstOrNull() ?: error("Upload could not be prepared. Please try again.")
         val upload = entry.requests.firstOrNull() ?: error("Upload could not be prepared. Please try again.")
@@ -112,7 +117,8 @@ class YouCamApiClient(
             upload.headers.forEach { (name, value) -> header(name, value) }
             setBody(bytes)
         }
-        ensureSuccess(uploadResponse)
+        ensureSuccess(uploadResponse, "upload/put")
+        log("upload: ok file_id=${entry.fileId} (${bytes.size} bytes)")
         return entry.fileId
     }
 
@@ -137,18 +143,21 @@ class YouCamApiClient(
                 ),
             )
         }
-        ensureSuccess(response)
-        return json.decodeFromString<YouCamTaskResponse>(response.bodyAsText()).result.taskId
+        ensureSuccess(response, "task/create")
+        val taskId = json.decodeFromString<YouCamTaskResponse>(response.bodyAsText()).result.taskId
+        log("task: created task_id=$taskId")
+        return taskId
     }
 
     private suspend fun pollTask(token: String, feature: Feature, taskId: String): String {
-        repeat(MAX_POLL_ATTEMPTS) {
+        repeat(MAX_POLL_ATTEMPTS) { attempt ->
             val response = request(
                 "$BASE_URL/s2s/${feature.version}/task/${feature.type}/$taskId",
                 method = HttpMethod.GET,
             ) { authorized(token) }
-            ensureSuccess(response)
+            ensureSuccess(response, "task/poll")
             val result = json.decodeFromString<YouCamPollResponse>(response.bodyAsText()).result
+            log("poll: attempt ${attempt + 1} status=${result.status}")
             when (result.status.lowercase()) {
                 STATUS_SUCCESS ->
                     return result.outputs.firstOrNull()?.url
@@ -162,7 +171,7 @@ class YouCamApiClient(
 
     private suspend fun downloadResult(url: String): ByteArray {
         val response = request(url, method = HttpMethod.GET)
-        ensureSuccess(response)
+        ensureSuccess(response, "download")
         return response.readRawBytes()
     }
 
@@ -186,15 +195,21 @@ class YouCamApiClient(
         header("Authorization", "Bearer $token")
     }
 
-    private fun ensureSuccess(response: HttpResponse) {
+    private suspend fun ensureSuccess(response: HttpResponse, step: String) {
         if (response.status.isSuccess()) return
+        val body = runCatching { response.bodyAsText() }.getOrDefault("")
+        log("$step: HTTP ${response.status.value} body=$body")
         val message = when (response.status.value) {
             HTTP_UNAUTHORIZED, HTTP_FORBIDDEN -> "Invalid YouCam credentials. Check them in Settings."
             HTTP_TOO_MANY_REQUESTS -> "Too many requests. Please wait and try again."
             in HTTP_SERVER_ERROR_RANGE -> "YouCam service error. Please try again later."
-            else -> "Unexpected error (${response.status.value}). Please try again."
+            else -> "YouCam error ${response.status.value}: ${body.take(BODY_PREVIEW_LEN)}"
         }
         error(message)
+    }
+
+    private fun log(message: String) {
+        println("[$LOG_TAG] $message")
     }
 
     private enum class HttpMethod { GET, POST, PUT }
@@ -216,6 +231,8 @@ class YouCamApiClient(
     }
 
     private companion object {
+        const val LOG_TAG = "YouCam"
+        const val BODY_PREVIEW_LEN = 300
         const val BASE_URL = "https://yce-api-01.perfectcorp.com"
         const val CONTENT_TYPE_JPEG = "image/jpeg"
         const val TOKEN_TTL_MILLIS = 2 * 60 * 60 * 1000L
