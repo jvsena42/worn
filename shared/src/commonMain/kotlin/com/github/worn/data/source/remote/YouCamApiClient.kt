@@ -88,7 +88,7 @@ class YouCamApiClient(
             YouCamAuthRequest.serializer(),
             YouCamAuthRequest(clientId = clientId, idToken = idToken),
         )
-        log("auth: POST /s2s/v1.0/client/auth body=$body")
+        log("auth: POST /s2s/v1.0/client/auth (id_token len=${idToken.length})")
         val response = request("$BASE_URL/s2s/v1.0/client/auth") {
             contentType(ContentType.Application.Json)
             setBody(body)
