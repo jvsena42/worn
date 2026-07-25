@@ -20,7 +20,7 @@ struct TryItScreen: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if !viewModel.state.hasApiKey {
+            if !viewModel.state.hasApiKey && !viewModel.state.hasYouCamKey {
                 aiEmptyContent
             } else {
                 tryItContent
@@ -90,19 +90,19 @@ struct TryItScreen: View {
                     .foregroundColor(WornColors.accentIndigo)
             }
 
-            Text(String(localized: "tryit_ai_empty_title"))
+            Text(String(localized: "tryit_locked_title"))
                 .font(.system(size: isCompact ? 24 : 26, weight: .medium))
                 .foregroundColor(WornColors.textPrimary)
                 .multilineTextAlignment(.center)
 
-            Text(String(localized: "tryit_ai_empty_description"))
+            Text(String(localized: "tryit_locked_description"))
                 .font(.system(size: isCompact ? 15 : 16))
                 .foregroundColor(WornColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
                 .frame(maxWidth: isCompact ? 280 : 380)
 
-            indigoCtaButton(text: String(localized: "tryit_connect_cta")) {
+            indigoCtaButton(text: String(localized: "tryit_open_settings")) {
                 onTabSelected(.settings)
             }
             .accessibilityIdentifier("try_it_connect_cta")
@@ -130,28 +130,34 @@ struct TryItScreen: View {
             tryItTitle(fontSize: 28)
             uploadZone(height: 200)
 
-            if photoData != nil && viewModel.state.result == nil && !viewModel.state.isLoading {
-                analyzeButton
+            if viewModel.state.hasApiKey {
+                if photoData != nil && viewModel.state.result == nil && !viewModel.state.isLoading {
+                    analyzeButton
+                }
+
+                if viewModel.state.isLoading {
+                    loadingIndicator
+                }
+
+                if let error = viewModel.state.error, !viewModel.state.isLoading {
+                    ErrorContentView(
+                        message: error as String,
+                        onRetry: {
+                            guard let data = photoData else { return }
+                            viewModel.analyzePhoto(imageData: data)
+                        },
+                        retryButtonColor: WornColors.accentIndigo
+                    )
+                    .padding(.vertical, 20)
+                }
+
+                if let result = viewModel.state.result as? TryItResult {
+                    resultsSection(result: result, thumbSize: 80)
+                }
             }
 
-            if viewModel.state.isLoading {
-                loadingIndicator
-            }
-
-            if let error = viewModel.state.error, !viewModel.state.isLoading {
-                ErrorContentView(
-                    message: error as String,
-                    onRetry: {
-                        guard let data = photoData else { return }
-                        viewModel.analyzePhoto(imageData: data)
-                    },
-                    retryButtonColor: WornColors.accentIndigo
-                )
-                .padding(.vertical, 20)
-            }
-
-            if let result = viewModel.state.result as? TryItResult {
-                resultsSection(result: result, thumbSize: 80)
+            if viewModel.state.hasYouCamKey {
+                tryOnSection(isCompact: true)
             }
 
             Spacer().frame(height: 12)
@@ -168,26 +174,32 @@ struct TryItScreen: View {
                 VStack(alignment: .leading, spacing: 24) {
                     uploadZone(height: 300)
 
-                    if photoData != nil && viewModel.state.result == nil && !viewModel.state.isLoading {
-                        analyzeButton
+                    if viewModel.state.hasApiKey {
+                        if photoData != nil && viewModel.state.result == nil && !viewModel.state.isLoading {
+                            analyzeButton
+                        }
+
+                        if viewModel.state.isLoading {
+                            loadingIndicator
+                        }
+
+                        if let error = viewModel.state.error, !viewModel.state.isLoading {
+                            errorContent(message: error as String)
+                        }
+
+                        if let result = viewModel.state.result as? TryItResult {
+                            pairsSection(matchingItems: result.matchingItems as! [ClothingItem], thumbSize: 90)
+                        }
                     }
 
-                    if viewModel.state.isLoading {
-                        loadingIndicator
-                    }
-
-                    if let error = viewModel.state.error, !viewModel.state.isLoading {
-                        errorContent(message: error as String)
-                    }
-
-                    if let result = viewModel.state.result as? TryItResult {
-                        pairsSection(matchingItems: result.matchingItems as! [ClothingItem], thumbSize: 90)
+                    if viewModel.state.hasYouCamKey {
+                        tryOnSection(isCompact: false)
                     }
                 }
                 .frame(maxWidth: .infinity)
 
                 // Right column
-                if let result = viewModel.state.result as? TryItResult {
+                if viewModel.state.hasApiKey, let result = viewModel.state.result as? TryItResult {
                     VStack(alignment: .leading, spacing: 24) {
                         combinationsCard(count: Int(result.combinationsUnlocked), isCompact: false)
                         gapsFilledSection(gaps: result.gapsFilled as! [String], isCompact: false)
@@ -431,6 +443,171 @@ struct TryItScreen: View {
             fixedHeight: nil,
             contentPadding: EdgeInsets(top: 14, leading: 40, bottom: 14, trailing: 40)
         )
+    }
+
+    // MARK: - Virtual Try-On
+
+    private var categoryOptions: [(GarmentCategory, String)] {
+        [
+            (.top, String(localized: "tryit_category_top")),
+            (.bottom, String(localized: "tryit_category_bottom")),
+            (.fullBody, String(localized: "tryit_category_full")),
+            (.shoes, String(localized: "tryit_category_shoes")),
+        ]
+    }
+
+    @ViewBuilder
+    private func tryOnSection(isCompact: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            if !viewModel.state.hasModelPhoto {
+                modelPhotoPrompt
+            } else {
+                Text(String(localized: "tryit_tryon_category_title"))
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(WornColors.textPrimary)
+                    .tracking(-0.2)
+
+                categorySelector
+
+                if photoData != nil && viewModel.state.selectedCategory != nil
+                    && viewModel.state.tryOnImage == nil && !viewModel.state.tryOnLoading {
+                    seeItOnMeButton
+                }
+
+                if viewModel.state.tryOnLoading {
+                    tryOnLoadingIndicator
+                }
+
+                if let error = viewModel.state.tryOnError, !viewModel.state.tryOnLoading {
+                    ErrorContentView(
+                        message: error as String,
+                        onRetry: { generateTryOn() },
+                        retryButtonColor: WornColors.accentIndigo
+                    )
+                    .padding(.vertical, 16)
+                }
+
+                if let imageData = viewModel.tryOnImageData {
+                    tryOnResultView(imageData: imageData, height: isCompact ? 320 : 400)
+                }
+
+                Text(String(localized: "tryit_tryon_cost_note"))
+                    .font(.system(size: 12))
+                    .foregroundColor(WornColors.textSecondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityIdentifier("try_on_section")
+    }
+
+    private var categorySelector: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(Array(categoryOptions.enumerated()), id: \.offset) { _, item in
+                    let (category, label) = item
+                    let selected = viewModel.state.selectedCategory == category
+                    Button { viewModel.selectCategory(category) } label: {
+                        Text(label)
+                            .font(.system(size: 14, weight: .medium))
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(selected ? WornColors.accentIndigo : WornColors.bgCard)
+                            .foregroundColor(selected ? .white : WornColors.textPrimary)
+                            .clipShape(Capsule())
+                            .overlay(Capsule().stroke(WornColors.borderSubtle, lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .accessibilityIdentifier("try_on_category_selector")
+    }
+
+    private var seeItOnMeButton: some View {
+        WornGradientButton(
+            text: String(localized: "tryit_see_on_me"),
+            action: { generateTryOn() },
+            gradientColors: WornGradients.indigo,
+            cornerRadius: 28,
+            shadowRadius: 10,
+            shadowColor: WornColors.accentIndigo.opacity(0.15),
+            shadowY: 6,
+            icon: AnyView(
+                Image(systemName: "sparkles")
+                    .font(.system(size: 18))
+                    .foregroundColor(.white)
+            ),
+            fixedHeight: nil,
+            contentPadding: EdgeInsets(top: 14, leading: 0, bottom: 14, trailing: 0)
+        )
+        .accessibilityIdentifier("try_on_generate_button")
+    }
+
+    private var tryOnLoadingIndicator: some View {
+        VStack(spacing: 12) {
+            ProgressView().tint(WornColors.accentIndigo)
+            Text(String(localized: "tryit_tryon_generating"))
+                .font(.system(size: 14))
+                .foregroundColor(WornColors.textSecondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 32)
+    }
+
+    private func tryOnResultView(imageData: Data, height: CGFloat) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(String(localized: "tryit_tryon_result_title"))
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(WornColors.textPrimary)
+                .tracking(-0.2)
+
+            ZStack {
+                if let image = UIImage(data: imageData) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: .infinity, maxHeight: height)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: height)
+            .background(WornColors.bgCard)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(WornColors.borderSubtle, lineWidth: 1)
+            )
+            .accessibilityIdentifier("try_on_result")
+        }
+    }
+
+    private var modelPhotoPrompt: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 36))
+                .foregroundColor(WornColors.accentIndigo)
+            Text(String(localized: "tryit_set_model_photo"))
+                .font(.system(size: 14))
+                .foregroundColor(WornColors.textSecondary)
+                .multilineTextAlignment(.center)
+            indigoCtaButton(text: String(localized: "tryit_set_model_photo_cta")) {
+                onTabSelected(.settings)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(24)
+        .background(WornColors.bgCard)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(WornColors.borderSubtle, lineWidth: 1)
+        )
+        .accessibilityIdentifier("try_on_model_photo_prompt")
+    }
+
+    private func generateTryOn() {
+        guard let data = photoData else { return }
+        viewModel.generateTryOn(imageData: data)
     }
 }
 
