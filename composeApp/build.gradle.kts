@@ -21,7 +21,12 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
     buildFeatures {
@@ -30,6 +35,22 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+
+composeCompiler {
+    // Domain models and MVI state classes live in :shared, which does not apply the Compose
+    // compiler plugin, so they carry no stability metadata and would be inferred as unstable.
+    // They are immutable data classes that are always replaced via copy(), never mutated in
+    // place, so declaring them stable is sound and lets composables taking them skip.
+    stabilityConfigurationFiles.add(
+        layout.projectDirectory.file("compose_stability.conf")
+    )
+
+    // Opt-in: ./gradlew :composeApp:assembleRelease -PcomposeMetrics=true
+    if (project.findProperty("composeMetrics") == "true") {
+        metricsDestination = layout.buildDirectory.dir("compose_metrics")
+        reportsDestination = layout.buildDirectory.dir("compose_reports")
     }
 }
 
