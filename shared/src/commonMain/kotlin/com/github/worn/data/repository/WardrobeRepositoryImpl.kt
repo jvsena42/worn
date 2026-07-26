@@ -38,8 +38,6 @@ class WardrobeRepositoryImpl(
     override fun observeAll(): Flow<List<ClothingItem>> =
         db.clothingItemQueries.getAll()
             .asFlow()
-            // mapToList takes the CoroutineContext the query runs on, so the injected dispatcher
-            // slots straight in — no hardcoded Dispatchers.IO anywhere in this class.
             .mapToList(dispatcher)
             .map { rows -> rows.map { it.toDomain() } }
 

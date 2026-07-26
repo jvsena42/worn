@@ -111,9 +111,8 @@ private fun TabItem(
     Surface(
         shape = RoundedCornerShape(26.dp),
         color = if (isActive) WornColors.AccentGreen else WornColors.BgElevated,
-        // No ripple: the tab's own fill colour already signals the selection, and the ripple's
-        // expand-and-fade keeps the whole bar repainting for the best part of a second after the
-        // tap, which reads as the page being slow to switch.
+        // No ripple: it repaints the bar for ~1s after each tap, which reads as a slow page
+        // switch. The active tab's fill already signals selection.
         modifier = modifier
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },

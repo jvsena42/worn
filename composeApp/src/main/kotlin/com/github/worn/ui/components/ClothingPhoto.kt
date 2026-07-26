@@ -22,15 +22,10 @@ import java.io.File
 /**
  * A stored clothing photo with a garment-icon placeholder behind it.
  *
- * Two deliberate performance choices:
- *
- * 1. The [File] is `remember`ed on the path. Allocating it in the composable body would produce a
- *    new instance every recomposition, which changes Coil's model identity and defeats its
- *    memory cache.
- * 2. There is no `File.exists()` check. That is a blocking `stat()` syscall, and running it in a
- *    composable body means one syscall per visible cell per recomposition — on the main thread,
- *    while the grid scrolls. Instead the placeholder is always composed *underneath* the image,
- *    so a missing or unreadable file simply leaves the placeholder visible.
+ * Deliberately does not check `File.exists()`: that is a blocking `stat()` syscall, and in a
+ * composable body it runs once per visible cell per recomposition. The placeholder sits
+ * underneath instead, so a missing file just leaves it visible. The [File] is remembered so
+ * Coil's model identity — and therefore its memory cache — stays stable.
  */
 @Composable
 fun ClothingPhoto(

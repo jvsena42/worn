@@ -224,10 +224,7 @@ internal fun AddItemForm(
 }
 
 private class AddItemFormState(existingItem: ClothingItem?) {
-    /**
-     * The stored photo of the item being edited. Decoded off the main thread, so it starts null
-     * and is filled in once ready — it has to be observable state, not a constructor capture.
-     */
+    /** Decoded off the main thread, so it arrives after construction and must be state. */
     var existingPhotoBitmap by mutableStateOf<ImageBitmap?>(null)
     var photoBytes by mutableStateOf<ByteArray?>(null)
     var originalPhotoBytes by mutableStateOf<ByteArray?>(null)

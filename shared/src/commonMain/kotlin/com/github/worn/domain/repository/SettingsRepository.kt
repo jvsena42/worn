@@ -22,11 +22,8 @@ interface SettingsRepository {
     suspend fun getModelPhoto(): Result<ByteArray?>
     suspend fun clearModelPhoto(): Result<Unit>
 
-    /**
-     * BYOK credentials. These are backed by the platform secret store, whose reads and writes
-     * are blocking (Android Keystore decrypt, iOS Keychain access), so they are exposed as
-     * suspend functions and dispatched here rather than at the call site.
-     */
+    // BYOK credentials. The platform secret store blocks (Keystore decrypt, Keychain access), so
+    // these are suspend and dispatched here rather than at the call site.
     suspend fun hasApiKey(): Result<Boolean>
     suspend fun saveApiKey(key: String): Result<Unit>
     suspend fun clearApiKey(): Result<Unit>

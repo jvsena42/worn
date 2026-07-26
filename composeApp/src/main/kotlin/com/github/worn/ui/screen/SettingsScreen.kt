@@ -433,8 +433,7 @@ private fun ProfileSheet(
 
 @Composable
 private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent) -> Unit, onSave: () -> Unit) {
-    // displayName() reads a string resource, so it stays in composition — but the five option
-    // lists are remembered rather than reallocated on every recomposition of this sheet.
+    // displayName() reads a string resource, so it stays in composition; the lists are not.
     val bodyTypeLabels = BodyType.entries.map { it.displayName() }
     val styleProfileLabels = StyleProfile.entries.map { it.displayName() }
     val ageRangeLabels = AgeRange.entries.map { it.displayName() }

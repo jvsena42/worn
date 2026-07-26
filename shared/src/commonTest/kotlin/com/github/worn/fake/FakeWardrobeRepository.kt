@@ -16,10 +16,7 @@ import kotlin.time.Clock
 
 class FakeWardrobeRepository : WardrobeRepository {
 
-    /**
-     * Stands in for the wardrobe table. Assigning to `value` emits on [observeAll], the same way
-     * a real write would make SQLDelight re-run the query.
-     */
+    /** Assigning to `value` emits on [observeAll], as a real write would. */
     val items = MutableStateFlow<List<ClothingItem>>(emptyList())
 
     var getAllError: Throwable? = null

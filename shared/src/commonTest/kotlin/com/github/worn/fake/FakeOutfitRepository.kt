@@ -9,7 +9,7 @@ import kotlin.time.Clock
 
 class FakeOutfitRepository : OutfitRepository {
 
-    /** Stands in for the outfit table; assigning to `value` emits on [observeAll]. */
+    /** Assigning to `value` emits on [observeAll], as a real write would. */
     val outfits = MutableStateFlow<List<Outfit>>(emptyList())
 
     var getAllError: Throwable? = null

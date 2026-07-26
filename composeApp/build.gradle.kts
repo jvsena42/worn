@@ -39,10 +39,6 @@ android {
 }
 
 composeCompiler {
-    // Domain models and MVI state classes live in :shared, which does not apply the Compose
-    // compiler plugin, so they carry no stability metadata and would be inferred as unstable.
-    // They are immutable data classes that are always replaced via copy(), never mutated in
-    // place, so declaring them stable is sound and lets composables taking them skip.
     stabilityConfigurationFiles.add(
         layout.projectDirectory.file("compose_stability.conf")
     )

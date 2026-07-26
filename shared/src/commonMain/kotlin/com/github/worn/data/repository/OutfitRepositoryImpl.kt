@@ -76,12 +76,7 @@ class OutfitRepositoryImpl(
     }
 }
 
-/**
- * One row of the outfit/outfitItem join. Both join queries are read through this mapper so they
- * share a single shape, and so [toOutfits] works for either of them.
- *
- * [itemId] is null for an outfit that has no items, because the join is a LEFT JOIN.
- */
+/** One row of the outfit/outfitItem join; [itemId] is null for an outfit with no items. */
 private data class OutfitRow(
     val id: String,
     val name: String,
@@ -89,7 +84,7 @@ private data class OutfitRow(
     val itemId: String?,
 )
 
-/** Regroups join rows back into one [Outfit] per id, preserving the query's `createdAt DESC` order. */
+/** Regroups join rows into one [Outfit] per id, preserving the query's `createdAt DESC` order. */
 private fun List<OutfitRow>.toOutfits(): List<Outfit> =
     groupBy { it.id }.map { (_, rows) ->
         val first = rows.first()

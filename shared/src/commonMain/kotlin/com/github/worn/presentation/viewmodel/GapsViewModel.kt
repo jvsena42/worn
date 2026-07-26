@@ -43,8 +43,7 @@ class GapsViewModel(
     val effects: Flow<GapsEffect> = _effects.receiveAsFlow()
 
     init {
-        // The secret-store read is blocking and this ViewModel is constructed during composition,
-        // so resolve the key off the main thread first, then pick the AI or fallback branch.
+        // Resolve the key before branching, and off the main thread — see SettingsRepository.
         viewModelScope.launch {
             val hasKey = settingsRepository.hasApiKey().getOrDefault(false)
             _state.update { it.copy(hasApiKey = hasKey, isAiMode = hasKey) }

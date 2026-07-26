@@ -67,10 +67,6 @@ class SettingsViewModel(
         onIntent(SettingsIntent.LoadProfile)
     }
 
-    /**
-     * Reads the secret store off the main thread. Doing this synchronously in [init] would block
-     * the frame that composes this screen, because the ViewModel is constructed during composition.
-     */
     private fun refreshCredentialState() {
         viewModelScope.launch {
             val hasApiKey = settingsRepository.hasApiKey().getOrDefault(false)

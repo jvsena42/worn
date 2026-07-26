@@ -26,9 +26,8 @@ fun CategoryFilterChips(
     onCategorySelected: (Category?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // The labels come from string resources, so they must be read in composition — but the list
-    // itself is remembered. Rebuilding it every recomposition allocated a fresh list of Pairs and
-    // handed LazyRow a new item provider each time, invalidating the whole row.
+    // stringResource has to be read in composition; the list is remembered so LazyRow does not
+    // get a new item provider on every recomposition.
     val labels = listOf(stringResource(R.string.filter_all)) +
         Category.entries.map { it.displayName() }
     val allChips = remember(labels) {

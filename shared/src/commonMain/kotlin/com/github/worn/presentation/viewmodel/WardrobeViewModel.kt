@@ -66,17 +66,16 @@ class WardrobeViewModel(
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
-    /** Everything in [WardrobeState] that is *not* derived from the database. */
+    /** The parts of [WardrobeState] not derived from the database. */
     private val _uiState = MutableStateFlow(WardrobeState(isLoading = true))
 
     private val _effects = Channel<WardrobeEffect>(Channel.BUFFERED)
     val effects: Flow<WardrobeEffect> = _effects.receiveAsFlow()
 
     /**
-     * The wardrobe table is the single source of truth: mutations never re-query, they just let
-     * the DB emission flow through. [SharingStarted.Eagerly] keeps the latest value cached for
-     * the ViewModel's whole lifetime, so re-entering the screen renders immediately instead of
-     * re-running the query behind a spinner.
+     * Mutations never re-query; the DB emission drives the update. [SharingStarted.Eagerly] keeps
+     * the last value cached, so re-entering the screen renders immediately rather than behind a
+     * spinner.
      */
     val state: StateFlow<WardrobeState> = combine(
         repository.observeAll().catch { error ->
@@ -88,7 +87,6 @@ class WardrobeViewModel(
     ) { items, ui ->
         ui.copy(
             items = ui.activeCategory?.let { cat -> items.filter { it.category == cat } } ?: items,
-            // Derived from the same emission — no second query just to count rows.
             totalItemCount = items.size,
             isLoading = false,
         )
@@ -98,10 +96,6 @@ class WardrobeViewModel(
         refreshApiKeyState()
     }
 
-    /**
-     * Reads the secret store off the main thread. This ViewModel is constructed during
-     * composition, so a synchronous Keystore decrypt here would stall the frame.
-     */
     private fun refreshApiKeyState() {
         viewModelScope.launch {
             val hasApiKey = settingsRepository.hasApiKey().getOrDefault(false)
@@ -122,7 +116,6 @@ class WardrobeViewModel(
     }
 
     private fun filterByCategory(category: Category?) {
-        // Filtering happens in the combine above, over the already-loaded list — no query.
         _uiState.update { it.copy(activeCategory = category) }
     }
 

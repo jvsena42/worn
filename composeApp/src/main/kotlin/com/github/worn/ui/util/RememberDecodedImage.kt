@@ -12,10 +12,8 @@ import java.io.File
 /**
  * Decodes [bytes] into an [ImageBitmap] off the main thread, returning null until it is ready.
  *
- * Decoding inside `remember { }` runs during the composition pass, so a camera-resolution JPEG
- * stalls the frame that opens the sheet. [produceState] moves the work to [Dispatchers.Default]
- * and re-composes once with the result. Decoding goes through [decodeForEditing] so the bitmap is
- * downsampled rather than allocated at full resolution.
+ * Decoding inside `remember { }` would run during the composition pass and stall the frame.
+ * [decodeForEditing] also downsamples rather than decoding at full resolution.
  */
 @Composable
 fun rememberDecodedImage(bytes: ByteArray?): ImageBitmap? {
@@ -27,7 +25,7 @@ fun rememberDecodedImage(bytes: ByteArray?): ImageBitmap? {
     return image
 }
 
-/** [rememberDecodedImage] for a stored photo path; the file read also happens off the main thread. */
+/** [rememberDecodedImage] for a stored photo path; the file read is off the main thread too. */
 @Composable
 fun rememberDecodedImage(photoPath: String?): ImageBitmap? {
     val image by produceState<ImageBitmap?>(initialValue = null, photoPath) {

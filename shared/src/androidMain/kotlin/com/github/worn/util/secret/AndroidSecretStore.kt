@@ -12,9 +12,8 @@ import javax.crypto.spec.GCMParameterSpec
 
 class AndroidSecretStore(private val context: Context) : SecretStore {
 
-    // Loading the Android Keystore is expensive (tens of milliseconds on first access). Keep it
-    // lazy so it happens on the dispatcher SettingsRepository uses, not on whichever thread Koin
-    // happens to construct this store on — which is the main thread during composition.
+    // Lazy so the expensive first load happens on SettingsRepository's dispatcher rather than
+    // whichever thread Koin constructs this on.
     private val keyStore: KeyStore by lazy {
         KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null) }
     }

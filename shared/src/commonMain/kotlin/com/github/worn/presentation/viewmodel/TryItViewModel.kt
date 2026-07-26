@@ -56,8 +56,6 @@ class TryItViewModel(
     val effects: Flow<TryItEffect> = _effects.receiveAsFlow()
 
     init {
-        // Secret-store reads are blocking, and this ViewModel is constructed during composition,
-        // so they must not run synchronously here.
         viewModelScope.launch {
             val hasApiKey = settingsRepository.hasApiKey().getOrDefault(false)
             val hasYouCamKey = settingsRepository.hasYouCamCredentials().getOrDefault(false)

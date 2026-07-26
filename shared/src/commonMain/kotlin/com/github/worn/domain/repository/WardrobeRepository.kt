@@ -12,15 +12,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface WardrobeRepository {
     /**
-     * The wardrobe as a reactive stream, re-emitting whenever the underlying table changes.
+     * The wardrobe as a reactive stream — the single source of truth for anything displaying it,
+     * so callers never re-query after a mutation.
      *
-     * This is the single source of truth for anything that displays the wardrobe: callers never
-     * need to re-query after a mutation, and re-entering a screen costs nothing because the
-     * latest value is already cached in the ViewModel's [kotlinx.coroutines.flow.StateFlow].
-     *
-     * Unlike the one-shot reads below it is neither `suspend` (a cold Flow is returned
-     * immediately) nor `Result`-wrapped — failures surface as an exception in the stream and are
-     * handled with `catch` by the collector.
+     * Not `Result`-wrapped like the one-shot reads below: failures surface as an exception in the
+     * stream and are handled with `catch` by the collector.
      */
     fun observeAll(): Flow<List<ClothingItem>>
 

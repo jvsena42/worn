@@ -145,9 +145,6 @@ private fun GapsScaffold(
         modifier = Modifier.testTag("gaps_screen"),
         containerColor = WornColors.BgPage,
     ) { paddingValues ->
-        // LazyColumn rather than Column + verticalScroll: the recommendation list is unbounded,
-        // and composing every card eagerly is work done during a tab transition for content the
-        // user cannot see yet.
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -242,12 +239,7 @@ private fun CompleteContent() {
     }
 }
 
-/**
- * Emits the banner and the category-grouped recommendations into the enclosing [LazyColumn].
- *
- * Grouping happens once here while building the item list, not inside a composable body, so it no
- * longer re-runs on every recomposition.
- */
+/** Grouping runs here while building the item list, not in a composable body. */
 private fun LazyListScope.gapsContent(
     state: GapsState,
     onCardClick: (GapRecommendation) -> Unit,

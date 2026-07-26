@@ -66,19 +66,16 @@ class OutfitViewModel(
     private val wardrobeRepository: WardrobeRepository,
 ) : ViewModel() {
 
-    /** Everything in [OutfitState] that is *not* derived from the database. */
+    /** The parts of [OutfitState] not derived from the database. */
     private val _uiState = MutableStateFlow(OutfitState(isLoading = true))
 
     private val _effects = Channel<OutfitEffect>(Channel.BUFFERED)
     val effects: Flow<OutfitEffect> = _effects.receiveAsFlow()
 
     /**
-     * The item-id → category lookup that [com.github.worn.domain.model.Outfit] cards render from.
-     *
-     * Derived here rather than inside the `combine` below on purpose: `map` only runs when the
-     * wardrobe actually changes, so the Map instance stays identical across unrelated state
-     * changes (selection, saving flags). Compose compares unstable parameters like `Map` by
-     * instance, so rebuilding it on every emission would stop every outfit card from skipping.
+     * Derived here rather than in the `combine` below on purpose: `map` only runs when the
+     * wardrobe changes, so the Map instance survives unrelated state changes. Compose compares
+     * unstable parameters like `Map` by instance, so rebuilding it would stop cards skipping.
      */
     private val wardrobeSnapshot: Flow<WardrobeSnapshot> =
         wardrobeRepository.observeAll()
@@ -86,9 +83,8 @@ class OutfitViewModel(
             .map { items -> WardrobeSnapshot(items, items.associate { it.id to it.category }) }
 
     /**
-     * Both tables this screen needs are observed once and joined here, so the outfit list, the
-     * item picker and the card category dots all read from a single source of truth rather than
-     * three independently-refreshed copies. Mutations never re-query — the DB emission does it.
+     * Both tables are observed once and joined here, so the outfit list, the item picker and the
+     * category dots share one source of truth instead of three refreshed copies.
      */
     val state: StateFlow<OutfitState> = combine(
         repository.observeAll().catch { error ->
@@ -125,7 +121,6 @@ class OutfitViewModel(
     }
 
     private fun filterItemsByCategory(category: Category?) {
-        // Filtering happens in the combine above, over the already-loaded list — no query.
         _uiState.update { it.copy(activeItemCategory = category) }
     }
 
