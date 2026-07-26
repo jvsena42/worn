@@ -12,15 +12,18 @@ import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
 import com.github.worn.domain.repository.SettingsRepository
 import com.github.worn.data.source.local.PhotoFileStorage
+import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
+@Suppress("TooManyFunctions")
 class SettingsRepositoryImpl(
     private val dataStore: DataStore<Preferences>,
     private val fileStorage: PhotoFileStorage,
+    private val secretStore: SecretStore,
     private val dispatcher: CoroutineContext,
 ) : SettingsRepository {
 
@@ -126,6 +129,42 @@ class SettingsRepositoryImpl(
         withContext(dispatcher) {
             dataStore.data.map { it[KEY_MODEL_PHOTO_PATH] }.first()?.let { fileStorage.delete(it) }
             dataStore.edit { prefs -> prefs.remove(KEY_MODEL_PHOTO_PATH) }
+        }
+    }
+
+    override suspend fun hasApiKey(): Result<Boolean> = runCatching {
+        withContext(dispatcher) { secretStore.getApiKey() != null }
+    }
+
+    override suspend fun saveApiKey(key: String): Result<Unit> = runCatching {
+        withContext(dispatcher) { secretStore.saveApiKey(key) }
+    }
+
+    override suspend fun clearApiKey(): Result<Unit> = runCatching {
+        withContext(dispatcher) { secretStore.clearApiKey() }
+    }
+
+    override suspend fun hasYouCamCredentials(): Result<Boolean> = runCatching {
+        withContext(dispatcher) {
+            !secretStore.getSecret(SecretStore.YOUCAM_CLIENT_ID).isNullOrBlank() &&
+                !secretStore.getSecret(SecretStore.YOUCAM_CLIENT_SECRET).isNullOrBlank()
+        }
+    }
+
+    override suspend fun saveYouCamCredentials(
+        clientId: String,
+        clientSecret: String,
+    ): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_ID, clientId)
+            secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_SECRET, clientSecret)
+        }
+    }
+
+    override suspend fun clearYouCamCredentials(): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            secretStore.clearSecret(SecretStore.YOUCAM_CLIENT_ID)
+            secretStore.clearSecret(SecretStore.YOUCAM_CLIENT_SECRET)
         }
     }
 

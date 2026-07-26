@@ -1,13 +1,11 @@
 package com.github.worn.viewmodel
 
 import com.github.worn.domain.model.GarmentCategory
-import com.github.worn.fake.FakeSecretStore
 import com.github.worn.fake.FakeSettingsRepository
 import com.github.worn.fake.FakeTryOnRepository
 import com.github.worn.fake.FakeWardrobeRepository
 import com.github.worn.presentation.viewmodel.TryItIntent
 import com.github.worn.presentation.viewmodel.TryItViewModel
-import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -30,7 +28,6 @@ class TryItViewModelTest {
     private lateinit var wardrobe: FakeWardrobeRepository
     private lateinit var tryOn: FakeTryOnRepository
     private lateinit var settings: FakeSettingsRepository
-    private lateinit var secretStore: FakeSecretStore
 
     @BeforeTest
     fun setup() {
@@ -38,7 +35,6 @@ class TryItViewModelTest {
         wardrobe = FakeWardrobeRepository()
         tryOn = FakeTryOnRepository()
         settings = FakeSettingsRepository()
-        secretStore = FakeSecretStore()
     }
 
     @AfterTest
@@ -46,7 +42,7 @@ class TryItViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel() = TryItViewModel(wardrobe, tryOn, settings, secretStore)
+    private fun createViewModel() = TryItViewModel(wardrobe, tryOn, settings)
 
     @Test
     fun `init reports no capabilities when neither key is set`() {
@@ -57,8 +53,8 @@ class TryItViewModelTest {
 
     @Test
     fun `init reports YouCam capability when both credentials are set`() {
-        secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_ID, "id")
-        secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_SECRET, "secret")
+        settings.youCamClientId = "id"
+        settings.youCamClientSecret = "secret"
         val vm = createViewModel()
         assertTrue(vm.state.value.hasYouCamKey)
         assertFalse(vm.state.value.hasApiKey)
@@ -66,7 +62,7 @@ class TryItViewModelTest {
 
     @Test
     fun `init does not report YouCam capability when only one credential is set`() {
-        secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_ID, "id")
+        settings.youCamClientId = "id"
         val vm = createViewModel()
         assertFalse(vm.state.value.hasYouCamKey)
     }

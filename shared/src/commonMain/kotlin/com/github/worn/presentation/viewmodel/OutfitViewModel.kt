@@ -10,15 +10,17 @@ import com.github.worn.domain.repository.WardrobeRepository
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed interface OutfitIntent {
-    data object LoadOutfits : OutfitIntent
-    data object LoadClothingItems : OutfitIntent
     data class FilterItemsByCategory(val category: Category?) : OutfitIntent
     data class ToggleItemSelection(val itemId: String) : OutfitIntent
     data class ToggleSelection(val outfitId: String) : OutfitIntent
@@ -52,36 +54,65 @@ sealed interface OutfitEffect {
     data object OutfitUpdated : OutfitEffect
 }
 
+/** One wardrobe emission plus the lookup derived from it, so both share the same lifetime. */
+private data class WardrobeSnapshot(
+    val items: List<ClothingItem>,
+    val categoriesById: Map<String, Category>,
+)
+
 @Suppress("TooManyFunctions")
 class OutfitViewModel(
     private val repository: OutfitRepository,
     private val wardrobeRepository: WardrobeRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(OutfitState())
-    val state: StateFlow<OutfitState> = _state.asStateFlow()
+    /** Everything in [OutfitState] that is *not* derived from the database. */
+    private val _uiState = MutableStateFlow(OutfitState(isLoading = true))
 
     private val _effects = Channel<OutfitEffect>(Channel.BUFFERED)
     val effects: Flow<OutfitEffect> = _effects.receiveAsFlow()
 
-    init {
-        onIntent(OutfitIntent.LoadOutfits)
-        loadItemCategories()
-    }
+    /**
+     * The item-id → category lookup that [com.github.worn.domain.model.Outfit] cards render from.
+     *
+     * Derived here rather than inside the `combine` below on purpose: `map` only runs when the
+     * wardrobe actually changes, so the Map instance stays identical across unrelated state
+     * changes (selection, saving flags). Compose compares unstable parameters like `Map` by
+     * instance, so rebuilding it on every emission would stop every outfit card from skipping.
+     */
+    private val wardrobeSnapshot: Flow<WardrobeSnapshot> =
+        wardrobeRepository.observeAll()
+            .catch { emit(emptyList()) }
+            .map { items -> WardrobeSnapshot(items, items.associate { it.id to it.category }) }
 
-    private fun loadItemCategories() {
-        viewModelScope.launch {
-            wardrobeRepository.getAll().onSuccess { items ->
-                val categories = items.associate { it.id to it.category }
-                _state.update { it.copy(itemCategories = categories, allClothingItems = items) }
-            }
-        }
-    }
+    /**
+     * Both tables this screen needs are observed once and joined here, so the outfit list, the
+     * item picker and the card category dots all read from a single source of truth rather than
+     * three independently-refreshed copies. Mutations never re-query — the DB emission does it.
+     */
+    val state: StateFlow<OutfitState> = combine(
+        repository.observeAll().catch { error ->
+            _uiState.update { it.copy(error = error.message) }
+            _effects.send(OutfitEffect.ShowError(error.message ?: "Unknown error"))
+            emit(emptyList())
+        },
+        wardrobeSnapshot,
+        _uiState,
+    ) { outfits, wardrobe, ui ->
+        ui.copy(
+            outfits = outfits,
+            allClothingItems = wardrobe.items,
+            itemCategories = wardrobe.categoriesById,
+            clothingItems = ui.activeItemCategory
+                ?.let { cat -> wardrobe.items.filter { it.category == cat } }
+                ?: wardrobe.items,
+            isLoading = false,
+            isLoadingItems = false,
+        )
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, OutfitState(isLoading = true))
 
     fun onIntent(intent: OutfitIntent) {
         when (intent) {
-            is OutfitIntent.LoadOutfits -> loadOutfits()
-            is OutfitIntent.LoadClothingItems -> loadClothingItems()
             is OutfitIntent.FilterItemsByCategory -> filterItemsByCategory(intent.category)
             is OutfitIntent.ToggleItemSelection -> toggleItemSelection(intent.itemId)
             is OutfitIntent.ToggleSelection -> toggleSelection(intent.outfitId)
@@ -93,43 +124,13 @@ class OutfitViewModel(
         }
     }
 
-    private fun loadOutfits() {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
-            repository.getAll()
-                .onSuccess { outfits ->
-                    _state.update { it.copy(outfits = outfits, isLoading = false) }
-                }
-                .onFailure { error ->
-                    _state.update { it.copy(isLoading = false, error = error.message) }
-                    _effects.send(OutfitEffect.ShowError(error.message ?: "Unknown error"))
-                }
-        }
-    }
-
-    private fun loadClothingItems() {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoadingItems = true) }
-            val result = when (val cat = _state.value.activeItemCategory) {
-                null -> wardrobeRepository.getAll()
-                else -> wardrobeRepository.getByCategory(cat)
-            }
-            result.onSuccess { items ->
-                _state.update { it.copy(clothingItems = items, isLoadingItems = false) }
-            }.onFailure { error ->
-                _state.update { it.copy(isLoadingItems = false) }
-                _effects.send(OutfitEffect.ShowError(error.message ?: "Failed to load items"))
-            }
-        }
-    }
-
     private fun filterItemsByCategory(category: Category?) {
-        _state.update { it.copy(activeItemCategory = category) }
-        loadClothingItems()
+        // Filtering happens in the combine above, over the already-loaded list — no query.
+        _uiState.update { it.copy(activeItemCategory = category) }
     }
 
     private fun toggleItemSelection(itemId: String) {
-        _state.update { state ->
+        _uiState.update { state ->
             val updated = if (itemId in state.selectedItemIds) {
                 state.selectedItemIds - itemId
             } else {
@@ -140,7 +141,7 @@ class OutfitViewModel(
     }
 
     private fun toggleSelection(outfitId: String) {
-        _state.update { state ->
+        _uiState.update { state ->
             val updated = if (outfitId in state.selectedIds) {
                 state.selectedIds - outfitId
             } else {
@@ -151,73 +152,58 @@ class OutfitViewModel(
     }
 
     private fun clearSelection() {
-        _state.update { it.copy(selectedIds = emptySet()) }
+        _uiState.update { it.copy(selectedIds = emptySet()) }
     }
 
     private fun createOutfit(name: String) {
-        val itemIds = _state.value.selectedItemIds.toList()
+        val itemIds = state.value.selectedItemIds.toList()
         if (name.isBlank() || itemIds.isEmpty()) return
         viewModelScope.launch {
-            _state.update { it.copy(isSaving = true) }
+            _uiState.update { it.copy(isSaving = true) }
             repository.createOutfit(name = name, itemIds = itemIds)
                 .onSuccess {
-                    _state.update {
+                    _uiState.update {
                         it.copy(isSaving = false, selectedItemIds = emptySet(), activeItemCategory = null)
                     }
                     _effects.send(OutfitEffect.OutfitCreated)
-                    loadOutfits()
                 }
                 .onFailure { error ->
-                    _state.update { it.copy(isSaving = false) }
+                    _uiState.update { it.copy(isSaving = false) }
                     _effects.send(OutfitEffect.ShowError(error.message ?: "Failed to create outfit"))
                 }
         }
     }
 
     private fun deleteSelected() {
-        val ids = _state.value.selectedIds.toList()
+        val ids = state.value.selectedIds.toList()
         if (ids.isEmpty()) return
         viewModelScope.launch {
-            _state.update { state ->
-                state.copy(
-                    isDeleting = true,
-                    outfits = state.outfits.filterNot { it.id in ids },
-                    selectedIds = emptySet(),
-                )
-            }
+            _uiState.update { it.copy(isDeleting = true, selectedIds = emptySet()) }
             var failed = false
             for (id in ids) {
                 repository.deleteOutfit(id).onFailure { failed = true }
             }
-            _state.update { it.copy(isDeleting = false) }
+            _uiState.update { it.copy(isDeleting = false) }
             if (failed) {
                 _effects.send(OutfitEffect.ShowError("Some outfits could not be deleted"))
             } else {
                 _effects.send(OutfitEffect.OutfitsDeleted)
             }
-            loadOutfits()
         }
     }
 
     private fun deleteOutfit(outfitId: String) {
         viewModelScope.launch {
-            _state.update { state ->
-                state.copy(outfits = state.outfits.filterNot { it.id == outfitId })
-            }
             repository.deleteOutfit(outfitId)
                 .onSuccess { _effects.send(OutfitEffect.OutfitDeleted) }
                 .onFailure { _effects.send(OutfitEffect.ShowError(it.message ?: "Failed to delete")) }
-            loadOutfits()
         }
     }
 
     private fun updateOutfit(outfit: Outfit) {
         viewModelScope.launch {
             repository.updateOutfit(outfit)
-                .onSuccess {
-                    _effects.send(OutfitEffect.OutfitUpdated)
-                    loadOutfits()
-                }
+                .onSuccess { _effects.send(OutfitEffect.OutfitUpdated) }
                 .onFailure {
                     _effects.send(OutfitEffect.ShowError(it.message ?: "Failed to update"))
                 }

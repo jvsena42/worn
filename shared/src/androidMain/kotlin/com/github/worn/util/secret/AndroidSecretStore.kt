@@ -12,7 +12,12 @@ import javax.crypto.spec.GCMParameterSpec
 
 class AndroidSecretStore(private val context: Context) : SecretStore {
 
-    private val keyStore: KeyStore = KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null) }
+    // Loading the Android Keystore is expensive (tens of milliseconds on first access). Keep it
+    // lazy so it happens on the dispatcher SettingsRepository uses, not on whichever thread Koin
+    // happens to construct this store on — which is the main thread during composition.
+    private val keyStore: KeyStore by lazy {
+        KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null) }
+    }
 
     override fun getSecret(name: String): String? {
         val contents = secretFile(name).takeIf { it.exists() }?.readBytes()

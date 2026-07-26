@@ -34,10 +34,6 @@ class WardrobeViewModelWrapper: ObservableObject {
         viewModel.onIntent(intent: intent)
     }
 
-    func loadItems() {
-        viewModel.onIntent(intent: WardrobeIntent.LoadItems())
-    }
-
     func addItem(
         imageData: Data, name: String, category: Category, colors: [String], seasons: [Season],
         subcategory: Subcategory? = nil, fit: Fit? = nil, material: Material? = nil

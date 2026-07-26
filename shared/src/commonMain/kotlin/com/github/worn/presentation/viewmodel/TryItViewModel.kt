@@ -7,7 +7,6 @@ import com.github.worn.domain.model.TryItResult
 import com.github.worn.domain.repository.SettingsRepository
 import com.github.worn.domain.repository.TryOnRepository
 import com.github.worn.domain.repository.WardrobeRepository
-import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,7 +47,6 @@ class TryItViewModel(
     private val wardrobeRepository: WardrobeRepository,
     private val tryOnRepository: TryOnRepository,
     private val settingsRepository: SettingsRepository,
-    private val secretStore: SecretStore,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TryItState())
@@ -58,11 +56,12 @@ class TryItViewModel(
     val effects: Flow<TryItEffect> = _effects.receiveAsFlow()
 
     init {
-        _state.update {
-            it.copy(
-                hasApiKey = secretStore.getApiKey() != null,
-                hasYouCamKey = hasYouCamCredentials(),
-            )
+        // Secret-store reads are blocking, and this ViewModel is constructed during composition,
+        // so they must not run synchronously here.
+        viewModelScope.launch {
+            val hasApiKey = settingsRepository.hasApiKey().getOrDefault(false)
+            val hasYouCamKey = settingsRepository.hasYouCamCredentials().getOrDefault(false)
+            _state.update { it.copy(hasApiKey = hasApiKey, hasYouCamKey = hasYouCamKey) }
         }
         viewModelScope.launch {
             settingsRepository.getModelPhoto().onSuccess { bytes ->
@@ -131,8 +130,4 @@ class TryItViewModel(
             it.copy(result = null, error = null, tryOnImage = null, tryOnError = null)
         }
     }
-
-    private fun hasYouCamCredentials(): Boolean =
-        !secretStore.getSecret(SecretStore.YOUCAM_CLIENT_ID).isNullOrBlank() &&
-            !secretStore.getSecret(SecretStore.YOUCAM_CLIENT_SECRET).isNullOrBlank()
 }

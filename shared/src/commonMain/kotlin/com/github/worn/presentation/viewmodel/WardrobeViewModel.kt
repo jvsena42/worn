@@ -8,19 +8,21 @@ import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.Subcategory
+import com.github.worn.domain.repository.SettingsRepository
 import com.github.worn.domain.repository.WardrobeRepository
-import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed interface WardrobeIntent {
-    data object LoadItems : WardrobeIntent
     data class FilterByCategory(val category: Category?) : WardrobeIntent
     data class AddItem(
         val imageBytes: ByteArray,
@@ -61,27 +63,54 @@ sealed interface WardrobeEffect {
 
 class WardrobeViewModel(
     private val repository: WardrobeRepository,
-    private val secretStore: SecretStore,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(WardrobeState())
-    val state: StateFlow<WardrobeState> = _state.asStateFlow()
+    /** Everything in [WardrobeState] that is *not* derived from the database. */
+    private val _uiState = MutableStateFlow(WardrobeState(isLoading = true))
 
     private val _effects = Channel<WardrobeEffect>(Channel.BUFFERED)
     val effects: Flow<WardrobeEffect> = _effects.receiveAsFlow()
 
+    /**
+     * The wardrobe table is the single source of truth: mutations never re-query, they just let
+     * the DB emission flow through. [SharingStarted.Eagerly] keeps the latest value cached for
+     * the ViewModel's whole lifetime, so re-entering the screen renders immediately instead of
+     * re-running the query behind a spinner.
+     */
+    val state: StateFlow<WardrobeState> = combine(
+        repository.observeAll().catch { error ->
+            _uiState.update { it.copy(error = error.message) }
+            _effects.send(WardrobeEffect.ShowError(error.message ?: "Unknown error"))
+            emit(emptyList())
+        },
+        _uiState,
+    ) { items, ui ->
+        ui.copy(
+            items = ui.activeCategory?.let { cat -> items.filter { it.category == cat } } ?: items,
+            // Derived from the same emission — no second query just to count rows.
+            totalItemCount = items.size,
+            isLoading = false,
+        )
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, WardrobeState(isLoading = true))
+
     init {
         refreshApiKeyState()
-        onIntent(WardrobeIntent.LoadItems)
     }
 
+    /**
+     * Reads the secret store off the main thread. This ViewModel is constructed during
+     * composition, so a synchronous Keystore decrypt here would stall the frame.
+     */
     private fun refreshApiKeyState() {
-        _state.update { it.copy(hasApiKey = secretStore.getApiKey() != null) }
+        viewModelScope.launch {
+            val hasApiKey = settingsRepository.hasApiKey().getOrDefault(false)
+            _uiState.update { it.copy(hasApiKey = hasApiKey) }
+        }
     }
 
     fun onIntent(intent: WardrobeIntent) {
         when (intent) {
-            is WardrobeIntent.LoadItems -> loadItems()
             is WardrobeIntent.FilterByCategory -> filterByCategory(intent.category)
             is WardrobeIntent.AddItem -> addItem(intent)
             is WardrobeIntent.ToggleSelection -> toggleSelection(intent.itemId)
@@ -92,36 +121,14 @@ class WardrobeViewModel(
         }
     }
 
-    private fun loadItems() {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
-            val cat = _state.value.activeCategory
-            val result = when (cat) {
-                null -> repository.getAll()
-                else -> repository.getByCategory(cat)
-            }
-            result.onSuccess { items ->
-                val totalCount = if (cat == null) {
-                    items.size
-                } else {
-                    repository.getAll().getOrNull()?.size ?: items.size
-                }
-                _state.update { it.copy(items = items, isLoading = false, totalItemCount = totalCount) }
-            }.onFailure { error ->
-                _state.update { it.copy(isLoading = false, error = error.message) }
-                _effects.send(WardrobeEffect.ShowError(error.message ?: "Unknown error"))
-            }
-        }
-    }
-
     private fun filterByCategory(category: Category?) {
-        _state.update { it.copy(activeCategory = category) }
-        loadItems()
+        // Filtering happens in the combine above, over the already-loaded list — no query.
+        _uiState.update { it.copy(activeCategory = category) }
     }
 
     private fun addItem(intent: WardrobeIntent.AddItem) {
         viewModelScope.launch {
-            _state.update { it.copy(isSaving = true) }
+            _uiState.update { it.copy(isSaving = true) }
             repository.addItem(
                 imageBytes = intent.imageBytes,
                 name = intent.name,
@@ -132,18 +139,17 @@ class WardrobeViewModel(
                 fit = intent.fit,
                 material = intent.material,
             ).onSuccess {
-                _state.update { it.copy(isSaving = false) }
+                _uiState.update { it.copy(isSaving = false) }
                 _effects.send(WardrobeEffect.ItemAdded)
-                loadItems()
             }.onFailure { error ->
-                _state.update { it.copy(isSaving = false) }
+                _uiState.update { it.copy(isSaving = false) }
                 _effects.send(WardrobeEffect.ShowError(error.message ?: "Failed to save"))
             }
         }
     }
 
     private fun toggleSelection(itemId: String) {
-        _state.update { state ->
+        _uiState.update { state ->
             val updated = if (itemId in state.selectedIds) {
                 state.selectedIds - itemId
             } else {
@@ -154,53 +160,39 @@ class WardrobeViewModel(
     }
 
     private fun clearSelection() {
-        _state.update { it.copy(selectedIds = emptySet()) }
+        _uiState.update { it.copy(selectedIds = emptySet()) }
     }
 
     private fun deleteSelected() {
-        val ids = _state.value.selectedIds.toList()
+        val ids = state.value.selectedIds.toList()
         if (ids.isEmpty()) return
         viewModelScope.launch {
-            _state.update { state ->
-                state.copy(
-                    isDeleting = true,
-                    items = state.items.filterNot { it.id in ids },
-                    selectedIds = emptySet(),
-                )
-            }
+            _uiState.update { it.copy(isDeleting = true, selectedIds = emptySet()) }
             var failed = false
             for (id in ids) {
                 repository.deleteItem(id).onFailure { failed = true }
             }
-            _state.update { it.copy(isDeleting = false) }
+            _uiState.update { it.copy(isDeleting = false) }
             if (failed) {
                 _effects.send(WardrobeEffect.ShowError("Some items could not be deleted"))
             } else {
                 _effects.send(WardrobeEffect.ItemsDeleted)
             }
-            loadItems()
         }
     }
 
     private fun deleteItem(itemId: String) {
         viewModelScope.launch {
-            _state.update { state ->
-                state.copy(items = state.items.filterNot { it.id == itemId })
-            }
             repository.deleteItem(itemId)
                 .onSuccess { _effects.send(WardrobeEffect.ItemDeleted) }
                 .onFailure { _effects.send(WardrobeEffect.ShowError(it.message ?: "Failed to delete")) }
-            loadItems()
         }
     }
 
     private fun updateItem(item: ClothingItem) {
         viewModelScope.launch {
             repository.updateItem(item)
-                .onSuccess {
-                    _effects.send(WardrobeEffect.ItemUpdated)
-                    loadItems()
-                }
+                .onSuccess { _effects.send(WardrobeEffect.ItemUpdated) }
                 .onFailure {
                     _effects.send(WardrobeEffect.ShowError(it.message ?: "Failed to update"))
                 }

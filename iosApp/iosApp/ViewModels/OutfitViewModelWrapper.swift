@@ -37,14 +37,6 @@ class OutfitViewModelWrapper: ObservableObject {
         }
     }
 
-    func loadOutfits() {
-        viewModel.onIntent(intent: OutfitIntent.LoadOutfits())
-    }
-
-    func loadClothingItems() {
-        viewModel.onIntent(intent: OutfitIntent.LoadClothingItems())
-    }
-
     func filterItemsByCategory(_ category: Category?) {
         let intent = OutfitIntent.FilterItemsByCategory(category: category)
         viewModel.onIntent(intent: intent)

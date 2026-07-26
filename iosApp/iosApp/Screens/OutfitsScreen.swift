@@ -13,10 +13,7 @@ struct OutfitsScreen: View {
         OutfitsContent(
             state: viewModel.state,
             isCompact: sizeClass == .compact,
-            onCreateClick: {
-                viewModel.loadClothingItems()
-                showCreateSheet = true
-            },
+            onCreateClick: { showCreateSheet = true },
             onToggleSelection: { viewModel.toggleSelection($0) },
             onClearSelection: { viewModel.clearSelection() },
             onDeleteSelected: { viewModel.deleteSelected() },
@@ -61,7 +58,6 @@ struct OutfitsScreen: View {
                             viewModel.toggleItemSelection(itemId)
                         }
                     }
-                    viewModel.loadClothingItems()
                     showCreateSheet = true
                 },
                 onDelete: { id in
@@ -76,9 +72,6 @@ struct OutfitsScreen: View {
                 editOutfit = nil
                 viewModel.outfitCreated = false
             }
-        }
-        .onAppear {
-            viewModel.loadOutfits()
         }
     }
 }

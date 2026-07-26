@@ -25,7 +25,12 @@ val sharedModule = module {
     singleOf(::ClaudeApiClient)
     singleOf(::YouCamApiClient)
     single<SettingsRepository> {
-        SettingsRepositoryImpl(dataStore = get(), fileStorage = get(), dispatcher = get())
+        SettingsRepositoryImpl(
+            dataStore = get(),
+            fileStorage = get(),
+            secretStore = get(),
+            dispatcher = get(),
+        )
     }
     single<TryOnRepository> {
         TryOnRepositoryImpl(youCamClient = get(), settingsRepository = get(), dispatcher = get())

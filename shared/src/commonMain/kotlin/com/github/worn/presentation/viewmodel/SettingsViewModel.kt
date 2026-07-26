@@ -10,7 +10,6 @@ import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
 import com.github.worn.domain.repository.SettingsRepository
 import com.github.worn.domain.repository.TryOnRepository
-import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,7 +54,6 @@ sealed interface SettingsEffect {
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
     private val tryOnRepository: TryOnRepository,
-    private val secretStore: SecretStore,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -65,13 +63,20 @@ class SettingsViewModel(
     val effects: Flow<SettingsEffect> = _effects.receiveAsFlow()
 
     init {
-        _state.update {
-            it.copy(
-                hasApiKey = secretStore.getApiKey() != null,
-                hasYouCamKey = hasYouCamCredentials(),
-            )
-        }
+        refreshCredentialState()
         onIntent(SettingsIntent.LoadProfile)
+    }
+
+    /**
+     * Reads the secret store off the main thread. Doing this synchronously in [init] would block
+     * the frame that composes this screen, because the ViewModel is constructed during composition.
+     */
+    private fun refreshCredentialState() {
+        viewModelScope.launch {
+            val hasApiKey = settingsRepository.hasApiKey().getOrDefault(false)
+            val hasYouCamKey = settingsRepository.hasYouCamCredentials().getOrDefault(false)
+            _state.update { it.copy(hasApiKey = hasApiKey, hasYouCamKey = hasYouCamKey) }
+        }
     }
 
     fun onIntent(intent: SettingsIntent) {
@@ -141,18 +146,28 @@ class SettingsViewModel(
     }
 
     private fun saveApiKey(key: String) {
-        secretStore.saveApiKey(key)
-        _state.update { it.copy(hasApiKey = true) }
         viewModelScope.launch {
-            _effects.send(SettingsEffect.ApiKeySaved)
+            settingsRepository.saveApiKey(key)
+                .onSuccess {
+                    _state.update { it.copy(hasApiKey = true) }
+                    _effects.send(SettingsEffect.ApiKeySaved)
+                }
+                .onFailure { error ->
+                    _effects.send(SettingsEffect.ShowError(error.message ?: "Failed to save"))
+                }
         }
     }
 
     private fun clearApiKey() {
-        secretStore.clearApiKey()
-        _state.update { it.copy(hasApiKey = false) }
         viewModelScope.launch {
-            _effects.send(SettingsEffect.ApiKeyCleared)
+            settingsRepository.clearApiKey()
+                .onSuccess {
+                    _state.update { it.copy(hasApiKey = false) }
+                    _effects.send(SettingsEffect.ApiKeyCleared)
+                }
+                .onFailure { error ->
+                    _effects.send(SettingsEffect.ShowError(error.message ?: "Failed to clear"))
+                }
         }
     }
 
@@ -160,9 +175,10 @@ class SettingsViewModel(
         _state.update { it.copy(verifyingYouCam = true, youCamError = null) }
         viewModelScope.launch {
             tryOnRepository.verifyCredentials(clientId, clientSecret)
+                .mapCatching {
+                    settingsRepository.saveYouCamCredentials(clientId, clientSecret).getOrThrow()
+                }
                 .onSuccess {
-                    secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_ID, clientId)
-                    secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_SECRET, clientSecret)
                     _state.update { it.copy(hasYouCamKey = true, verifyingYouCam = false) }
                     _effects.send(SettingsEffect.YouCamCredentialsSaved)
                 }
@@ -175,15 +191,15 @@ class SettingsViewModel(
     }
 
     private fun clearYouCamCredentials() {
-        secretStore.clearSecret(SecretStore.YOUCAM_CLIENT_ID)
-        secretStore.clearSecret(SecretStore.YOUCAM_CLIENT_SECRET)
-        _state.update { it.copy(hasYouCamKey = false) }
         viewModelScope.launch {
-            _effects.send(SettingsEffect.YouCamCredentialsCleared)
+            settingsRepository.clearYouCamCredentials()
+                .onSuccess {
+                    _state.update { it.copy(hasYouCamKey = false) }
+                    _effects.send(SettingsEffect.YouCamCredentialsCleared)
+                }
+                .onFailure { error ->
+                    _effects.send(SettingsEffect.ShowError(error.message ?: "Failed to clear"))
+                }
         }
     }
-
-    private fun hasYouCamCredentials(): Boolean =
-        !secretStore.getSecret(SecretStore.YOUCAM_CLIENT_ID).isNullOrBlank() &&
-            !secretStore.getSecret(SecretStore.YOUCAM_CLIENT_SECRET).isNullOrBlank()
 }
