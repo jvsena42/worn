@@ -41,7 +41,11 @@ fun App() {
         val onTabSelected: (Tab) -> Unit = { tab ->
             val index = tabs.indexOf(tab)
             if (index >= 0) {
-                scope.launch { pagerState.animateScrollToPage(index) }
+                // scrollToPage, not animateScrollToPage: animating jumps the pager *through* the
+                // pages in between, composing each one during the animation. Tapping Settings from
+                // Wardrobe would compose Gaps and Try-It on the way. Snapping composes only the
+                // destination. Swiping still animates, because that is the gesture driving it.
+                scope.launch { pagerState.scrollToPage(index) }
             }
         }
 
