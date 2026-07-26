@@ -73,6 +73,7 @@ import com.github.worn.ui.components.SaveButton
 import com.github.worn.ui.components.SeasonSection
 import com.github.worn.ui.components.SubcategoryDropdown
 import com.github.worn.ui.theme.SheetPreview
+import com.github.worn.ui.util.rememberDecodedImage
 import com.github.worn.ui.theme.WornColors
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -222,10 +223,12 @@ internal fun AddItemForm(
     )
 }
 
-private class AddItemFormState(
-    existingItem: ClothingItem?,
-    val existingPhotoBitmap: ImageBitmap?,
-) {
+private class AddItemFormState(existingItem: ClothingItem?) {
+    /**
+     * The stored photo of the item being edited. Decoded off the main thread, so it starts null
+     * and is filled in once ready — it has to be observable state, not a constructor capture.
+     */
+    var existingPhotoBitmap by mutableStateOf<ImageBitmap?>(null)
     var photoBytes by mutableStateOf<ByteArray?>(null)
     var originalPhotoBytes by mutableStateOf<ByteArray?>(null)
     var photoBitmap by mutableStateOf<ImageBitmap?>(null)
@@ -246,13 +249,10 @@ private class AddItemFormState(
 
 @Composable
 private fun rememberAddItemFormState(existingItem: ClothingItem?): AddItemFormState {
-    val existingPhotoBitmap = remember(existingItem?.photoPath) {
-        existingItem?.photoPath?.takeIf { it.isNotEmpty() }?.let { path ->
-            val file = java.io.File(path)
-            if (file.exists()) BitmapFactory.decodeFile(path)?.asImageBitmap() else null
-        }
-    }
-    return remember { AddItemFormState(existingItem, existingPhotoBitmap) }
+    val existingPhotoBitmap = rememberDecodedImage(existingItem?.photoPath)
+    val formState = remember { AddItemFormState(existingItem) }
+    formState.existingPhotoBitmap = existingPhotoBitmap
+    return formState
 }
 
 @Composable

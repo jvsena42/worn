@@ -169,7 +169,11 @@ private fun BottomRow(outfit: Outfit) {
 }
 
 
+// Allocating a SimpleDateFormat parses the pattern and loads DateFormatSymbols. Doing that per
+// card per recomposition inside a LazyColumn is pure waste; composition is single-threaded here,
+// so one shared instance is safe despite SimpleDateFormat not being thread-safe.
+private val dateFormat = SimpleDateFormat("MMM d", Locale.getDefault())
+
 private fun formatDate(epochMillis: Long): String {
-    val formatter = SimpleDateFormat("MMM d", Locale.getDefault())
-    return formatter.format(Date(epochMillis))
+    return dateFormat.format(Date(epochMillis))
 }

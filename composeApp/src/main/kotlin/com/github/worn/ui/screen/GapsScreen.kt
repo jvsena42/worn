@@ -14,10 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
@@ -32,7 +33,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.GapRecommendation
@@ -78,7 +79,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun GapsScreen(onTabSelected: (Tab) -> Unit) {
     val viewModel: GapsViewModel = koinViewModel()
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val windowInfo = currentWindowAdaptiveInfo()
     val isCompact = windowInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
@@ -144,44 +145,52 @@ private fun GapsScaffold(
         modifier = Modifier.testTag("gaps_screen"),
         containerColor = WornColors.BgPage,
     ) { paddingValues ->
-        Column(
+        // LazyColumn rather than Column + verticalScroll: the recommendation list is unbounded,
+        // and composing every card eagerly is work done during a tab transition for content the
+        // user cannot see yet.
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = contentPadding)
-                .verticalScroll(rememberScrollState()),
+                .padding(horizontal = contentPadding),
         ) {
-            Spacer(Modifier.height(24.dp))
-            Text(
-                text = stringResource(R.string.gaps_title),
-                color = WornColors.TextPrimary,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = (-0.5).sp,
-            )
-            Text(
-                text = stringResource(R.string.gaps_subtitle),
-                color = WornColors.TextSecondary,
-                fontSize = 14.sp,
-            )
-            Spacer(Modifier.height(20.dp))
+            item(key = "header") {
+                Spacer(Modifier.height(24.dp))
+                Text(
+                    text = stringResource(R.string.gaps_title),
+                    color = WornColors.TextPrimary,
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    letterSpacing = (-0.5).sp,
+                )
+                Text(
+                    text = stringResource(R.string.gaps_subtitle),
+                    color = WornColors.TextSecondary,
+                    fontSize = 14.sp,
+                )
+                Spacer(Modifier.height(20.dp))
+            }
 
             when {
-                state.isLoading -> LoadingContent()
-                state.error != null -> ErrorContentView(
-                    message = state.error!!,
-                    onRetry = onRetry,
-                    modifier = Modifier.padding(vertical = 60.dp),
-                )
-                state.recommendations.isEmpty() -> CompleteContent()
-                else -> GapsContent(
+                state.isLoading -> item(key = "loading") { LoadingContent() }
+                state.error != null -> item(key = "error") {
+                    ErrorContentView(
+                        message = state.error!!,
+                        onRetry = onRetry,
+                        modifier = Modifier.padding(vertical = 60.dp),
+                    )
+                }
+                state.recommendations.isEmpty() -> item(key = "complete") { CompleteContent() }
+                else -> gapsContent(
                     state = state,
                     onCardClick = onCardClick,
                     onBannerClick = onBannerClick,
                 )
             }
 
-            Spacer(Modifier.height(WornDimens.BottomBarClearance))
+            item(key = "bottom_clearance") {
+                Spacer(Modifier.height(WornDimens.BottomBarClearance))
+            }
         }
     }
 }
@@ -233,20 +242,28 @@ private fun CompleteContent() {
     }
 }
 
-@Composable
-private fun GapsContent(
+/**
+ * Emits the banner and the category-grouped recommendations into the enclosing [LazyColumn].
+ *
+ * Grouping happens once here while building the item list, not inside a composable body, so it no
+ * longer re-runs on every recomposition.
+ */
+private fun LazyListScope.gapsContent(
     state: GapsState,
     onCardClick: (GapRecommendation) -> Unit,
     onBannerClick: () -> Unit,
 ) {
-    GapsBanner(isAiMode = state.isAiMode, onClick = onBannerClick)
-    Spacer(Modifier.height(20.dp))
+    item(key = "banner") {
+        GapsBanner(isAiMode = state.isAiMode, onClick = onBannerClick)
+        Spacer(Modifier.height(20.dp))
+    }
 
-    val grouped = state.recommendations.groupBy { it.category }
-    grouped.forEach { (category, items) ->
-        SectionLabel(category)
-        Spacer(Modifier.height(10.dp))
-        items.forEach { recommendation ->
+    state.recommendations.groupBy { it.category }.forEach { (category, items) ->
+        item(key = "section_$category") {
+            SectionLabel(category)
+            Spacer(Modifier.height(10.dp))
+        }
+        items(items, key = { "${category}_${it.itemName}" }) { recommendation ->
             GapCard(
                 recommendation = recommendation,
                 isAiMode = state.isAiMode,
@@ -254,7 +271,7 @@ private fun GapsContent(
             )
             Spacer(Modifier.height(8.dp))
         }
-        Spacer(Modifier.height(12.dp))
+        item(key = "section_gap_$category") { Spacer(Modifier.height(12.dp)) }
     }
 }
 
