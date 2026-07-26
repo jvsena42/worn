@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
@@ -25,8 +26,14 @@ fun CategoryFilterChips(
     onCategorySelected: (Category?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val allChips = listOf<Pair<Category?, String>>(null to stringResource(R.string.filter_all)) +
-        Category.entries.map { it to it.displayName() }
+    // stringResource has to be read in composition; the list is remembered so LazyRow does not
+    // get a new item provider on every recomposition.
+    val labels = listOf(stringResource(R.string.filter_all)) +
+        Category.entries.map { it.displayName() }
+    val allChips = remember(labels) {
+        val categories = listOf<Category?>(null) + Category.entries
+        categories.zip(labels)
+    }
 
     LazyRow(
         modifier = modifier,

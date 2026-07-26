@@ -169,7 +169,10 @@ private fun BottomRow(outfit: Outfit) {
 }
 
 
+// Shared rather than allocated per card per recomposition. SimpleDateFormat is not thread-safe,
+// but composition is single-threaded.
+private val dateFormat = SimpleDateFormat("MMM d", Locale.getDefault())
+
 private fun formatDate(epochMillis: Long): String {
-    val formatter = SimpleDateFormat("MMM d", Locale.getDefault())
-    return formatter.format(Date(epochMillis))
+    return dateFormat.format(Date(epochMillis))
 }

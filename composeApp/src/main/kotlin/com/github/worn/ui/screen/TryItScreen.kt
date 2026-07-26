@@ -37,7 +37,6 @@ import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.Checkroom
 import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material.icons.outlined.SmartToy
 import androidx.compose.material3.AlertDialog
@@ -56,7 +55,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -79,7 +77,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.window.core.layout.WindowWidthSizeClass
-import coil3.compose.AsyncImage
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.worn.R
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.GarmentCategory
@@ -94,17 +92,18 @@ import com.github.worn.ui.components.ErrorContentView
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
+import com.github.worn.ui.components.ClothingPhoto
+import com.github.worn.ui.util.rememberDecodedImage
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 import java.io.ByteArrayOutputStream
-import java.io.File
 
 @Composable
 fun TryItScreen(onTabSelected: (Tab) -> Unit) {
     val viewModel: TryItViewModel = koinViewModel()
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val windowInfo = currentWindowAdaptiveInfo()
     val isCompact = windowInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
@@ -763,23 +762,13 @@ private fun ItemThumbnail(item: ClothingItem, size: Dp, onClick: () -> Unit) {
         shadowElevation = 2.dp,
         modifier = Modifier.size(size),
     ) {
-        if (item.photoPath.isNotEmpty() && File(item.photoPath).exists()) {
-            AsyncImage(
-                model = File(item.photoPath),
-                contentDescription = item.name,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),
-            )
-        } else {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Icon(
-                    imageVector = Icons.Outlined.Checkroom,
-                    contentDescription = item.name,
-                    tint = WornColors.TextSecondary,
-                    modifier = Modifier.size(28.dp),
-                )
-            }
-        }
+        ClothingPhoto(
+            photoPath = item.photoPath,
+            contentDescription = item.name,
+            shape = RoundedCornerShape(16.dp),
+            placeholderIconSize = 28.dp,
+            placeholderTint = WornColors.TextSecondary,
+        )
     }
 }
 
@@ -965,9 +954,7 @@ private fun TryOnSection(
 
 @Composable
 private fun PersonPhotoZone(personImage: ByteArray?, height: Dp, onClick: () -> Unit) {
-    val bitmap = remember(personImage) {
-        personImage?.let { BitmapFactory.decodeByteArray(it, 0, it.size)?.asImageBitmap() }
-    }
+    val bitmap = rememberDecodedImage(personImage)
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(20.dp),
@@ -1079,9 +1066,7 @@ private fun TryOnLoadingIndicator() {
 
 @Composable
 private fun TryOnResultView(imageBytes: ByteArray, height: Dp) {
-    val bitmap = remember(imageBytes) {
-        BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)?.asImageBitmap()
-    }
+    val bitmap = rememberDecodedImage(imageBytes)
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = stringResource(R.string.tryit_tryon_result_title),

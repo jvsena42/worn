@@ -8,6 +8,7 @@ import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
 import kotlinx.coroutines.flow.Flow
 
+@Suppress("TooManyFunctions")
 interface SettingsRepository {
     fun getUserProfile(): Flow<UserProfile>
     suspend fun updateBodyType(bodyType: BodyType?): Result<Unit>
@@ -20,4 +21,13 @@ interface SettingsRepository {
     suspend fun saveModelPhoto(bytes: ByteArray): Result<Unit>
     suspend fun getModelPhoto(): Result<ByteArray?>
     suspend fun clearModelPhoto(): Result<Unit>
+
+    // BYOK credentials. The platform secret store blocks (Keystore decrypt, Keychain access), so
+    // these are suspend and dispatched here rather than at the call site.
+    suspend fun hasApiKey(): Result<Boolean>
+    suspend fun saveApiKey(key: String): Result<Unit>
+    suspend fun clearApiKey(): Result<Unit>
+    suspend fun hasYouCamCredentials(): Result<Boolean>
+    suspend fun saveYouCamCredentials(clientId: String, clientSecret: String): Result<Unit>
+    suspend fun clearYouCamCredentials(): Result<Unit>
 }

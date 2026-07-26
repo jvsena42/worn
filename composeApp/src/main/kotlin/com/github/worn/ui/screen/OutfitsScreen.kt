@@ -83,7 +83,6 @@ fun OutfitsScreen(
     var editOutfit by remember { mutableStateOf<Outfit?>(null) }
 
     LaunchedEffect(Unit) {
-        viewModel.onIntent(OutfitIntent.LoadOutfits)
         viewModel.effects.collect { effect ->
             when (effect) {
                 is OutfitEffect.OutfitCreated, is OutfitEffect.OutfitUpdated -> {
@@ -92,12 +91,6 @@ fun OutfitsScreen(
                 is OutfitEffect.OutfitDeleted -> detailOutfit = null
                 is OutfitEffect.OutfitsDeleted, is OutfitEffect.ShowError -> {}
             }
-        }
-    }
-
-    LaunchedEffect(showCreateSheet) {
-        if (showCreateSheet) {
-            viewModel.onIntent(OutfitIntent.LoadClothingItems)
         }
     }
 

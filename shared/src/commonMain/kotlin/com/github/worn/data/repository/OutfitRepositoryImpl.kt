@@ -3,6 +3,10 @@ package com.github.worn.data.repository
 import com.github.worn.data.source.local.db.WardrobeDatabase
 import com.github.worn.domain.model.Outfit
 import com.github.worn.domain.repository.OutfitRepository
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Clock
@@ -15,35 +19,23 @@ class OutfitRepositoryImpl(
     private val dispatcher: CoroutineContext,
 ) : OutfitRepository {
 
+    override fun observeAll(): Flow<List<Outfit>> =
+        db.outfitQueries.getAllWithItems(::OutfitRow)
+            .asFlow()
+            .mapToList(dispatcher)
+            .map { rows -> rows.toOutfits() }
+
     override suspend fun getAll(): Result<List<Outfit>> = runCatching {
         withContext(dispatcher) {
-            db.outfitQueries.getAll().executeAsList().map { dbOutfit ->
-                val itemIds = db.outfitItemQueries
-                    .getItemIdsForOutfit(dbOutfit.id)
-                    .executeAsList()
-                Outfit(
-                    id = dbOutfit.id,
-                    name = dbOutfit.name,
-                    itemIds = itemIds,
-                    createdAt = dbOutfit.createdAt,
-                )
-            }
+            db.outfitQueries.getAllWithItems(::OutfitRow).executeAsList().toOutfits()
         }
     }
 
     override suspend fun getById(id: String): Result<Outfit?> = runCatching {
         withContext(dispatcher) {
-            val dbOutfit = db.outfitQueries.getById(id).executeAsOneOrNull()
-                ?: return@withContext null
-            val itemIds = db.outfitItemQueries
-                .getItemIdsForOutfit(dbOutfit.id)
-                .executeAsList()
-            Outfit(
-                id = dbOutfit.id,
-                name = dbOutfit.name,
-                itemIds = itemIds,
-                createdAt = dbOutfit.createdAt,
-            )
+            db.outfitQueries.getByIdWithItems(id, ::OutfitRow).executeAsList()
+                .toOutfits()
+                .firstOrNull()
         }
     }
 
@@ -83,3 +75,23 @@ class OutfitRepositoryImpl(
         }
     }
 }
+
+/** One row of the outfit/outfitItem join; [itemId] is null for an outfit with no items. */
+private data class OutfitRow(
+    val id: String,
+    val name: String,
+    val createdAt: Long,
+    val itemId: String?,
+)
+
+/** Regroups join rows into one [Outfit] per id, preserving the query's `createdAt DESC` order. */
+private fun List<OutfitRow>.toOutfits(): List<Outfit> =
+    groupBy { it.id }.map { (_, rows) ->
+        val first = rows.first()
+        Outfit(
+            id = first.id,
+            name = first.name,
+            itemIds = rows.mapNotNull { it.itemId },
+            createdAt = first.createdAt,
+        )
+    }

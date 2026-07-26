@@ -13,6 +13,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class FakeSettingsRepository : SettingsRepository {
     val profile = MutableStateFlow(UserProfile())
     val modelPhoto = MutableStateFlow<ByteArray?>(null)
+    var apiKey: String? = null
+    var youCamClientId: String? = null
+    var youCamClientSecret: String? = null
 
     override fun getUserProfile(): Flow<UserProfile> = profile
 
@@ -29,6 +32,36 @@ class FakeSettingsRepository : SettingsRepository {
     override suspend fun getModelPhoto(): Result<ByteArray?> = Result.success(modelPhoto.value)
     override suspend fun clearModelPhoto(): Result<Unit> {
         modelPhoto.value = null
+        return Result.success(Unit)
+    }
+
+    override suspend fun hasApiKey(): Result<Boolean> = Result.success(apiKey != null)
+
+    override suspend fun saveApiKey(key: String): Result<Unit> {
+        apiKey = key
+        return Result.success(Unit)
+    }
+
+    override suspend fun clearApiKey(): Result<Unit> {
+        apiKey = null
+        return Result.success(Unit)
+    }
+
+    override suspend fun hasYouCamCredentials(): Result<Boolean> =
+        Result.success(!youCamClientId.isNullOrBlank() && !youCamClientSecret.isNullOrBlank())
+
+    override suspend fun saveYouCamCredentials(
+        clientId: String,
+        clientSecret: String,
+    ): Result<Unit> {
+        youCamClientId = clientId
+        youCamClientSecret = clientSecret
+        return Result.success(Unit)
+    }
+
+    override suspend fun clearYouCamCredentials(): Result<Unit> {
+        youCamClientId = null
+        youCamClientSecret = null
         return Result.success(Unit)
     }
 }

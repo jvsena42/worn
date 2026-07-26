@@ -8,8 +8,18 @@ import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.Subcategory
 import com.github.worn.domain.model.TryItResult
+import kotlinx.coroutines.flow.Flow
 
 interface WardrobeRepository {
+    /**
+     * The wardrobe as a reactive stream — the single source of truth for anything displaying it,
+     * so callers never re-query after a mutation.
+     *
+     * Not `Result`-wrapped like the one-shot reads below: failures surface as an exception in the
+     * stream and are handled with `catch` by the collector.
+     */
+    fun observeAll(): Flow<List<ClothingItem>>
+
     suspend fun getAll(): Result<List<ClothingItem>>
     suspend fun getById(id: String): Result<ClothingItem?>
     suspend fun getByCategory(category: Category): Result<List<ClothingItem>>

@@ -10,6 +10,21 @@ SELECT * FROM outfit ORDER BY createdAt DESC;
 getById:
 SELECT * FROM outfit WHERE id = ?;
 
+-- Outfits joined with their item ids, so reading every outfit is one query rather than one
+-- query per outfit. SQLDelight registers a listener for every table a query references, so the
+-- Flow built from this re-emits on changes to either `outfit` or `outfitItem`.
+getAllWithItems:
+SELECT o.id, o.name, o.createdAt, oi.itemId
+FROM outfit o
+LEFT JOIN outfitItem oi ON oi.outfitId = o.id
+ORDER BY o.createdAt DESC;
+
+getByIdWithItems:
+SELECT o.id, o.name, o.createdAt, oi.itemId
+FROM outfit o
+LEFT JOIN outfitItem oi ON oi.outfitId = o.id
+WHERE o.id = ?;
+
 insert:
 INSERT INTO outfit(id, name, createdAt) VALUES (?, ?, ?);
 

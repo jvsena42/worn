@@ -40,7 +40,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.worn.R
 import com.github.worn.domain.model.AgeRange
 import com.github.worn.domain.model.BodyType
@@ -89,7 +89,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SettingsScreen(onTabSelected: (Tab) -> Unit) {
     val viewModel: SettingsViewModel = koinViewModel()
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val windowInfo = currentWindowAdaptiveInfo()
     val isCompact = windowInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
@@ -433,11 +433,18 @@ private fun ProfileSheet(
 
 @Composable
 private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent) -> Unit, onSave: () -> Unit) {
-    val bodyTypeOptions = BodyType.entries.map { it to it.displayName() }
-    val styleProfileOptions = StyleProfile.entries.map { it to it.displayName() }
-    val ageRangeOptions = AgeRange.entries.map { it to it.displayName() }
-    val climateOptions = Climate.entries.map { it to it.displayName() }
-    val lifestyleOptions = Lifestyle.entries.map { it to it.displayName() }
+    // displayName() reads a string resource, so it stays in composition; the lists are not.
+    val bodyTypeLabels = BodyType.entries.map { it.displayName() }
+    val styleProfileLabels = StyleProfile.entries.map { it.displayName() }
+    val ageRangeLabels = AgeRange.entries.map { it.displayName() }
+    val climateLabels = Climate.entries.map { it.displayName() }
+    val lifestyleLabels = Lifestyle.entries.map { it.displayName() }
+
+    val bodyTypeOptions = remember(bodyTypeLabels) { BodyType.entries.zip(bodyTypeLabels) }
+    val styleProfileOptions = remember(styleProfileLabels) { StyleProfile.entries.zip(styleProfileLabels) }
+    val ageRangeOptions = remember(ageRangeLabels) { AgeRange.entries.zip(ageRangeLabels) }
+    val climateOptions = remember(climateLabels) { Climate.entries.zip(climateLabels) }
+    val lifestyleOptions = remember(lifestyleLabels) { Lifestyle.entries.zip(lifestyleLabels) }
 
     Column(
         modifier = Modifier

@@ -41,7 +41,8 @@ fun App() {
         val onTabSelected: (Tab) -> Unit = { tab ->
             val index = tabs.indexOf(tab)
             if (index >= 0) {
-                scope.launch { pagerState.animateScrollToPage(index) }
+                // Not animateScrollToPage: animating composes every page it scrolls past.
+                scope.launch { pagerState.scrollToPage(index) }
             }
         }
 

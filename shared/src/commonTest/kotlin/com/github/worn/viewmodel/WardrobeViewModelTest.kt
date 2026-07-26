@@ -3,7 +3,7 @@ package com.github.worn.viewmodel
 import app.cash.turbine.test
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.Season
-import com.github.worn.fake.FakeSecretStore
+import com.github.worn.fake.FakeSettingsRepository
 import com.github.worn.fake.FakeWardrobeRepository
 import com.github.worn.fake.clothingItem
 import com.github.worn.presentation.viewmodel.WardrobeEffect
@@ -29,13 +29,13 @@ class WardrobeViewModelTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var repository: FakeWardrobeRepository
-    private lateinit var secretStore: FakeSecretStore
+    private lateinit var settingsRepository: FakeSettingsRepository
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         repository = FakeWardrobeRepository()
-        secretStore = FakeSecretStore()
+        settingsRepository = FakeSettingsRepository()
     }
 
     @AfterTest
@@ -44,20 +44,20 @@ class WardrobeViewModelTest {
     }
 
     private fun createViewModel(): WardrobeViewModel =
-        WardrobeViewModel(repository, secretStore)
+        WardrobeViewModel(repository, settingsRepository)
 
     // region init
 
     @Test
     fun `init sets hasApiKey true when key exists`() {
-        secretStore.saveApiKey("test-key")
+        settingsRepository.apiKey = "test-key"
         val vm = createViewModel()
         assertTrue(vm.state.value.hasApiKey)
     }
 
     @Test
     fun `init sets hasApiKey false when key is null`() {
-        secretStore.clearApiKey()
+        settingsRepository.apiKey = null
         val vm = createViewModel()
         assertFalse(vm.state.value.hasApiKey)
     }
@@ -65,7 +65,7 @@ class WardrobeViewModelTest {
     @Test
     fun `init loads items on creation`() {
         val item = clothingItem(id = "1")
-        repository.items.add(item)
+        repository.addItems(item)
 
         val vm = createViewModel()
 
@@ -75,15 +75,14 @@ class WardrobeViewModelTest {
 
     // endregion
 
-    // region LoadItems
+    // region observeAll
 
     @Test
-    fun `LoadItems success updates state with items`() {
+    fun `state follows repository emissions without an explicit reload`() {
         val vm = createViewModel()
 
         val item = clothingItem(id = "2")
-        repository.items.add(item)
-        vm.onIntent(WardrobeIntent.LoadItems)
+        repository.addItems(item)
 
         assertEquals(listOf(item), vm.state.value.items)
         assertFalse(vm.state.value.isLoading)
@@ -91,13 +90,11 @@ class WardrobeViewModelTest {
     }
 
     @Test
-    fun `LoadItems failure sets error and sends ShowError effect`() = runTest {
+    fun `observeAll failure sets error and sends ShowError effect`() = runTest {
+        repository.observeAllError = RuntimeException("DB error")
+
         val vm = createViewModel()
-
-        repository.getAllError = RuntimeException("DB error")
         vm.effects.test {
-            vm.onIntent(WardrobeIntent.LoadItems)
-
             val effect = awaitItem()
             assertIs<WardrobeEffect.ShowError>(effect)
             assertEquals("DB error", effect.message)
@@ -114,7 +111,7 @@ class WardrobeViewModelTest {
     fun `FilterByCategory updates activeCategory and filters items`() {
         val top = clothingItem(id = "1", category = Category.TOP)
         val bottom = clothingItem(id = "2", category = Category.BOTTOM)
-        repository.items.addAll(listOf(top, bottom))
+        repository.addItems(top, bottom)
 
         val vm = createViewModel()
         vm.onIntent(WardrobeIntent.FilterByCategory(Category.TOP))
@@ -128,7 +125,7 @@ class WardrobeViewModelTest {
     fun `FilterByCategory with null shows all items`() {
         val top = clothingItem(id = "1", category = Category.TOP)
         val bottom = clothingItem(id = "2", category = Category.BOTTOM)
-        repository.items.addAll(listOf(top, bottom))
+        repository.addItems(top, bottom)
 
         val vm = createViewModel()
         vm.onIntent(WardrobeIntent.FilterByCategory(Category.TOP))
@@ -142,7 +139,7 @@ class WardrobeViewModelTest {
     @Test
     fun `FilterByCategory to empty category keeps totalItemCount`() {
         val top = clothingItem(id = "1", category = Category.TOP)
-        repository.items.add(top)
+        repository.addItems(top)
 
         val vm = createViewModel()
         vm.onIntent(WardrobeIntent.FilterByCategory(Category.SHOES))
@@ -208,7 +205,7 @@ class WardrobeViewModelTest {
     @Test
     fun `ToggleSelection adds item to selectedIds`() {
         val item = clothingItem(id = "1")
-        repository.items.add(item)
+        repository.addItems(item)
         val vm = createViewModel()
 
         vm.onIntent(WardrobeIntent.ToggleSelection("1"))
@@ -219,7 +216,7 @@ class WardrobeViewModelTest {
     @Test
     fun `ToggleSelection removes already-selected item`() {
         val item = clothingItem(id = "1")
-        repository.items.add(item)
+        repository.addItems(item)
         val vm = createViewModel()
 
         vm.onIntent(WardrobeIntent.ToggleSelection("1"))
@@ -231,7 +228,7 @@ class WardrobeViewModelTest {
     @Test
     fun `ClearSelection empties selectedIds`() {
         val item = clothingItem(id = "1")
-        repository.items.add(item)
+        repository.addItems(item)
         val vm = createViewModel()
 
         vm.onIntent(WardrobeIntent.ToggleSelection("1"))
@@ -248,7 +245,7 @@ class WardrobeViewModelTest {
     fun `DeleteSelected removes items and sends ItemsDeleted`() = runTest {
         val item1 = clothingItem(id = "1")
         val item2 = clothingItem(id = "2")
-        repository.items.addAll(listOf(item1, item2))
+        repository.addItems(item1, item2)
         val vm = createViewModel()
 
         vm.onIntent(WardrobeIntent.ToggleSelection("1"))
@@ -268,7 +265,7 @@ class WardrobeViewModelTest {
     fun `DeleteSelected partial failure sends ShowError`() = runTest {
         val item1 = clothingItem(id = "1")
         val item2 = clothingItem(id = "2")
-        repository.items.addAll(listOf(item1, item2))
+        repository.addItems(item1, item2)
         val vm = createViewModel()
 
         vm.onIntent(WardrobeIntent.ToggleSelection("1"))

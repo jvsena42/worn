@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.worn.domain.model.GapRecommendation
 import com.github.worn.domain.model.capsuleWardrobeSuggestions
+import com.github.worn.domain.repository.SettingsRepository
 import com.github.worn.domain.repository.WardrobeRepository
-import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +33,7 @@ sealed interface GapsEffect {
 
 class GapsViewModel(
     private val wardrobeRepository: WardrobeRepository,
-    private val secretStore: SecretStore,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(GapsState())
@@ -43,25 +43,26 @@ class GapsViewModel(
     val effects: Flow<GapsEffect> = _effects.receiveAsFlow()
 
     init {
-        val hasKey = secretStore.getApiKey() != null
-        _state.update { it.copy(hasApiKey = hasKey, isAiMode = hasKey) }
-        onIntent(GapsIntent.LoadGaps)
+        // Resolve the key before branching, and off the main thread — see SettingsRepository.
+        viewModelScope.launch {
+            val hasKey = settingsRepository.hasApiKey().getOrDefault(false)
+            _state.update { it.copy(hasApiKey = hasKey, isAiMode = hasKey) }
+            loadGaps()
+        }
     }
 
     fun onIntent(intent: GapsIntent) {
         when (intent) {
-            is GapsIntent.LoadGaps -> loadGaps()
+            is GapsIntent.LoadGaps -> viewModelScope.launch { loadGaps() }
         }
     }
 
-    private fun loadGaps() {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
-            if (_state.value.isAiMode) {
-                loadAiRecommendations()
-            } else {
-                loadFallbackSuggestions()
-            }
+    private suspend fun loadGaps() {
+        _state.update { it.copy(isLoading = true, error = null) }
+        if (_state.value.isAiMode) {
+            loadAiRecommendations()
+        } else {
+            loadFallbackSuggestions()
         }
     }
 

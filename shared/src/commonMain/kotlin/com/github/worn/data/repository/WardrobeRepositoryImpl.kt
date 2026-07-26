@@ -13,7 +13,11 @@ import com.github.worn.domain.model.Subcategory
 import com.github.worn.domain.model.TryItResult
 import com.github.worn.domain.repository.SettingsRepository
 import com.github.worn.domain.repository.WardrobeRepository
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Clock
@@ -22,6 +26,7 @@ import kotlin.uuid.Uuid
 import com.github.worn.data.source.local.db.ClothingItem as DbClothingItem
 
 @OptIn(ExperimentalUuidApi::class)
+@Suppress("TooManyFunctions")
 class WardrobeRepositoryImpl(
     private val db: WardrobeDatabase,
     private val fileStorage: PhotoFileStorage,
@@ -29,6 +34,12 @@ class WardrobeRepositoryImpl(
     private val settingsRepository: SettingsRepository,
     private val dispatcher: CoroutineContext,
 ) : WardrobeRepository {
+
+    override fun observeAll(): Flow<List<ClothingItem>> =
+        db.clothingItemQueries.getAll()
+            .asFlow()
+            .mapToList(dispatcher)
+            .map { rows -> rows.map { it.toDomain() } }
 
     override suspend fun getAll(): Result<List<ClothingItem>> = runCatching {
         withContext(dispatcher) {

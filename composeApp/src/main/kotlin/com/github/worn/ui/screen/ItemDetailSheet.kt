@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Checkroom
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -39,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,7 +45,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
@@ -64,8 +61,8 @@ import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
 import com.github.worn.ui.components.dotColor
 import com.github.worn.ui.theme.SheetPreview
+import com.github.worn.ui.components.ClothingPhoto
 import com.github.worn.ui.theme.WornColors
-import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -166,23 +163,12 @@ private fun ItemPhoto(item: ClothingItem, dims: ItemDetailDimens) {
         shadowElevation = 8.dp,
         modifier = Modifier.fillMaxWidth().height(dims.photoHeight),
     ) {
-        if (item.photoPath.isNotEmpty() && File(item.photoPath).exists()) {
-            AsyncImage(
-                model = File(item.photoPath),
-                contentDescription = item.name,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(dims.photoRadius)),
-            )
-        } else {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Icon(
-                    imageVector = Icons.Outlined.Checkroom,
-                    contentDescription = null,
-                    tint = WornColors.IconMuted,
-                    modifier = Modifier.size(dims.placeholderIconSize),
-                )
-            }
-        }
+        ClothingPhoto(
+            photoPath = item.photoPath,
+            contentDescription = item.name,
+            shape = RoundedCornerShape(dims.photoRadius),
+            placeholderIconSize = dims.placeholderIconSize,
+        )
     }
 }
 

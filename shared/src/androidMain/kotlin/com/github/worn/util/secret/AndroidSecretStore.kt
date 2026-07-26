@@ -12,7 +12,11 @@ import javax.crypto.spec.GCMParameterSpec
 
 class AndroidSecretStore(private val context: Context) : SecretStore {
 
-    private val keyStore: KeyStore = KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null) }
+    // Lazy so the expensive first load happens on SettingsRepository's dispatcher rather than
+    // whichever thread Koin constructs this on.
+    private val keyStore: KeyStore by lazy {
+        KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null) }
+    }
 
     override fun getSecret(name: String): String? {
         val contents = secretFile(name).takeIf { it.exists() }?.readBytes()

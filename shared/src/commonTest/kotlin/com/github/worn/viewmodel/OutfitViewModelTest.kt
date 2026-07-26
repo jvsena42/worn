@@ -51,7 +51,7 @@ class OutfitViewModelTest {
     @Test
     fun `init loads outfits on creation`() {
         val o = outfit(id = "1")
-        outfitRepository.outfits.add(o)
+        outfitRepository.addOutfits(o)
 
         val vm = createViewModel()
 
@@ -61,15 +61,14 @@ class OutfitViewModelTest {
 
     // endregion
 
-    // region LoadOutfits
+    // region observeAll
 
     @Test
-    fun `LoadOutfits success updates state with outfits`() {
+    fun `state follows outfit emissions without an explicit reload`() {
         val vm = createViewModel()
 
         val o = outfit(id = "2")
-        outfitRepository.outfits.add(o)
-        vm.onIntent(OutfitIntent.LoadOutfits)
+        outfitRepository.addOutfits(o)
 
         assertEquals(listOf(o), vm.state.value.outfits)
         assertFalse(vm.state.value.isLoading)
@@ -77,13 +76,11 @@ class OutfitViewModelTest {
     }
 
     @Test
-    fun `LoadOutfits failure sets error and sends ShowError effect`() = runTest {
+    fun `observeAll failure sets error and sends ShowError effect`() = runTest {
+        outfitRepository.observeAllError = RuntimeException("DB error")
+
         val vm = createViewModel()
-
-        outfitRepository.getAllError = RuntimeException("DB error")
         vm.effects.test {
-            vm.onIntent(OutfitIntent.LoadOutfits)
-
             val effect = awaitItem()
             assertIs<OutfitEffect.ShowError>(effect)
             assertEquals("DB error", effect.message)
@@ -94,17 +91,16 @@ class OutfitViewModelTest {
 
     // endregion
 
-    // region LoadClothingItems
+    // region clothing items
 
     @Test
-    fun `LoadClothingItems success updates state with items`() {
+    fun `clothing items follow wardrobe emissions`() {
         val item = clothingItem(id = "1")
-        wardrobeRepository.items.add(item)
+        wardrobeRepository.addItems(item)
         val vm = createViewModel()
 
-        vm.onIntent(OutfitIntent.LoadClothingItems)
-
         assertEquals(listOf(item), vm.state.value.clothingItems)
+        assertEquals(mapOf(item.id to item.category), vm.state.value.itemCategories)
         assertFalse(vm.state.value.isLoadingItems)
     }
 
@@ -112,7 +108,7 @@ class OutfitViewModelTest {
     fun `FilterItemsByCategory filters items and updates activeCategory`() {
         val top = clothingItem(id = "1", category = Category.TOP)
         val bottom = clothingItem(id = "2", category = Category.BOTTOM)
-        wardrobeRepository.items.addAll(listOf(top, bottom))
+        wardrobeRepository.addItems(top, bottom)
         val vm = createViewModel()
 
         vm.onIntent(OutfitIntent.FilterItemsByCategory(Category.TOP))
@@ -151,7 +147,7 @@ class OutfitViewModelTest {
     @Test
     fun `ToggleSelection adds outfit to selectedIds`() {
         val o = outfit(id = "1")
-        outfitRepository.outfits.add(o)
+        outfitRepository.addOutfits(o)
         val vm = createViewModel()
 
         vm.onIntent(OutfitIntent.ToggleSelection("1"))
@@ -162,7 +158,7 @@ class OutfitViewModelTest {
     @Test
     fun `ToggleSelection removes already-selected outfit`() {
         val o = outfit(id = "1")
-        outfitRepository.outfits.add(o)
+        outfitRepository.addOutfits(o)
         val vm = createViewModel()
 
         vm.onIntent(OutfitIntent.ToggleSelection("1"))
@@ -174,7 +170,7 @@ class OutfitViewModelTest {
     @Test
     fun `ClearSelection empties selectedIds`() {
         val o = outfit(id = "1")
-        outfitRepository.outfits.add(o)
+        outfitRepository.addOutfits(o)
         val vm = createViewModel()
 
         vm.onIntent(OutfitIntent.ToggleSelection("1"))
@@ -202,8 +198,8 @@ class OutfitViewModelTest {
         }
         assertFalse(vm.state.value.isSaving)
         assertTrue(vm.state.value.selectedItemIds.isEmpty())
-        assertEquals(1, outfitRepository.outfits.size)
-        assertEquals("Weekend Casual", outfitRepository.outfits.first().name)
+        assertEquals(1, outfitRepository.outfits.value.size)
+        assertEquals("Weekend Casual", outfitRepository.outfits.value.first().name)
     }
 
     @Test
@@ -231,7 +227,7 @@ class OutfitViewModelTest {
     fun `DeleteSelected removes outfits and sends OutfitsDeleted`() = runTest {
         val o1 = outfit(id = "1")
         val o2 = outfit(id = "2")
-        outfitRepository.outfits.addAll(listOf(o1, o2))
+        outfitRepository.addOutfits(o1, o2)
         val vm = createViewModel()
 
         vm.onIntent(OutfitIntent.ToggleSelection("1"))
@@ -251,7 +247,7 @@ class OutfitViewModelTest {
     fun `DeleteSelected partial failure sends ShowError`() = runTest {
         val o1 = outfit(id = "1")
         val o2 = outfit(id = "2")
-        outfitRepository.outfits.addAll(listOf(o1, o2))
+        outfitRepository.addOutfits(o1, o2)
         val vm = createViewModel()
 
         vm.onIntent(OutfitIntent.ToggleSelection("1"))
