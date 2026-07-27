@@ -165,6 +165,12 @@
     <string name="share_choose_try_on">Ver em mim</string>
     <string name="share_photo_read_failed">Não foi possível abrir essa foto</string>
 
+    <!-- App Shortcuts -->
+    <string name="shortcut_add_item_short">Adicionar</string>
+    <string name="shortcut_add_item_long">Adicionar ao armário</string>
+    <string name="shortcut_try_it_short">Testar</string>
+    <string name="shortcut_try_it_long">Experimentar uma peça</string>
+
     <!-- AI Locked Sheet -->
     <string name="ai_locked_title">Desbloquear funções de IA</string>
     <string name="ai_locked_description">Adicione sua chave da API Claude nos Ajustes para habilitar.</string>

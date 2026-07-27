@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.github.worn.domain.model.AppShortcut
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornBottomBar
 import com.github.worn.ui.screen.GapsScreen
@@ -26,6 +27,7 @@ import com.github.worn.ui.screen.WardrobeScreen
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.util.SharedPhoto
+import com.github.worn.ui.util.ShortcutCommand
 import kotlinx.coroutines.launch
 
 private val tabs = Tab.entries.toList()
@@ -33,7 +35,12 @@ private val tabs = Tab.entries.toList()
 @OptIn(ExperimentalComposeUiApi::class)
 @Suppress("FunctionNaming")
 @Composable
-fun App(sharedPhoto: SharedPhoto? = null, onSharedPhotoConsumed: () -> Unit = {}) {
+fun App(
+    sharedPhoto: SharedPhoto? = null,
+    onSharedPhotoConsumed: () -> Unit = {},
+    shortcut: ShortcutCommand? = null,
+    onShortcutConsumed: () -> Unit = {},
+) {
     WornTheme {
         val pagerState = rememberPagerState(pageCount = { tabs.size })
         val scope = rememberCoroutineScope()
@@ -52,6 +59,19 @@ fun App(sharedPhoto: SharedPhoto? = null, onSharedPhotoConsumed: () -> Unit = {}
             if (sharedPhoto != null) onTabSelected(Tab.TRY_IT)
         }
 
+        LaunchedEffect(shortcut) {
+            when (shortcut?.shortcut) {
+                // The tab switch is the whole job, so this one is done here.
+                AppShortcut.TRY_IT -> {
+                    onTabSelected(Tab.TRY_IT)
+                    onShortcutConsumed()
+                }
+                // WardrobeScreen consumes this once the sheet is actually open.
+                AppShortcut.ADD_ITEM -> onTabSelected(Tab.WARDROBE)
+                null -> Unit
+            }
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -64,7 +84,11 @@ fun App(sharedPhoto: SharedPhoto? = null, onSharedPhotoConsumed: () -> Unit = {}
                 modifier = Modifier.fillMaxSize(),
             ) { page ->
                 when (tabs[page]) {
-                    Tab.WARDROBE -> WardrobeScreen(onTabSelected = onTabSelected)
+                    Tab.WARDROBE -> WardrobeScreen(
+                        onTabSelected = onTabSelected,
+                        openAddSheet = shortcut?.takeIf { it.shortcut == AppShortcut.ADD_ITEM },
+                        onAddSheetOpened = onShortcutConsumed,
+                    )
                     Tab.OUTFITS -> OutfitsScreen(onTabSelected = onTabSelected)
                     Tab.GAPS -> GapsScreen(onTabSelected = onTabSelected)
                     Tab.TRY_IT -> TryItScreen(

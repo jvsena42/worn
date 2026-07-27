@@ -32,6 +32,11 @@
 
                 <data android:mimeType="image/*" />
             </intent-filter>
+
+            <!-- Long-press shortcuts on the launcher icon: Add item and Try it. -->
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
     </application>
 

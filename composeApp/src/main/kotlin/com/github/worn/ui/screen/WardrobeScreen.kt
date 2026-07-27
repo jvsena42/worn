@@ -74,6 +74,7 @@ import com.github.worn.ui.components.Tab
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
+import com.github.worn.ui.util.ShortcutCommand
 import org.koin.compose.viewmodel.koinViewModel
 
 private val GRID_MIN_CELL_WIDTH = 160.dp
@@ -82,12 +83,26 @@ private val GRID_GAP_EXPANDED = 16.dp
 @Composable
 fun WardrobeScreen(
     onTabSelected: (Tab) -> Unit = {},
+    openAddSheet: ShortcutCommand? = null,
+    onAddSheetOpened: () -> Unit = {},
     viewModel: WardrobeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     var showAddSheet by remember { mutableStateOf(false) }
     var detailItem by remember { mutableStateOf<ClothingItem?>(null) }
     var editItem by remember { mutableStateOf<ClothingItem?>(null) }
+
+    /**
+     * [onAddSheetOpened] clears the shortcut so it is handled exactly once: the pager disposes this
+     * screen when it is more than a page away, and without this the sheet would reopen on every
+     * return to the tab.
+     */
+    LaunchedEffect(openAddSheet) {
+        if (openAddSheet == null) return@LaunchedEffect
+        editItem = null
+        showAddSheet = true
+        onAddSheetOpened()
+    }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
