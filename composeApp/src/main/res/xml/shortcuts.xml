@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The intents are explicit (targetPackage + targetClass), so the custom actions are a payload for
+    MainActivity to read rather than something the system has to resolve: no intent-filter needed.
+
+    Launchers stack shortcuts bottom-up, so the last one declared sits nearest the app icon.
+-->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="try_it"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_try_it"
+        android:shortcutShortLabel="@string/shortcut_try_it_short"
+        android:shortcutLongLabel="@string/shortcut_try_it_long">
+        <intent
+            android:action="com.github.worn.action.try_it"
+            android:targetPackage="com.github.worn"
+            android:targetClass="com.github.worn.MainActivity" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="add_item"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_add_item"
+        android:shortcutShortLabel="@string/shortcut_add_item_short"
+        android:shortcutLongLabel="@string/shortcut_add_item_long">
+        <intent
+            android:action="com.github.worn.action.add_item"
+            android:targetPackage="com.github.worn"
+            android:targetClass="com.github.worn.MainActivity" />
+    </shortcut>
+</shortcuts>

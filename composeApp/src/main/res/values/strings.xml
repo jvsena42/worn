@@ -165,6 +165,12 @@
     <string name="share_choose_try_on">See it on me</string>
     <string name="share_photo_read_failed">Couldn\'t open that photo</string>
 
+    <!-- App Shortcuts -->
+    <string name="shortcut_add_item_short">Add item</string>
+    <string name="shortcut_add_item_long">Add to wardrobe</string>
+    <string name="shortcut_try_it_short">Try it</string>
+    <string name="shortcut_try_it_long">Try on an item</string>
+
     <!-- AI Locked Sheet -->
     <string name="ai_locked_title">Unlock AI features</string>
     <string name="ai_locked_description">Add your Claude API key in Settings to enable this.</string>
