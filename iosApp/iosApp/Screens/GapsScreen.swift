@@ -72,7 +72,7 @@ struct GapsScreen: View {
             if let gap = addItemPreFill {
                 AddItemSheet(
                     isSaving: false,
-                    hasApiKey: viewModel.state.hasApiKey,
+                    isAiAvailable: viewModel.state.isAiAvailable,
                     existingItem: gap.toPreFilledItem(),
                     onSave: { _, _, _, _, _, _, _, _ in showAddItemSheet = false },
                     onDismiss: { showAddItemSheet = false }

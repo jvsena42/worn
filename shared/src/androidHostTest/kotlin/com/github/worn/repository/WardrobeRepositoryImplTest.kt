@@ -3,6 +3,7 @@ package com.github.worn.repository
 import app.cash.sqldelight.Query
 import app.cash.sqldelight.TransactionWithoutReturn
 import com.github.worn.data.repository.WardrobeRepositoryImpl
+import com.github.worn.data.source.ai.OnDeviceAiSource
 import com.github.worn.data.source.local.PhotoFileStorage
 import com.github.worn.data.source.local.db.ClothingItemQueries
 import com.github.worn.data.source.local.db.OutfitItemQueries
@@ -16,6 +17,7 @@ import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.TryItResult
 import com.github.worn.domain.model.UserProfile
 import com.github.worn.domain.repository.SettingsRepository
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -42,8 +44,11 @@ class WardrobeRepositoryImplTest {
     private val outfitQueries = mockk<OutfitQueries>(relaxed = true)
     private val fileStorage = mockk<PhotoFileStorage>()
     private val aiClient = mockk<ClaudeApiClient>()
+    private val onDeviceAi = mockk<OnDeviceAiSource>()
+    private val onDeviceAiEnabled = MutableStateFlow(false)
     private val settingsRepository = mockk<SettingsRepository> {
         every { getUserProfile() } returns flowOf(UserProfile())
+        every { isOnDeviceAiEnabled() } returns onDeviceAiEnabled
     }
 
     private lateinit var repository: WardrobeRepositoryImpl
@@ -73,7 +78,9 @@ class WardrobeRepositoryImplTest {
             val tx = mockk<TransactionWithoutReturn>(relaxed = true)
             body(tx)
         }
-        repository = WardrobeRepositoryImpl(db, fileStorage, aiClient, settingsRepository, testDispatcher)
+        onDeviceAiEnabled.value = false
+        repository =
+            WardrobeRepositoryImpl(db, fileStorage, aiClient, onDeviceAi, settingsRepository, testDispatcher)
     }
 
     // region getAll
@@ -261,6 +268,46 @@ class WardrobeRepositoryImplTest {
     }
 
     @Test
+    fun `analyzeAndTag routes to the on-device engine when the preference is on`() = runTest {
+        onDeviceAiEnabled.value = true
+        val query = mockk<Query<DbClothingItem>>()
+        every { queries.getById("item-1") } returns query
+        every { query.executeAsOneOrNull() } returns dbItem
+        coEvery { fileStorage.read("/photos/item-1.jpg") } returns byteArrayOf(10, 20)
+        coEvery { onDeviceAi.analyzeImage(byteArrayOf(10, 20)) } returns AiAnalysisResult(
+            description = "Local analysis",
+            suggestedCategory = Category.TOP,
+            colors = listOf("grey"),
+            seasons = listOf(Season.WINTER),
+            tags = emptyList(),
+        )
+
+        val result = repository.analyzeAndTag("item-1")
+
+        assertEquals("Local analysis", result.getOrThrow().description)
+        coVerify { onDeviceAi.analyzeImage(byteArrayOf(10, 20)) }
+        coVerify(exactly = 0) { aiClient.analyzeImage(any()) }
+    }
+
+    /** Opting in means photos never leave the device, so a local failure must not retry on Claude. */
+    @Test
+    fun `analyzeAndTag surfaces on-device failures without falling back to Claude`() = runTest {
+        onDeviceAiEnabled.value = true
+        val query = mockk<Query<DbClothingItem>>()
+        every { queries.getById("item-1") } returns query
+        every { query.executeAsOneOrNull() } returns dbItem
+        coEvery { fileStorage.read("/photos/item-1.jpg") } returns byteArrayOf(10, 20)
+        coEvery { onDeviceAi.analyzeImage(any()) } throws IllegalStateException("Model unavailable")
+
+        val result = repository.analyzeAndTag("item-1")
+
+        assertTrue(result.isFailure)
+        assertEquals("Model unavailable", result.exceptionOrNull()?.message)
+        coVerify(exactly = 0) { aiClient.analyzeImage(any()) }
+        verify(exactly = 0) { queries.update(any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any()) }
+    }
+
+    @Test
     fun `analyzeAndTag fails when item not found`() = runTest {
         val query = mockk<Query<DbClothingItem>>()
         every { queries.getById("missing") } returns query
@@ -345,4 +392,71 @@ class WardrobeRepositoryImplTest {
     }
 
     // endregion
+
+    // region getGapRecommendations
+
+    @Test
+    fun `getGapRecommendations uses Claude when on-device AI is off`() = runTest {
+        val query = mockk<Query<DbClothingItem>>()
+        every { queries.getAll() } returns query
+        every { query.executeAsList() } returns listOf(dbItem)
+        coEvery { aiClient.getGapRecommendations(any(), any()) } returns listOf(gapRecommendation)
+
+        val result = repository.getGapRecommendations()
+
+        assertEquals(listOf(gapRecommendation), result.getOrThrow())
+        coVerify(exactly = 0) { onDeviceAi.getGapRecommendations(any(), any()) }
+    }
+
+    @Test
+    fun `getGapRecommendations uses the on-device engine when the preference is on`() = runTest {
+        onDeviceAiEnabled.value = true
+        val query = mockk<Query<DbClothingItem>>()
+        every { queries.getAll() } returns query
+        every { query.executeAsList() } returns listOf(dbItem)
+        coEvery { onDeviceAi.getGapRecommendations(any(), any()) } returns listOf(gapRecommendation)
+
+        val result = repository.getGapRecommendations()
+
+        assertEquals(listOf(gapRecommendation), result.getOrThrow())
+        coVerify(exactly = 0) { aiClient.getGapRecommendations(any(), any()) }
+    }
+
+    // endregion
+
+    // region analyzeProspectiveItem
+
+    /** Try-It reasons over the whole wardrobe, so it stays on Claude even when the toggle is on. */
+    @Test
+    fun `analyzeProspectiveItem always uses Claude`() = runTest {
+        onDeviceAiEnabled.value = true
+        val query = mockk<Query<DbClothingItem>>()
+        every { queries.getAll() } returns query
+        every { query.executeAsList() } returns listOf(dbItem)
+        val tryItResult = TryItResult(
+            matchingItems = emptyList(),
+            combinationsUnlocked = 3,
+            gapsFilled = emptyList(),
+            worthAdding = true,
+        )
+        coEvery { aiClient.analyzeProspectiveItem(any(), any(), any()) } returns tryItResult
+
+        val result = repository.analyzeProspectiveItem(byteArrayOf(1, 2))
+
+        assertEquals(tryItResult, result.getOrThrow())
+        coVerify { aiClient.analyzeProspectiveItem(any(), any(), any()) }
+    }
+
+    // endregion
+
+    private companion object {
+        val gapRecommendation = GapRecommendation(
+            itemName = "White crew tee",
+            category = "BASICS",
+            pairingCount = 12,
+            colors = listOf("white"),
+            seasons = listOf(Season.SUMMER),
+            mappedCategory = Category.TOP,
+        )
+    }
 }

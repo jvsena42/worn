@@ -85,6 +85,13 @@
 "settings_your_profile" = "Your Profile";
 "settings_profile_subtitle_empty" = "Tap to set up";
 "settings_profile_help" = "Help AI give better suggestions";
+"settings_on_device_ai_title" = "On-device AI";
+"settings_on_device_ai_available" = "Runs privately on this device, no key needed";
+"settings_on_device_ai_downloading" = "The model downloads the first time you use it";
+"settings_on_device_ai_unsupported_device" = "Not supported by this device";
+"settings_on_device_ai_unsupported_os" = "Needs iOS 26 or later";
+"settings_on_device_ai_disabled_by_user" = "Turn on Apple Intelligence in iOS Settings";
+"settings_on_device_ai_unavailable" = "Unavailable right now";
 "settings_api_key_title" = "Claude API Key";
 "settings_api_key_connected" = "Connected";
 "settings_api_key_required" = "Required for AI features";
@@ -170,7 +177,7 @@
 
 /* AI Locked Sheet */
 "ai_locked_title" = "Unlock AI features";
-"ai_locked_description" = "Add your Claude API key in Settings to enable this.";
+"ai_locked_description" = "Turn on on-device AI or add your Claude API key in Settings.";
 "ai_locked_cta" = "Go to Settings";
 
 /* Filter */

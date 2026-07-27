@@ -88,6 +88,13 @@
     <string name="settings_your_profile">Seu Perfil</string>
     <string name="settings_profile_subtitle_empty">Toque para configurar</string>
     <string name="settings_profile_help">Ajude a IA a dar melhores sugestões</string>
+    <string name="settings_on_device_ai_title">IA no dispositivo</string>
+    <string name="settings_on_device_ai_available">Roda de forma privada neste aparelho, sem chave</string>
+    <string name="settings_on_device_ai_downloading">O modelo é baixado no primeiro uso</string>
+    <string name="settings_on_device_ai_unsupported_device">Não compatível com este aparelho</string>
+    <string name="settings_on_device_ai_unsupported_os">Requer uma versão mais recente do Android</string>
+    <string name="settings_on_device_ai_disabled_by_user">Ative o Gemini Nano nos ajustes do sistema</string>
+    <string name="settings_on_device_ai_unavailable">Indisponível no momento</string>
     <string name="settings_api_key_title">Chave da API Claude</string>
     <string name="settings_api_key_connected">Conectado</string>
     <string name="settings_api_key_required">Necessária para funções de IA</string>
@@ -173,7 +180,7 @@
 
     <!-- AI Locked Sheet -->
     <string name="ai_locked_title">Desbloquear funções de IA</string>
-    <string name="ai_locked_description">Adicione sua chave da API Claude nos Ajustes para habilitar.</string>
+    <string name="ai_locked_description">Ative a IA no dispositivo ou adicione sua chave da API Claude nos Ajustes.</string>
     <string name="ai_locked_cta">Ir para Ajustes</string>
 
     <!-- Filter -->

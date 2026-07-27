@@ -48,7 +48,8 @@ data class WardrobeState(
     val isDeleting: Boolean = false,
     val selectedIds: Set<String> = emptySet(),
     val activeCategory: Category? = null,
-    val hasApiKey: Boolean = false,
+    /** A Claude key is configured, or on-device AI is enabled and available. */
+    val isAiAvailable: Boolean = false,
     val error: String? = null,
     val totalItemCount: Int = 0,
 )
@@ -93,13 +94,13 @@ class WardrobeViewModel(
     }.stateIn(viewModelScope, SharingStarted.Eagerly, WardrobeState(isLoading = true))
 
     init {
-        refreshApiKeyState()
+        refreshAiAvailability()
     }
 
-    private fun refreshApiKeyState() {
+    private fun refreshAiAvailability() {
         viewModelScope.launch {
-            val hasApiKey = settingsRepository.hasApiKey().getOrDefault(false)
-            _uiState.update { it.copy(hasApiKey = hasApiKey) }
+            val isAiAvailable = settingsRepository.isAiAvailable().getOrDefault(false)
+            _uiState.update { it.copy(isAiAvailable = isAiAvailable) }
         }
     }
 

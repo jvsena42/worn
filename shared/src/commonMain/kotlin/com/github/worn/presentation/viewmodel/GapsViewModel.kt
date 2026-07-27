@@ -22,7 +22,8 @@ sealed interface GapsIntent {
 data class GapsState(
     val recommendations: List<GapRecommendation> = emptyList(),
     val isLoading: Boolean = false,
-    val hasApiKey: Boolean = false,
+    /** A Claude key is configured, or on-device AI is enabled and available. */
+    val isAiAvailable: Boolean = false,
     val isAiMode: Boolean = false,
     val error: String? = null,
 )
@@ -43,10 +44,10 @@ class GapsViewModel(
     val effects: Flow<GapsEffect> = _effects.receiveAsFlow()
 
     init {
-        // Resolve the key before branching, and off the main thread — see SettingsRepository.
+        // Resolve the provider before branching, and off the main thread — see SettingsRepository.
         viewModelScope.launch {
-            val hasKey = settingsRepository.hasApiKey().getOrDefault(false)
-            _state.update { it.copy(hasApiKey = hasKey, isAiMode = hasKey) }
+            val hasAi = settingsRepository.isAiAvailable().getOrDefault(false)
+            _state.update { it.copy(isAiAvailable = hasAi, isAiMode = hasAi) }
             loadGaps()
         }
     }

@@ -4,7 +4,7 @@ import Shared
 
 struct AddItemSheet: View {
     let isSaving: Bool
-    let hasApiKey: Bool
+    let isAiAvailable: Bool
     var existingItem: ClothingItem?
     let onSave: (Data, String, Category, [String], [Season], Subcategory?, Fit?, Material?) -> Void
     let onDismiss: () -> Void
@@ -238,7 +238,7 @@ struct AddItemSheet: View {
 
     private var aiBadge: some View {
         Button {
-            if !hasApiKey { showAiLockedSheet = true }
+            if !isAiAvailable { showAiLockedSheet = true }
         } label: {
             HStack(spacing: 6) {
                 Text("✦")
@@ -565,10 +565,10 @@ struct AddItemSheet: View {
 }
 
 #Preview("iPhone") {
-    AddItemSheet(isSaving: false, hasApiKey: false, onSave: { _, _, _, _, _, _, _, _ in }, onDismiss: {})
+    AddItemSheet(isSaving: false, isAiAvailable: false, onSave: { _, _, _, _, _, _, _, _ in }, onDismiss: {})
 }
 
 #Preview("iPad Portrait") {
-    AddItemSheet(isSaving: false, hasApiKey: false, onSave: { _, _, _, _, _, _, _, _ in }, onDismiss: {})
+    AddItemSheet(isSaving: false, isAiAvailable: false, onSave: { _, _, _, _, _, _, _, _ in }, onDismiss: {})
         .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

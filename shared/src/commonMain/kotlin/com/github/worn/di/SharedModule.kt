@@ -4,6 +4,7 @@ import com.github.worn.data.repository.OutfitRepositoryImpl
 import com.github.worn.data.repository.SettingsRepositoryImpl
 import com.github.worn.data.repository.TryOnRepositoryImpl
 import com.github.worn.data.repository.WardrobeRepositoryImpl
+import com.github.worn.data.source.ai.OnDeviceAiSource
 import com.github.worn.data.source.local.createDatabase
 import com.github.worn.data.source.remote.ClaudeApiClient
 import com.github.worn.data.source.remote.YouCamApiClient
@@ -24,11 +25,13 @@ val sharedModule = module {
     single { createDatabase(get()) }
     singleOf(::ClaudeApiClient)
     singleOf(::YouCamApiClient)
+    singleOf(::OnDeviceAiSource)
     single<SettingsRepository> {
         SettingsRepositoryImpl(
             dataStore = get(),
             fileStorage = get(),
             secretStore = get(),
+            onDeviceAi = get(),
             dispatcher = get(),
         )
     }
@@ -40,6 +43,7 @@ val sharedModule = module {
             db = get(),
             fileStorage = get(),
             aiClient = get(),
+            onDeviceAi = get(),
             settingsRepository = get(),
             dispatcher = get(),
         )

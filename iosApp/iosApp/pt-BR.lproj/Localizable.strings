@@ -85,6 +85,13 @@
 "settings_your_profile" = "Seu Perfil";
 "settings_profile_subtitle_empty" = "Toque para configurar";
 "settings_profile_help" = "Ajude a IA a dar melhores sugestões";
+"settings_on_device_ai_title" = "IA no dispositivo";
+"settings_on_device_ai_available" = "Roda de forma privada neste aparelho, sem chave";
+"settings_on_device_ai_downloading" = "O modelo é baixado no primeiro uso";
+"settings_on_device_ai_unsupported_device" = "Não compatível com este aparelho";
+"settings_on_device_ai_unsupported_os" = "Requer iOS 26 ou mais recente";
+"settings_on_device_ai_disabled_by_user" = "Ative a Apple Intelligence nos Ajustes do iOS";
+"settings_on_device_ai_unavailable" = "Indisponível no momento";
 "settings_api_key_title" = "Chave da API Claude";
 "settings_api_key_connected" = "Conectado";
 "settings_api_key_required" = "Necessária para funções de IA";
@@ -170,7 +177,7 @@
 
 /* AI Locked Sheet */
 "ai_locked_title" = "Desbloquear funções de IA";
-"ai_locked_description" = "Adicione sua chave da API Claude nos Ajustes para habilitar.";
+"ai_locked_description" = "Ative a IA no dispositivo ou adicione sua chave da API Claude nos Ajustes.";
 "ai_locked_cta" = "Ir para Ajustes";
 
 /* Filter */

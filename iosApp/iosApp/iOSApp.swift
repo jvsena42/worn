@@ -13,6 +13,9 @@ struct iOSApp: App {
 
     init() {
         KoinHelperKt.initKoin()
+        // FoundationModels is Swift-only, so the shared engine reaches Apple Intelligence through
+        // this bridge. Registered before any screen can resolve the engine from Koin.
+        OnDeviceAiBridgeRegistry.shared.bridge = OnDeviceAiService()
         QuickActionInbox.register()
     }
 

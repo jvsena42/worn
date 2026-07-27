@@ -54,38 +54,6 @@ internal data class ClaudeResponseContent(
 )
 
 @Serializable
-internal data class AiAnalysisJson(
-    val description: String,
-    @SerialName("suggested_category") val suggestedCategory: String,
-    val colors: List<String>,
-    val seasons: List<String>,
-    val tags: List<String>,
-    @SerialName("suggested_subcategory") val suggestedSubcategory: String? = null,
-    @SerialName("suggested_fit") val suggestedFit: String? = null,
-    @SerialName("suggested_material") val suggestedMaterial: String? = null,
-)
-
-@Serializable
-internal data class GapRecommendationJson(
-    @SerialName("item_name") val itemName: String,
-    val category: String,
-    @SerialName("pairing_count") val pairingCount: Int,
-    val subcategory: String? = null,
-    val colors: List<String> = emptyList(),
-    val seasons: List<String> = emptyList(),
-    val fit: String? = null,
-    val material: String? = null,
-)
-
-@Serializable
-internal data class TryItResultJson(
-    @SerialName("matching_item_ids") val matchingItemIds: List<String>,
-    @SerialName("combinations_unlocked") val combinationsUnlocked: Int,
-    @SerialName("gaps_filled") val gapsFilled: List<String>,
-    @SerialName("worth_adding") val worthAdding: Boolean,
-)
-
-@Serializable
 internal data class ClaudeErrorResponse(
     val type: String,
     val error: ClaudeErrorDetail,
