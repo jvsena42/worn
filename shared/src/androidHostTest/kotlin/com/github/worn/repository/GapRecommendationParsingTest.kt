@@ -1,7 +1,7 @@
 package com.github.worn.repository
 
-import com.github.worn.data.source.remote.GapRecommendationJson
-import com.github.worn.data.source.remote.toDomain
+import com.github.worn.data.source.ai.GapRecommendationJson
+import com.github.worn.data.source.ai.toDomain
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.Material
