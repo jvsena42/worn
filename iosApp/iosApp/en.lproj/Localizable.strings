@@ -156,6 +156,12 @@
 "tryit_tryon_result_title" = "On you";
 "tryit_tryon_cost_note" = "Each try-on spends YouCam units.";
 
+/* Shared Photo */
+"share_choose_feature_title" = "What do you want to do?";
+"share_choose_analyze" = "Check if it fits my wardrobe";
+"share_choose_try_on" = "See it on me";
+"share_photo_read_failed" = "Couldn't open that photo";
+
 /* AI Locked Sheet */
 "ai_locked_title" = "Unlock AI features";
 "ai_locked_description" = "Add your Claude API key in Settings to enable this.";
