@@ -1,14 +1,11 @@
-<!-- Launchers do not tint a shortcut icon, so the ink colour is baked in (WornColors.TextPrimary). -->
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
-    <path
-        android:pathData="M5,12 L19,12 M12,5 L12,19"
-        android:strokeWidth="2"
-        android:strokeColor="#2C2924"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:fillColor="@android:color/transparent" />
-</vector>
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Adaptive, so the shortcut owns its background instead of being scaled onto the launcher's white
+    badge: a white glyph then stays legible in light and dark, and pinned shortcuts match the app
+    icon. The monochrome layer opts into themed icons on Android 13+.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_shortcut_add_item_foreground" />
+    <monochrome android:drawable="@drawable/ic_shortcut_add_item_foreground" />
+</adaptive-icon>
