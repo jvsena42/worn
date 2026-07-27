@@ -8,6 +8,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -24,6 +25,7 @@ import com.github.worn.ui.screen.TryItScreen
 import com.github.worn.ui.screen.WardrobeScreen
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
+import com.github.worn.ui.util.SharedPhoto
 import kotlinx.coroutines.launch
 
 private val tabs = Tab.entries.toList()
@@ -31,7 +33,7 @@ private val tabs = Tab.entries.toList()
 @OptIn(ExperimentalComposeUiApi::class)
 @Suppress("FunctionNaming")
 @Composable
-fun App() {
+fun App(sharedPhoto: SharedPhoto? = null, onSharedPhotoConsumed: () -> Unit = {}) {
     WornTheme {
         val pagerState = rememberPagerState(pageCount = { tabs.size })
         val scope = rememberCoroutineScope()
@@ -44,6 +46,10 @@ fun App() {
                 // Not animateScrollToPage: animating composes every page it scrolls past.
                 scope.launch { pagerState.scrollToPage(index) }
             }
+        }
+
+        LaunchedEffect(sharedPhoto) {
+            if (sharedPhoto != null) onTabSelected(Tab.TRY_IT)
         }
 
         Box(
@@ -61,7 +67,11 @@ fun App() {
                     Tab.WARDROBE -> WardrobeScreen(onTabSelected = onTabSelected)
                     Tab.OUTFITS -> OutfitsScreen(onTabSelected = onTabSelected)
                     Tab.GAPS -> GapsScreen(onTabSelected = onTabSelected)
-                    Tab.TRY_IT -> TryItScreen(onTabSelected = onTabSelected)
+                    Tab.TRY_IT -> TryItScreen(
+                        onTabSelected = onTabSelected,
+                        sharedPhoto = sharedPhoto,
+                        onSharedPhotoConsumed = onSharedPhotoConsumed,
+                    )
                     Tab.SETTINGS -> SettingsScreen(onTabSelected = onTabSelected)
                 }
             }

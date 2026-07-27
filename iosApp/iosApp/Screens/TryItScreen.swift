@@ -5,6 +5,9 @@ import Shared
 struct TryItScreen: View {
     @StateObject private var viewModel = TryItViewModelWrapper()
     let onTabSelected: (WornTab) -> Void
+    var sharedPhoto: SharedPhoto?
+
+    @State private var showShareReadFailed = false
 
     @State private var showSourceChooser = false
     @State private var showPhotoPicker = false
@@ -22,6 +25,13 @@ struct TryItScreen: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isCompact: Bool { sizeClass == .compact }
     private var contentPadding: CGFloat { isCompact ? 24 : 32 }
+
+    /// Presentation is driven purely by ViewModel state, so every dismissal path — including an
+    /// outside tap, which fires the `.cancel` button's action — goes through an intent. A real
+    /// setter would race the FlowAdapter's async state delivery and undo the choice just made.
+    private var featureChooserBinding: Binding<Bool> {
+        Binding(get: { viewModel.state.featureChoiceRequired }, set: { _ in })
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -78,6 +88,37 @@ struct TryItScreen: View {
                     viewModel.reset()
                 }
             }
+        }
+        .onChange(of: sharedPhoto) { _, photo in
+            guard let photo = photo else { return }
+            guard let data = photo.data else {
+                showShareReadFailed = true
+                return
+            }
+            photoData = data
+            photoImage = UIImage(data: data)
+            viewModel.reset()
+            viewModel.receiveSharedPhoto()
+        }
+        .confirmationDialog(
+            String(localized: "share_choose_feature_title"),
+            isPresented: featureChooserBinding,
+            titleVisibility: .visible
+        ) {
+            Button(String(localized: "share_choose_analyze")) {
+                viewModel.chooseFeature(.analysis)
+            }
+            .accessibilityIdentifier("share_choose_analyze")
+            Button(String(localized: "share_choose_try_on")) {
+                viewModel.chooseFeature(.virtualTryOn)
+            }
+            .accessibilityIdentifier("share_choose_try_on")
+            Button(String(localized: "common_cancel"), role: .cancel) {
+                viewModel.clearFeatureFocus()
+            }
+        }
+        .alert(String(localized: "share_photo_read_failed"), isPresented: $showShareReadFailed) {
+            Button(String(localized: "common_cancel"), role: .cancel) {}
         }
         .sheet(item: $selectedItem) { item in
             ItemDetailSheet(
@@ -137,19 +178,35 @@ struct TryItScreen: View {
     // MARK: - Try It Content
 
     private var tryItContent: some View {
-        ScrollView {
-            if isCompact {
-                phoneContent
-            } else {
-                tabletContent
+        ScrollViewReader { proxy in
+            ScrollView {
+                if isCompact {
+                    phoneContent
+                } else {
+                    tabletContent
+                }
+            }
+            .background(WornColors.bgPage)
+            .onChange(of: viewModel.state.focusedFeature) { _, feature in
+                guard let feature else { return }
+                withAnimation {
+                    proxy.scrollTo(
+                        feature == .virtualTryOn ? Self.tryOnAnchor : Self.analysisAnchor,
+                        anchor: .top
+                    )
+                }
+                viewModel.clearFeatureFocus()
             }
         }
-        .background(WornColors.bgPage)
     }
+
+    private static let analysisAnchor = "analysis"
+    private static let tryOnAnchor = "tryOn"
 
     private var phoneContent: some View {
         VStack(alignment: .leading, spacing: 20) {
             tryItTitle(fontSize: 28)
+                .id(Self.analysisAnchor)
             uploadZone(height: 200)
             if photoData != nil { garmentCropButton }
 
@@ -181,6 +238,7 @@ struct TryItScreen: View {
 
             if viewModel.state.hasYouCamKey {
                 tryOnSection(isCompact: true)
+                    .id(Self.tryOnAnchor)
             }
 
             Spacer().frame(height: 95)
@@ -191,6 +249,7 @@ struct TryItScreen: View {
     private var tabletContent: some View {
         VStack(alignment: .leading, spacing: 28) {
             tryItTitle(fontSize: 32)
+                .id(Self.analysisAnchor)
 
             HStack(alignment: .top, spacing: 32) {
                 // Left column
@@ -218,6 +277,7 @@ struct TryItScreen: View {
 
                     if viewModel.state.hasYouCamKey {
                         tryOnSection(isCompact: false)
+                            .id(Self.tryOnAnchor)
                     }
                 }
                 .frame(maxWidth: .infinity)

@@ -49,6 +49,19 @@ class TryItViewModelWrapper: ObservableObject {
         viewModel.onIntent(intent: TryItIntent.SetPersonPhoto(imageBytes: imageData.toKotlinByteArray()))
     }
 
+    /// Signals that a photo arrived from the share sheet; the bytes stay on the Swift side.
+    func receiveSharedPhoto() {
+        viewModel.onIntent(intent: TryItIntent.ReceiveSharedPhoto())
+    }
+
+    func chooseFeature(_ feature: TryItFeature) {
+        viewModel.onIntent(intent: TryItIntent.ChooseFeature(feature: feature))
+    }
+
+    func clearFeatureFocus() {
+        viewModel.onIntent(intent: TryItIntent.ClearFeatureFocus())
+    }
+
     /// The saved person photo, if any, as displayable `Data`.
     var personImageData: Data? {
         state.personImage?.toData()

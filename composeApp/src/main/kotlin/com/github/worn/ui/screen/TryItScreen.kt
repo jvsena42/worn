@@ -3,11 +3,11 @@
 package com.github.worn.ui.screen
 
 import android.Manifest
-import android.graphics.BitmapFactory
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -56,17 +56,21 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -81,6 +85,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.worn.R
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.GarmentCategory
+import com.github.worn.domain.model.TryItFeature
 import com.github.worn.domain.model.TryItResult
 import com.github.worn.presentation.viewmodel.TryItEffect
 import com.github.worn.presentation.viewmodel.TryItIntent
@@ -93,22 +98,29 @@ import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
 import com.github.worn.ui.components.ClothingPhoto
+import com.github.worn.ui.util.SharedPhoto
+import com.github.worn.ui.util.readImageBytes
 import com.github.worn.ui.util.rememberDecodedImage
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import java.io.ByteArrayOutputStream
 
 @Composable
-fun TryItScreen(onTabSelected: (Tab) -> Unit) {
+fun TryItScreen(
+    onTabSelected: (Tab) -> Unit,
+    sharedPhoto: SharedPhoto? = null,
+    onSharedPhotoConsumed: () -> Unit = {},
+) {
     val viewModel: TryItViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val windowInfo = currentWindowAdaptiveInfo()
     val isCompact = windowInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
-    var photoBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     var photoBytes by remember { mutableStateOf<ByteArray?>(null) }
+    val photoBitmap = rememberDecodedImage(photoBytes)
     var showSourceChooser by remember { mutableStateOf(false) }
     var showPersonSourceChooser by remember { mutableStateOf(false) }
     var showCropEditor by remember { mutableStateOf(false) }
@@ -116,6 +128,9 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
     var selectedItem by remember { mutableStateOf<ClothingItem?>(null) }
 
     val snackbarHostState = remember { SnackbarHostState() }
+    val scrollState = rememberScrollState()
+    var tryOnSectionTop by remember { mutableIntStateOf(0) }
+    var viewportTop by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
@@ -125,12 +140,37 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
         }
     }
 
+    SharedPhotoEffect(
+        sharedPhoto = sharedPhoto,
+        snackbarHostState = snackbarHostState,
+        onBytes = { bytes ->
+            photoBytes = bytes
+            viewModel.onIntent(TryItIntent.Reset)
+            viewModel.onIntent(TryItIntent.ReceiveSharedPhoto)
+        },
+        onConsumed = onSharedPhotoConsumed,
+    )
+
+    FeatureFocusEffect(
+        focusedFeature = state.focusedFeature,
+        scrollState = scrollState,
+        tryOnSectionTop = { tryOnSectionTop },
+        viewportTop = { viewportTop },
+        onFocusHandled = { viewModel.onIntent(TryItIntent.ClearFeatureFocus) },
+    )
+
+    if (state.featureChoiceRequired) {
+        FeatureChooserDialog(
+            onDismiss = { viewModel.onIntent(TryItIntent.ClearFeatureFocus) },
+            onChoose = { viewModel.onIntent(TryItIntent.ChooseFeature(it)) },
+        )
+    }
+
     PhotoSourceChooser(
         show = showSourceChooser,
         onDismiss = { showSourceChooser = false },
-        onPhoto = { bytes, bitmap ->
+        onPhoto = { bytes ->
             photoBytes = bytes
-            photoBitmap = bitmap
             viewModel.onIntent(TryItIntent.Reset)
         },
     )
@@ -138,7 +178,7 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
     PhotoSourceChooser(
         show = showPersonSourceChooser,
         onDismiss = { showPersonSourceChooser = false },
-        onPhoto = { bytes, _ -> viewModel.onIntent(TryItIntent.SetPersonPhoto(bytes)) },
+        onPhoto = { bytes -> viewModel.onIntent(TryItIntent.SetPersonPhoto(bytes)) },
     )
 
     if (showCropEditor) {
@@ -148,7 +188,6 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
                 onCancel = { showCropEditor = false },
                 onCropped = { cropped ->
                     photoBytes = cropped
-                    photoBitmap = BitmapFactory.decodeByteArray(cropped, 0, cropped.size)?.asImageBitmap()
                     // The previous analysis described the uncropped photo.
                     viewModel.onIntent(TryItIntent.Reset)
                     showCropEditor = false
@@ -177,6 +216,9 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
         photoBitmap = photoBitmap,
         hasPhoto = photoBytes != null,
         snackbarHostState = snackbarHostState,
+        scrollState = scrollState,
+        onTryOnSectionPositioned = { tryOnSectionTop = it },
+        onScrollViewportPositioned = { viewportTop = it },
         onPhotoClick = { showSourceChooser = true },
         onCropClick = { showCropEditor = true },
         onAnalyze = { photoBytes?.let { viewModel.onIntent(TryItIntent.AnalyzePhoto(it)) } },
@@ -202,20 +244,16 @@ fun TryItScreen(onTabSelected: (Tab) -> Unit) {
 private fun PhotoSourceChooser(
     show: Boolean,
     onDismiss: () -> Unit,
-    onPhoto: (ByteArray, ImageBitmap) -> Unit,
+    onPhoto: (ByteArray) -> Unit,
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
     ) { uri ->
         uri?.let {
-            val bytes = context.contentResolver.openInputStream(it)?.readBytes()
-            if (bytes != null) {
-                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)?.let { bmp ->
-                    onPhoto(bytes, bmp.asImageBitmap())
-                }
-            }
+            scope.launch { readImageBytes(context, it)?.let(onPhoto) }
         }
     }
 
@@ -225,7 +263,7 @@ private fun PhotoSourceChooser(
         bitmap?.let {
             val stream = ByteArrayOutputStream()
             it.compress(android.graphics.Bitmap.CompressFormat.JPEG, JPEG_QUALITY, stream)
-            onPhoto(stream.toByteArray(), it.asImageBitmap())
+            onPhoto(stream.toByteArray())
         }
     }
 
@@ -296,6 +334,108 @@ private fun PhotoSourceDialog(
     )
 }
 
+/**
+ * Places a photo arriving from the share sheet, or reports that its URI could not be read.
+ *
+ * [onConsumed] clears the share so it is handled exactly once: the pager disposes this screen when
+ * it is more than one page away, and without this the share would replay on every return to the tab.
+ */
+@Composable
+private fun SharedPhotoEffect(
+    sharedPhoto: SharedPhoto?,
+    snackbarHostState: SnackbarHostState,
+    onBytes: (ByteArray) -> Unit,
+    onConsumed: () -> Unit,
+) {
+    val readFailedMessage = stringResource(R.string.share_photo_read_failed)
+    LaunchedEffect(sharedPhoto) {
+        val photo = sharedPhoto ?: return@LaunchedEffect
+        photo.bytes?.let(onBytes)
+        // Before the snackbar, which suspends until dismissed: a dispose while it is showing
+        // would otherwise leave the share unconsumed and replay it.
+        onConsumed()
+        if (photo.bytes == null) snackbarHostState.showSnackbar(readFailedMessage)
+    }
+}
+
+/** Scrolls the section a shared photo was routed to into view, then releases the focus. */
+@Composable
+private fun FeatureFocusEffect(
+    focusedFeature: TryItFeature?,
+    scrollState: ScrollState,
+    tryOnSectionTop: () -> Int,
+    viewportTop: () -> Int,
+    onFocusHandled: () -> Unit,
+) {
+    LaunchedEffect(focusedFeature) {
+        when (focusedFeature) {
+            TryItFeature.ANALYSIS -> scrollState.animateScrollTo(0)
+            TryItFeature.VIRTUAL_TRY_ON -> {
+                // The positions are reported during layout, which can land after this effect
+                // starts; one frame of slack means we measure against a placed section.
+                withFrameNanos { }
+                // Both are root-relative, so adding the current scroll turns the on-screen delta
+                // back into an absolute offset within the scrollable content.
+                val target = tryOnSectionTop() - viewportTop() + scrollState.value
+                scrollState.animateScrollTo(target.coerceIn(0, scrollState.maxValue))
+            }
+            null -> return@LaunchedEffect
+        }
+        onFocusHandled()
+    }
+}
+
+/** Asked only when both credentials are connected, so a shared photo is ambiguous. */
+@Composable
+private fun FeatureChooserDialog(
+    onDismiss: () -> Unit,
+    onChoose: (TryItFeature) -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        modifier = Modifier.testTag("share_feature_chooser"),
+        title = { Text(stringResource(R.string.share_choose_feature_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                FeatureChoiceRow(
+                    icon = Icons.Outlined.SmartToy,
+                    label = stringResource(R.string.share_choose_analyze),
+                    testTag = "share_choose_analyze",
+                    onClick = { onChoose(TryItFeature.ANALYSIS) },
+                )
+                FeatureChoiceRow(
+                    icon = Icons.Outlined.AutoAwesome,
+                    label = stringResource(R.string.share_choose_try_on),
+                    testTag = "share_choose_try_on",
+                    onClick = { onChoose(TryItFeature.VIRTUAL_TRY_ON) },
+                )
+            }
+        },
+        confirmButton = {},
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
+    )
+}
+
+@Composable
+private fun FeatureChoiceRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    testTag: String,
+    onClick: () -> Unit,
+) {
+    TextButton(onClick = onClick, modifier = Modifier.fillMaxWidth().testTag(testTag)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Icon(icon, contentDescription = null, modifier = Modifier.size(24.dp))
+            Spacer(Modifier.width(12.dp))
+            Text(label, fontSize = 16.sp)
+        }
+    }
+}
+
 @Composable
 private fun TryItScaffold(
     state: TryItState,
@@ -303,6 +443,9 @@ private fun TryItScaffold(
     photoBitmap: ImageBitmap?,
     hasPhoto: Boolean,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+    scrollState: ScrollState = rememberScrollState(),
+    onTryOnSectionPositioned: (Int) -> Unit = {},
+    onScrollViewportPositioned: (Int) -> Unit = {},
     onPhotoClick: () -> Unit = {},
     onCropClick: () -> Unit = {},
     onAnalyze: () -> Unit = {},
@@ -335,6 +478,8 @@ private fun TryItScaffold(
                 isCompact = isCompact,
                 photoBitmap = photoBitmap,
                 hasPhoto = hasPhoto,
+                scrollState = scrollState,
+                onTryOnSectionPositioned = onTryOnSectionPositioned,
                 onPhotoClick = onPhotoClick,
                 onCropClick = onCropClick,
                 onAnalyze = onAnalyze,
@@ -346,7 +491,10 @@ private fun TryItScaffold(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(horizontal = contentPadding),
+                    .padding(horizontal = contentPadding)
+                    // Before verticalScroll in the chain, so this reports the viewport, which
+                    // stays put while the content inside it translates.
+                    .onGloballyPositioned { onScrollViewportPositioned(it.positionInRoot().y.toInt()) },
             )
         }
     }
@@ -431,6 +579,8 @@ private fun TryItContent(
     isCompact: Boolean,
     photoBitmap: ImageBitmap?,
     hasPhoto: Boolean,
+    scrollState: ScrollState,
+    onTryOnSectionPositioned: (Int) -> Unit,
     onPhotoClick: () -> Unit,
     onCropClick: () -> Unit,
     onAnalyze: () -> Unit,
@@ -446,6 +596,8 @@ private fun TryItContent(
             state = state,
             photoBitmap = photoBitmap,
             hasPhoto = hasPhoto,
+            scrollState = scrollState,
+            onTryOnSectionPositioned = onTryOnSectionPositioned,
             onPhotoClick = onPhotoClick,
             onCropClick = onCropClick,
             onAnalyze = onAnalyze,
@@ -461,6 +613,8 @@ private fun TryItContent(
             state = state,
             photoBitmap = photoBitmap,
             hasPhoto = hasPhoto,
+            scrollState = scrollState,
+            onTryOnSectionPositioned = onTryOnSectionPositioned,
             onPhotoClick = onPhotoClick,
             onCropClick = onCropClick,
             onAnalyze = onAnalyze,
@@ -479,6 +633,8 @@ private fun TryItPhoneContent(
     state: TryItState,
     photoBitmap: ImageBitmap?,
     hasPhoto: Boolean,
+    scrollState: ScrollState,
+    onTryOnSectionPositioned: (Int) -> Unit,
     onPhotoClick: () -> Unit,
     onCropClick: () -> Unit,
     onAnalyze: () -> Unit,
@@ -490,7 +646,7 @@ private fun TryItPhoneContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.verticalScroll(rememberScrollState()),
+        modifier = modifier.verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Spacer(Modifier.height(4.dp))
@@ -529,6 +685,7 @@ private fun TryItPhoneContent(
                 onPersonPhotoClick = onPersonPhotoClick,
                 onPersonCropClick = onPersonCropClick,
                 onGenerateTryOn = onGenerateTryOn,
+                onPositioned = onTryOnSectionPositioned,
             )
         }
         Spacer(Modifier.height(WornDimens.BottomBarClearance))
@@ -540,6 +697,8 @@ private fun TryItTabletContent(
     state: TryItState,
     photoBitmap: ImageBitmap?,
     hasPhoto: Boolean,
+    scrollState: ScrollState,
+    onTryOnSectionPositioned: (Int) -> Unit,
     onPhotoClick: () -> Unit,
     onCropClick: () -> Unit,
     onAnalyze: () -> Unit,
@@ -550,7 +709,7 @@ private fun TryItTabletContent(
     onItemClick: (ClothingItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
+    Column(modifier = modifier.verticalScroll(scrollState)) {
         Spacer(Modifier.height(4.dp))
         TryItTitle(fontSize = 32.sp)
         Spacer(Modifier.height(28.dp))
@@ -600,6 +759,7 @@ private fun TryItTabletContent(
                         onPersonPhotoClick = onPersonPhotoClick,
                         onPersonCropClick = onPersonCropClick,
                         onGenerateTryOn = onGenerateTryOn,
+                        onPositioned = onTryOnSectionPositioned,
                     )
                 }
             }
@@ -892,10 +1052,14 @@ private fun TryOnSection(
     onPersonPhotoClick: () -> Unit,
     onPersonCropClick: () -> Unit,
     onGenerateTryOn: () -> Unit,
+    onPositioned: (Int) -> Unit = {},
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.testTag("try_on_section"),
+        modifier = Modifier
+            .testTag("try_on_section")
+            // Root-relative, not parent-relative: on tablet this sits inside a nested column.
+            .onGloballyPositioned { onPositioned(it.positionInRoot().y.toInt()) },
     ) {
         Text(
             text = stringResource(R.string.tryit_your_photo_title),
@@ -1157,6 +1321,34 @@ private fun TryItResultsTabletPreview() {
             photoBitmap = null,
             hasPhoto = true,
         )
+    }
+}
+
+@Preview(showSystemUi = true, device = "id:pixel_8")
+@Composable
+private fun TryItShareChooserPhonePreview() {
+    WornTheme {
+        TryItScaffold(
+            state = TryItState(hasApiKey = true, hasYouCamKey = true),
+            isCompact = true,
+            photoBitmap = null,
+            hasPhoto = true,
+        )
+        FeatureChooserDialog(onDismiss = {}, onChoose = {})
+    }
+}
+
+@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@Composable
+private fun TryItShareChooserTabletPreview() {
+    WornTheme {
+        TryItScaffold(
+            state = TryItState(hasApiKey = true, hasYouCamKey = true),
+            isCompact = false,
+            photoBitmap = null,
+            hasPhoto = true,
+        )
+        FeatureChooserDialog(onDismiss = {}, onChoose = {})
     }
 }
 

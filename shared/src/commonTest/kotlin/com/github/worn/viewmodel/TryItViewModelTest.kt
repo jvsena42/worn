@@ -1,6 +1,7 @@
 package com.github.worn.viewmodel
 
 import com.github.worn.domain.model.GarmentCategory
+import com.github.worn.domain.model.TryItFeature
 import com.github.worn.fake.FakeSettingsRepository
 import com.github.worn.fake.FakeTryOnRepository
 import com.github.worn.fake.FakeWardrobeRepository
@@ -113,4 +114,99 @@ class TryItViewModelTest {
         assertTrue(tryOn.calls.isEmpty())
         assertNull(vm.state.value.tryOnImage)
     }
+
+    // region Shared-photo routing
+
+    private fun connectClaude() {
+        settings.apiKey = "sk-ant-test"
+    }
+
+    private fun connectYouCam() {
+        settings.youCamClientId = "id"
+        settings.youCamClientSecret = "secret"
+    }
+
+    @Test
+    fun `ReceiveSharedPhoto focuses analysis when only Claude is connected`() = runTest {
+        connectClaude()
+        val vm = createViewModel()
+
+        vm.onIntent(TryItIntent.ReceiveSharedPhoto)
+
+        assertEquals(TryItFeature.ANALYSIS, vm.state.value.focusedFeature)
+        assertFalse(vm.state.value.featureChoiceRequired)
+    }
+
+    @Test
+    fun `ReceiveSharedPhoto focuses try-on when only YouCam is connected`() = runTest {
+        connectYouCam()
+        val vm = createViewModel()
+
+        vm.onIntent(TryItIntent.ReceiveSharedPhoto)
+
+        assertEquals(TryItFeature.VIRTUAL_TRY_ON, vm.state.value.focusedFeature)
+        assertFalse(vm.state.value.featureChoiceRequired)
+    }
+
+    @Test
+    fun `ReceiveSharedPhoto asks which feature when both are connected`() = runTest {
+        connectClaude()
+        connectYouCam()
+        val vm = createViewModel()
+
+        vm.onIntent(TryItIntent.ReceiveSharedPhoto)
+
+        assertTrue(vm.state.value.featureChoiceRequired)
+        assertNull(vm.state.value.focusedFeature)
+    }
+
+    @Test
+    fun `ReceiveSharedPhoto neither asks nor focuses when no credential is connected`() = runTest {
+        val vm = createViewModel()
+
+        vm.onIntent(TryItIntent.ReceiveSharedPhoto)
+
+        assertFalse(vm.state.value.featureChoiceRequired)
+        assertNull(vm.state.value.focusedFeature)
+    }
+
+    @Test
+    fun `ReceiveSharedPhoto reads credentials connected after the ViewModel was built`() = runTest {
+        val vm = createViewModel()
+        assertFalse(vm.state.value.hasApiKey)
+
+        connectClaude()
+        vm.onIntent(TryItIntent.ReceiveSharedPhoto)
+
+        assertTrue(vm.state.value.hasApiKey)
+        assertEquals(TryItFeature.ANALYSIS, vm.state.value.focusedFeature)
+    }
+
+    @Test
+    fun `ChooseFeature focuses the picked feature and dismisses the chooser`() = runTest {
+        connectClaude()
+        connectYouCam()
+        val vm = createViewModel()
+        vm.onIntent(TryItIntent.ReceiveSharedPhoto)
+
+        vm.onIntent(TryItIntent.ChooseFeature(TryItFeature.VIRTUAL_TRY_ON))
+
+        assertEquals(TryItFeature.VIRTUAL_TRY_ON, vm.state.value.focusedFeature)
+        assertFalse(vm.state.value.featureChoiceRequired)
+    }
+
+    @Test
+    fun `ClearFeatureFocus clears both the focus and the chooser`() = runTest {
+        connectClaude()
+        connectYouCam()
+        val vm = createViewModel()
+        vm.onIntent(TryItIntent.ReceiveSharedPhoto)
+
+        vm.onIntent(TryItIntent.ClearFeatureFocus)
+
+        assertNull(vm.state.value.focusedFeature)
+        assertFalse(vm.state.value.featureChoiceRequired)
+    }
+
+    // endregion
 }

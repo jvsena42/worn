@@ -3,7 +3,9 @@ import Shared
 
 @main
 struct iOSApp: App {
+    @Environment(\.scenePhase) private var scenePhase
     @State private var activeTab: WornTab = .wardrobe
+    @State private var sharedPhoto: SharedPhoto?
 
     init() {
         KoinHelperKt.initKoin()
@@ -19,7 +21,7 @@ struct iOSApp: App {
                         .tag(WornTab.outfits)
                     GapsScreen(onTabSelected: selectTab)
                         .tag(WornTab.gaps)
-                    TryItScreen(onTabSelected: selectTab)
+                    TryItScreen(onTabSelected: selectTab, sharedPhoto: sharedPhoto)
                         .tag(WornTab.tryIt)
                     SettingsScreen(onTabSelected: selectTab)
                         .tag(WornTab.settings)
@@ -28,7 +30,18 @@ struct iOSApp: App {
 
                 WornBottomBar(activeTab: activeTab, onTabSelected: selectTab)
             }
+            .onOpenURL { _ in receiveSharedPhoto() }
+            .onChange(of: scenePhase) { _, phase in
+                // Covers the case where the extension wrote the file but could not launch us.
+                if phase == .active { receiveSharedPhoto() }
+            }
         }
+    }
+
+    private func receiveSharedPhoto() {
+        guard let photo = SharedPhotoInbox.consume() else { return }
+        sharedPhoto = photo
+        selectTab(.tryIt)
     }
 
     /// Switches tabs without the paged TabView's slide animation.
