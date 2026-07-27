@@ -41,6 +41,28 @@ android layout --pretty          # inspect the current screen's tree
 
 Each journey is self-contained; evaluate them independently.
 
+### When `android layout` fails
+
+On some devices `android layout` cannot dump the view tree at all, and the failure has nothing to
+do with the app under test. Xiaomi/MIUI builds are a known case: the dump crashes inside MIUI's
+own resource loading with
+
+```
+Failed to retrieve UI dump: java.io.FileNotFoundException:
+/data/system/theme_config/theme_compatibility.xml: open failed: ENOENT
+```
+
+Every journey step is still evaluable — locate elements visually instead of by tree:
+
+```shell
+android screen capture --annotate -o screen.png   # labels each element with a number
+adb shell input $(android screen resolve --screenshot screen.png --string "tap #26")
+```
+
+Note the flag is `--screenshot`, not `--screen`. Re-capture after each interaction, since the
+labels are assigned per screenshot and do not survive a screen change. The `resource-id` test tags
+described above are unavailable on this path, so fall back to the visible text a user would see.
+
 ## Journeys
 
 | File | Flow |
