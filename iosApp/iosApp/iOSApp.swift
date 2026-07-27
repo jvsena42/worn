@@ -3,19 +3,28 @@ import Shared
 
 @main
 struct iOSApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @Environment(\.scenePhase) private var scenePhase
+    @StateObject private var quickActions = QuickActionInbox.shared
     @State private var activeTab: WornTab = .wardrobe
     @State private var sharedPhoto: SharedPhoto?
+    @State private var openAddSheet: ShortcutCommand?
+    @State private var handledShortcutId: UUID?
 
     init() {
         KoinHelperKt.initKoin()
+        QuickActionInbox.register()
     }
 
     var body: some Scene {
         WindowGroup {
             VStack(spacing: 0) {
                 TabView(selection: $activeTab) {
-                    WardrobeScreen(onTabSelected: selectTab)
+                    WardrobeScreen(
+                        onTabSelected: selectTab,
+                        openAddSheet: openAddSheet,
+                        onAddSheetOpened: { openAddSheet = nil }
+                    )
                         .tag(WornTab.wardrobe)
                     OutfitsScreen(onTabSelected: selectTab)
                         .tag(WornTab.outfits)
@@ -35,6 +44,28 @@ struct iOSApp: App {
                 // Covers the case where the extension wrote the file but could not launch us.
                 if phase == .active { receiveSharedPhoto() }
             }
+            // onReceive, not onChange: on a cold launch the scene delegate fills the inbox before
+            // this view installs its observers, and @Published replays its current value to a new
+            // subscriber whereas onChange would only see later ones.
+            //
+            // The tap is marked handled here rather than cleared on the inbox, because that replay
+            // can land mid-update and SwiftUI forbids publishing changes from there. Every tap
+            // carries a fresh id, so a repeat of the same action still gets through.
+            .onReceive(quickActions.$pending) { command in
+                guard let command, command.id != handledShortcutId else { return }
+                handledShortcutId = command.id
+                perform(command)
+            }
+        }
+    }
+
+    private func perform(_ command: ShortcutCommand) {
+        // A Kotlin enum bridges to Swift as a class, so it is compared rather than switched on.
+        if command.shortcut == .addItem {
+            selectTab(.wardrobe)
+            openAddSheet = command
+        } else if command.shortcut == .tryIt {
+            selectTab(.tryIt)
         }
     }
 

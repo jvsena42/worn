@@ -8,6 +8,8 @@ struct WardrobeScreen: View {
     @State private var detailItem: ClothingItem?
     @State private var editItem: ClothingItem?
     var onTabSelected: (WornTab) -> Void = { _ in }
+    var openAddSheet: ShortcutCommand?
+    var onAddSheetOpened: () -> Void = {}
 
     var body: some View {
         WardrobeContent(
@@ -61,6 +63,14 @@ struct WardrobeScreen: View {
                     viewModel.deleteItem(id)
                 }
             )
+        }
+        // task(id:), not onChange: this also runs on first appearance, so a quick action that
+        // cold-launched the app is not missed. onAddSheetOpened clears it so it fires exactly once.
+        .task(id: openAddSheet) {
+            guard openAddSheet != nil else { return }
+            editItem = nil
+            showAddSheet = true
+            onAddSheetOpened()
         }
     }
 }

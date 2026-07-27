@@ -162,6 +162,12 @@
 "share_choose_try_on" = "Ver em mim";
 "share_photo_read_failed" = "Não foi possível abrir essa foto";
 
+/* App Shortcuts */
+"shortcut_add_item_short" = "Adicionar";
+"shortcut_add_item_long" = "Adicionar ao armário";
+"shortcut_try_it_short" = "Testar";
+"shortcut_try_it_long" = "Experimentar uma peça";
+
 /* AI Locked Sheet */
 "ai_locked_title" = "Desbloquear funções de IA";
 "ai_locked_description" = "Adicione sua chave da API Claude nos Ajustes para habilitar.";
