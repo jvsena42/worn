@@ -170,7 +170,13 @@ class ClaudeApiClient(
         val responseBody = response.bodyAsText()
 
         if (!response.status.isSuccess()) {
+            println("[$LOG_TAG] HTTP ${response.status.value} body=${responseBody.take(BODY_PREVIEW_LEN)}")
+            val apiMessage = parseErrorMessage(responseBody)
             val userMessage = when (response.status.value) {
+                // 400 covers billing ("credit balance is too low") and malformed requests alike.
+                // Both are actionable and neither is fixed by retrying, so relay what the API said.
+                HTTP_BAD_REQUEST -> apiMessage
+                    ?: "Claude rejected the request (400). Please try again."
                 HTTP_UNAUTHORIZED -> "Invalid API key. Check your key in Settings."
                 HTTP_TOO_MANY_REQUESTS -> "Too many requests. Please wait and try again."
                 in HTTP_SERVER_ERROR_RANGE -> "Claude service error. Please try again later."
@@ -186,11 +192,20 @@ class ClaudeApiClient(
             ?: error("No text content in Claude response")
     }
 
+    /** Anthropic errors carry a human-readable reason; fall back to the status when absent. */
+    private fun parseErrorMessage(body: String): String? =
+        runCatching { json.decodeFromString<ClaudeErrorResponse>(body).error.message }
+            .getOrNull()
+            ?.takeIf { it.isNotBlank() }
+
     companion object {
+        private const val LOG_TAG = "ClaudeApi"
+        private const val BODY_PREVIEW_LEN = 300
         private const val API_URL = "https://api.anthropic.com/v1/messages"
         private const val API_VERSION = "2023-06-01"
         private const val MODEL = "claude-sonnet-5"
         private const val MAX_TOKENS = 1024
+        private const val HTTP_BAD_REQUEST = 400
         private const val HTTP_UNAUTHORIZED = 401
         private const val HTTP_TOO_MANY_REQUESTS = 429
         private val HTTP_SERVER_ERROR_RANGE = 500..599

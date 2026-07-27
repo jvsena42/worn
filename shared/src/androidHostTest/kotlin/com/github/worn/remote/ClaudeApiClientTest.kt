@@ -12,6 +12,8 @@ import io.ktor.http.headersOf
 import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -76,5 +78,41 @@ class ClaudeApiClientTest {
 
         assertFalse(body.contains("\"source\":null"), "explicit null source: $body")
         assertFalse(body.contains("\"text\":null"), "explicit null text: $body")
+    }
+
+    @Test
+    fun `a credit balance error surfaces the message from the API`() = runTest {
+        val engine = MockEngine {
+            respond(
+                ByteReadChannel(
+                    """{"type":"error","error":{"type":"invalid_request_error","message":""" +
+                        """"Your credit balance is too low to access the Anthropic API."}}""",
+                ),
+                HttpStatusCode.BadRequest,
+                jsonHeaders(),
+            )
+        }
+
+        val failure = assertFailsWith<IllegalStateException> {
+            ClaudeApiClient(HttpClient(engine), secretStore()).analyzeImage(byteArrayOf(1))
+        }
+
+        assertEquals(
+            "Your credit balance is too low to access the Anthropic API.",
+            failure.message,
+        )
+    }
+
+    @Test
+    fun `an unparseable error falls back to a generic message`() = runTest {
+        val engine = MockEngine {
+            respond(ByteReadChannel("not json"), HttpStatusCode.BadRequest, jsonHeaders())
+        }
+
+        val failure = assertFailsWith<IllegalStateException> {
+            ClaudeApiClient(HttpClient(engine), secretStore()).analyzeImage(byteArrayOf(1))
+        }
+
+        assertTrue(failure.message.orEmpty().contains("400"), "lost status: ${failure.message}")
     }
 }
