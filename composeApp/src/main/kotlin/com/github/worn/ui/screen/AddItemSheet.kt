@@ -73,9 +73,12 @@ import com.github.worn.ui.components.SaveButton
 import com.github.worn.ui.components.SeasonSection
 import com.github.worn.ui.components.SubcategoryDropdown
 import com.github.worn.ui.theme.SheetPreview
+import com.github.worn.ui.util.readImageBytes
 import com.github.worn.ui.util.rememberDecodedImage
 import com.github.worn.ui.theme.WornColors
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
 import java.io.ByteArrayOutputStream
 
@@ -259,16 +262,18 @@ private fun PhotoSourceChooser(
     onPhoto: (ByteArray, ImageBitmap) -> Unit,
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
     ) { uri ->
         uri?.let {
-            val bytes = context.contentResolver.openInputStream(it)?.readBytes()
-            if (bytes != null) {
-                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)?.let { bmp ->
-                    onPhoto(bytes, bmp.asImageBitmap())
-                }
+            scope.launch {
+                val bytes = readImageBytes(context, it) ?: return@launch
+                val bitmap = withContext(Dispatchers.Default) {
+                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)?.asImageBitmap()
+                } ?: return@launch
+                onPhoto(bytes, bitmap)
             }
         }
     }
