@@ -159,6 +159,12 @@
     <string name="tryit_tryon_result_title">On you</string>
     <string name="tryit_tryon_cost_note">Each try-on spends YouCam units.</string>
 
+    <!-- Shared Photo -->
+    <string name="share_choose_feature_title">What do you want to do?</string>
+    <string name="share_choose_analyze">Check if it fits my wardrobe</string>
+    <string name="share_choose_try_on">See it on me</string>
+    <string name="share_photo_read_failed">Couldn\'t open that photo</string>
+
     <!-- AI Locked Sheet -->
     <string name="ai_locked_title">Unlock AI features</string>
     <string name="ai_locked_description">Add your Claude API key in Settings to enable this.</string>
