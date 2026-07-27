@@ -65,6 +65,7 @@ kotlin {
             implementation(libs.sqldelight.android)
             implementation(libs.koin.android)
             implementation(libs.mlkit.subject.segmentation)
+            implementation(libs.mlkit.genai.prompt)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

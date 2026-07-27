@@ -32,6 +32,22 @@ struct SettingsScreen: View {
 
                     sectionLabel(String(localized: "settings_section_ai"))
                         .padding(.top, 24)
+                    // Listed before the key card: it is free and private, so it should be the
+                    // first option a new user sees.
+                    settingsToggleCard(
+                        iconColor: WornColors.accentGreen,
+                        iconName: "iphone",
+                        title: String(localized: "settings_on_device_ai_title"),
+                        subtitle: onDeviceAiSubtitle,
+                        isOn: Binding(
+                            get: { viewModel.state.onDeviceAiEnabled },
+                            set: { viewModel.setOnDeviceAi($0) }
+                        ),
+                        enabled: viewModel.state.onDeviceAiAvailability.isUsable
+                    )
+                    .padding(.top, 10)
+                    .accessibilityIdentifier("settings_on_device_ai_toggle")
+
                     settingsCard(
                         iconColor: WornColors.accentIndigo,
                         iconName: "sparkles",
@@ -94,6 +110,24 @@ struct SettingsScreen: View {
         }
     }
 
+    private var onDeviceAiSubtitle: String {
+        switch viewModel.state.onDeviceAiAvailability {
+        case is OnDeviceAiAvailability.Available:
+            return String(localized: "settings_on_device_ai_available")
+        case is OnDeviceAiAvailability.Downloadable:
+            return String(localized: "settings_on_device_ai_downloading")
+        case let unavailable as OnDeviceAiAvailability.Unavailable:
+            switch unavailable.reason {
+            case .unsupportedDevice: return String(localized: "settings_on_device_ai_unsupported_device")
+            case .unsupportedOs: return String(localized: "settings_on_device_ai_unsupported_os")
+            case .disabledByUser: return String(localized: "settings_on_device_ai_disabled_by_user")
+            default: return String(localized: "settings_on_device_ai_unavailable")
+            }
+        default:
+            return String(localized: "settings_on_device_ai_unavailable")
+        }
+    }
+
     private var profileSummary: String {
         let profile = viewModel.state.userProfile
         let parts: [String] = [
@@ -142,6 +176,44 @@ struct SettingsScreen: View {
             .clipShape(RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
+    }
+
+    /// A `settingsCard` whose trailing affordance is a switch instead of a chevron. The switch is
+    /// disabled — rather than hidden — when the capability is missing, so the subtitle can say why.
+    private func settingsToggleCard(
+        iconColor: Color,
+        iconName: String,
+        title: String,
+        subtitle: String,
+        isOn: Binding<Bool>,
+        enabled: Bool
+    ) -> some View {
+        HStack(spacing: 14) {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(iconColor)
+                .frame(width: 40, height: 40)
+                .overlay(
+                    Image(systemName: iconName)
+                        .font(.system(size: 18))
+                        .foregroundColor(.white)
+                )
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(WornColors.textPrimary)
+                Text(subtitle)
+                    .font(.system(size: 13))
+                    .foregroundColor(WornColors.textSecondary)
+            }
+            Spacer()
+            Toggle("", isOn: isOn)
+                .labelsHidden()
+                .tint(WornColors.accentGreen)
+                .disabled(!enabled)
+        }
+        .padding(16)
+        .background(WornColors.bgCard)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 
     private var appVersion: String {

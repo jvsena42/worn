@@ -86,7 +86,7 @@ import java.io.ByteArrayOutputStream
 @Composable
 fun AddItemSheet(
     isSaving: Boolean,
-    hasApiKey: Boolean,
+    isAiAvailable: Boolean,
     existingItem: ClothingItem? = null,
     onSave: (
         imageBytes: ByteArray, name: String, category: Category,
@@ -106,7 +106,7 @@ fun AddItemSheet(
     ) {
         AddItemForm(
             isSaving = isSaving,
-            hasApiKey = hasApiKey,
+            isAiAvailable = isAiAvailable,
             existingItem = existingItem,
             onSave = onSave,
         )
@@ -116,7 +116,7 @@ fun AddItemSheet(
 @Composable
 internal fun AddItemForm(
     isSaving: Boolean = false,
-    hasApiKey: Boolean = false,
+    isAiAvailable: Boolean = false,
     existingItem: ClothingItem? = null,
     onSave: (ByteArray, String, Category, List<String>, List<Season>, Subcategory?, Fit?, Material?) -> Unit =
         { _, _, _, _, _, _, _, _ -> },
@@ -215,7 +215,7 @@ internal fun AddItemForm(
         canSave = formState.hasPhoto && formState.name.isNotBlank() && formState.selectedCategory != null,
         isEditing = existingItem != null,
         onPhotoClick = { formState.showSourceChooser = true },
-        onAiBadgeClick = { if (!hasApiKey) formState.showAiLockedSheet = true },
+        onAiBadgeClick = { if (!isAiAvailable) formState.showAiLockedSheet = true },
         onSave = {
             val cat = formState.selectedCategory ?: return@AddItemFormContent
             val bytes = formState.photoBytes ?: ByteArray(0)

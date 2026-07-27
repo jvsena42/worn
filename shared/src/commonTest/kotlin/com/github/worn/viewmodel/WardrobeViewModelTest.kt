@@ -3,6 +3,7 @@ package com.github.worn.viewmodel
 import app.cash.turbine.test
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.Season
+import com.github.worn.domain.model.OnDeviceAiAvailability
 import com.github.worn.fake.FakeSettingsRepository
 import com.github.worn.fake.FakeWardrobeRepository
 import com.github.worn.fake.clothingItem
@@ -49,17 +50,38 @@ class WardrobeViewModelTest {
     // region init
 
     @Test
-    fun `init sets hasApiKey true when key exists`() {
+    fun `init sets isAiAvailable true when a Claude key exists`() {
         settingsRepository.apiKey = "test-key"
         val vm = createViewModel()
-        assertTrue(vm.state.value.hasApiKey)
+        assertTrue(vm.state.value.isAiAvailable)
     }
 
     @Test
-    fun `init sets hasApiKey false when key is null`() {
+    fun `init sets isAiAvailable false when there is no provider at all`() {
         settingsRepository.apiKey = null
         val vm = createViewModel()
-        assertFalse(vm.state.value.hasApiKey)
+        assertFalse(vm.state.value.isAiAvailable)
+    }
+
+    @Test
+    fun `init sets isAiAvailable true when on-device AI is enabled without a key`() {
+        settingsRepository.apiKey = null
+        settingsRepository.onDeviceAiAvailability = OnDeviceAiAvailability.Available
+        settingsRepository.onDeviceAiEnabled.value = true
+
+        val vm = createViewModel()
+
+        assertTrue(vm.state.value.isAiAvailable)
+    }
+
+    @Test
+    fun `init sets isAiAvailable false when on-device AI is enabled but unsupported`() {
+        settingsRepository.apiKey = null
+        settingsRepository.onDeviceAiEnabled.value = true
+
+        val vm = createViewModel()
+
+        assertFalse(vm.state.value.isAiAvailable)
     }
 
     @Test

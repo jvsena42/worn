@@ -26,7 +26,7 @@ struct WardrobeScreen: View {
         .sheet(isPresented: $showAddSheet) {
             AddItemSheet(
                 isSaving: viewModel.state.isSaving,
-                hasApiKey: viewModel.state.hasApiKey,
+                isAiAvailable: viewModel.state.isAiAvailable,
                 existingItem: editItem,
                 onSave: { data, name, category, colors, seasons, subcategory, fit, material in
                     if let existing = editItem {

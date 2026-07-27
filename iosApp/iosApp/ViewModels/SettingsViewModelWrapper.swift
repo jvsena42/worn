@@ -63,6 +63,10 @@ class SettingsViewModelWrapper: ObservableObject {
         viewModel.onIntent(intent: SettingsIntent.ClearYouCamCredentials())
     }
 
+    func setOnDeviceAi(_ enabled: Bool) {
+        viewModel.onIntent(intent: SettingsIntent.SetOnDeviceAi(enabled: enabled))
+    }
+
     deinit {
         cancellable?.cancel()
     }

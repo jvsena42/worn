@@ -2,15 +2,19 @@ package com.github.worn.data.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.github.worn.domain.model.AgeRange
 import com.github.worn.domain.model.BodyType
 import com.github.worn.domain.model.Climate
 import com.github.worn.domain.model.Lifestyle
+import com.github.worn.domain.model.OnDeviceAiAvailability
 import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
+import com.github.worn.domain.model.isUsable
 import com.github.worn.domain.repository.SettingsRepository
+import com.github.worn.data.source.ai.OnDeviceAiEngine
 import com.github.worn.data.source.local.PhotoFileStorage
 import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +28,7 @@ class SettingsRepositoryImpl(
     private val dataStore: DataStore<Preferences>,
     private val fileStorage: PhotoFileStorage,
     private val secretStore: SecretStore,
+    private val onDeviceAi: OnDeviceAiEngine,
     private val dispatcher: CoroutineContext,
 ) : SettingsRepository {
 
@@ -168,7 +173,27 @@ class SettingsRepositoryImpl(
         }
     }
 
+    override fun isOnDeviceAiEnabled(): Flow<Boolean> =
+        dataStore.data.map { it[KEY_ON_DEVICE_AI] == true }
+
+    override suspend fun setOnDeviceAiEnabled(enabled: Boolean): Result<Unit> = runCatching {
+        withContext(dispatcher) {
+            dataStore.edit { prefs -> prefs[KEY_ON_DEVICE_AI] = enabled }
+        }
+    }
+
+    override suspend fun getOnDeviceAiAvailability(): Result<OnDeviceAiAvailability> = runCatching {
+        onDeviceAi.availability()
+    }
+
+    override suspend fun isAiAvailable(): Result<Boolean> = runCatching {
+        // Short-circuit on the key: it is the cheaper check and the provider the app falls back to.
+        hasApiKey().getOrDefault(false) ||
+            (isOnDeviceAiEnabled().first() && onDeviceAi.availability().isUsable)
+    }
+
     companion object {
+        private val KEY_ON_DEVICE_AI = booleanPreferencesKey("on_device_ai_enabled")
         private val KEY_BODY_TYPE = stringPreferencesKey("body_type")
         private val KEY_STYLE_PROFILE = stringPreferencesKey("style_profile")
         private val KEY_AGE_RANGE = stringPreferencesKey("age_range")

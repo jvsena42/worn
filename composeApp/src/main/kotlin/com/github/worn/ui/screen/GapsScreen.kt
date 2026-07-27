@@ -123,7 +123,7 @@ fun GapsScreen(onTabSelected: (Tab) -> Unit) {
         val gap = addItemPreFill!!
         AddItemSheet(
             isSaving = false,
-            hasApiKey = state.hasApiKey,
+            isAiAvailable = state.isAiAvailable,
             existingItem = gap.toPreFilledItem(),
             onSave = { _, _, _, _, _, _, _, _ -> showAddItemSheet = false },
             onDismiss = { showAddItemSheet = false },
@@ -613,7 +613,7 @@ private fun GapsScreenPhonePreview() {
             state = GapsState(
                 recommendations = com.github.worn.domain.model.capsuleWardrobeSuggestions.take(6),
                 isAiMode = false,
-                hasApiKey = false,
+                isAiAvailable = false,
             ),
         )
     }
@@ -627,7 +627,7 @@ private fun GapsScreenTabletPreview() {
             state = GapsState(
                 recommendations = com.github.worn.domain.model.capsuleWardrobeSuggestions.take(6),
                 isAiMode = true,
-                hasApiKey = true,
+                isAiAvailable = true,
             ),
             isCompact = false,
         )
@@ -650,7 +650,7 @@ private fun GapsScreenErrorPreview() {
             state = GapsState(
                 error = "Invalid API key. Check your key in Settings.",
                 isAiMode = true,
-                hasApiKey = true,
+                isAiAvailable = true,
             ),
         )
     }

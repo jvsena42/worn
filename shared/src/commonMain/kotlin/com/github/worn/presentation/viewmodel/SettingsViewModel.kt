@@ -6,8 +6,11 @@ import com.github.worn.domain.model.AgeRange
 import com.github.worn.domain.model.BodyType
 import com.github.worn.domain.model.Climate
 import com.github.worn.domain.model.Lifestyle
+import com.github.worn.domain.model.OnDeviceAiAvailability
+import com.github.worn.domain.model.OnDeviceAiUnavailableReason
 import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
+import com.github.worn.domain.model.isUsable
 import com.github.worn.domain.repository.SettingsRepository
 import com.github.worn.domain.repository.TryOnRepository
 import kotlinx.coroutines.channels.Channel
@@ -15,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -30,6 +34,7 @@ sealed interface SettingsIntent {
     data object ClearApiKey : SettingsIntent
     data class SaveYouCamCredentials(val clientId: String, val clientSecret: String) : SettingsIntent
     data object ClearYouCamCredentials : SettingsIntent
+    data class SetOnDeviceAi(val enabled: Boolean) : SettingsIntent
 }
 
 data class SettingsState(
@@ -39,6 +44,9 @@ data class SettingsState(
     val hasYouCamKey: Boolean = false,
     val verifyingYouCam: Boolean = false,
     val youCamError: String? = null,
+    val onDeviceAiEnabled: Boolean = false,
+    val onDeviceAiAvailability: OnDeviceAiAvailability =
+        OnDeviceAiAvailability.Unavailable(OnDeviceAiUnavailableReason.UNKNOWN),
     val error: String? = null,
 )
 
@@ -71,7 +79,36 @@ class SettingsViewModel(
         viewModelScope.launch {
             val hasApiKey = settingsRepository.hasApiKey().getOrDefault(false)
             val hasYouCamKey = settingsRepository.hasYouCamCredentials().getOrDefault(false)
-            _state.update { it.copy(hasApiKey = hasApiKey, hasYouCamKey = hasYouCamKey) }
+            val availability = settingsRepository.getOnDeviceAiAvailability()
+                .getOrDefault(OnDeviceAiAvailability.Unavailable(OnDeviceAiUnavailableReason.UNKNOWN))
+            var onDeviceAiEnabled = settingsRepository.isOnDeviceAiEnabled().first()
+
+            // The device can lose support after opt-in (Apple Intelligence switched off, model
+            // evicted). Clear the preference so the repository stops routing to a dead engine and
+            // the toggle reflects reality.
+            if (onDeviceAiEnabled && !availability.isUsable) {
+                settingsRepository.setOnDeviceAiEnabled(false)
+                onDeviceAiEnabled = false
+            }
+
+            _state.update {
+                it.copy(
+                    hasApiKey = hasApiKey,
+                    hasYouCamKey = hasYouCamKey,
+                    onDeviceAiEnabled = onDeviceAiEnabled,
+                    onDeviceAiAvailability = availability,
+                )
+            }
+        }
+    }
+
+    private fun setOnDeviceAi(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setOnDeviceAiEnabled(enabled)
+                .onSuccess { _state.update { it.copy(onDeviceAiEnabled = enabled) } }
+                .onFailure { error ->
+                    _effects.send(SettingsEffect.ShowError(error.message ?: "Failed to save"))
+                }
         }
     }
 
@@ -87,6 +124,7 @@ class SettingsViewModel(
             is SettingsIntent.ClearApiKey -> clearApiKey()
             is SettingsIntent.SaveYouCamCredentials -> saveYouCamCredentials(intent.clientId, intent.clientSecret)
             is SettingsIntent.ClearYouCamCredentials -> clearYouCamCredentials()
+            is SettingsIntent.SetOnDeviceAi -> setOnDeviceAi(intent.enabled)
         }
     }
 

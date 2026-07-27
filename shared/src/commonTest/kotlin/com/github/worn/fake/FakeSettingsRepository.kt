@@ -4,8 +4,11 @@ import com.github.worn.domain.model.AgeRange
 import com.github.worn.domain.model.BodyType
 import com.github.worn.domain.model.Climate
 import com.github.worn.domain.model.Lifestyle
+import com.github.worn.domain.model.OnDeviceAiAvailability
+import com.github.worn.domain.model.OnDeviceAiUnavailableReason
 import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
+import com.github.worn.domain.model.isUsable
 import com.github.worn.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +19,9 @@ class FakeSettingsRepository : SettingsRepository {
     var apiKey: String? = null
     var youCamClientId: String? = null
     var youCamClientSecret: String? = null
+    val onDeviceAiEnabled = MutableStateFlow(false)
+    var onDeviceAiAvailability: OnDeviceAiAvailability =
+        OnDeviceAiAvailability.Unavailable(OnDeviceAiUnavailableReason.UNSUPPORTED_DEVICE)
 
     override fun getUserProfile(): Flow<UserProfile> = profile
 
@@ -64,4 +70,18 @@ class FakeSettingsRepository : SettingsRepository {
         youCamClientSecret = null
         return Result.success(Unit)
     }
+
+    override fun isOnDeviceAiEnabled(): Flow<Boolean> = onDeviceAiEnabled
+
+    override suspend fun setOnDeviceAiEnabled(enabled: Boolean): Result<Unit> {
+        onDeviceAiEnabled.value = enabled
+        return Result.success(Unit)
+    }
+
+    override suspend fun getOnDeviceAiAvailability(): Result<OnDeviceAiAvailability> =
+        Result.success(onDeviceAiAvailability)
+
+    override suspend fun isAiAvailable(): Result<Boolean> = Result.success(
+        apiKey != null || (onDeviceAiEnabled.value && onDeviceAiAvailability.isUsable),
+    )
 }

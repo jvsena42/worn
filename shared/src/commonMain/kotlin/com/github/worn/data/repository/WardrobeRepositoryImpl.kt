@@ -1,5 +1,6 @@
 package com.github.worn.data.repository
 
+import com.github.worn.data.source.ai.OnDeviceAiSource
 import com.github.worn.data.source.local.PhotoFileStorage
 import com.github.worn.data.source.local.db.WardrobeDatabase
 import com.github.worn.data.source.remote.ClaudeApiClient
@@ -31,6 +32,7 @@ class WardrobeRepositoryImpl(
     private val db: WardrobeDatabase,
     private val fileStorage: PhotoFileStorage,
     private val aiClient: ClaudeApiClient,
+    private val onDeviceAi: OnDeviceAiSource,
     private val settingsRepository: SettingsRepository,
     private val dispatcher: CoroutineContext,
 ) : WardrobeRepository {
@@ -118,7 +120,11 @@ class WardrobeRepositoryImpl(
         withContext(dispatcher) {
             val item = findById(itemId) ?: error("Item not found: $itemId")
             val imageBytes = fileStorage.read(item.photoPath)
-            val analysis = aiClient.analyzeImage(imageBytes)
+            val analysis = if (useOnDeviceAi()) {
+                onDeviceAi.analyzeImage(imageBytes)
+            } else {
+                aiClient.analyzeImage(imageBytes)
+            }
 
             val updated = item.copy(
                 description = analysis.description,
@@ -184,10 +190,16 @@ class WardrobeRepositoryImpl(
         withContext(dispatcher) {
             val items = db.clothingItemQueries.getAll().executeAsList().map { it.toDomain() }
             val userProfile = settingsRepository.getUserProfile().first()
-            aiClient.getGapRecommendations(items, userProfile)
+            if (useOnDeviceAi()) {
+                onDeviceAi.getGapRecommendations(items, userProfile)
+            } else {
+                aiClient.getGapRecommendations(items, userProfile)
+            }
         }
     }
 
+    // Try-It reasons over the whole wardrobe against a new photo, which a small on-device model
+    // handles poorly, so it stays on Claude regardless of the preference.
     override suspend fun analyzeProspectiveItem(imageBytes: ByteArray): Result<TryItResult> =
         runCatching {
             withContext(dispatcher) {
@@ -196,6 +208,15 @@ class WardrobeRepositoryImpl(
                 aiClient.analyzeProspectiveItem(imageBytes, items, userProfile)
             }
         }
+
+    /**
+     * Choosing the provider is business logic, so it lives here rather than in a data source.
+     * Only the preference is consulted: the engine itself raises a descriptive error if the
+     * device stopped supporting it, and there is deliberately no fallback to Claude — opting in
+     * means photos never leave the device.
+     */
+    private suspend fun useOnDeviceAi(): Boolean =
+        settingsRepository.isOnDeviceAiEnabled().first()
 
     private suspend fun findById(id: String): ClothingItem? = withContext(dispatcher) {
         db.clothingItemQueries.getById(id).executeAsOneOrNull()?.toDomain()

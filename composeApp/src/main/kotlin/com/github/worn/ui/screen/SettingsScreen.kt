@@ -25,6 +25,7 @@ import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Checkroom
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.PhoneAndroid
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +35,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -58,6 +61,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.annotation.StringRes
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,8 +73,11 @@ import com.github.worn.domain.model.AgeRange
 import com.github.worn.domain.model.BodyType
 import com.github.worn.domain.model.Climate
 import com.github.worn.domain.model.Lifestyle
+import com.github.worn.domain.model.OnDeviceAiAvailability
+import com.github.worn.domain.model.OnDeviceAiUnavailableReason
 import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
+import com.github.worn.domain.model.isUsable
 import com.github.worn.presentation.viewmodel.SettingsEffect
 import com.github.worn.presentation.viewmodel.SettingsIntent
 import com.github.worn.presentation.viewmodel.SettingsState
@@ -111,6 +118,7 @@ fun SettingsScreen(onTabSelected: (Tab) -> Unit) {
         onProfileClick = { showProfileSheet = true },
         onApiKeyClick = { showApiKeySheet = true },
         onYouCamClick = { showYouCamSheet = true },
+        onOnDeviceAiChange = { viewModel.onIntent(SettingsIntent.SetOnDeviceAi(it)) },
     )
 
     if (showProfileSheet) {
@@ -161,6 +169,7 @@ private fun SettingsScaffold(
     onProfileClick: () -> Unit = {},
     onApiKeyClick: () -> Unit = {},
     onYouCamClick: () -> Unit = {},
+    onOnDeviceAiChange: (Boolean) -> Unit = {},
 ) {
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
@@ -197,6 +206,17 @@ private fun SettingsScaffold(
 
             Spacer(Modifier.height(24.dp))
             SectionLabel(stringResource(R.string.settings_section_ai))
+            Spacer(Modifier.height(10.dp))
+            // Listed before the key card: it is free and private, so it should be the first option.
+            SettingsToggleCard(
+                icon = { SettingsIcon(color = WornColors.AccentGreen, icon = Icons.Outlined.PhoneAndroid) },
+                title = stringResource(R.string.settings_on_device_ai_title),
+                subtitle = stringResource(state.onDeviceAiAvailability.subtitleRes()),
+                checked = state.onDeviceAiEnabled,
+                enabled = state.onDeviceAiAvailability.isUsable,
+                onCheckedChange = onOnDeviceAiChange,
+                modifier = Modifier.testTag("settings_on_device_ai_toggle"),
+            )
             Spacer(Modifier.height(10.dp))
             SettingsCard(
                 icon = { SettingsIcon(color = WornColors.AccentIndigo, icon = Icons.Outlined.AutoAwesome) },
@@ -257,6 +277,67 @@ private fun SettingsIcon(color: Color, icon: androidx.compose.ui.graphics.vector
             tint = Color.White,
             modifier = Modifier.size(22.dp),
         )
+    }
+}
+
+/**
+ * A [SettingsCard] whose trailing affordance is a switch instead of a chevron. The whole row is
+ * tappable so the target matches the other cards, and the switch is disabled — rather than hidden —
+ * when the capability is missing, so the subtitle can explain why.
+ */
+@Composable
+private fun SettingsToggleCard(
+    icon: @Composable () -> Unit,
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    enabled: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        onClick = { onCheckedChange(!checked) },
+        enabled = enabled,
+        shape = RoundedCornerShape(16.dp),
+        color = WornColors.BgCard,
+        modifier = modifier,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+        ) {
+            icon()
+            Spacer(Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, color = WornColors.TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                Text(subtitle, color = WornColors.TextSecondary, fontSize = 13.sp)
+            }
+            Spacer(Modifier.width(8.dp))
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                enabled = enabled,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = WornColors.AccentGreen,
+                ),
+            )
+        }
+    }
+}
+
+@StringRes
+private fun OnDeviceAiAvailability.subtitleRes(): Int = when (this) {
+    OnDeviceAiAvailability.Available -> R.string.settings_on_device_ai_available
+    OnDeviceAiAvailability.Downloadable -> R.string.settings_on_device_ai_downloading
+    is OnDeviceAiAvailability.Unavailable -> when (reason) {
+        OnDeviceAiUnavailableReason.UNSUPPORTED_DEVICE ->
+            R.string.settings_on_device_ai_unsupported_device
+        OnDeviceAiUnavailableReason.UNSUPPORTED_OS ->
+            R.string.settings_on_device_ai_unsupported_os
+        OnDeviceAiUnavailableReason.DISABLED_BY_USER ->
+            R.string.settings_on_device_ai_disabled_by_user
+        OnDeviceAiUnavailableReason.UNKNOWN -> R.string.settings_on_device_ai_unavailable
     }
 }
 
@@ -919,7 +1000,12 @@ private const val LICENSE_URL = "https://github.com/jvsena42/worn/blob/main/LICE
 @Composable
 private fun SettingsScreenPhonePreview() {
     WornTheme {
-        SettingsScaffold(state = SettingsState())
+        SettingsScaffold(
+            state = SettingsState(
+                onDeviceAiEnabled = true,
+                onDeviceAiAvailability = OnDeviceAiAvailability.Available,
+            ),
+        )
     }
 }
 
@@ -927,6 +1013,21 @@ private fun SettingsScreenPhonePreview() {
 @Composable
 private fun SettingsScreenTabletPreview() {
     WornTheme {
-        SettingsScaffold(state = SettingsState(), isCompact = false)
+        SettingsScaffold(
+            state = SettingsState(
+                onDeviceAiEnabled = true,
+                onDeviceAiAvailability = OnDeviceAiAvailability.Available,
+            ),
+            isCompact = false,
+        )
+    }
+}
+
+/** The default [SettingsState] already reports on-device AI as unavailable. */
+@Preview(showSystemUi = true, device = "id:pixel_8")
+@Composable
+private fun SettingsScreenOnDeviceAiUnavailablePreview() {
+    WornTheme {
+        SettingsScaffold(state = SettingsState())
     }
 }

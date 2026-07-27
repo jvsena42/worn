@@ -165,7 +165,7 @@ private fun WardrobeAddItemSheet(
 ) {
     AddItemSheet(
         isSaving = state.isSaving,
-        hasApiKey = state.hasApiKey,
+        isAiAvailable = state.isAiAvailable,
         existingItem = editItem,
         onSave = { imageBytes, name, category, colors, seasons, subcategory, fit, material ->
             if (editItem != null) {

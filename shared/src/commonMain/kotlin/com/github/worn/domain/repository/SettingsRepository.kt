@@ -4,6 +4,7 @@ import com.github.worn.domain.model.AgeRange
 import com.github.worn.domain.model.BodyType
 import com.github.worn.domain.model.Climate
 import com.github.worn.domain.model.Lifestyle
+import com.github.worn.domain.model.OnDeviceAiAvailability
 import com.github.worn.domain.model.StyleProfile
 import com.github.worn.domain.model.UserProfile
 import kotlinx.coroutines.flow.Flow
@@ -30,4 +31,17 @@ interface SettingsRepository {
     suspend fun hasYouCamCredentials(): Result<Boolean>
     suspend fun saveYouCamCredentials(clientId: String, clientSecret: String): Result<Unit>
     suspend fun clearYouCamCredentials(): Result<Unit>
+
+    /** Whether the user has opted into running AI on the device instead of calling Claude. */
+    fun isOnDeviceAiEnabled(): Flow<Boolean>
+    suspend fun setOnDeviceAiEnabled(enabled: Boolean): Result<Unit>
+
+    /** Whether this device can run the on-device model at all. Queries the platform each time. */
+    suspend fun getOnDeviceAiAvailability(): Result<OnDeviceAiAvailability>
+
+    /**
+     * Whether *any* AI provider can serve a request: a Claude key is configured, or on-device AI
+     * is both enabled and available. Gates the AI features in Wardrobe and Gaps.
+     */
+    suspend fun isAiAvailable(): Result<Boolean>
 }
