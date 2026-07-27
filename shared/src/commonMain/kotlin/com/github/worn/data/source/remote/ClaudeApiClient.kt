@@ -27,7 +27,13 @@ class ClaudeApiClient(
     private val httpClient: HttpClient,
     private val secretStore: SecretStore,
 ) {
-    private val json = Json { ignoreUnknownKeys = true }
+    // encodeDefaults: the image source's `type`/`media_type` are defaults the API requires.
+    // explicitNulls: content blocks are a union, so unused members are omitted rather than nulled.
+    private val json = Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+        explicitNulls = false
+    }
 
     suspend fun analyzeImage(imageBytes: ByteArray): AiAnalysisResult {
         val responseText = sendRequest(
@@ -183,7 +189,7 @@ class ClaudeApiClient(
     companion object {
         private const val API_URL = "https://api.anthropic.com/v1/messages"
         private const val API_VERSION = "2023-06-01"
-        private const val MODEL = "claude-sonnet-4-20250514"
+        private const val MODEL = "claude-sonnet-5"
         private const val MAX_TOKENS = 1024
         private const val HTTP_UNAUTHORIZED = 401
         private const val HTTP_TOO_MANY_REQUESTS = 429

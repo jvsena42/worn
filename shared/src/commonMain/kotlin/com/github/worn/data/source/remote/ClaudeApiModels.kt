@@ -9,6 +9,17 @@ internal data class ClaudeRequest(
     @SerialName("max_tokens") val maxTokens: Int,
     val system: String,
     val messages: List<ClaudeMessage>,
+    val thinking: ClaudeThinking = ClaudeThinking(),
+)
+
+/**
+ * Thinking is on by default from Claude Sonnet 5 onward, and `max_tokens` caps thinking *plus*
+ * response text. These calls parse the reply as JSON, so thinking is disabled to keep the whole
+ * budget available for the answer.
+ */
+@Serializable
+internal data class ClaudeThinking(
+    val type: String = "disabled",
 )
 
 @Serializable
