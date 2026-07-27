@@ -3,6 +3,7 @@ package com.github.worn.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.worn.domain.model.GarmentCategory
+import com.github.worn.domain.model.TryItFeature
 import com.github.worn.domain.model.TryItResult
 import com.github.worn.domain.repository.SettingsRepository
 import com.github.worn.domain.repository.TryOnRepository
@@ -23,6 +24,11 @@ sealed interface TryItIntent {
     data class GenerateTryOn(val garmentBytes: ByteArray) : TryItIntent
     data object ResetTryOn : TryItIntent
     data object Reset : TryItIntent
+
+    /** A photo arrived from outside the app (system share). The bytes stay in the UI layer. */
+    data object ReceiveSharedPhoto : TryItIntent
+    data class ChooseFeature(val feature: TryItFeature) : TryItIntent
+    data object ClearFeatureFocus : TryItIntent
 }
 
 data class TryItState(
@@ -37,6 +43,9 @@ data class TryItState(
     val tryOnLoading: Boolean = false,
     val tryOnImage: ByteArray? = null,
     val tryOnError: String? = null,
+    // Routing for a photo received from the system share sheet
+    val featureChoiceRequired: Boolean = false,
+    val focusedFeature: TryItFeature? = null,
 )
 
 sealed interface TryItEffect {
@@ -56,11 +65,7 @@ class TryItViewModel(
     val effects: Flow<TryItEffect> = _effects.receiveAsFlow()
 
     init {
-        viewModelScope.launch {
-            val hasApiKey = settingsRepository.hasApiKey().getOrDefault(false)
-            val hasYouCamKey = settingsRepository.hasYouCamCredentials().getOrDefault(false)
-            _state.update { it.copy(hasApiKey = hasApiKey, hasYouCamKey = hasYouCamKey) }
-        }
+        viewModelScope.launch { loadCredentialState() }
         viewModelScope.launch {
             settingsRepository.getModelPhoto().onSuccess { bytes ->
                 _state.update { it.copy(personImage = bytes) }
@@ -78,6 +83,49 @@ class TryItViewModel(
             is TryItIntent.ResetTryOn ->
                 _state.update { it.copy(tryOnImage = null, tryOnError = null) }
             is TryItIntent.Reset -> reset()
+            is TryItIntent.ReceiveSharedPhoto -> receiveSharedPhoto()
+            is TryItIntent.ChooseFeature ->
+                _state.update {
+                    it.copy(focusedFeature = intent.feature, featureChoiceRequired = false)
+                }
+            is TryItIntent.ClearFeatureFocus ->
+                _state.update { it.copy(focusedFeature = null, featureChoiceRequired = false) }
+        }
+    }
+
+    /**
+     * Reads both credential flags into state and returns them, so callers that need to branch on
+     * them do not race the [init] load.
+     */
+    private suspend fun loadCredentialState(): Pair<Boolean, Boolean> {
+        val hasApiKey = settingsRepository.hasApiKey().getOrDefault(false)
+        val hasYouCamKey = settingsRepository.hasYouCamCredentials().getOrDefault(false)
+        _state.update { it.copy(hasApiKey = hasApiKey, hasYouCamKey = hasYouCamKey) }
+        return hasApiKey to hasYouCamKey
+    }
+
+    /**
+     * A share can arrive before [init] finishes loading credentials, so this re-reads them rather
+     * than trusting the current state. With one credential the feature is unambiguous; with both
+     * the user picks. With neither the screen already shows its locked state.
+     */
+    private fun receiveSharedPhoto() {
+        viewModelScope.launch {
+            val (hasApiKey, hasYouCamKey) = loadCredentialState()
+            _state.update {
+                when {
+                    hasApiKey && hasYouCamKey ->
+                        it.copy(featureChoiceRequired = true, focusedFeature = null)
+                    hasApiKey ->
+                        it.copy(featureChoiceRequired = false, focusedFeature = TryItFeature.ANALYSIS)
+                    hasYouCamKey ->
+                        it.copy(
+                            featureChoiceRequired = false,
+                            focusedFeature = TryItFeature.VIRTUAL_TRY_ON,
+                        )
+                    else -> it.copy(featureChoiceRequired = false, focusedFeature = null)
+                }
+            }
         }
     }
 
