@@ -4,13 +4,6 @@ import Shared
 @main
 struct iOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.horizontalSizeClass) private var sizeClass
-    @StateObject private var quickActions = QuickActionInbox.shared
-    @State private var activeTab: WornTab = .wardrobe
-    @State private var sharedPhoto: SharedPhoto?
-    @State private var openAddSheet: ShortcutCommand?
-    @State private var handledShortcutId: UUID?
 
     init() {
         KoinHelperKt.doInitKoin()
@@ -22,52 +15,71 @@ struct iOSApp: App {
 
     var body: some Scene {
         WindowGroup {
-            VStack(spacing: 0) {
-                TabView(selection: $activeTab) {
-                    WardrobeScreen(
-                        onTabSelected: selectTab,
-                        openAddSheet: openAddSheet,
-                        onAddSheetOpened: { openAddSheet = nil }
-                    )
-                        .tag(WornTab.wardrobe)
-                    OutfitsScreen(onTabSelected: selectTab)
-                        .tag(WornTab.outfits)
-                    GapsScreen(onTabSelected: selectTab)
-                        .tag(WornTab.gaps)
-                    TryItScreen(onTabSelected: selectTab, sharedPhoto: sharedPhoto)
-                        .tag(WornTab.tryIt)
-                    SettingsScreen(onTabSelected: selectTab)
-                        .tag(WornTab.settings)
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
+            RootView()
+        }
+    }
+}
 
-                WornBottomBar(
-                    activeTab: activeTab,
+/// Tab host and entry-point router.
+///
+/// This is a `View` rather than the body of `iOSApp` because `@Environment` on an `App` is not
+/// filled in from the view hierarchy: `horizontalSizeClass` read there is always nil, which would
+/// leave the bottom bar permanently in its expanded layout.
+struct RootView: View {
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    @StateObject private var quickActions = QuickActionInbox.shared
+    @State private var activeTab: WornTab = .wardrobe
+    @State private var sharedPhoto: SharedPhoto?
+    @State private var openAddSheet: ShortcutCommand?
+    @State private var handledShortcutId: UUID?
+
+    var body: some View {
+        VStack(spacing: 0) {
+            TabView(selection: $activeTab) {
+                WardrobeScreen(
                     onTabSelected: selectTab,
-                    isCompact: sizeClass == .compact
+                    openAddSheet: openAddSheet,
+                    onAddSheetOpened: { openAddSheet = nil }
                 )
+                    .tag(WornTab.wardrobe)
+                OutfitsScreen(onTabSelected: selectTab)
+                    .tag(WornTab.outfits)
+                GapsScreen(onTabSelected: selectTab)
+                    .tag(WornTab.gaps)
+                TryItScreen(onTabSelected: selectTab, sharedPhoto: sharedPhoto)
+                    .tag(WornTab.tryIt)
+                SettingsScreen(onTabSelected: selectTab)
+                    .tag(WornTab.settings)
             }
-            // The screens paint bgPage inside their own bounds, but nothing filled the status bar
-            // and home indicator areas, so they fell through to the window's black. Android gets
-            // this from enableEdgeToEdge() plus the theme background.
-            .background(WornColors.bgPage.ignoresSafeArea())
-            .onOpenURL { _ in receiveSharedPhoto() }
-            .onChange(of: scenePhase) { _, phase in
-                // Covers the case where the extension wrote the file but could not launch us.
-                if phase == .active { receiveSharedPhoto() }
-            }
-            // onReceive, not onChange: on a cold launch the scene delegate fills the inbox before
-            // this view installs its observers, and @Published replays its current value to a new
-            // subscriber whereas onChange would only see later ones.
-            //
-            // The tap is marked handled here rather than cleared on the inbox, because that replay
-            // can land mid-update and SwiftUI forbids publishing changes from there. Every tap
-            // carries a fresh id, so a repeat of the same action still gets through.
-            .onReceive(quickActions.$pending) { command in
-                guard let command, command.id != handledShortcutId else { return }
-                handledShortcutId = command.id
-                perform(command)
-            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+
+            WornBottomBar(
+                activeTab: activeTab,
+                onTabSelected: selectTab,
+                isCompact: sizeClass == .compact
+            )
+        }
+        // The screens paint bgPage inside their own bounds, but nothing filled the status bar
+        // and home indicator areas, so they fell through to the window's black. Android gets
+        // this from enableEdgeToEdge() plus the theme background.
+        .background(WornColors.bgPage.ignoresSafeArea())
+        .onOpenURL { _ in receiveSharedPhoto() }
+        .onChange(of: scenePhase) { _, phase in
+            // Covers the case where the extension wrote the file but could not launch us.
+            if phase == .active { receiveSharedPhoto() }
+        }
+        // onReceive, not onChange: on a cold launch the scene delegate fills the inbox before
+        // this view installs its observers, and @Published replays its current value to a new
+        // subscriber whereas onChange would only see later ones.
+        //
+        // The tap is marked handled here rather than cleared on the inbox, because that replay
+        // can land mid-update and SwiftUI forbids publishing changes from there. Every tap
+        // carries a fresh id, so a repeat of the same action still gets through.
+        .onReceive(quickActions.$pending) { command in
+            guard let command, command.id != handledShortcutId else { return }
+            handledShortcutId = command.id
+            perform(command)
         }
     }
 
