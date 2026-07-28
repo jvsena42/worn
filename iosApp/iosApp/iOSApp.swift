@@ -5,6 +5,7 @@ import Shared
 struct iOSApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @StateObject private var quickActions = QuickActionInbox.shared
     @State private var activeTab: WornTab = .wardrobe
     @State private var sharedPhoto: SharedPhoto?
@@ -40,7 +41,11 @@ struct iOSApp: App {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
 
-                WornBottomBar(activeTab: activeTab, onTabSelected: selectTab)
+                WornBottomBar(
+                    activeTab: activeTab,
+                    onTabSelected: selectTab,
+                    isCompact: sizeClass == .compact
+                )
             }
             .onOpenURL { _ in receiveSharedPhoto() }
             .onChange(of: scenePhase) { _, phase in
