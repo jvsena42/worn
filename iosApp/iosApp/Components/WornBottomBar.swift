@@ -103,6 +103,11 @@ private struct TabItem: View {
                 Text(tab.label)
                     .font(.system(size: 10, weight: .semibold))
                     .tracking(0.5)
+                    // "WARDROBE" is the longest label and wraps on a 5-tab compact bar, which
+                    // clips the descender. Shrink instead of wrapping, and never take two lines.
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
