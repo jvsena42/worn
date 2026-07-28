@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Shared
 
 @MainActor
@@ -9,14 +10,12 @@ class SettingsViewModelWrapper: ObservableObject {
     @Published var state: SettingsState
 
     init() {
-        let koin = KoinHelper.shared.koin
-        let vm = koin.get(objCClass: SettingsViewModel.self) as! SettingsViewModel
+        let vm = KoinHelper.shared.settingsViewModel
         self.viewModel = vm
-        self.state = vm.state.value
 
-        let adapter = FlowAdapter(flow: vm.state)
+        let adapter = FlowAdapter<SettingsState>(flow: vm.state)
+        self.state = adapter.currentValue
         cancellable = adapter.subscribe { [weak self] newState in
-            guard let newState = newState as? SettingsState else { return }
             DispatchQueue.main.async {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     self?.state = newState
@@ -26,45 +25,45 @@ class SettingsViewModelWrapper: ObservableObject {
     }
 
     func selectBodyType(_ bodyType: BodyType?) {
-        viewModel.onIntent(intent: SettingsIntent.SelectBodyType(bodyType: bodyType))
+        viewModel.onIntent(intent: SettingsIntentSelectBodyType(bodyType: bodyType))
     }
 
     func selectStyleProfile(_ styleProfile: StyleProfile?) {
-        viewModel.onIntent(intent: SettingsIntent.SelectStyleProfile(styleProfile: styleProfile))
+        viewModel.onIntent(intent: SettingsIntentSelectStyleProfile(styleProfile: styleProfile))
     }
 
     func selectAgeRange(_ ageRange: AgeRange?) {
-        viewModel.onIntent(intent: SettingsIntent.SelectAgeRange(ageRange: ageRange))
+        viewModel.onIntent(intent: SettingsIntentSelectAgeRange(ageRange: ageRange))
     }
 
     func selectClimate(_ climate: Climate?) {
-        viewModel.onIntent(intent: SettingsIntent.SelectClimate(climate: climate))
+        viewModel.onIntent(intent: SettingsIntentSelectClimate(climate: climate))
     }
 
     func toggleLifestyle(_ lifestyle: Lifestyle) {
-        viewModel.onIntent(intent: SettingsIntent.ToggleLifestyle(lifestyle: lifestyle))
+        viewModel.onIntent(intent: SettingsIntentToggleLifestyle(lifestyle: lifestyle))
     }
 
     func saveApiKey(_ key: String) {
-        viewModel.onIntent(intent: SettingsIntent.SaveApiKey(key: key))
+        viewModel.onIntent(intent: SettingsIntentSaveApiKey(key: key))
     }
 
     func clearApiKey() {
-        viewModel.onIntent(intent: SettingsIntent.ClearApiKey())
+        viewModel.onIntent(intent: SettingsIntentClearApiKey())
     }
 
     func saveYouCamCredentials(clientId: String, clientSecret: String) {
         viewModel.onIntent(
-            intent: SettingsIntent.SaveYouCamCredentials(clientId: clientId, clientSecret: clientSecret)
+            intent: SettingsIntentSaveYouCamCredentials(clientId: clientId, clientSecret: clientSecret)
         )
     }
 
     func clearYouCamCredentials() {
-        viewModel.onIntent(intent: SettingsIntent.ClearYouCamCredentials())
+        viewModel.onIntent(intent: SettingsIntentClearYouCamCredentials())
     }
 
     func setOnDeviceAi(_ enabled: Bool) {
-        viewModel.onIntent(intent: SettingsIntent.SetOnDeviceAi(enabled: enabled))
+        viewModel.onIntent(intent: SettingsIntentSetOnDeviceAi(enabled: enabled))
     }
 
     deinit {

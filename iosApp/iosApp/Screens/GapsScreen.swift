@@ -3,7 +3,7 @@ import Shared
 
 struct GapsScreen: View {
     @StateObject private var viewModel = GapsViewModelWrapper()
-    let onTabSelected: (Tab) -> Void
+    let onTabSelected: (WornTab) -> Void
 
     @State private var selectedGap: GapRecommendation?
     @State private var showAiLockedSheet = false
@@ -213,7 +213,7 @@ struct GapsScreen: View {
         .buttonStyle(.plain)
     }
 
-    private func categoryIcon(for category: Category) -> some View {
+    private func categoryIcon(for category: Shared.Category) -> some View {
         RoundedRectangle(cornerRadius: 10)
             .fill(dotColor(for: category))
             .frame(width: 36, height: 36)
@@ -224,7 +224,7 @@ struct GapsScreen: View {
             )
     }
 
-    private func dotColor(for category: Category) -> Color {
+    private func dotColor(for category: Shared.Category) -> Color {
         switch category {
         case .top: return WornColors.categoryDotTop
         case .bottom: return WornColors.categoryDotBottom
@@ -235,7 +235,7 @@ struct GapsScreen: View {
         }
     }
 
-    private func iconName(for category: Category) -> String {
+    private func iconName(for category: Shared.Category) -> String {
         switch category {
         case .top: return "tshirt"
         case .bottom: return "ruler"
@@ -385,7 +385,7 @@ private struct GapDetailSheet: View {
         }
     }
 
-    private func dotColor(for category: Category) -> Color {
+    private func dotColor(for category: Shared.Category) -> Color {
         switch category {
         case .top: return WornColors.categoryDotTop
         case .bottom: return WornColors.categoryDotBottom
@@ -396,7 +396,7 @@ private struct GapDetailSheet: View {
         }
     }
 
-    private func iconName(for category: Category) -> String {
+    private func iconName(for category: Shared.Category) -> String {
         switch category {
         case .top: return "tshirt"
         case .bottom: return "ruler"
@@ -407,7 +407,7 @@ private struct GapDetailSheet: View {
         }
     }
 
-    private func displayLabel(for category: Category) -> String {
+    private func displayLabel(for category: Shared.Category) -> String {
         switch category {
         case .top: return String(localized: "category_tops")
         case .bottom: return String(localized: "category_bottoms")

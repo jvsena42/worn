@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Shared
 
 @MainActor
@@ -9,14 +10,12 @@ class GapsViewModelWrapper: ObservableObject {
     @Published var state: GapsState
 
     init() {
-        let koin = KoinHelper.shared.koin
-        let vm = koin.get(objCClass: GapsViewModel.self) as! GapsViewModel
+        let vm = KoinHelper.shared.gapsViewModel
         self.viewModel = vm
-        self.state = vm.state.value
 
-        let adapter = FlowAdapter(flow: vm.state)
+        let adapter = FlowAdapter<GapsState>(flow: vm.state)
+        self.state = adapter.currentValue
         cancellable = adapter.subscribe { [weak self] newState in
-            guard let newState = newState as? GapsState else { return }
             DispatchQueue.main.async {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     self?.state = newState
@@ -26,7 +25,7 @@ class GapsViewModelWrapper: ObservableObject {
     }
 
     func loadGaps() {
-        viewModel.onIntent(intent: GapsIntent.LoadGaps())
+        viewModel.onIntent(intent: GapsIntentLoadGaps())
     }
 
     deinit {

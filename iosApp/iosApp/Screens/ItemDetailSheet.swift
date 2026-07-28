@@ -178,7 +178,7 @@ struct ItemDetailSheet: View {
         }
     }
 
-    private func dotColor(for category: Category) -> Color {
+    private func dotColor(for category: Shared.Category) -> Color {
         switch category {
         case .top: return WornColors.categoryDotTop
         case .bottom: return WornColors.categoryDotBottom
@@ -189,7 +189,7 @@ struct ItemDetailSheet: View {
         }
     }
 
-    private func displayLabel(for category: Category) -> String {
+    private func displayLabel(for category: Shared.Category) -> String {
         switch category {
         case .top: return String(localized: "category_tops")
         case .bottom: return String(localized: "category_bottoms")
@@ -225,7 +225,7 @@ struct ItemDetailSheet: View {
         return String(localized: String.LocalizationValue(key))
     }
 
-    private func materialDisplayName(_ material: Material) -> String {
+    private func materialDisplayName(_ material: Shared.Material) -> String {
         let key = "material_\(material.name.lowercased())"
         return String(localized: String.LocalizationValue(key))
     }

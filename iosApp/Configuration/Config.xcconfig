@@ -9,4 +9,8 @@ MARKETING_VERSION=1.0
 // FoundationModels (Apple Intelligence) only exists from iOS 26, but the app deploys back to
 // 18.2. Weak linking lets it launch on older systems, where OnDeviceAiService reports the
 // feature as unavailable via its #available guard.
-OTHER_LDFLAGS=$(inherited) -weak_framework FoundationModels
+//
+// -lsqlite3 is required by SQLDelight's NativeSqliteDriver: `Shared` is a static framework
+// (isStatic = true in shared/build.gradle.kts), so its sqliter dependency's sqlite3_* symbols
+// are left for whoever links the framework to resolve.
+OTHER_LDFLAGS=$(inherited) -weak_framework FoundationModels -lsqlite3

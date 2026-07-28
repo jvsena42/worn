@@ -3,7 +3,7 @@ import Shared
 
 struct SettingsScreen: View {
     @StateObject private var viewModel = SettingsViewModelWrapper()
-    let onTabSelected: (Tab) -> Void
+    let onTabSelected: (WornTab) -> Void
 
     @State private var showProfileSheet = false
     @State private var showApiKeySheet = false
@@ -43,7 +43,7 @@ struct SettingsScreen: View {
                             get: { viewModel.state.onDeviceAiEnabled },
                             set: { viewModel.setOnDeviceAi($0) }
                         ),
-                        enabled: viewModel.state.onDeviceAiAvailability.isUsable
+                        enabled: OnDeviceAiAvailabilityKt.isUsable(viewModel.state.onDeviceAiAvailability)
                     )
                     .padding(.top, 10)
                     .accessibilityIdentifier("settings_on_device_ai_toggle")
@@ -112,11 +112,11 @@ struct SettingsScreen: View {
 
     private var onDeviceAiSubtitle: String {
         switch viewModel.state.onDeviceAiAvailability {
-        case is OnDeviceAiAvailability.Available:
+        case is OnDeviceAiAvailabilityAvailable:
             return String(localized: "settings_on_device_ai_available")
-        case is OnDeviceAiAvailability.Downloadable:
+        case is OnDeviceAiAvailabilityDownloadable:
             return String(localized: "settings_on_device_ai_downloading")
-        case let unavailable as OnDeviceAiAvailability.Unavailable:
+        case let unavailable as OnDeviceAiAvailabilityUnavailable:
             switch unavailable.reason {
             case .unsupportedDevice: return String(localized: "settings_on_device_ai_unsupported_device")
             case .unsupportedOs: return String(localized: "settings_on_device_ai_unsupported_os")

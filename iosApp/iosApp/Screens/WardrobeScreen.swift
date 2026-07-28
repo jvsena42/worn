@@ -78,7 +78,7 @@ struct WardrobeScreen: View {
 struct WardrobeContent: View {
     let state: WardrobeState
     var isCompact: Bool = true
-    var onCategorySelected: (Category?) -> Void = { _ in }
+    var onCategorySelected: (Shared.Category?) -> Void = { _ in }
     var onAddItemClick: () -> Void = {}
     var onToggleSelection: (String) -> Void = { _ in }
     var onClearSelection: () -> Void = {}
@@ -281,38 +281,38 @@ struct WardrobeContent: View {
 }
 
 private let previewItems: [ClothingItem] = [
-    ClothingItem(id: "1", name: "Black T-Shirt", category: .top, colors: ["black"], seasons: [], tags: [], description: nil, photoPath: "", createdAt: 0),
-    ClothingItem(id: "2", name: "Navy Jeans", category: .bottom, colors: ["navy"], seasons: [], tags: [], description: nil, photoPath: "", createdAt: 0),
-    ClothingItem(id: "3", name: "White Sneakers", category: .shoes, colors: ["white"], seasons: [], tags: [], description: nil, photoPath: "", createdAt: 0),
-    ClothingItem(id: "4", name: "Olive Jacket", category: .outerwear, colors: ["olive"], seasons: [], tags: [], description: nil, photoPath: "", createdAt: 0),
-    ClothingItem(id: "5", name: "Grey Hoodie", category: .top, colors: ["grey"], seasons: [], tags: [], description: nil, photoPath: "", createdAt: 0),
-    ClothingItem(id: "6", name: "Chinos", category: .bottom, colors: ["khaki"], seasons: [], tags: [], description: nil, photoPath: "", createdAt: 0),
+    ClothingItem(id: "1", name: "Black T-Shirt", category: .top, colors: ["black"], seasons: [], tags: [], description: nil, subcategory: nil, fit: nil, material: nil, photoPath: "", createdAt: 0),
+    ClothingItem(id: "2", name: "Navy Jeans", category: .bottom, colors: ["navy"], seasons: [], tags: [], description: nil, subcategory: nil, fit: nil, material: nil, photoPath: "", createdAt: 0),
+    ClothingItem(id: "3", name: "White Sneakers", category: .shoes, colors: ["white"], seasons: [], tags: [], description: nil, subcategory: nil, fit: nil, material: nil, photoPath: "", createdAt: 0),
+    ClothingItem(id: "4", name: "Olive Jacket", category: .outerwear, colors: ["olive"], seasons: [], tags: [], description: nil, subcategory: nil, fit: nil, material: nil, photoPath: "", createdAt: 0),
+    ClothingItem(id: "5", name: "Grey Hoodie", category: .top, colors: ["grey"], seasons: [], tags: [], description: nil, subcategory: nil, fit: nil, material: nil, photoPath: "", createdAt: 0),
+    ClothingItem(id: "6", name: "Chinos", category: .bottom, colors: ["khaki"], seasons: [], tags: [], description: nil, subcategory: nil, fit: nil, material: nil, photoPath: "", createdAt: 0),
 ]
 
 #Preview("iPhone") {
     WardrobeContent(
-        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil, totalItemCount: Int32(previewItems.count)),
+        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: true
     )
 }
 
 #Preview("iPhone - Selection") {
     WardrobeContent(
-        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(["1", "3"]), activeCategory: nil, error: nil, totalItemCount: Int32(previewItems.count)),
+        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(["1", "3"]), activeCategory: nil, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: true
     )
 }
 
 #Preview("iPhone - Empty") {
     WardrobeContent(
-        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil, totalItemCount: 0),
+        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, isAiAvailable: false, error: nil, totalItemCount: 0),
         isCompact: true
     )
 }
 
 #Preview("iPad Portrait") {
     WardrobeContent(
-        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil, totalItemCount: Int32(previewItems.count)),
+        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: false
     )
     .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
@@ -320,22 +320,22 @@ private let previewItems: [ClothingItem] = [
 
 #Preview("iPad - Empty") {
     WardrobeContent(
-        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, error: nil, totalItemCount: 0),
+        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, isAiAvailable: false, error: nil, totalItemCount: 0),
         isCompact: false
     )
     .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }
 
-#Preview("iPhone - Empty Category") {
+#Preview("iPhone - Empty Shared.Category") {
     WardrobeContent(
-        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: .top, error: nil, totalItemCount: Int32(previewItems.count)),
+        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: .top, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: true
     )
 }
 
-#Preview("iPad - Empty Category") {
+#Preview("iPad - Empty Shared.Category") {
     WardrobeContent(
-        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: .top, error: nil, totalItemCount: Int32(previewItems.count)),
+        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: .top, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: false
     )
     .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))

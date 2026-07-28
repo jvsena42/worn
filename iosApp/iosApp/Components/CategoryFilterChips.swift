@@ -2,10 +2,10 @@ import SwiftUI
 import Shared
 
 struct CategoryFilterChips: View {
-    let activeCategory: Category?
-    let onCategorySelected: (Category?) -> Void
+    let activeCategory: Shared.Category?
+    let onCategorySelected: (Shared.Category?) -> Void
 
-    private var allChips: [(category: Category?, label: String)] {
+    private var allChips: [(category: Shared.Category?, label: String)] {
         [
             (nil, String(localized: "filter_all")),
             (.top, String(localized: "category_tops")),

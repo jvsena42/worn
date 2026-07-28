@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Shared
 
 @MainActor
@@ -9,14 +10,12 @@ class WardrobeViewModelWrapper: ObservableObject {
     @Published var state: WardrobeState
 
     init() {
-        let koin = KoinHelper.shared.koin
-        let vm = koin.get(objCClass: WardrobeViewModel.self) as! WardrobeViewModel
+        let vm = KoinHelper.shared.wardrobeViewModel
         self.viewModel = vm
-        self.state = vm.state.value
 
-        let adapter = FlowAdapter(flow: vm.state)
+        let adapter = FlowAdapter<WardrobeState>(flow: vm.state)
+        self.state = adapter.currentValue
         cancellable = adapter.subscribe { [weak self] newState in
-            guard let newState = newState as? WardrobeState else { return }
             DispatchQueue.main.async {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     self?.state = newState
@@ -29,21 +28,21 @@ class WardrobeViewModelWrapper: ObservableObject {
         viewModel.onIntent(intent: intent)
     }
 
-    func filterByCategory(_ category: Category?) {
-        let intent = WardrobeIntent.FilterByCategory(category: category)
+    func filterByCategory(_ category: Shared.Category?) {
+        let intent = WardrobeIntentFilterByCategory(category: category)
         viewModel.onIntent(intent: intent)
     }
 
     func addItem(
-        imageData: Data, name: String, category: Category, colors: [String], seasons: [Season],
-        subcategory: Subcategory? = nil, fit: Fit? = nil, material: Material? = nil
+        imageData: Data, name: String, category: Shared.Category, colors: [String], seasons: [Season],
+        subcategory: Subcategory? = nil, fit: Fit? = nil, material: Shared.Material? = nil
     ) {
         let bytes = [UInt8](imageData)
         let kotlinBytes = KotlinByteArray(size: Int32(bytes.count))
         for (index, byte) in bytes.enumerated() {
             kotlinBytes.set(index: Int32(index), value: Int8(bitPattern: byte))
         }
-        let intent = WardrobeIntent.AddItem(
+        let intent = WardrobeIntentAddItem(
             imageBytes: kotlinBytes,
             name: name,
             category: category,
@@ -57,23 +56,23 @@ class WardrobeViewModelWrapper: ObservableObject {
     }
 
     func toggleSelection(_ itemId: String) {
-        viewModel.onIntent(intent: WardrobeIntent.ToggleSelection(itemId: itemId))
+        viewModel.onIntent(intent: WardrobeIntentToggleSelection(itemId: itemId))
     }
 
     func clearSelection() {
-        viewModel.onIntent(intent: WardrobeIntent.ClearSelection())
+        viewModel.onIntent(intent: WardrobeIntentClearSelection())
     }
 
     func deleteSelected() {
-        viewModel.onIntent(intent: WardrobeIntent.DeleteSelected())
+        viewModel.onIntent(intent: WardrobeIntentDeleteSelected())
     }
 
     func deleteItem(_ itemId: String) {
-        viewModel.onIntent(intent: WardrobeIntent.DeleteItem(itemId: itemId))
+        viewModel.onIntent(intent: WardrobeIntentDeleteItem(itemId: itemId))
     }
 
     func updateItem(_ item: ClothingItem) {
-        viewModel.onIntent(intent: WardrobeIntent.UpdateItem(item: item))
+        viewModel.onIntent(intent: WardrobeIntentUpdateItem(item: item))
     }
 
     deinit {
