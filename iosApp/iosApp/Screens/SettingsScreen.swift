@@ -3,6 +3,7 @@ import Shared
 
 struct SettingsScreen: View {
     @StateObject private var viewModel = SettingsViewModelWrapper()
+    @Environment(\.horizontalSizeClass) private var sizeClass
     let onTabSelected: (WornTab) -> Void
 
     @State private var showProfileSheet = false
@@ -10,79 +11,14 @@ struct SettingsScreen: View {
     @State private var showYouCamSheet = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(String(localized: "settings_title"))
-                        .font(.system(size: 28, weight: .semibold))
-                        .foregroundColor(WornColors.textPrimary)
-                        .padding(.top, 24)
-                        .padding(.bottom, 28)
-
-                    sectionLabel(String(localized: "settings_section_profile"))
-                    settingsCard(
-                        iconColor: WornColors.accentGreen,
-                        iconName: "person.fill",
-                        title: String(localized: "settings_your_profile"),
-                        subtitle: profileSummary,
-                        action: { showProfileSheet = true }
-                    )
-                    .padding(.top, 10)
-                    .accessibilityIdentifier("settings_profile_card")
-
-                    sectionLabel(String(localized: "settings_section_ai"))
-                        .padding(.top, 24)
-                    // Listed before the key card: it is free and private, so it should be the
-                    // first option a new user sees.
-                    settingsToggleCard(
-                        iconColor: WornColors.accentGreen,
-                        iconName: "iphone",
-                        title: String(localized: "settings_on_device_ai_title"),
-                        subtitle: onDeviceAiSubtitle,
-                        isOn: Binding(
-                            get: { viewModel.state.onDeviceAiEnabled },
-                            set: { viewModel.setOnDeviceAi($0) }
-                        ),
-                        enabled: OnDeviceAiAvailabilityKt.isUsable(viewModel.state.onDeviceAiAvailability)
-                    )
-                    .padding(.top, 10)
-                    .accessibilityIdentifier("settings_on_device_ai_toggle")
-
-                    settingsCard(
-                        iconColor: WornColors.accentIndigo,
-                        iconName: "sparkles",
-                        title: String(localized: "settings_api_key_title"),
-                        subtitle: viewModel.state.hasApiKey ? String(localized: "settings_api_key_connected") : String(localized: "settings_api_key_required"),
-                        action: { showApiKeySheet = true }
-                    )
-                    .padding(.top, 10)
-                    .accessibilityIdentifier("settings_api_key_card")
-
-                    settingsCard(
-                        iconColor: WornColors.accentIndigo,
-                        iconName: "tshirt",
-                        title: String(localized: "settings_youcam_title"),
-                        subtitle: viewModel.state.hasYouCamKey ? String(localized: "settings_youcam_connected") : String(localized: "settings_youcam_required"),
-                        action: { showYouCamSheet = true }
-                    )
-                    .padding(.top, 10)
-                    .accessibilityIdentifier("settings_youcam_card")
-
-                    sectionLabel(String(localized: "settings_section_about"))
-                        .padding(.top, 24)
-                    aboutCard
-                        .padding(.top, 10)
-
-                    donationCard
-                        .padding(.top, 16)
-
-                    Spacer().frame(height: 95)
-                }
-                .padding(.horizontal, 24)
-            }
-            .background(WornColors.bgPage)
-        }
-        .accessibilityIdentifier("settings_screen")
+        SettingsContent(
+            state: viewModel.state,
+            isCompact: sizeClass == .compact,
+            onProfileClick: { showProfileSheet = true },
+            onApiKeyClick: { showApiKeySheet = true },
+            onYouCamClick: { showYouCamSheet = true },
+            onSetOnDeviceAi: { viewModel.setOnDeviceAi($0) }
+        )
         .sheet(isPresented: $showProfileSheet) {
             ProfileSheet(viewModel: viewModel)
                 .presentationDetents([.large])
@@ -109,9 +45,101 @@ struct SettingsScreen: View {
             if has { showYouCamSheet = false }
         }
     }
+}
+
+/// Pure, state-driven half of the Settings screen.
+///
+/// Split out for the same reason as `WardrobeContent` and `OutfitsContent`: the stateful wrapper
+/// resolves its ViewModel from Koin, so a preview of it only renders once `initKoin()` has run.
+/// This view takes the state directly and previews on its own.
+struct SettingsContent: View {
+    let state: SettingsState
+    var isCompact: Bool = true
+    var onProfileClick: () -> Void = {}
+    var onApiKeyClick: () -> Void = {}
+    var onYouCamClick: () -> Void = {}
+    var onSetOnDeviceAi: (Bool) -> Void = { _ in }
+
+    private var contentPadding: CGFloat { isCompact ? 24 : 32 }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(String(localized: "settings_title"))
+                        .font(.system(size: 28, weight: .semibold))
+                        .foregroundColor(WornColors.textPrimary)
+                        .padding(.top, 24)
+                        .padding(.bottom, 28)
+
+                    sectionLabel(String(localized: "settings_section_profile"))
+                    settingsCard(
+                        iconColor: WornColors.accentGreen,
+                        iconName: "person.fill",
+                        title: String(localized: "settings_your_profile"),
+                        subtitle: profileSummary,
+                        action: onProfileClick
+                    )
+                    .padding(.top, 10)
+                    .accessibilityIdentifier("settings_profile_card")
+
+                    sectionLabel(String(localized: "settings_section_ai"))
+                        .padding(.top, 24)
+                    // Listed before the key card: it is free and private, so it should be the
+                    // first option a new user sees.
+                    settingsToggleCard(
+                        iconColor: WornColors.accentGreen,
+                        iconName: "iphone",
+                        title: String(localized: "settings_on_device_ai_title"),
+                        subtitle: onDeviceAiSubtitle,
+                        isOn: Binding(
+                            get: { state.onDeviceAiEnabled },
+                            set: onSetOnDeviceAi
+                        ),
+                        enabled: OnDeviceAiAvailabilityKt.isUsable(state.onDeviceAiAvailability)
+                    )
+                    .padding(.top, 10)
+                    .accessibilityIdentifier("settings_on_device_ai_toggle")
+
+                    settingsCard(
+                        iconColor: WornColors.accentIndigo,
+                        iconName: "sparkles",
+                        title: String(localized: "settings_api_key_title"),
+                        subtitle: state.hasApiKey ? String(localized: "settings_api_key_connected") : String(localized: "settings_api_key_required"),
+                        action: onApiKeyClick
+                    )
+                    .padding(.top, 10)
+                    .accessibilityIdentifier("settings_api_key_card")
+
+                    settingsCard(
+                        iconColor: WornColors.accentIndigo,
+                        iconName: "tshirt",
+                        title: String(localized: "settings_youcam_title"),
+                        subtitle: state.hasYouCamKey ? String(localized: "settings_youcam_connected") : String(localized: "settings_youcam_required"),
+                        action: onYouCamClick
+                    )
+                    .padding(.top, 10)
+                    .accessibilityIdentifier("settings_youcam_card")
+
+                    sectionLabel(String(localized: "settings_section_about"))
+                        .padding(.top, 24)
+                    aboutCard
+                        .padding(.top, 10)
+
+                    donationCard
+                        .padding(.top, 16)
+
+                    Spacer().frame(height: 95)
+                }
+                .padding(.horizontal, contentPadding)
+            }
+            .background(WornColors.bgPage)
+        }
+        .accessibilityIdentifier("settings_screen")
+    }
 
     private var onDeviceAiSubtitle: String {
-        switch viewModel.state.onDeviceAiAvailability {
+        switch state.onDeviceAiAvailability {
         case is OnDeviceAiAvailabilityAvailable:
             return String(localized: "settings_on_device_ai_available")
         case is OnDeviceAiAvailabilityDownloadable:
@@ -129,7 +157,7 @@ struct SettingsScreen: View {
     }
 
     private var profileSummary: String {
-        let profile = viewModel.state.userProfile
+        let profile = state.userProfile
         let parts: [String] = [
             (profile.bodyType as? BodyType)?.displayName,
             (profile.styleProfile as? StyleProfile)?.displayName,
@@ -705,11 +733,44 @@ struct FlowLayout: Layout {
     }
 }
 
-#Preview("iPhone") {
-    SettingsScreen(onTabSelected: { _ in })
+private func previewSettingsState(
+    availability: OnDeviceAiAvailability
+) -> SettingsState {
+    SettingsState(
+        userProfile: UserProfile(
+            bodyType: .athletic, styleProfile: .smartCasual, ageRange: .age2635,
+            climate: .temperate, lifestyles: [.workOffice]
+        ),
+        isLoading: false,
+        hasApiKey: true,
+        hasYouCamKey: false,
+        verifyingYouCam: false,
+        youCamError: nil,
+        onDeviceAiEnabled: false,
+        onDeviceAiAvailability: availability,
+        error: nil
+    )
 }
 
-#Preview("iPad") {
-    SettingsScreen(onTabSelected: { _ in })
-        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
+#Preview("iPhone") {
+    SettingsContent(
+        state: previewSettingsState(availability: OnDeviceAiAvailabilityAvailable()),
+        isCompact: true
+    )
+}
+
+#Preview("iPhone - AI unavailable") {
+    SettingsContent(
+        state: previewSettingsState(
+            availability: OnDeviceAiAvailabilityUnavailable(reason: .unsupportedDevice)
+        ),
+        isCompact: true
+    )
+}
+
+#Preview("iPad Portrait", traits: .portrait) {
+    SettingsContent(
+        state: previewSettingsState(availability: OnDeviceAiAvailabilityAvailable()),
+        isCompact: false
+    )
 }
