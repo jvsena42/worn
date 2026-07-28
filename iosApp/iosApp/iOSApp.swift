@@ -47,6 +47,10 @@ struct iOSApp: App {
                     isCompact: sizeClass == .compact
                 )
             }
+            // The screens paint bgPage inside their own bounds, but nothing filled the status bar
+            // and home indicator areas, so they fell through to the window's black. Android gets
+            // this from enableEdgeToEdge() plus the theme background.
+            .background(WornColors.bgPage.ignoresSafeArea())
             .onOpenURL { _ in receiveSharedPhoto() }
             .onChange(of: scenePhase) { _, phase in
                 // Covers the case where the extension wrote the file but could not launch us.
