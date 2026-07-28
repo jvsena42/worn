@@ -212,7 +212,7 @@ struct ItemDetailSheet: View {
 
     private func fitDisplayName(_ fit: Fit) -> String {
         switch fit {
-        case .slimFit: return String(localized: "fit_slim_fit")
+        case .slimFit: return String(localized: "fit_slim")
         case .regular: return String(localized: "fit_regular")
         case .relaxed: return String(localized: "fit_relaxed")
         case .oversized: return String(localized: "fit_oversized")
