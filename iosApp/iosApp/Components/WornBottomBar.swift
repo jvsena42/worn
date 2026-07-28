@@ -52,6 +52,10 @@ struct WornBottomBar: View {
                     TabItem(tab: tab, isActive: tab == activeTab) {
                         onTabSelected(tab)
                     }
+                    // Equal slots. Without this the HStack sizes each item to its label, so a
+                    // long translation ("COMBINAÇÕES" in pt-BR) steals width from its neighbours
+                    // and spills over the active tab's pill.
+                    .frame(maxWidth: .infinity)
                     .accessibilityIdentifier(tab.testTag)
                 }
             }
@@ -103,11 +107,13 @@ private struct TabItem: View {
                 Text(tab.label)
                     .font(.system(size: 10, weight: .semibold))
                     .tracking(0.5)
-                    // "WARDROBE" is the longest label and wraps on a 5-tab compact bar, which
-                    // clips the descender. Shrink instead of wrapping, and never take two lines.
+                    // Labels wrap on a 5-tab compact bar, which clips the descender. Shrink
+                    // instead, down far enough for the longest translation to fit its slot, and
+                    // truncate rather than overflow if even that is not enough.
                     .lineLimit(1)
-                    .minimumScaleFactor(0.75)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .minimumScaleFactor(0.6)
+                    .truncationMode(.tail)
+                    .padding(.horizontal, 2)
             }
             .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
