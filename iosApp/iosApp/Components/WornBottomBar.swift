@@ -68,7 +68,7 @@ struct WornBottomBar: View {
 
             if !isCompact { Spacer() }
         }
-        .padding(.horizontal, isCompact ? 21 : 32)
+        .padding(.horizontal, isCompact ? 10 : 32)
         .padding(.top, 12)
         .padding(.bottom, 21)
     }

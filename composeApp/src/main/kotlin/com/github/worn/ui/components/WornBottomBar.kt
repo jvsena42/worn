@@ -66,8 +66,8 @@ fun WornBottomBar(
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                start = if (isCompact) 21.dp else 32.dp,
-                end = if (isCompact) 21.dp else 32.dp,
+                start = if (isCompact) 10.dp else 32.dp,
+                end = if (isCompact) 10.dp else 32.dp,
                 top = 12.dp,
                 bottom = 21.dp,
             ),
