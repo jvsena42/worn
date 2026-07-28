@@ -74,6 +74,22 @@ struct WornBottomBar: View {
     }
 }
 
+#Preview("iPhone") {
+    VStack {
+        Spacer()
+        WornBottomBar(activeTab: .wardrobe, onTabSelected: { _ in }, isCompact: true)
+    }
+    .background(WornColors.bgPage)
+}
+
+#Preview("iPad Portrait", traits: .portrait) {
+    VStack {
+        Spacer()
+        WornBottomBar(activeTab: .gaps, onTabSelected: { _ in }, isCompact: false)
+    }
+    .background(WornColors.bgPage)
+}
+
 private struct TabItem: View {
     let tab: WornTab
     let isActive: Bool

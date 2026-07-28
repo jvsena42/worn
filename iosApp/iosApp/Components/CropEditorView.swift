@@ -261,7 +261,6 @@ private extension Color {
     CropEditorView(imageData: previewImageData(), onCropped: { _ in }, onCancel: {})
 }
 
-#Preview("iPad") {
+#Preview("iPad Portrait", traits: .portrait) {
     CropEditorView(imageData: previewImageData(), onCropped: { _ in }, onCancel: {})
-        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

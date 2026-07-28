@@ -108,12 +108,12 @@ struct WardrobeContent: View {
         }
         .background(WornColors.bgPage)
         .accessibilityIdentifier("wardrobe_screen")
-        .alert(String(format: String(localized: "delete_items_title"), state.selectedIds.count), isPresented: $showDeleteDialog) {
-            Button(String(localized: "common_cancel"), role: .cancel) {}
-            Button(String(localized: "common_delete"), role: .destructive) { onDeleteSelected() }
-        } message: {
-            Text(String(localized: "wardrobe_delete_dialog_message"))
-        }
+        .deleteConfirmationAlert(
+            title: String(format: String(localized: "delete_items_title"), state.selectedIds.count),
+            message: String(localized: "wardrobe_delete_dialog_message"),
+            isPresented: $showDeleteDialog,
+            onConfirm: onDeleteSelected
+        )
     }
 
     private var isWardrobeEmpty: Bool { !state.isLoading && state.totalItemCount == 0 }
@@ -310,33 +310,30 @@ private let previewItems: [ClothingItem] = [
     )
 }
 
-#Preview("iPad Portrait") {
+#Preview("iPad Portrait", traits: .portrait) {
     WardrobeContent(
         state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: false
     )
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }
 
-#Preview("iPad - Empty") {
+#Preview("iPad Portrait - Empty", traits: .portrait) {
     WardrobeContent(
         state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, isAiAvailable: false, error: nil, totalItemCount: 0),
         isCompact: false
     )
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }
 
-#Preview("iPhone - Empty Shared.Category") {
+#Preview("iPhone - Empty Category") {
     WardrobeContent(
         state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: .top, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: true
     )
 }
 
-#Preview("iPad - Empty Shared.Category") {
+#Preview("iPad Portrait - Empty Category", traits: .portrait) {
     WardrobeContent(
         state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: .top, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: false
     )
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

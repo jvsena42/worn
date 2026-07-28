@@ -26,7 +26,6 @@ struct CropPhotoButton: View {
     CropPhotoButton(action: {})
 }
 
-#Preview("iPad") {
+#Preview("iPad Portrait", traits: .portrait) {
     CropPhotoButton(action: {})
-        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

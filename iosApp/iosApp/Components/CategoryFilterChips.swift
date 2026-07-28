@@ -30,3 +30,21 @@ struct CategoryFilterChips: View {
         }
     }
 }
+
+#Preview("iPhone") {
+    VStack(alignment: .leading, spacing: 16) {
+        CategoryFilterChips(activeCategory: nil, onCategorySelected: { _ in })
+        CategoryFilterChips(activeCategory: .top, onCategorySelected: { _ in })
+    }
+    .padding(24)
+    .background(WornColors.bgPage)
+}
+
+#Preview("iPad Portrait", traits: .portrait) {
+    VStack(alignment: .leading, spacing: 16) {
+        CategoryFilterChips(activeCategory: nil, onCategorySelected: { _ in })
+        CategoryFilterChips(activeCategory: .shoes, onCategorySelected: { _ in })
+    }
+    .padding(32)
+    .background(WornColors.bgPage)
+}

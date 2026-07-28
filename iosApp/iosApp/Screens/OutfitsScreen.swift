@@ -98,15 +98,12 @@ struct OutfitsContent: View {
         }
         .background(WornColors.bgPage)
         .accessibilityIdentifier("outfits_screen")
-        .alert(
-            String(format: String(localized: "delete_outfits_title"), state.selectedIds.count),
-            isPresented: $showDeleteDialog
-        ) {
-            Button(String(localized: "common_cancel"), role: .cancel) {}
-            Button(String(localized: "common_delete"), role: .destructive) { onDeleteSelected() }
-        } message: {
-            Text(String(localized: "outfits_delete_dialog_message"))
-        }
+        .deleteConfirmationAlert(
+            title: String(format: String(localized: "delete_outfits_title"), state.selectedIds.count),
+            message: String(localized: "outfits_delete_dialog_message"),
+            isPresented: $showDeleteDialog,
+            onConfirm: onDeleteSelected
+        )
     }
 
     private var isEmpty: Bool { !state.isLoading && state.outfits.isEmpty }
@@ -375,18 +372,16 @@ private let previewOutfits: [Outfit] = [
     )
 }
 
-#Preview("iPad Portrait") {
+#Preview("iPad Portrait", traits: .portrait) {
     OutfitsContent(
         state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], allClothingItems: [], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: false
     )
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }
 
-#Preview("iPad - Empty") {
+#Preview("iPad Portrait - Empty", traits: .portrait) {
     OutfitsContent(
         state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], allClothingItems: [], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: false
     )
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

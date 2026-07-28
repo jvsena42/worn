@@ -78,7 +78,7 @@ extension EmptyStateView where Action == EmptyView {
     )
 }
 
-#Preview("iPad", traits: .landscapeLeft) {
+#Preview("iPad Portrait", traits: .portrait) {
     EmptyStateView(
         icon: {
             Image(systemName: "tshirt")

@@ -568,7 +568,6 @@ struct AddItemSheet: View {
     AddItemSheet(isSaving: false, isAiAvailable: false, onSave: { _, _, _, _, _, _, _, _ in }, onDismiss: {})
 }
 
-#Preview("iPad Portrait") {
+#Preview("iPad Portrait", traits: .portrait) {
     AddItemSheet(isSaving: false, isAiAvailable: false, onSave: { _, _, _, _, _, _, _, _ in }, onDismiss: {})
-        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

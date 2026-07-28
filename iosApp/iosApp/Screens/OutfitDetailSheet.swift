@@ -96,12 +96,12 @@ struct OutfitDetailSheet: View {
         }
         .background(WornColors.bgElevated)
         .accessibilityIdentifier("outfit_detail_sheet")
-        .alert(String(localized: "outfit_detail_delete_dialog_title"), isPresented: $showDeleteAlert) {
-            Button(String(localized: "common_cancel"), role: .cancel) {}
-            Button(String(localized: "common_delete"), role: .destructive) { onDelete(outfit.id) }
-        } message: {
-            Text(String(format: String(localized: "outfit_detail_delete_dialog_message"), outfit.name))
-        }
+        .deleteConfirmationAlert(
+            title: String(localized: "outfit_detail_delete_dialog_title"),
+            message: String(format: String(localized: "outfit_detail_delete_dialog_message"), outfit.name),
+            isPresented: $showDeleteAlert,
+            onConfirm: { onDelete(outfit.id) }
+        )
     }
 
     private func outfitItemCard(item: ClothingItem) -> some View {
@@ -179,10 +179,9 @@ private let previewOutfit = Outfit(id: "1", name: "Weekend Casual", itemIds: ["i
     )
 }
 
-#Preview("iPad") {
+#Preview("iPad Portrait", traits: .portrait) {
     OutfitDetailSheet(
         outfit: previewOutfit, clothingItems: previewItems,
         isCompact: false, onEdit: { _ in }, onDelete: { _ in }
     )
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

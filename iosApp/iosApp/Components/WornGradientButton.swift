@@ -86,7 +86,7 @@ private extension Color {
     .padding()
 }
 
-#Preview("iPad", traits: .landscapeLeft) {
+#Preview("iPad Portrait", traits: .portrait) {
     VStack(spacing: 16) {
         WornGradientButton(text: "Save to Wardrobe", action: {})
     }

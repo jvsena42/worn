@@ -41,7 +41,7 @@ struct SelectionHeader: View {
         .padding()
 }
 
-#Preview("iPad", traits: .landscapeLeft) {
+#Preview("iPad Portrait", traits: .portrait) {
     SelectionHeader(count: 5)
         .padding()
 }

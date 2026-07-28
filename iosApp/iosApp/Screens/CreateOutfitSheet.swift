@@ -199,7 +199,7 @@ private let previewItems: [ClothingItem] = [
     )
 }
 
-#Preview("iPad Portrait") {
+#Preview("iPad Portrait", traits: .portrait) {
     CreateOutfitSheet(
         clothingItems: previewItems,
         selectedItemIds: Set(["1", "2"]),
@@ -210,5 +210,4 @@ private let previewItems: [ClothingItem] = [
         onSave: { _ in },
         onDismiss: {}
     )
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

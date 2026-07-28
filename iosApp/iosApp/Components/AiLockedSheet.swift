@@ -64,7 +64,6 @@ struct AiLockedSheet: View {
     AiLockedSheet(onDismiss: {})
 }
 
-#Preview("iPad Portrait") {
+#Preview("iPad Portrait", traits: .portrait) {
     AiLockedSheet(onDismiss: {})
-        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

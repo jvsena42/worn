@@ -770,7 +770,6 @@ struct TryItScreen: View {
     TryItScreen(onTabSelected: { _ in })
 }
 
-#Preview("iPad") {
+#Preview("iPad Portrait", traits: .portrait) {
     TryItScreen(onTabSelected: { _ in })
-        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

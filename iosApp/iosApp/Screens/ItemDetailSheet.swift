@@ -37,12 +37,12 @@ struct ItemDetailSheet: View {
         }
         .background(WornColors.bgElevated)
         .accessibilityIdentifier("item_detail_sheet")
-        .alert(String(localized: "item_detail_delete_dialog_title"), isPresented: $showDeleteAlert) {
-            Button(String(localized: "common_cancel"), role: .cancel) {}
-            Button(String(localized: "common_delete"), role: .destructive) { onDelete(item.id) }
-        } message: {
-            Text(String(format: String(localized: "item_detail_delete_dialog_message"), item.name))
-        }
+        .deleteConfirmationAlert(
+            title: String(localized: "item_detail_delete_dialog_title"),
+            message: String(format: String(localized: "item_detail_delete_dialog_message"), item.name),
+            isPresented: $showDeleteAlert,
+            onConfirm: { onDelete(item.id) }
+        )
     }
 
     private var photoArea: some View {
@@ -260,10 +260,9 @@ private let previewItem = ClothingItem(
     )
 }
 
-#Preview("iPad") {
+#Preview("iPad Portrait", traits: .portrait) {
     ItemDetailSheet(
         item: previewItem, isCompact: false,
         onEdit: { _ in }, onDelete: { _ in }
     )
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }
