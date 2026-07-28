@@ -31,7 +31,7 @@ struct WornChip: View {
     .padding()
 }
 
-#Preview("iPad", traits: .landscapeLeft) {
+#Preview("iPad Portrait", traits: .portrait) {
     HStack(spacing: 8) {
         WornChip(label: "Summer", isActive: false, onTap: {})
         WornChip(label: "Winter", isActive: true, onTap: {})

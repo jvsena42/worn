@@ -46,7 +46,7 @@ struct ErrorContentView: View {
     .padding(.vertical, 60)
 }
 
-#Preview("iPad", traits: .landscapeLeft) {
+#Preview("iPad Portrait", traits: .portrait) {
     ErrorContentView(
         message: "Something went wrong. Please try again.",
         onRetry: {},

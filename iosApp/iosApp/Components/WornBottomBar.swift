@@ -52,6 +52,10 @@ struct WornBottomBar: View {
                     TabItem(tab: tab, isActive: tab == activeTab) {
                         onTabSelected(tab)
                     }
+                    // Equal slots. Without this the HStack sizes each item to its label, so a
+                    // long translation ("COMBINAÇÕES" in pt-BR) steals width from its neighbours
+                    // and spills over the active tab's pill.
+                    .frame(maxWidth: .infinity)
                     .accessibilityIdentifier(tab.testTag)
                 }
             }
@@ -68,10 +72,26 @@ struct WornBottomBar: View {
 
             if !isCompact { Spacer() }
         }
-        .padding(.horizontal, isCompact ? 21 : 32)
+        .padding(.horizontal, isCompact ? 10 : 32)
         .padding(.top, 12)
         .padding(.bottom, 21)
     }
+}
+
+#Preview("iPhone") {
+    VStack {
+        Spacer()
+        WornBottomBar(activeTab: .wardrobe, onTabSelected: { _ in }, isCompact: true)
+    }
+    .background(WornColors.bgPage)
+}
+
+#Preview("iPad Portrait", traits: .portrait) {
+    VStack {
+        Spacer()
+        WornBottomBar(activeTab: .gaps, onTabSelected: { _ in }, isCompact: false)
+    }
+    .background(WornColors.bgPage)
 }
 
 private struct TabItem: View {
@@ -87,6 +107,13 @@ private struct TabItem: View {
                 Text(tab.label)
                     .font(.system(size: 10, weight: .semibold))
                     .tracking(0.5)
+                    // Labels wrap on a 5-tab compact bar, which clips the descender. Shrink
+                    // instead, down far enough for the longest translation to fit its slot, and
+                    // truncate rather than overflow if even that is not enough.
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                    .truncationMode(.tail)
+                    .padding(.horizontal, 2)
             }
             .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
             .frame(maxWidth: .infinity, maxHeight: .infinity)

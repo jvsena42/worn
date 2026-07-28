@@ -36,7 +36,7 @@ struct SelectionIndicator: View {
     .padding()
 }
 
-#Preview("iPad", traits: .landscapeLeft) {
+#Preview("iPad Portrait", traits: .portrait) {
     HStack(spacing: 16) {
         SelectionIndicator(isSelected: false)
         SelectionIndicator(isSelected: true)

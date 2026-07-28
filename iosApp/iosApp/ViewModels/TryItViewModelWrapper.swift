@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Shared
 
 @MainActor
@@ -9,14 +10,12 @@ class TryItViewModelWrapper: ObservableObject {
     @Published var state: TryItState
 
     init() {
-        let koin = KoinHelper.shared.koin
-        let vm = koin.get(objCClass: TryItViewModel.self) as! TryItViewModel
+        let vm = KoinHelper.shared.tryItViewModel
         self.viewModel = vm
-        self.state = vm.state.value
 
-        let adapter = FlowAdapter(flow: vm.state)
+        let adapter = FlowAdapter<TryItState>(flow: vm.state)
+        self.state = adapter.currentValue
         cancellable = adapter.subscribe { [weak self] newState in
-            guard let newState = newState as? TryItState else { return }
             DispatchQueue.main.async {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     self?.state = newState
@@ -26,40 +25,40 @@ class TryItViewModelWrapper: ObservableObject {
     }
 
     func analyzePhoto(imageData: Data) {
-        viewModel.onIntent(intent: TryItIntent.AnalyzePhoto(imageBytes: imageData.toKotlinByteArray()))
+        viewModel.onIntent(intent: TryItIntentAnalyzePhoto(imageBytes: imageData.toKotlinByteArray()))
     }
 
     func reset() {
-        viewModel.onIntent(intent: TryItIntent.Reset())
+        viewModel.onIntent(intent: TryItIntentReset())
     }
 
     func selectCategory(_ category: GarmentCategory) {
-        viewModel.onIntent(intent: TryItIntent.SelectCategory(category: category))
+        viewModel.onIntent(intent: TryItIntentSelectCategory(category: category))
     }
 
     func generateTryOn(imageData: Data) {
-        viewModel.onIntent(intent: TryItIntent.GenerateTryOn(garmentBytes: imageData.toKotlinByteArray()))
+        viewModel.onIntent(intent: TryItIntentGenerateTryOn(garmentBytes: imageData.toKotlinByteArray()))
     }
 
     func resetTryOn() {
-        viewModel.onIntent(intent: TryItIntent.ResetTryOn())
+        viewModel.onIntent(intent: TryItIntentResetTryOn())
     }
 
     func setPersonPhoto(imageData: Data) {
-        viewModel.onIntent(intent: TryItIntent.SetPersonPhoto(imageBytes: imageData.toKotlinByteArray()))
+        viewModel.onIntent(intent: TryItIntentSetPersonPhoto(imageBytes: imageData.toKotlinByteArray()))
     }
 
     /// Signals that a photo arrived from the share sheet; the bytes stay on the Swift side.
     func receiveSharedPhoto() {
-        viewModel.onIntent(intent: TryItIntent.ReceiveSharedPhoto())
+        viewModel.onIntent(intent: TryItIntentReceiveSharedPhoto())
     }
 
     func chooseFeature(_ feature: TryItFeature) {
-        viewModel.onIntent(intent: TryItIntent.ChooseFeature(feature: feature))
+        viewModel.onIntent(intent: TryItIntentChooseFeature(feature: feature))
     }
 
     func clearFeatureFocus() {
-        viewModel.onIntent(intent: TryItIntent.ClearFeatureFocus())
+        viewModel.onIntent(intent: TryItIntentClearFeatureFocus())
     }
 
     /// The saved person photo, if any, as displayable `Data`.
@@ -74,28 +73,5 @@ class TryItViewModelWrapper: ObservableObject {
 
     deinit {
         cancellable?.cancel()
-    }
-}
-
-extension Data {
-    /// Bridges Swift `Data` to a Kotlin `KotlinByteArray` for shared-module calls.
-    func toKotlinByteArray() -> KotlinByteArray {
-        let bytes = [UInt8](self)
-        let array = KotlinByteArray(size: Int32(bytes.count))
-        for (index, byte) in bytes.enumerated() {
-            array.set(index: Int32(index), value: Int8(bitPattern: byte))
-        }
-        return array
-    }
-}
-
-extension KotlinByteArray {
-    /// Bridges a Kotlin `KotlinByteArray` back to Swift `Data`.
-    func toData() -> Data {
-        var data = Data(count: Int(size))
-        for index in 0..<Int(size) {
-            data[index] = UInt8(bitPattern: get(index: Int32(index)))
-        }
-        return data
     }
 }

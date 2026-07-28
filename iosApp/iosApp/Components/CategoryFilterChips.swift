@@ -2,10 +2,10 @@ import SwiftUI
 import Shared
 
 struct CategoryFilterChips: View {
-    let activeCategory: Category?
-    let onCategorySelected: (Category?) -> Void
+    let activeCategory: Shared.Category?
+    let onCategorySelected: (Shared.Category?) -> Void
 
-    private var allChips: [(category: Category?, label: String)] {
+    private var allChips: [(category: Shared.Category?, label: String)] {
         [
             (nil, String(localized: "filter_all")),
             (.top, String(localized: "category_tops")),
@@ -29,4 +29,22 @@ struct CategoryFilterChips: View {
             }
         }
     }
+}
+
+#Preview("iPhone") {
+    VStack(alignment: .leading, spacing: 16) {
+        CategoryFilterChips(activeCategory: nil, onCategorySelected: { _ in })
+        CategoryFilterChips(activeCategory: .top, onCategorySelected: { _ in })
+    }
+    .padding(24)
+    .background(WornColors.bgPage)
+}
+
+#Preview("iPad Portrait", traits: .portrait) {
+    VStack(alignment: .leading, spacing: 16) {
+        CategoryFilterChips(activeCategory: nil, onCategorySelected: { _ in })
+        CategoryFilterChips(activeCategory: .shoes, onCategorySelected: { _ in })
+    }
+    .padding(32)
+    .background(WornColors.bgPage)
 }

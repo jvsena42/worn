@@ -6,7 +6,7 @@ struct AddItemSheet: View {
     let isSaving: Bool
     let isAiAvailable: Bool
     var existingItem: ClothingItem?
-    let onSave: (Data, String, Category, [String], [Season], Subcategory?, Fit?, Material?) -> Void
+    let onSave: (Data, String, Shared.Category, [String], [Season], Subcategory?, Fit?, Shared.Material?) -> Void
     let onDismiss: () -> Void
 
     @State private var selectedPhotoItem: PhotosPickerItem?
@@ -17,12 +17,12 @@ struct AddItemSheet: View {
     @State private var isProcessingBg = false
     @State private var showBgError = false
     @State private var name = ""
-    @State private var selectedCategory: Category?
+    @State private var selectedCategory: Shared.Category?
     @State private var selectedColors: Set<String> = []
     @State private var selectedSeasons: Set<Season> = []
     @State private var selectedSubcategory: Subcategory?
     @State private var selectedFit: Fit?
-    @State private var selectedMaterial: Material?
+    @State private var selectedMaterial: Shared.Material?
     @State private var showSourceChooser = false
     @State private var showPhotoPicker = false
     @State private var cover: PhotoCover?
@@ -411,7 +411,7 @@ struct AddItemSheet: View {
         .accessibilityIdentifier("add_item_save_button")
     }
 
-    private var categoryOptions: [(Category, String)] {
+    private var categoryOptions: [(Shared.Category, String)] {
         [
             (.top, String(localized: "category_tops")), (.bottom, String(localized: "category_bottoms")),
             (.outerwear, String(localized: "category_outerwear")), (.shoes, String(localized: "category_shoes")), (.accessory, String(localized: "category_accessories")),
@@ -422,7 +422,7 @@ struct AddItemSheet: View {
         [(.spring, String(localized: "season_spring")), (.summer, String(localized: "season_summer")), (.fall, String(localized: "season_fall")), (.winter, String(localized: "season_winter"))]
     }
 
-    private func iconName(for category: Category) -> String {
+    private func iconName(for category: Shared.Category) -> String {
         switch category {
         case .top: return "tshirt"
         case .bottom: return "ruler"
@@ -433,7 +433,7 @@ struct AddItemSheet: View {
         }
     }
 
-    private func displayName(for category: Category) -> String {
+    private func displayName(for category: Shared.Category) -> String {
         switch category {
         case .top: return String(localized: "category_tops")
         case .bottom: return String(localized: "category_bottoms")
@@ -537,7 +537,7 @@ struct AddItemSheet: View {
 
     // MARK: - Material
 
-    private var materialOptions: [(Material, String)] {
+    private var materialOptions: [(Shared.Material, String)] {
         [
             (.cotton, String(localized: "material_cotton")), (.linen, String(localized: "material_linen")),
             (.denim, String(localized: "material_denim")), (.wool, String(localized: "material_wool")),
@@ -568,7 +568,6 @@ struct AddItemSheet: View {
     AddItemSheet(isSaving: false, isAiAvailable: false, onSave: { _, _, _, _, _, _, _, _ in }, onDismiss: {})
 }
 
-#Preview("iPad Portrait") {
+#Preview("iPad Portrait", traits: .portrait) {
     AddItemSheet(isSaving: false, isAiAvailable: false, onSave: { _, _, _, _, _, _, _, _ in }, onDismiss: {})
-        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

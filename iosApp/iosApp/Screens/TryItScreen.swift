@@ -220,15 +220,8 @@ struct TryItScreen: View {
                 }
 
                 if let error = viewModel.state.error, !viewModel.state.isLoading {
-                    ErrorContentView(
-                        message: error as String,
-                        onRetry: {
-                            guard let data = photoData else { return }
-                            viewModel.analyzePhoto(imageData: data)
-                        },
-                        retryButtonColor: WornColors.accentIndigo
-                    )
-                    .padding(.vertical, 20)
+                    errorContent(message: error as String)
+                        .padding(.vertical, 20)
                 }
 
                 if let result = viewModel.state.result as? TryItResult {
@@ -368,6 +361,19 @@ struct TryItScreen: View {
             contentPadding: EdgeInsets(top: 14, leading: 0, bottom: 14, trailing: 0)
         )
         .accessibilityIdentifier("try_it_analyze_button")
+    }
+
+    /// Analysis error, shared by the phone and tablet layouts. Retrying re-sends the garment photo
+    /// that produced the error, so it is a no-op once the photo has been cleared.
+    private func errorContent(message: String) -> some View {
+        ErrorContentView(
+            message: message,
+            onRetry: {
+                guard let data = photoData else { return }
+                viewModel.analyzePhoto(imageData: data)
+            },
+            retryButtonColor: WornColors.accentIndigo
+        )
     }
 
     private var loadingIndicator: some View {
@@ -764,7 +770,6 @@ struct TryItScreen: View {
     TryItScreen(onTabSelected: { _ in })
 }
 
-#Preview("iPad") {
+#Preview("iPad Portrait", traits: .portrait) {
     TryItScreen(onTabSelected: { _ in })
-        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

@@ -1,76 +1,79 @@
-# WornShareExtension — Xcode setup
+# WornShareExtension
 
-The Swift sources, `Info.plist`, and entitlements in this folder are complete. The target itself
-must be created in Xcode, because `iosApp.xcodeproj/project.pbxproj` uses the synchronized-folder
-layout (`objectVersion = 77`) and hand-editing it is error-prone.
+Shares a photo from any app into Worn's Try It screen.
 
-Do this once, on a machine with Xcode.
+The target is committed to `iosApp.xcodeproj` — there is no manual Xcode setup left to do. Open
+the project and it builds alongside the app.
 
-## 1. Create the target
+## How the handoff works
 
-**File → New → Target… → iOS → Share Extension**
+The extension deliberately does **not** link the `Shared` framework. `shared/build.gradle.kts`
+sets `isStatic = true`, so linking it would copy the whole Kotlin binary into a process that runs
+under a tight memory cap. The entire handoff is one file in an App Group:
 
-- Product Name: `WornShareExtension`
-- Embed in Application: `Worn`
-- Language: Swift
-- When prompted to activate the new scheme: **Cancel** (keep the `iosApp` scheme).
+1. `ShareViewController` writes the image to `group.com.github.worn/pending_share.jpg`.
+2. It then walks the responder chain to reach `UIApplication` and open `worn://tryit`.
+3. `RootView.receiveSharedPhoto()` calls `SharedPhotoInbox.consume()`, which reads the file and
+   deletes it, and switches to the Try It tab.
 
-Xcode generates its own `ShareViewController.swift`, `MainInterface.storyboard`, and `Info.plist`
-under a new group. **Delete all three** (Move to Trash), then drag this `WornShareExtension/`
-folder into the project and assign it to the `WornShareExtension` target.
+Step 2 is a workaround: `NSExtensionContext.open(_:)` does not launch the host app from a share
+extension on current iOS. It is widely shipped but is not blessed API and has occasionally drawn
+App Review attention. If you would rather not ship it, delete `openHostApp()` and its call — the
+extension still parks the file, and `RootView`'s `scenePhase` observer picks it up the next time
+the user opens Worn themselves.
 
-## 2. Build settings for the extension target
+## Target configuration
+
+Set in `project.pbxproj`, and worth preserving if the target is ever recreated:
 
 | Setting | Value |
 |---|---|
+| `PRODUCT_BUNDLE_IDENTIFIER` | `$(inherited).ShareExtension` — resolves to `com.github.worn.Worn$(TEAM_ID).ShareExtension`, and must stay a child of the app id or embedded-binary validation fails |
 | `INFOPLIST_FILE` | `WornShareExtension/Info.plist` |
-| `GENERATE_INFOPLIST_FILE` | `NO` |
-| `PRODUCT_BUNDLE_IDENTIFIER` | `$(inherited).ShareExtension` — must be a child of the app id |
-| `IPHONEOS_DEPLOYMENT_TARGET` | `18.2` — match the app |
+| `GENERATE_INFOPLIST_FILE` | `YES` — the checked-in plist only carries `NSExtension` and the display name; Xcode synthesises `CFBundleIdentifier` and friends, same as the app target |
 | `CODE_SIGN_ENTITLEMENTS` | `WornShareExtension/WornShareExtension.entitlements` |
+| `IPHONEOS_DEPLOYMENT_TARGET` | `18.2` — matches the app |
 
-The app id comes from `iosApp/Configuration/Config.xcconfig`
-(`com.github.worn.Worn$(TEAM_ID)`), so make sure the extension target also picks up that xcconfig.
+Both targets carry `group.com.github.worn`; the app's entitlement lives in
+`iosApp/iosApp.entitlements`. Without it on **both** sides the extension writes to a container
+the app cannot read and the share silently does nothing.
 
-If Xcode copied the **Compile Kotlin Framework** run-script build phase onto the new target,
-delete it. The extension does not link the `Shared` framework on purpose: it is a static framework
-(`shared/build.gradle.kts`, `isStatic = true`), so linking would duplicate the whole binary into a
-process that runs under a tight memory cap. Parking one file in the App Group is the entire handoff.
+The extension has no `Compile Kotlin Framework` build phase. Do not add one.
 
-## 3. App Groups capability — required on BOTH targets
+## Verifying
 
-**Signing & Capabilities → + Capability → App Groups**, then add `group.com.github.worn` to:
+The app side is deterministic and does not need the share sheet:
 
-- the `Worn` app target — also point its `CODE_SIGN_ENTITLEMENTS` at `iosApp/iosApp.entitlements`
-- the `WornShareExtension` target
+```shell
+xcrun simctl boot "iPhone 16"
+xcodebuild -project iosApp/iosApp.xcodeproj -target iosApp -sdk iphonesimulator -arch arm64 \
+  -configuration Debug CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= build
+xcrun simctl install booted iosApp/build/Debug-iphonesimulator/Worn.app
 
-Without the group on both sides, the extension writes to a container the app cannot read and the
-share silently does nothing.
+GROUP=$(xcrun simctl get_app_container booted com.github.worn.Worn group.com.github.worn)
+cp some.jpg "$GROUP/pending_share.jpg"
+xcrun simctl launch booted com.github.worn.Worn
+```
 
-## 4. Verify
+Worn should open on **Try It** with the photo in the upload zone, and `pending_share.jpg` should
+be gone — `consume()` deletes it either way, so an unreadable file cannot re-trigger forever.
 
-Share extensions do **not** appear in the Simulator's Photos share sheet, so this needs a real
-device.
+The extension binary should stay tiny, which is how you know it is not pulling in `Shared`:
 
-1. Run the `Worn` scheme on a device.
-2. Photos → pick an image → Share → Worn.
-3. The app should open on **Try It** with the photo already in the upload zone.
+```shell
+du -k iosApp/build/Debug-iphonesimulator/Worn.app/PlugIns/WornShareExtension.appex/WornShareExtension
+# ~128 KB, against ~28 MB for the app binary
+```
 
-Then walk the credential matrix in Settings, sharing an image after each change:
+Then exercise the real share sheet — Photos → pick an image → Share → Worn — and walk the
+credential matrix in Settings, sharing an image after each change:
 
 | Claude key | YouCam creds | Expected |
 |---|---|---|
-| ✅ | ❌ | Lands on Try It, no dialog, *Analyze* button visible |
-| ❌ | ✅ | Lands on Try It, scrolled to the try-on section, no dialog |
-| ✅ | ✅ | Chooser dialog; each choice scrolls to its section, both stay visible |
+| ✅ | ❌ | Try It, no dialog, *Analyze* visible |
+| ❌ | ✅ | Try It, scrolled to the try-on section, no dialog |
+| ✅ | ✅ | Chooser dialog; each choice scrolls to its section |
 | ❌ | ❌ | Locked state with *Open Settings* |
 
-## Known caveat: launching the app from the extension
-
-`NSExtensionContext.open(_:)` does not launch the host app from a share extension on current iOS.
-`ShareViewController.openHostApp()` therefore walks the responder chain to reach `UIApplication`.
-This is widely shipped but is not blessed API and has occasionally drawn App Review attention.
-
-If you would rather not ship it, delete `openHostApp()` and its call. The extension still writes
-the handoff file, and `iOSApp.receiveSharedPhoto()` already picks it up on the next foreground via
-the `scenePhase` observer — correct behaviour, but the user has to open Worn themselves.
+Try the simulator first. If Worn does not appear in the share sheet, or `openHostApp()` does not
+bring the app forward, repeat on a real device before concluding anything is broken.

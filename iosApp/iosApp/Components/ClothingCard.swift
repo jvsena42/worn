@@ -75,7 +75,7 @@ struct ClothingCard: View {
         }
     }
 
-    private func dotColor(for category: Category) -> Color {
+    private func dotColor(for category: Shared.Category) -> Color {
         switch category {
         case .top: return WornColors.categoryDotTop
         case .bottom: return WornColors.categoryDotBottom
@@ -86,7 +86,7 @@ struct ClothingCard: View {
         }
     }
 
-    private func displayLabel(for category: Category) -> String {
+    private func displayLabel(for category: Shared.Category) -> String {
         switch category {
         case .top: return String(localized: "category_tops")
         case .bottom: return String(localized: "category_bottoms")
@@ -96,4 +96,28 @@ struct ClothingCard: View {
         default: return ""
         }
     }
+}
+
+private let previewCardItem = ClothingItem(
+    id: "1", name: "Black T-Shirt", category: .top, colors: ["black"], seasons: [],
+    tags: [], description: nil, subcategory: .tShirt, fit: .regular, material: .cotton,
+    photoPath: "", createdAt: 0
+)
+
+#Preview("iPhone") {
+    HStack(spacing: 12) {
+        ClothingCard(item: previewCardItem)
+        ClothingCard(item: previewCardItem, isSelected: true, isSelectionMode: true)
+    }
+    .padding(24)
+    .background(WornColors.bgPage)
+}
+
+#Preview("iPad Portrait", traits: .portrait) {
+    HStack(spacing: 16) {
+        ClothingCard(item: previewCardItem, photoHeight: 200)
+        ClothingCard(item: previewCardItem, photoHeight: 200, isSelected: true, isSelectionMode: true)
+    }
+    .padding(32)
+    .background(WornColors.bgPage)
 }

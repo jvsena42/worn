@@ -96,12 +96,12 @@ struct OutfitDetailSheet: View {
         }
         .background(WornColors.bgElevated)
         .accessibilityIdentifier("outfit_detail_sheet")
-        .alert(String(localized: "outfit_detail_delete_dialog_title"), isPresented: $showDeleteAlert) {
-            Button(String(localized: "common_cancel"), role: .cancel) {}
-            Button(String(localized: "common_delete"), role: .destructive) { onDelete(outfit.id) }
-        } message: {
-            Text(String(format: String(localized: "outfit_detail_delete_dialog_message"), outfit.name))
-        }
+        .deleteConfirmationAlert(
+            title: String(localized: "outfit_detail_delete_dialog_title"),
+            message: String(format: String(localized: "outfit_detail_delete_dialog_message"), outfit.name),
+            isPresented: $showDeleteAlert,
+            onConfirm: { onDelete(outfit.id) }
+        )
     }
 
     private func outfitItemCard(item: ClothingItem) -> some View {
@@ -164,10 +164,10 @@ struct OutfitDetailSheet: View {
 }
 
 private let previewItems: [ClothingItem] = [
-    ClothingItem(id: "i1", name: "Black T-Shirt", category: .top, colors: ["Black"], seasons: [], tags: [], description: nil, photoPath: "", createdAt: 0),
-    ClothingItem(id: "i2", name: "Navy Jeans", category: .bottom, colors: ["Navy"], seasons: [], tags: [], description: nil, photoPath: "", createdAt: 0),
-    ClothingItem(id: "i3", name: "White Sneakers", category: .shoes, colors: ["White"], seasons: [], tags: [], description: nil, photoPath: "", createdAt: 0),
-    ClothingItem(id: "i4", name: "Olive Jacket", category: .outerwear, colors: ["Olive"], seasons: [], tags: [], description: nil, photoPath: "", createdAt: 0),
+    ClothingItem(id: "i1", name: "Black T-Shirt", category: .top, colors: ["Black"], seasons: [], tags: [], description: nil, subcategory: nil, fit: nil, material: nil, photoPath: "", createdAt: 0),
+    ClothingItem(id: "i2", name: "Navy Jeans", category: .bottom, colors: ["Navy"], seasons: [], tags: [], description: nil, subcategory: nil, fit: nil, material: nil, photoPath: "", createdAt: 0),
+    ClothingItem(id: "i3", name: "White Sneakers", category: .shoes, colors: ["White"], seasons: [], tags: [], description: nil, subcategory: nil, fit: nil, material: nil, photoPath: "", createdAt: 0),
+    ClothingItem(id: "i4", name: "Olive Jacket", category: .outerwear, colors: ["Olive"], seasons: [], tags: [], description: nil, subcategory: nil, fit: nil, material: nil, photoPath: "", createdAt: 0),
 ]
 
 private let previewOutfit = Outfit(id: "1", name: "Weekend Casual", itemIds: ["i1", "i2", "i3", "i4"], createdAt: 1_710_460_800_000)
@@ -179,10 +179,9 @@ private let previewOutfit = Outfit(id: "1", name: "Weekend Casual", itemIds: ["i
     )
 }
 
-#Preview("iPad") {
+#Preview("iPad Portrait", traits: .portrait) {
     OutfitDetailSheet(
         outfit: previewOutfit, clothingItems: previewItems,
         isCompact: false, onEdit: { _ in }, onDelete: { _ in }
     )
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

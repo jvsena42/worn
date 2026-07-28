@@ -3,7 +3,8 @@ import Shared
 
 struct GapsScreen: View {
     @StateObject private var viewModel = GapsViewModelWrapper()
-    let onTabSelected: (Tab) -> Void
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    let onTabSelected: (WornTab) -> Void
 
     @State private var selectedGap: GapRecommendation?
     @State private var showAiLockedSheet = false
@@ -11,40 +12,13 @@ struct GapsScreen: View {
     @State private var addItemPreFill: GapRecommendation?
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(String(localized: "gaps_title"))
-                        .font(.system(size: 28, weight: .semibold))
-                        .foregroundColor(WornColors.textPrimary)
-                        .padding(.top, 24)
-                    Text(String(localized: "gaps_subtitle"))
-                        .font(.system(size: 14))
-                        .foregroundColor(WornColors.textSecondary)
-                        .padding(.top, 4)
-                        .padding(.bottom, 20)
-
-                    if viewModel.state.isLoading {
-                        loadingContent
-                    } else if let error = viewModel.state.error {
-                        ErrorContentView(
-                            message: error as String,
-                            onRetry: { viewModel.loadGaps() }
-                        )
-                        .padding(.vertical, 60)
-                    } else if viewModel.state.recommendations.isEmpty {
-                        completeContent
-                    } else {
-                        gapsContent
-                    }
-
-                    Spacer().frame(height: 95)
-                }
-                .padding(.horizontal, 24)
-            }
-            .background(WornColors.bgPage)
-        }
-        .accessibilityIdentifier("gaps_screen")
+        GapsContent(
+            state: viewModel.state,
+            isCompact: sizeClass == .compact,
+            onRetry: { viewModel.loadGaps() },
+            onGapClick: { selectedGap = $0 },
+            onBannerClick: { showAiLockedSheet = true }
+        )
         .sheet(item: $selectedGap) { gap in
             GapDetailSheet(
                 recommendation: gap,
@@ -79,6 +53,58 @@ struct GapsScreen: View {
                 )
             }
         }
+    }
+}
+
+/// Pure, state-driven half of the Gaps screen.
+///
+/// Split out for the same reason as `WardrobeContent` and `OutfitsContent`: the stateful wrapper
+/// resolves its ViewModel from Koin, so a preview of it only renders once `initKoin()` has run.
+/// This view takes the state directly and previews on its own.
+struct GapsContent: View {
+    let state: GapsState
+    var isCompact: Bool = true
+    var onRetry: () -> Void = {}
+    var onGapClick: (GapRecommendation) -> Void = { _ in }
+    var onBannerClick: () -> Void = {}
+
+    private var contentPadding: CGFloat { isCompact ? 24 : 32 }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(String(localized: "gaps_title"))
+                        .font(.system(size: 28, weight: .semibold))
+                        .foregroundColor(WornColors.textPrimary)
+                        .padding(.top, 24)
+                    Text(String(localized: "gaps_subtitle"))
+                        .font(.system(size: 14))
+                        .foregroundColor(WornColors.textSecondary)
+                        .padding(.top, 4)
+                        .padding(.bottom, 20)
+
+                    if state.isLoading {
+                        loadingContent
+                    } else if let error = state.error {
+                        ErrorContentView(
+                            message: error as String,
+                            onRetry: onRetry
+                        )
+                        .padding(.vertical, 60)
+                    } else if state.recommendations.isEmpty {
+                        completeContent
+                    } else {
+                        gapsContent
+                    }
+
+                    Spacer().frame(height: 95)
+                }
+                .padding(.horizontal, contentPadding)
+            }
+            .background(WornColors.bgPage)
+        }
+        .accessibilityIdentifier("gaps_screen")
     }
 
     // MARK: - Loading
@@ -130,8 +156,8 @@ struct GapsScreen: View {
             gapsBanner
                 .padding(.bottom, 20)
 
-            let grouped = Dictionary(grouping: viewModel.state.recommendations as! [GapRecommendation]) { $0.category }
-            let orderedKeys = (viewModel.state.recommendations as! [GapRecommendation]).map { $0.category }
+            let grouped = Dictionary(grouping: state.recommendations as! [GapRecommendation]) { $0.category }
+            let orderedKeys = (state.recommendations as! [GapRecommendation]).map { $0.category }
                 .reduce(into: [String]()) { if !$0.contains($1) { $0.append($1) } }
 
             ForEach(orderedKeys, id: \.self) { category in
@@ -152,14 +178,14 @@ struct GapsScreen: View {
 
     private var gapsBanner: some View {
         Button {
-            if !viewModel.state.isAiMode { showAiLockedSheet = true }
+            if !state.isAiMode { onBannerClick() }
         } label: {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(viewModel.state.isAiMode ? String(localized: "gaps_banner_ai_title") : String(localized: "gaps_banner_common_title"))
+                    Text(state.isAiMode ? String(localized: "gaps_banner_ai_title") : String(localized: "gaps_banner_common_title"))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white)
-                    Text(viewModel.state.isAiMode
+                    Text(state.isAiMode
                          ? String(localized: "gaps_banner_ai_subtitle")
                          : String(localized: "gaps_banner_common_subtitle"))
                         .font(.system(size: 13))
@@ -171,7 +197,7 @@ struct GapsScreen: View {
                     .foregroundColor(.white.opacity(0.7))
             }
             .padding(16)
-            .background(viewModel.state.isAiMode ? WornColors.accentGreen : WornColors.accentGreenDark)
+            .background(state.isAiMode ? WornColors.accentGreen : WornColors.accentGreenDark)
             .clipShape(RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
@@ -187,7 +213,7 @@ struct GapsScreen: View {
 
     private func gapCard(recommendation: GapRecommendation) -> some View {
         Button {
-            selectedGap = recommendation
+            onGapClick(recommendation)
         } label: {
             HStack(spacing: 12) {
                 categoryIcon(for: recommendation.mappedCategory)
@@ -195,7 +221,7 @@ struct GapsScreen: View {
                     Text(recommendation.itemName)
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(WornColors.textPrimary)
-                    Text(viewModel.state.isAiMode
+                    Text(state.isAiMode
                          ? String(format: String(localized: "gaps_pairing_ai"), recommendation.pairingCount)
                          : String(localized: "gaps_pairing_common"))
                         .font(.system(size: 12))
@@ -213,7 +239,7 @@ struct GapsScreen: View {
         .buttonStyle(.plain)
     }
 
-    private func categoryIcon(for category: Category) -> some View {
+    private func categoryIcon(for category: Shared.Category) -> some View {
         RoundedRectangle(cornerRadius: 10)
             .fill(dotColor(for: category))
             .frame(width: 36, height: 36)
@@ -224,7 +250,7 @@ struct GapsScreen: View {
             )
     }
 
-    private func dotColor(for category: Category) -> Color {
+    private func dotColor(for category: Shared.Category) -> Color {
         switch category {
         case .top: return WornColors.categoryDotTop
         case .bottom: return WornColors.categoryDotBottom
@@ -235,7 +261,7 @@ struct GapsScreen: View {
         }
     }
 
-    private func iconName(for category: Category) -> String {
+    private func iconName(for category: Shared.Category) -> String {
         switch category {
         case .top: return "tshirt"
         case .bottom: return "ruler"
@@ -385,7 +411,7 @@ private struct GapDetailSheet: View {
         }
     }
 
-    private func dotColor(for category: Category) -> Color {
+    private func dotColor(for category: Shared.Category) -> Color {
         switch category {
         case .top: return WornColors.categoryDotTop
         case .bottom: return WornColors.categoryDotBottom
@@ -396,7 +422,7 @@ private struct GapDetailSheet: View {
         }
     }
 
-    private func iconName(for category: Category) -> String {
+    private func iconName(for category: Shared.Category) -> String {
         switch category {
         case .top: return "tshirt"
         case .bottom: return "ruler"
@@ -407,7 +433,7 @@ private struct GapDetailSheet: View {
         }
     }
 
-    private func displayLabel(for category: Category) -> String {
+    private func displayLabel(for category: Shared.Category) -> String {
         switch category {
         case .top: return String(localized: "category_tops")
         case .bottom: return String(localized: "category_bottoms")
@@ -444,11 +470,45 @@ extension GapRecommendation {
     }
 }
 
+private let previewGaps: [GapRecommendation] = [
+    GapRecommendation(
+        itemName: "White Oxford Shirt", category: "Tops", pairingCount: 6,
+        subcategory: .dressShirt, colors: ["white"], seasons: [.spring, .fall],
+        fit: .regular, material: .cotton, mappedCategory: .top
+    ),
+    GapRecommendation(
+        itemName: "Chelsea Boots", category: "Shoes", pairingCount: 4,
+        subcategory: .bootsChelsea, colors: ["brown"], seasons: [.fall, .winter],
+        fit: nil, material: .leather, mappedCategory: .shoes
+    ),
+]
+
 #Preview("iPhone") {
-    GapsScreen(onTabSelected: { _ in })
+    GapsContent(
+        state: GapsState(
+            recommendations: previewGaps, isLoading: false,
+            isAiAvailable: true, isAiMode: true, error: nil
+        ),
+        isCompact: true
+    )
 }
 
-#Preview("iPad") {
-    GapsScreen(onTabSelected: { _ in })
-        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
+#Preview("iPhone - Complete") {
+    GapsContent(
+        state: GapsState(
+            recommendations: [], isLoading: false,
+            isAiAvailable: false, isAiMode: false, error: nil
+        ),
+        isCompact: true
+    )
+}
+
+#Preview("iPad Portrait", traits: .portrait) {
+    GapsContent(
+        state: GapsState(
+            recommendations: previewGaps, isLoading: false,
+            isAiAvailable: true, isAiMode: true, error: nil
+        ),
+        isCompact: false
+    )
 }

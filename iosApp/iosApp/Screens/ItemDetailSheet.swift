@@ -37,12 +37,12 @@ struct ItemDetailSheet: View {
         }
         .background(WornColors.bgElevated)
         .accessibilityIdentifier("item_detail_sheet")
-        .alert(String(localized: "item_detail_delete_dialog_title"), isPresented: $showDeleteAlert) {
-            Button(String(localized: "common_cancel"), role: .cancel) {}
-            Button(String(localized: "common_delete"), role: .destructive) { onDelete(item.id) }
-        } message: {
-            Text(String(format: String(localized: "item_detail_delete_dialog_message"), item.name))
-        }
+        .deleteConfirmationAlert(
+            title: String(localized: "item_detail_delete_dialog_title"),
+            message: String(format: String(localized: "item_detail_delete_dialog_message"), item.name),
+            isPresented: $showDeleteAlert,
+            onConfirm: { onDelete(item.id) }
+        )
     }
 
     private var photoArea: some View {
@@ -178,7 +178,7 @@ struct ItemDetailSheet: View {
         }
     }
 
-    private func dotColor(for category: Category) -> Color {
+    private func dotColor(for category: Shared.Category) -> Color {
         switch category {
         case .top: return WornColors.categoryDotTop
         case .bottom: return WornColors.categoryDotBottom
@@ -189,7 +189,7 @@ struct ItemDetailSheet: View {
         }
     }
 
-    private func displayLabel(for category: Category) -> String {
+    private func displayLabel(for category: Shared.Category) -> String {
         switch category {
         case .top: return String(localized: "category_tops")
         case .bottom: return String(localized: "category_bottoms")
@@ -212,7 +212,7 @@ struct ItemDetailSheet: View {
 
     private func fitDisplayName(_ fit: Fit) -> String {
         switch fit {
-        case .slimFit: return String(localized: "fit_slim_fit")
+        case .slimFit: return String(localized: "fit_slim")
         case .regular: return String(localized: "fit_regular")
         case .relaxed: return String(localized: "fit_relaxed")
         case .oversized: return String(localized: "fit_oversized")
@@ -225,7 +225,7 @@ struct ItemDetailSheet: View {
         return String(localized: String.LocalizationValue(key))
     }
 
-    private func materialDisplayName(_ material: Material) -> String {
+    private func materialDisplayName(_ material: Shared.Material) -> String {
         let key = "material_\(material.name.lowercased())"
         return String(localized: String.LocalizationValue(key))
     }
@@ -260,10 +260,9 @@ private let previewItem = ClothingItem(
     )
 }
 
-#Preview("iPad") {
+#Preview("iPad Portrait", traits: .portrait) {
     ItemDetailSheet(
         item: previewItem, isCompact: false,
         onEdit: { _ in }, onDelete: { _ in }
     )
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

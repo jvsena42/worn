@@ -98,15 +98,12 @@ struct OutfitsContent: View {
         }
         .background(WornColors.bgPage)
         .accessibilityIdentifier("outfits_screen")
-        .alert(
-            String(format: String(localized: "delete_outfits_title"), state.selectedIds.count),
-            isPresented: $showDeleteDialog
-        ) {
-            Button(String(localized: "common_cancel"), role: .cancel) {}
-            Button(String(localized: "common_delete"), role: .destructive) { onDeleteSelected() }
-        } message: {
-            Text(String(localized: "outfits_delete_dialog_message"))
-        }
+        .deleteConfirmationAlert(
+            title: String(format: String(localized: "delete_outfits_title"), state.selectedIds.count),
+            message: String(localized: "outfits_delete_dialog_message"),
+            isPresented: $showDeleteDialog,
+            onConfirm: onDeleteSelected
+        )
     }
 
     private var isEmpty: Bool { !state.isLoading && state.outfits.isEmpty }
@@ -244,7 +241,7 @@ private let outfitBadgeColors: [Color] = [
 
 private struct OutfitCardView: View {
     let outfit: Outfit
-    var itemCategories: [String: Category] = [:]
+    var itemCategories: [String: Shared.Category] = [:]
     var isSelected: Bool = false
     var isSelectionMode: Bool = false
 
@@ -290,7 +287,7 @@ private struct OutfitCardView: View {
         }
     }
 
-    private func itemThumbnail(for category: Category?) -> some View {
+    private func itemThumbnail(for category: Shared.Category?) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .fill(WornColors.bgElevated)
@@ -301,7 +298,7 @@ private struct OutfitCardView: View {
         }
     }
 
-    private func iconName(for category: Category?) -> String {
+    private func iconName(for category: Shared.Category?) -> String {
         switch category {
         case .top: return "tshirt"
         case .bottom: return "ruler"
@@ -356,37 +353,35 @@ private let previewOutfits: [Outfit] = [
 
 #Preview("iPhone") {
     OutfitsContent(
-        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
+        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], allClothingItems: [], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: true
     )
 }
 
 #Preview("iPhone - Selection") {
     OutfitsContent(
-        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(["1", "3"]), error: nil, itemCategories: [:], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
+        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(["1", "3"]), error: nil, itemCategories: [:], allClothingItems: [], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: true
     )
 }
 
 #Preview("iPhone - Empty") {
     OutfitsContent(
-        state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
+        state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], allClothingItems: [], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: true
     )
 }
 
-#Preview("iPad Portrait") {
+#Preview("iPad Portrait", traits: .portrait) {
     OutfitsContent(
-        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
+        state: OutfitState(outfits: previewOutfits, isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], allClothingItems: [], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: false
     )
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }
 
-#Preview("iPad - Empty") {
+#Preview("iPad Portrait - Empty", traits: .portrait) {
     OutfitsContent(
-        state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
+        state: OutfitState(outfits: [], isLoading: false, isDeleting: false, selectedIds: Set(), error: nil, itemCategories: [:], allClothingItems: [], clothingItems: [], selectedItemIds: Set(), activeItemCategory: nil, isSaving: false, isLoadingItems: false),
         isCompact: false
     )
-    .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }

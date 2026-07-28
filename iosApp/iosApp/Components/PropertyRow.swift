@@ -26,7 +26,7 @@ struct PropertyRow: View {
     .padding()
 }
 
-#Preview("iPad", traits: .landscapeLeft) {
+#Preview("iPad Portrait", traits: .portrait) {
     VStack(spacing: 12) {
         PropertyRow(label: "Season", value: "Summer")
         PropertyRow(label: "Fit", value: "Regular")

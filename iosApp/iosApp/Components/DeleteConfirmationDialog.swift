@@ -45,7 +45,7 @@ extension View {
         )
 }
 
-#Preview("iPad") {
+#Preview("iPad Portrait", traits: .portrait) {
     Color.clear
         .deleteConfirmationAlert(
             title: "Delete 3 items?",
@@ -53,5 +53,4 @@ extension View {
             isPresented: .constant(true),
             onConfirm: {}
         )
-        .previewDevice(PreviewDevice(rawValue: "iPad Pro (11-inch)"))
 }
