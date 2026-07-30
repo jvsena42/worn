@@ -1,6 +1,17 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
+}
+
+// Read through providers.fileContents so the configuration cache tracks local.properties as an
+// input. A plain File.inputStream() read at configuration time is untracked, so editing the file
+// would leave a stale cached configuration behind.
+val localProperties = Properties().apply {
+    providers.fileContents(
+        rootProject.layout.projectDirectory.file("local.properties")
+    ).asText.orNull?.let { load(it.reader()) }
 }
 
 android {
@@ -19,8 +30,21 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    signingConfigs {
+        // Absent on CI and on machines without a keystore, where release builds stay unsigned.
+        val keystoreFile = localProperties["KEYSTORE_FILE"] as? String
+        if (keystoreFile != null) {
+            create("release") {
+                storeFile = file(keystoreFile)
+                storePassword = localProperties["KEYSTORE_PASSWORD"] as String
+                keyAlias = localProperties["KEY_ALIAS"] as String
+                keyPassword = localProperties["KEY_PASSWORD"] as String
+            }
+        }
+    }
     buildTypes {
         getByName("release") {
+            signingConfigs.findByName("release")?.let { signingConfig = it }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
