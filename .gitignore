@@ -1,19 +1,76 @@
-*.iml
-.kotlin
+# Gradle
 .gradle
+.gradle/
+build/
 **/build/
-xcuserdata
 !src/**/build/
+/gradle/gradle-daemon-jvm.properties
+
+# Kotlin
+.kotlin
+.kotlin_cache/
+kotlinc/
+kotlin-tooling-box/
+
+# Local configuration (sdk path, secrets, etc)
 local.properties
+
+# Build outputs
+# Scoped to module roots (e.g. composeApp/release/ from the signed-APK wizard) so it
+# never shadows an Android variant source set such as composeApp/src/release/.
+/*/release/
+*.apk
+*.aab
+*.dm
+output.json
+output-metadata.json
+
+# Android Studio generated files and folders
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Profiling
+*.hprof
+
+# Keystore files
+*.jks
+*.keystore
+
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# IntelliJ / Android Studio
 .idea
-.DS_Store
-captures
-.externalNativeBuild
-.cxx
+*.iml
+*.iws
+*.pid
+
+# Other editors
+.vscode/
+
+# Claude Code local (machine-specific) settings; .claude/commands/ stays tracked
+.claude/settings.local.json
+
+# Xcode
+xcuserdata
+*.xcarchive
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
 !*.xcodeproj/project.xcworkspace/
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
+
+# Test results
+test-results/
+test-reports/
+
+# Node
 node_modules/
+
+# Log / OS / temporary files
+*.log
+*.tmp
+*.swp
+.DS_Store
