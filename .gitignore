@@ -5,11 +5,13 @@
 xcuserdata
 !src/**/build/
 local.properties
+output-metadata.json
 .idea
 .DS_Store
 captures
 .externalNativeBuild
 .cxx
+.dm
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
@@ -17,3 +19,14 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+
+# Android Studio generated files and folders
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+output.json
+
+# Keystore files
+*.jks
+*.keystore
