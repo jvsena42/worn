@@ -37,9 +37,11 @@ merge commit).
      two build numbers in lockstep. This xcconfig is the base configuration for both project-level
      build configs, so it covers the `iosApp` and `WornShareExtension` targets; the Info.plists
      carry no version keys (`GENERATE_INFOPLIST_FILE = YES`).
-   - `Config.xcconfig` is tracked in git and its `TEAM_ID` is intentionally empty. Change only the
-     two version lines, then check `git diff` shows nothing else — a locally filled `TEAM_ID` must
-     never be committed.
+   - `Config.xcconfig` is tracked in git and its `TEAM_ID` is intentionally empty — a locally
+     filled `TEAM_ID` must never be committed. Verify by inspecting **added lines only**:
+     `git diff | grep -E "^\+[^+]"` must show exactly the four version lines and nothing else.
+     Do not grep the whole diff: `TEAM_ID=` sits a few lines above the version block, so it always
+     appears as an unchanged context line and a naive grep aborts the release on every run.
    - Commit: `chore: bump version to <numeric_version>`.
 
 5. **Open the pull request**:
@@ -65,24 +67,36 @@ merge commit).
      APK is unsigned.
    - Copy it to `Worn-<numeric_version>.apk` in the repo root for upload (`*.apk` is gitignored).
 
-8. **Create git tag** on the merge commit now at the tip of `main`:
+8. **Generate changelog** (before tagging, so the user confirms the notes and the publish together):
+   - Find the previous tag: `git describe --tags --abbrev=0 HEAD` — the new tag does not exist yet,
+     so this returns the previous one. If no tag exists at all, use every commit.
+   - List commits since it: `git log <previous_tag>..HEAD --oneline --no-merges`.
+   - For a large range, group first: `git log <prev>..HEAD --no-merges --format="%s" | sed -E
+     's/^([a-z]+)(\(.*\))?:.*/\1/' | sort | uniq -c | sort -rn`, then read the `feat:` and `fix:`
+     subjects. Releases here can span ~90 commits, so summarize by theme rather than per commit.
+   - Write the changelog as a bullet list of user-facing changes (group related commits, skip
+     chore/CI/test/refactor commits — including this release's own version bump — and keep each
+     bullet to one sentence in English). Do not trust commit subjects blindly: some past commits
+     are mislabelled (two `fix: update changelog` commits only touched `.gitignore`).
+   - End with a full-changelog link:
+     `https://github.com/jvsena42/worn/compare/<previous_tag>...<version>`.
+
+9. **Confirm, then create the git tag** on the merge commit now at the tip of `main`:
+   - Show the user the changelog and state plainly that the next actions push a tag and publish a
+     **public** release. Get explicit approval before continuing.
    - `git tag -a <version> -m "Release <version>"`.
+   - Confirm it landed on the merge commit: `git rev-list -n1 <version>` should equal `main`'s tip.
    - `git push origin <version>` (tags push fine; only branch pushes to `main` are blocked).
 
-9. **Generate changelog**:
-   - Find the previous tag: `git describe --tags --abbrev=0 HEAD~1` (if no previous tag exists, use
-     all commits).
-   - List commits since the previous tag: `git log <previous_tag>..HEAD --oneline --no-merges`.
-   - Write a short changelog as a bullet-point list summarizing the user-facing changes (group
-     related commits, skip chore/CI-only commits — including this release's own version bump — and
-     keep each bullet to one sentence in English).
-   - Show the changelog to the user for approval before proceeding.
-
 10. **Create GitHub release**:
-    - Use `gh release create <version>` with the signed APK (`Worn-<numeric_version>.apk`) attached.
-    - Title: `Worn <version>`.
-    - Use the approved changelog as the release body (pass via `--notes`).
-    - Mark as latest release.
+    - Write the approved changelog to a temp file and pass it with `--notes-file` — `--notes` is
+      unwieldy for multi-line bodies.
+    - `gh release create <version> Worn-<numeric_version>.apk --title "Worn <version>"
+      --notes-file <file> --latest`.
+    - Verify it published as intended:
+      `gh release view <version> --json tagName,name,isDraft,isPrerelease,assets` and
+      `gh api repos/jvsena42/worn/releases/latest -q '.tag_name'`. Note there is no `isLatest`
+      JSON field — query the `releases/latest` endpoint instead.
 
 11. **Clean up and summarize**: Delete the temporary `Worn-<numeric_version>.apk` and the merged
     release branch (`git branch -d chore/version-<numeric_version>`), then print the release URL,
@@ -94,7 +108,13 @@ merge commit).
 - Abort immediately if any step fails.
 - Never commit or push directly to `main` — it is protected. The version bump always goes through
   the release branch and its PR.
-- Ask the user for confirmation before pushing the tag and creating the release.
+- Ask the user for confirmation before pushing the tag and creating the release (step 9).
+- Run `git commit`, `git push` and `gh pr create` as **separate** commands, never chained into one.
+  Chained, a declined or interrupted call can leave the commit and push already done while the PR
+  is missing, and the run then looks inconsistent. If a step seems to have half-run, re-check the
+  real state (`git log`, `git ls-remote --heads origin <branch>`, `gh pr list`) before redoing
+  anything — `git rev-parse @{u}` can fail on a branch that *was* pushed, when its remote-tracking
+  ref is simply not fetched yet.
 - Never skip detekt, the tests, or the APK signature verification.
 - Never print, log, or commit any value from `local.properties`, and never commit a real `TEAM_ID`.
   Refer to the signing constants by name only.
