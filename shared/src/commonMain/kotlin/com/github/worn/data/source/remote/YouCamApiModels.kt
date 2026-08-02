@@ -3,8 +3,9 @@ package com.github.worn.data.source.remote
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// Field names confirmed against live cloth-v3 responses. Note the wrapper differs by endpoint:
-// auth wraps its payload in "result", while file/task/poll wrap in "data".
+// Field names confirmed against live cloth-v3 responses. Note the wrapper differs by API *version*,
+// not by endpoint: v1.0 (auth) wraps its payload in "result", while the whole v2.0 family —
+// file/task/poll, for both cloth-v3 and shoes — wraps in "data".
 
 // Auth ------------------------------------------------------------------------------------------
 
@@ -53,11 +54,16 @@ internal data class YouCamFileResponse(@SerialName("data") val data: Payload) {
 
 // Task creation + polling -----------------------------------------------------------------------
 
+// `garment_category` is cloth-v3 only; `gender` and `style` are shoes only. The client's Json is
+// configured with `explicitNulls = false`, so the fields that don't apply are omitted entirely
+// rather than sent as nulls (which the endpoints reject).
 @Serializable
 internal data class YouCamTaskRequest(
     @SerialName("src_file_id") val srcFileId: String,
     @SerialName("ref_file_id") val refFileId: String,
     @SerialName("garment_category") val garmentCategory: String? = null,
+    val gender: String? = null,
+    val style: String? = null,
 )
 
 @Serializable

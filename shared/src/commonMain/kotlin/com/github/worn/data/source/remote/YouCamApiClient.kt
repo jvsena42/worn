@@ -17,6 +17,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.delay
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.json.Json
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
@@ -33,7 +34,12 @@ class YouCamApiClient(
     private val secretStore: SecretStore,
     private val rsaEncryptor: RsaEncryptor,
 ) {
-    private val json = Json { ignoreUnknownKeys = true }
+    private val json = Json {
+        ignoreUnknownKeys = true
+        // Keeps the category-specific task fields (`garment_category`, `gender`, `style`) out of the
+        // request body when they don't apply, instead of sending them as explicit nulls.
+        explicitNulls = false
+    }
 
     private var cachedToken: String? = null
     private var tokenExpiryMillis: Long = 0
@@ -44,7 +50,7 @@ class YouCamApiClient(
         category: GarmentCategory,
     ): ByteArray {
         val feature = category.feature()
-        log("tryOn: start category=$category feature=${feature.type}")
+        log("tryOn: start category=$category feature=$feature")
         val token = authenticate()
         val personFileId = uploadImage(token, feature, personBytes)
         val garmentFileId = uploadImage(token, feature, garmentBytes)
@@ -95,14 +101,14 @@ class YouCamApiClient(
             setBody(body)
         }
         ensureSuccess(response, "auth")
-        val token = json.decodeFromString<YouCamAuthResponse>(response.bodyAsText()).result.accessToken
+        val token = decode(YouCamAuthResponse.serializer(), response.bodyAsText(), "auth").result.accessToken
         log("auth: ok, requesting upload slots")
         return token
     }
 
-    private suspend fun uploadImage(token: String, feature: Feature, bytes: ByteArray): String {
-        log("upload: creating slot (${bytes.size}b) at /s2s/${feature.version}/file/${feature.type}")
-        val createResponse = request("$BASE_URL/s2s/${feature.version}/file/${feature.type}") {
+    private suspend fun uploadImage(token: String, feature: String, bytes: ByteArray): String {
+        log("upload: creating slot (${bytes.size}b) at /s2s/$API_VERSION/file/$feature")
+        val createResponse = request("$BASE_URL/s2s/$API_VERSION/file/$feature") {
             authorized(token)
             contentType(ContentType.Application.Json)
             setBody(
@@ -115,7 +121,7 @@ class YouCamApiClient(
             )
         }
         ensureSuccess(createResponse, "upload/create")
-        val entry = json.decodeFromString<YouCamFileResponse>(createResponse.bodyAsText())
+        val entry = decode(YouCamFileResponse.serializer(), createResponse.bodyAsText(), "upload/create")
             .data.files.firstOrNull() ?: error("Upload could not be prepared. Please try again.")
         val upload = entry.requests.firstOrNull() ?: error("Upload could not be prepared. Please try again.")
 
@@ -130,39 +136,35 @@ class YouCamApiClient(
 
     private suspend fun createTask(
         token: String,
-        feature: Feature,
+        feature: String,
         personFileId: String,
         garmentFileId: String,
         category: GarmentCategory,
     ): String {
-        val response = request("$BASE_URL/s2s/${feature.version}/task/${feature.type}") {
+        val response = request("$BASE_URL/s2s/$API_VERSION/task/$feature") {
             authorized(token)
             contentType(ContentType.Application.Json)
             setBody(
                 json.encodeToString(
                     YouCamTaskRequest.serializer(),
-                    YouCamTaskRequest(
-                        srcFileId = personFileId,
-                        refFileId = garmentFileId,
-                        garmentCategory = category.garmentCategory(),
-                    ),
+                    category.taskRequest(srcFileId = personFileId, refFileId = garmentFileId),
                 ),
             )
         }
         ensureSuccess(response, "task/create")
-        val taskId = json.decodeFromString<YouCamTaskResponse>(response.bodyAsText()).data.taskId
+        val taskId = decode(YouCamTaskResponse.serializer(), response.bodyAsText(), "task/create").data.taskId
         log("task: created")
         return taskId
     }
 
-    private suspend fun pollTask(token: String, feature: Feature, taskId: String): String {
+    private suspend fun pollTask(token: String, feature: String, taskId: String): String {
         repeat(MAX_POLL_ATTEMPTS) { attempt ->
             val response = request(
-                "$BASE_URL/s2s/${feature.version}/task/${feature.type}/$taskId",
+                "$BASE_URL/s2s/$API_VERSION/task/$feature/$taskId",
                 method = HttpMethod.GET,
             ) { authorized(token) }
             ensureSuccess(response, "task/poll")
-            val result = json.decodeFromString<YouCamPollResponse>(response.bodyAsText()).data
+            val result = decode(YouCamPollResponse.serializer(), response.bodyAsText(), "task/poll").data
             log("poll: attempt ${attempt + 1} status=${result.status}")
             when (result.status.lowercase()) {
                 STATUS_SUCCESS ->
@@ -217,26 +219,40 @@ class YouCamApiClient(
         error(message)
     }
 
+    /**
+     * Decodes a response body, turning a contract mismatch into a message a user can act on. Without
+     * this the raw [kotlinx.serialization.SerializationException] — which names the internal DTO
+     * class — would reach the UI. The body is logged so the real shape stays debuggable.
+     */
+    private fun <T> decode(serializer: DeserializationStrategy<T>, body: String, step: String): T =
+        runCatching { json.decodeFromString(serializer, body) }.getOrElse {
+            log("$step: decode failed: ${it.message} body=${body.take(BODY_PREVIEW_LEN)}")
+            error("YouCam returned an unexpected response. Please try again.")
+        }
+
     private fun log(message: String) {
         println("[$LOG_TAG] $message")
     }
 
     private enum class HttpMethod { GET, POST, PUT }
 
-    /** Which YouCam endpoint family serves a garment category. */
-    private data class Feature(val version: String, val type: String)
-
-    private fun GarmentCategory.feature(): Feature = when (this) {
-        GarmentCategory.TOP, GarmentCategory.BOTTOM, GarmentCategory.FULL_BODY ->
-            Feature(version = "v2.0", type = "cloth-v3")
-        GarmentCategory.SHOES -> Feature(version = "v1.0", type = "shoes")
+    /** Which YouCam feature serves a garment category. Both live under the same [API_VERSION]. */
+    private fun GarmentCategory.feature(): String = when (this) {
+        GarmentCategory.TOP, GarmentCategory.BOTTOM, GarmentCategory.FULL_BODY -> FEATURE_CLOTH
+        GarmentCategory.SHOES -> FEATURE_SHOES
     }
 
-    private fun GarmentCategory.garmentCategory(): String? = when (this) {
-        GarmentCategory.TOP -> "upper_body"
-        GarmentCategory.BOTTOM -> "lower_body"
-        GarmentCategory.FULL_BODY -> "full_body"
-        GarmentCategory.SHOES -> null
+    /** The two features take different task parameters; each set is spelled out here in one place. */
+    private fun GarmentCategory.taskRequest(srcFileId: String, refFileId: String) = when (this) {
+        GarmentCategory.SHOES -> YouCamTaskRequest(
+            srcFileId = srcFileId,
+            refFileId = refFileId,
+            gender = SHOES_GENDER,
+            style = SHOES_STYLE,
+        )
+        GarmentCategory.TOP -> YouCamTaskRequest(srcFileId, refFileId, garmentCategory = "upper_body")
+        GarmentCategory.BOTTOM -> YouCamTaskRequest(srcFileId, refFileId, garmentCategory = "lower_body")
+        GarmentCategory.FULL_BODY -> YouCamTaskRequest(srcFileId, refFileId, garmentCategory = "full_body")
     }
 
     private companion object {
@@ -244,6 +260,20 @@ class YouCamApiClient(
         const val BODY_PREVIEW_LEN = 300
         const val BASE_URL = "https://yce-api-01.perfectcorp.com"
         const val CONTENT_TYPE_JPEG = "image/jpeg"
+
+        // Try-on features. Both the clothes and the shoes families live under v2.0; only the auth
+        // handshake is still v1.0. Routing shoes to v1.0 returns a legacy `result`-wrapped body that
+        // none of the response DTOs can decode.
+        const val API_VERSION = "v2.0"
+        const val FEATURE_CLOTH = "cloth-v3"
+        const val FEATURE_SHOES = "shoes"
+
+        // Shoes-only task parameters. Worn is an app for men, so gender is pinned to "male" by
+        // product decision rather than exposed as a choice; style is left to the API's presets at
+        // random. Neither is threaded through the UI.
+        const val SHOES_GENDER = "male"
+        const val SHOES_STYLE = "random"
+
         const val TOKEN_TTL_MILLIS = 2 * 60 * 60 * 1000L
         const val TOKEN_REFRESH_MARGIN_MILLIS = 5 * 60 * 1000L
         const val POLL_INTERVAL_MILLIS = 2000L
