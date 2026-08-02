@@ -279,7 +279,7 @@ Server-to-server against `https://yce-api-01.perfectcorp.com`, from shared Kotli
 
 - **Auth is RSA, not a bearer secret.** The `id_token` is `client_id=<id>&timestamp=<ms>` encrypted with the user's public key under RSA/PKCS#1 v1.5, Base64'd. Access tokens are cached for their 2h TTL with a 5-minute refresh margin.
 - The `expect/actual` `RsaEncryptor` exists because the platforms disagree on key format: Android's `X509EncodedKeySpec` takes the X.509 SPKI key the portal issues, while iOS's `SecKeyCreateWithData` requires PKCS#1 — so the iOS actual walks the ASN.1 TLV structure to unwrap the inner `RSAPublicKey`.
-- **Endpoint family is routed by garment category**: `v2.0`/`cloth-v3` with `garment_category` = `upper_body`/`lower_body`/`full_body`, or `v1.0`/`shoes` (no garment category).
+- **The feature is routed by garment category**, both under `v2.0` (only auth is `v1.0`): `cloth-v3` with `garment_category` = `upper_body`/`lower_body`/`full_body`, or `shoes`, which takes no garment category and instead sends `gender` (always `male` by design — Worn is an app for men) and `style` (always `random`). Neither is user-facing.
 - Polling runs every 2s for up to 60 attempts; HTTP status codes map to user-actionable messages (401/403 credentials, 429 quota, 5xx service).
 
 See the README for the full walkthrough.
