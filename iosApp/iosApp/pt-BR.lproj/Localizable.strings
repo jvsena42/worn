@@ -231,14 +231,14 @@
 "subcategory_polo" = "Polo";
 "subcategory_dress_shirt" = "Camisa social";
 "subcategory_henley" = "Henley";
-"subcategory_sweater" = "Suéter";
-"subcategory_hoodie" = "Moletom";
 "subcategory_jeans" = "Jeans";
 "subcategory_chinos" = "Chinos";
 "subcategory_tailored_pants" = "Calça social";
 "subcategory_shorts" = "Bermuda";
 "subcategory_cargo_pants" = "Calça cargo";
 "subcategory_sweatpants" = "Calça de moletom";
+"subcategory_sweater" = "Suéter";
+"subcategory_hoodie" = "Moletom";
 "subcategory_bomber" = "Bomber";
 "subcategory_trucker" = "Trucker";
 "subcategory_puffer" = "Puffer";

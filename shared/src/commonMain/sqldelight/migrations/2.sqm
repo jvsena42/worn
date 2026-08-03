@@ -1,0 +1,1 @@
+UPDATE clothingItem SET category = 'OUTERWEAR' WHERE subcategory IN ('HOODIE', 'SWEATER');

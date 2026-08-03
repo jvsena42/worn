@@ -78,7 +78,7 @@ sqldelight {
     databases {
         create("WardrobeDatabase") {
             packageName.set("com.github.worn.data.source.local.db")
-            version = 2
+            version = 3
             srcDirs("src/commonMain/sqldelight")
         }
     }

@@ -234,14 +234,14 @@
     <string name="subcategory_polo">Polo</string>
     <string name="subcategory_dress_shirt">Dress shirt</string>
     <string name="subcategory_henley">Henley</string>
-    <string name="subcategory_sweater">Sweater</string>
-    <string name="subcategory_hoodie">Hoodie</string>
     <string name="subcategory_jeans">Jeans</string>
     <string name="subcategory_chinos">Chinos</string>
     <string name="subcategory_tailored_pants">Tailored pants</string>
     <string name="subcategory_shorts">Shorts</string>
     <string name="subcategory_cargo_pants">Cargo pants</string>
     <string name="subcategory_sweatpants">Sweatpants</string>
+    <string name="subcategory_sweater">Sweater</string>
+    <string name="subcategory_hoodie">Hoodie</string>
     <string name="subcategory_bomber">Bomber</string>
     <string name="subcategory_trucker">Trucker</string>
     <string name="subcategory_puffer">Puffer</string>

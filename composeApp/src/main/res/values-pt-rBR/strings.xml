@@ -234,14 +234,14 @@
     <string name="subcategory_polo">Polo</string>
     <string name="subcategory_dress_shirt">Camisa social</string>
     <string name="subcategory_henley">Henley</string>
-    <string name="subcategory_sweater">Suéter</string>
-    <string name="subcategory_hoodie">Moletom</string>
     <string name="subcategory_jeans">Jeans</string>
     <string name="subcategory_chinos">Chinos</string>
     <string name="subcategory_tailored_pants">Calça social</string>
     <string name="subcategory_shorts">Bermuda</string>
     <string name="subcategory_cargo_pants">Calça cargo</string>
     <string name="subcategory_sweatpants">Calça de moletom</string>
+    <string name="subcategory_sweater">Suéter</string>
+    <string name="subcategory_hoodie">Moletom</string>
     <string name="subcategory_bomber">Bomber</string>
     <string name="subcategory_trucker">Trucker</string>
     <string name="subcategory_puffer">Puffer</string>
