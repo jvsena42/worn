@@ -4,6 +4,7 @@ import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
 import com.github.worn.domain.model.Season
+import com.github.worn.domain.model.Subcategory
 
 fun clothingItem(
     id: String = "item-1",
@@ -13,6 +14,7 @@ fun clothingItem(
     seasons: List<Season> = listOf(Season.SUMMER),
     tags: List<String> = emptyList(),
     description: String? = null,
+    subcategory: Subcategory? = null,
     photoPath: String = "/photos/$id.jpg",
     createdAt: Long = 1_000_000L,
 ): ClothingItem = ClothingItem(
@@ -23,6 +25,7 @@ fun clothingItem(
     seasons = seasons,
     tags = tags,
     description = description,
+    subcategory = subcategory,
     photoPath = photoPath,
     createdAt = createdAt,
 )

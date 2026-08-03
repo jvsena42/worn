@@ -26,6 +26,13 @@ class FakeWardrobeRepository : WardrobeRepository {
     var updateItemError: Throwable? = null
     var observeAllError: Throwable? = null
 
+    var gapRecommendations: List<GapRecommendation> = emptyList()
+    var gapRecommendationsError: Throwable? = null
+
+    /** Lets tests assert that a wardrobe write never triggers a new (paid) AI call. */
+    var gapRecommendationCalls = 0
+        private set
+
     val deletedIds = mutableListOf<String>()
 
     fun addItems(vararg newItems: ClothingItem) {
@@ -65,6 +72,9 @@ class FakeWardrobeRepository : WardrobeRepository {
             category = category,
             colors = colors,
             seasons = seasons,
+            subcategory = subcategory,
+            fit = fit,
+            material = material,
             photoPath = "/photos/fake.jpg",
             createdAt = Clock.System.now().toEpochMilliseconds(),
         )
@@ -85,8 +95,10 @@ class FakeWardrobeRepository : WardrobeRepository {
         return Result.success(Unit)
     }
 
-    override suspend fun getGapRecommendations(): Result<List<GapRecommendation>> =
-        Result.success(emptyList())
+    override suspend fun getGapRecommendations(): Result<List<GapRecommendation>> {
+        gapRecommendationCalls++
+        return gapRecommendationsError?.let { Result.failure(it) } ?: Result.success(gapRecommendations)
+    }
 
     override suspend fun analyzeProspectiveItem(imageBytes: ByteArray): Result<TryItResult> =
         Result.success(
