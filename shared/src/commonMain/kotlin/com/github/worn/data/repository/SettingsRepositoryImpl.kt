@@ -18,8 +18,12 @@ import com.github.worn.data.source.ai.OnDeviceAiEngine
 import com.github.worn.data.source.local.PhotoFileStorage
 import com.github.worn.util.secret.SecretStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
@@ -31,6 +35,14 @@ class SettingsRepositoryImpl(
     private val onDeviceAi: OnDeviceAiEngine,
     private val dispatcher: CoroutineContext,
 ) : SettingsRepository {
+
+    /**
+     * Ticks on every credential write. The platform secret stores (Keystore, Keychain) have no
+     * change notification, so the flows below re-read through this instead of observing storage.
+     * One repository instance is shared app-wide (Koin `single`), which is what lets a write from
+     * the Settings screen reach a gate collected by another screen.
+     */
+    private val credentialRevision = MutableStateFlow(0)
 
     override fun getUserProfile(): Flow<UserProfile> = dataStore.data.map { prefs ->
         UserProfile(
@@ -142,11 +154,17 @@ class SettingsRepositoryImpl(
     }
 
     override suspend fun saveApiKey(key: String): Result<Unit> = runCatching {
-        withContext(dispatcher) { secretStore.saveApiKey(key) }
+        withContext(dispatcher) {
+            secretStore.saveApiKey(key)
+            notifyCredentialChange()
+        }
     }
 
     override suspend fun clearApiKey(): Result<Unit> = runCatching {
-        withContext(dispatcher) { secretStore.clearApiKey() }
+        withContext(dispatcher) {
+            secretStore.clearApiKey()
+            notifyCredentialChange()
+        }
     }
 
     override suspend fun hasYouCamCredentials(): Result<Boolean> = runCatching {
@@ -163,6 +181,7 @@ class SettingsRepositoryImpl(
         withContext(dispatcher) {
             secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_ID, clientId)
             secretStore.saveSecret(SecretStore.YOUCAM_CLIENT_SECRET, clientSecret)
+            notifyCredentialChange()
         }
     }
 
@@ -170,8 +189,20 @@ class SettingsRepositoryImpl(
         withContext(dispatcher) {
             secretStore.clearSecret(SecretStore.YOUCAM_CLIENT_ID)
             secretStore.clearSecret(SecretStore.YOUCAM_CLIENT_SECRET)
+            notifyCredentialChange()
         }
     }
+
+    override fun hasApiKeyFlow(): Flow<Boolean> = credentialRevision
+        .map { hasApiKey().getOrDefault(false) }
+        .distinctUntilChanged()
+
+    override fun hasYouCamCredentialsFlow(): Flow<Boolean> = credentialRevision
+        .map { hasYouCamCredentials().getOrDefault(false) }
+        .distinctUntilChanged()
+
+    /** Bumped after a successful write so the credential flows re-read the secret store. */
+    private fun notifyCredentialChange() = credentialRevision.update { it + 1 }
 
     override fun isOnDeviceAiEnabled(): Flow<Boolean> =
         dataStore.data.map { it[KEY_ON_DEVICE_AI] == true }
@@ -191,6 +222,12 @@ class SettingsRepositoryImpl(
         hasApiKey().getOrDefault(false) ||
             (isOnDeviceAiEnabled().first() && onDeviceAi.availability().isUsable)
     }
+
+    // Both inputs to isAiAvailable() are observable: the key through the revision tick, the
+    // on-device opt-in through DataStore. Availability itself is re-queried on each emission.
+    override fun isAiAvailableFlow(): Flow<Boolean> =
+        combine(credentialRevision, isOnDeviceAiEnabled()) { _, _ -> isAiAvailable().getOrDefault(false) }
+            .distinctUntilChanged()
 
     companion object {
         private val KEY_ON_DEVICE_AI = booleanPreferencesKey("on_device_ai_enabled")
