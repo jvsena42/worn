@@ -2,7 +2,9 @@ package com.github.worn.viewmodel
 
 import app.cash.turbine.test
 import com.github.worn.domain.model.Category
+import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.GapRecommendation
+import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.Subcategory
 import com.github.worn.domain.model.capsuleWardrobeSuggestions
@@ -239,4 +241,82 @@ class GapsViewModelTest {
 
     // endregion
 
+    // region AddItem
+
+    @Test
+    fun `AddItem forwards every field to the repository`() = runTest {
+        val vm = createViewModel()
+
+        vm.onIntent(
+            GapsIntent.AddItem(
+                imageBytes = byteArrayOf(1, 2, 3),
+                name = "Polo shirt",
+                category = Category.TOP,
+                colors = listOf("Black"),
+                seasons = listOf(Season.SUMMER),
+                subcategory = Subcategory.POLO,
+                fit = Fit.SLIM_FIT,
+                material = Material.COTTON,
+            ),
+        )
+
+        val saved = repository.items.value.single()
+        assertEquals("Polo shirt", saved.name)
+        assertEquals(Category.TOP, saved.category)
+        assertEquals(Subcategory.POLO, saved.subcategory)
+        assertEquals(Fit.SLIM_FIT, saved.fit)
+        assertEquals(Material.COTTON, saved.material)
+    }
+
+    @Test
+    fun `AddItem emits ItemAdded on success`() = runTest {
+        val vm = createViewModel()
+
+        vm.effects.test {
+            vm.onIntent(addPoloIntent())
+
+            assertIs<GapsEffect.ItemAdded>(awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+        assertFalse(vm.state.value.isSaving)
+    }
+
+    @Test
+    fun `AddItem failure emits ShowError and clears isSaving`() = runTest {
+        repository.addItemError = IllegalStateException("disk full")
+        val vm = createViewModel()
+
+        vm.effects.test {
+            vm.onIntent(addPoloIntent())
+
+            assertEquals("disk full", assertIs<GapsEffect.ShowError>(awaitItem()).message)
+            cancelAndIgnoreRemainingEvents()
+        }
+        assertFalse(vm.state.value.isSaving)
+    }
+
+    @Test
+    fun `adding the recommended item removes it from the suggestions`() = runTest {
+        val vm = createViewModel()
+
+        vm.state.test {
+            assertTrue(awaitItem().recommendations.any { it.subcategory == Subcategory.POLO })
+
+            vm.onIntent(addPoloIntent())
+
+            assertTrue(awaitItem().recommendations.none { it.subcategory == Subcategory.POLO })
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    private fun addPoloIntent() = GapsIntent.AddItem(
+        imageBytes = byteArrayOf(1),
+        name = "Polo shirt",
+        category = Category.TOP,
+        colors = listOf("Black"),
+        seasons = listOf(Season.SUMMER),
+        subcategory = Subcategory.POLO,
+    )
+
+    // endregion
 }

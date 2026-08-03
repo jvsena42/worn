@@ -2,7 +2,12 @@ package com.github.worn.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.worn.domain.model.Category
+import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.GapRecommendation
+import com.github.worn.domain.model.Material
+import com.github.worn.domain.model.Season
+import com.github.worn.domain.model.Subcategory
 import com.github.worn.domain.model.capsuleWardrobeSuggestions
 import com.github.worn.domain.model.excludingOwned
 import com.github.worn.domain.repository.SettingsRepository
@@ -21,11 +26,22 @@ import kotlinx.coroutines.launch
 
 sealed interface GapsIntent {
     data object LoadGaps : GapsIntent
+    data class AddItem(
+        val imageBytes: ByteArray,
+        val name: String,
+        val category: Category,
+        val colors: List<String>,
+        val seasons: List<Season>,
+        val subcategory: Subcategory? = null,
+        val fit: Fit? = null,
+        val material: Material? = null,
+    ) : GapsIntent
 }
 
 data class GapsState(
     val recommendations: List<GapRecommendation> = emptyList(),
     val isLoading: Boolean = false,
+    val isSaving: Boolean = false,
     /** A Claude key is configured, or on-device AI is enabled and available. */
     val isAiAvailable: Boolean = false,
     val isAiMode: Boolean = false,
@@ -34,6 +50,7 @@ data class GapsState(
 
 sealed interface GapsEffect {
     data class ShowError(val message: String) : GapsEffect
+    data object ItemAdded : GapsEffect
 }
 
 /**
@@ -45,6 +62,7 @@ sealed interface GapsEffect {
 private data class GapsUiState(
     val aiRecommendations: List<GapRecommendation> = emptyList(),
     val isLoading: Boolean = true,
+    val isSaving: Boolean = false,
     val isAiAvailable: Boolean = false,
     val isAiMode: Boolean = false,
     val error: String? = null,
@@ -80,6 +98,7 @@ class GapsViewModel(
         GapsState(
             recommendations = source.excludingOwned(items),
             isLoading = ui.isLoading,
+            isSaving = ui.isSaving,
             isAiAvailable = ui.isAiAvailable,
             isAiMode = ui.isAiMode,
             error = ui.error,
@@ -109,6 +128,7 @@ class GapsViewModel(
     fun onIntent(intent: GapsIntent) {
         when (intent) {
             is GapsIntent.LoadGaps -> retry()
+            is GapsIntent.AddItem -> addItem(intent)
         }
     }
 
@@ -140,8 +160,35 @@ class GapsViewModel(
             }
     }
 
+    /**
+     * Saved through the same repository the Wardrobe tab uses, so the new item lands in the DB and
+     * the stream above drops its suggestion — no explicit refresh anywhere.
+     */
+    private fun addItem(intent: GapsIntent.AddItem) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSaving = true) }
+            wardrobeRepository.addItem(
+                imageBytes = intent.imageBytes,
+                name = intent.name,
+                category = intent.category,
+                colors = intent.colors,
+                seasons = intent.seasons,
+                subcategory = intent.subcategory,
+                fit = intent.fit,
+                material = intent.material,
+            ).onSuccess {
+                _uiState.update { it.copy(isSaving = false) }
+                _effects.send(GapsEffect.ItemAdded)
+            }.onFailure { error ->
+                _uiState.update { it.copy(isSaving = false) }
+                _effects.send(GapsEffect.ShowError(error.message ?: SAVE_ERROR))
+            }
+        }
+    }
+
     private companion object {
         const val UNKNOWN_ERROR = "Unknown error"
         const val RECOMMENDATIONS_ERROR = "Failed to load recommendations"
+        const val SAVE_ERROR = "Failed to save"
     }
 }

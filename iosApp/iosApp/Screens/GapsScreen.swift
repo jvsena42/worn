@@ -45,12 +45,33 @@ struct GapsScreen: View {
         .sheet(isPresented: $showAddItemSheet) {
             if let gap = addItemPreFill {
                 AddItemSheet(
-                    isSaving: false,
+                    isSaving: viewModel.state.isSaving,
                     isAiAvailable: viewModel.state.isAiAvailable,
-                    existingItem: gap.toPreFilledItem(),
-                    onSave: { _, _, _, _, _, _, _, _ in showAddItemSheet = false },
-                    onDismiss: { showAddItemSheet = false }
+                    prefillItem: gap.toPreFilledItem(),
+                    onSave: { data, name, category, colors, seasons, subcategory, fit, material in
+                        viewModel.addItem(
+                            imageData: data,
+                            name: name,
+                            category: category,
+                            colors: colors,
+                            seasons: seasons,
+                            subcategory: subcategory,
+                            fit: fit,
+                            material: material
+                        )
+                    },
+                    onDismiss: {
+                        showAddItemSheet = false
+                        addItemPreFill = nil
+                    }
                 )
+            }
+        }
+        .onChange(of: viewModel.itemAdded) { _, added in
+            if added {
+                showAddItemSheet = false
+                addItemPreFill = nil
+                viewModel.itemAdded = false
             }
         }
     }
@@ -486,7 +507,7 @@ private let previewGaps: [GapRecommendation] = [
 #Preview("iPhone") {
     GapsContent(
         state: GapsState(
-            recommendations: previewGaps, isLoading: false,
+            recommendations: previewGaps, isLoading: false, isSaving: false,
             isAiAvailable: true, isAiMode: true, error: nil
         ),
         isCompact: true
@@ -496,7 +517,7 @@ private let previewGaps: [GapRecommendation] = [
 #Preview("iPhone - Complete") {
     GapsContent(
         state: GapsState(
-            recommendations: [], isLoading: false,
+            recommendations: [], isLoading: false, isSaving: false,
             isAiAvailable: false, isAiMode: false, error: nil
         ),
         isCompact: true
@@ -506,7 +527,7 @@ private let previewGaps: [GapRecommendation] = [
 #Preview("iPad Portrait", traits: .portrait) {
     GapsContent(
         state: GapsState(
-            recommendations: previewGaps, isLoading: false,
+            recommendations: previewGaps, isLoading: false, isSaving: false,
             isAiAvailable: true, isAiMode: true, error: nil
         ),
         isCompact: false

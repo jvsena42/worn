@@ -6,6 +6,10 @@ struct AddItemSheet: View {
     let isSaving: Bool
     let isAiAvailable: Bool
     var existingItem: ClothingItem?
+    /// Seed values for a *new* item, e.g. a Gaps suggestion. Unlike `existingItem` it does not put
+    /// the sheet in editing mode: a photo is still required and the button still says "Save to
+    /// wardrobe", because nothing has been stored yet.
+    var prefillItem: ClothingItem?
     let onSave: (Data, String, Shared.Category, [String], [Season], Subcategory?, Fit?, Shared.Material?) -> Void
     let onDismiss: () -> Void
 
@@ -124,7 +128,9 @@ struct AddItemSheet: View {
                 }
             }
             .onAppear {
-                if let item = existingItem, !didInitFromExisting {
+                // A prefill seeds the same fields; only a stored item has a photo on disk, which
+                // the `photoPath` check below already accounts for.
+                if let item = existingItem ?? prefillItem, !didInitFromExisting {
                     didInitFromExisting = true
                     name = item.name
                     selectedCategory = item.category
