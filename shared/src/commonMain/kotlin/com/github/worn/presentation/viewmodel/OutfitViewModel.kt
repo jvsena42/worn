@@ -152,7 +152,8 @@ class OutfitViewModel(
 
     private fun createOutfit(name: String) {
         val itemIds = state.value.selectedItemIds.toList()
-        if (name.isBlank() || itemIds.isEmpty()) return
+        // A blank name is allowed: the repository names the outfit after its items instead.
+        if (itemIds.isEmpty()) return
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
             repository.createOutfit(name = name, itemIds = itemIds)

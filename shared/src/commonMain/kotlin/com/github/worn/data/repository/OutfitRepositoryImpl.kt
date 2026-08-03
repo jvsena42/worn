@@ -13,6 +13,9 @@ import kotlin.time.Clock
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+/** Joins item names into an outfit's default name, e.g. `Black T-Shirt + Navy Jeans`. */
+private const val NAME_SEPARATOR = " + "
+
 @OptIn(ExperimentalUuidApi::class)
 class OutfitRepositoryImpl(
     private val db: WardrobeDatabase,
@@ -44,29 +47,47 @@ class OutfitRepositoryImpl(
             withContext(dispatcher) {
                 val id = Uuid.random().toString()
                 val createdAt = Clock.System.now().toEpochMilliseconds()
+                val resolvedName = resolveName(name, itemIds)
 
                 db.transaction {
-                    db.outfitQueries.insert(id = id, name = name, createdAt = createdAt)
+                    db.outfitQueries.insert(id = id, name = resolvedName, createdAt = createdAt)
                     itemIds.forEach { itemId ->
                         db.outfitItemQueries.insertItem(outfitId = id, itemId = itemId)
                     }
                 }
 
-                Outfit(id = id, name = name, itemIds = itemIds, createdAt = createdAt)
+                Outfit(id = id, name = resolvedName, itemIds = itemIds, createdAt = createdAt)
             }
         }
 
     override suspend fun updateOutfit(outfit: Outfit): Result<Outfit> = runCatching {
         withContext(dispatcher) {
+            val resolved = outfit.copy(name = resolveName(outfit.name, outfit.itemIds))
             db.transaction {
-                db.outfitQueries.update(name = outfit.name, id = outfit.id)
-                db.outfitItemQueries.deleteAllForOutfit(outfit.id)
-                outfit.itemIds.forEach { itemId ->
-                    db.outfitItemQueries.insertItem(outfitId = outfit.id, itemId = itemId)
+                db.outfitQueries.update(name = resolved.name, id = resolved.id)
+                db.outfitItemQueries.deleteAllForOutfit(resolved.id)
+                resolved.itemIds.forEach { itemId ->
+                    db.outfitItemQueries.insertItem(outfitId = resolved.id, itemId = itemId)
                 }
             }
-            outfit
+            resolved
         }
+    }
+
+    /**
+     * Falls back to the outfit's item names joined by [NAME_SEPARATOR] when the user left the name
+     * empty, so every outfit ends up with something readable in the list.
+     */
+    private fun resolveName(name: String, itemIds: List<String>): String =
+        name.ifBlank { defaultName(itemIds) }.trim()
+
+    private fun defaultName(itemIds: List<String>): String {
+        if (itemIds.isEmpty()) return ""
+        val namesById = db.clothingItemQueries
+            .getNamesByIds(itemIds) { id, name -> id to name }
+            .executeAsList()
+            .toMap()
+        return itemIds.mapNotNull { namesById[it] }.joinToString(NAME_SEPARATOR)
     }
 
     override suspend fun deleteOutfit(id: String): Result<Unit> = runCatching {

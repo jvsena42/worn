@@ -203,6 +203,30 @@ class OutfitViewModelTest {
     }
 
     @Test
+    fun `CreateOutfit with blank name still reaches the repository`() = runTest {
+        val vm = createViewModel()
+
+        vm.onIntent(OutfitIntent.ToggleItemSelection("item-1"))
+
+        vm.effects.test {
+            vm.onIntent(OutfitIntent.CreateOutfit("  "))
+
+            assertIs<OutfitEffect.OutfitCreated>(awaitItem())
+        }
+        assertEquals(1, outfitRepository.outfits.value.size)
+    }
+
+    @Test
+    fun `CreateOutfit without selected items does nothing`() = runTest {
+        val vm = createViewModel()
+
+        vm.onIntent(OutfitIntent.CreateOutfit("Weekend Casual"))
+
+        assertTrue(outfitRepository.outfits.value.isEmpty())
+        assertFalse(vm.state.value.isSaving)
+    }
+
+    @Test
     fun `CreateOutfit failure sends ShowError`() = runTest {
         val vm = createViewModel()
 
