@@ -5,9 +5,8 @@ enum class Subcategory {
     T_SHIRT,
     POLO,
     DRESS_SHIRT,
+    LONG_SLEEVE_SHIRT,
     HENLEY,
-    SWEATER,
-    HOODIE,
 
     // BOTTOM
     JEANS,
@@ -18,6 +17,8 @@ enum class Subcategory {
     SWEATPANTS,
 
     // OUTERWEAR
+    SWEATER,
+    HOODIE,
     BOMBER,
     TRUCKER,
     PUFFER,
@@ -48,9 +49,8 @@ fun subcategoriesFor(category: Category): List<Subcategory> = when (category) {
         Subcategory.T_SHIRT,
         Subcategory.POLO,
         Subcategory.DRESS_SHIRT,
+        Subcategory.LONG_SLEEVE_SHIRT,
         Subcategory.HENLEY,
-        Subcategory.SWEATER,
-        Subcategory.HOODIE,
     )
     Category.BOTTOM -> listOf(
         Subcategory.JEANS,
@@ -61,6 +61,8 @@ fun subcategoriesFor(category: Category): List<Subcategory> = when (category) {
         Subcategory.SWEATPANTS,
     )
     Category.OUTERWEAR -> listOf(
+        Subcategory.SWEATER,
+        Subcategory.HOODIE,
         Subcategory.BOMBER,
         Subcategory.TRUCKER,
         Subcategory.PUFFER,
