@@ -543,6 +543,7 @@ internal fun Subcategory.displayName(): String = stringResource(
         Subcategory.T_SHIRT -> R.string.subcategory_t_shirt
         Subcategory.POLO -> R.string.subcategory_polo
         Subcategory.DRESS_SHIRT -> R.string.subcategory_dress_shirt
+        Subcategory.LONG_SLEEVE_SHIRT -> R.string.subcategory_long_sleeve_shirt
         Subcategory.HENLEY -> R.string.subcategory_henley
         Subcategory.JEANS -> R.string.subcategory_jeans
         Subcategory.CHINOS -> R.string.subcategory_chinos

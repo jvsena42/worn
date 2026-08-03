@@ -5,6 +5,7 @@ enum class Subcategory {
     T_SHIRT,
     POLO,
     DRESS_SHIRT,
+    LONG_SLEEVE_SHIRT,
     HENLEY,
 
     // BOTTOM
@@ -48,6 +49,7 @@ fun subcategoriesFor(category: Category): List<Subcategory> = when (category) {
         Subcategory.T_SHIRT,
         Subcategory.POLO,
         Subcategory.DRESS_SHIRT,
+        Subcategory.LONG_SLEEVE_SHIRT,
         Subcategory.HENLEY,
     )
     Category.BOTTOM -> listOf(
