@@ -69,6 +69,38 @@ class TryItViewModelTest {
     }
 
     @Test
+    fun `YouCam credentials saved after construction unlock the screen without a restart`() {
+        val vm = createViewModel()
+        assertFalse(vm.state.value.hasYouCamKey)
+
+        settings.youCamClientId = "id"
+        settings.youCamClientSecret = "secret"
+
+        assertTrue(vm.state.value.hasYouCamKey)
+    }
+
+    @Test
+    fun `clearing YouCam credentials after construction re-locks the screen`() {
+        settings.youCamClientId = "id"
+        settings.youCamClientSecret = "secret"
+        val vm = createViewModel()
+
+        settings.youCamClientSecret = null
+
+        assertFalse(vm.state.value.hasYouCamKey)
+    }
+
+    @Test
+    fun `a Claude key saved after construction unlocks analysis without a restart`() {
+        val vm = createViewModel()
+        assertFalse(vm.state.value.hasApiKey)
+
+        settings.apiKey = "test-key"
+
+        assertTrue(vm.state.value.hasApiKey)
+    }
+
+    @Test
     fun `init loads the saved person photo`() {
         settings.modelPhoto.value = byteArrayOf(1, 2)
         val vm = createViewModel()

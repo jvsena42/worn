@@ -45,10 +45,13 @@ class GapsViewModel(
 
     init {
         // Resolve the provider before branching, and off the main thread — see SettingsRepository.
+        // Collected, not read once: adding a key on Settings has to switch this screen over to AI
+        // recommendations without a restart, which means recomputing the gaps too.
         viewModelScope.launch {
-            val hasAi = settingsRepository.isAiAvailable().getOrDefault(false)
-            _state.update { it.copy(isAiAvailable = hasAi, isAiMode = hasAi) }
-            loadGaps()
+            settingsRepository.isAiAvailableFlow().collect { hasAi ->
+                _state.update { it.copy(isAiAvailable = hasAi, isAiMode = hasAi) }
+                loadGaps()
+            }
         }
     }
 

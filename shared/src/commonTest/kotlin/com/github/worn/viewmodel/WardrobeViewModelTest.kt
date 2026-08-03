@@ -57,6 +57,16 @@ class WardrobeViewModelTest {
     }
 
     @Test
+    fun `a Claude key saved after construction flips isAiAvailable without a restart`() {
+        val vm = createViewModel()
+        assertFalse(vm.state.value.isAiAvailable)
+
+        settingsRepository.apiKey = "test-key"
+
+        assertTrue(vm.state.value.isAiAvailable)
+    }
+
+    @Test
     fun `init sets isAiAvailable false when there is no provider at all`() {
         settingsRepository.apiKey = null
         val vm = createViewModel()

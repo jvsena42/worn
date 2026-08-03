@@ -94,13 +94,15 @@ class WardrobeViewModel(
     }.stateIn(viewModelScope, SharingStarted.Eagerly, WardrobeState(isLoading = true))
 
     init {
-        refreshAiAvailability()
+        observeAiAvailability()
     }
 
-    private fun refreshAiAvailability() {
+    /** Collected rather than read once: a key added on Settings must unlock this screen live. */
+    private fun observeAiAvailability() {
         viewModelScope.launch {
-            val isAiAvailable = settingsRepository.isAiAvailable().getOrDefault(false)
-            _uiState.update { it.copy(isAiAvailable = isAiAvailable) }
+            settingsRepository.isAiAvailableFlow().collect { isAiAvailable ->
+                _uiState.update { it.copy(isAiAvailable = isAiAvailable) }
+            }
         }
     }
 

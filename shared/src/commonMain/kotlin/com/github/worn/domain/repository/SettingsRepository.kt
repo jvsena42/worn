@@ -32,6 +32,12 @@ interface SettingsRepository {
     suspend fun saveYouCamCredentials(clientId: String, clientSecret: String): Result<Unit>
     suspend fun clearYouCamCredentials(): Result<Unit>
 
+    // Observable counterparts of the credential checks above. Both platforms keep every tab's
+    // screen alive, so a ViewModel that read its gate once at construction would still show the
+    // locked state after the user entered a key on Settings. Screens collect these instead.
+    fun hasApiKeyFlow(): Flow<Boolean>
+    fun hasYouCamCredentialsFlow(): Flow<Boolean>
+
     /** Whether the user has opted into running AI on the device instead of calling Claude. */
     fun isOnDeviceAiEnabled(): Flow<Boolean>
     suspend fun setOnDeviceAiEnabled(enabled: Boolean): Result<Unit>
@@ -44,4 +50,7 @@ interface SettingsRepository {
      * is both enabled and available. Gates the AI features in Wardrobe and Gaps.
      */
     suspend fun isAiAvailable(): Result<Boolean>
+
+    /** Observable [isAiAvailable], for the same reason as [hasApiKeyFlow]. */
+    fun isAiAvailableFlow(): Flow<Boolean>
 }

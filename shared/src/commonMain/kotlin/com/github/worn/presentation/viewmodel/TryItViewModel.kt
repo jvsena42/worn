@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -65,7 +66,7 @@ class TryItViewModel(
     val effects: Flow<TryItEffect> = _effects.receiveAsFlow()
 
     init {
-        viewModelScope.launch { loadCredentialState() }
+        observeCredentials()
         viewModelScope.launch {
             settingsRepository.getModelPhoto().onSuccess { bytes ->
                 _state.update { it.copy(personImage = bytes) }
@@ -94,8 +95,25 @@ class TryItViewModel(
     }
 
     /**
+     * Keys are entered on the Settings screen while this ViewModel stays alive — both platforms
+     * keep every tab's screen in memory — so the gate has to follow the credentials rather than
+     * sample them once at construction.
+     */
+    private fun observeCredentials() {
+        viewModelScope.launch {
+            combine(
+                settingsRepository.hasApiKeyFlow(),
+                settingsRepository.hasYouCamCredentialsFlow(),
+                ::Pair,
+            ).collect { (hasApiKey, hasYouCamKey) ->
+                _state.update { it.copy(hasApiKey = hasApiKey, hasYouCamKey = hasYouCamKey) }
+            }
+        }
+    }
+
+    /**
      * Reads both credential flags into state and returns them, so callers that need to branch on
-     * them do not race the [init] load.
+     * them do not race the [observeCredentials] collector's first emission.
      */
     private suspend fun loadCredentialState(): Pair<Boolean, Boolean> {
         val hasApiKey = settingsRepository.hasApiKey().getOrDefault(false)
