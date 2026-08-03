@@ -310,6 +310,11 @@ struct AddItemSheet: View {
                     let (category, label) = item
                     Button {
                         selectedCategory = category
+                        // Mirrors AddItemSheet.kt: the old subcategory is not offered by the new
+                        // category, and a stale one (e.g. BOTTOM + POLO) would wrongly suppress a
+                        // gap suggestion. Done here rather than in `.onChange(of: selectedCategory)`,
+                        // which would also fire while seeding from existingItem/prefillItem.
+                        selectedSubcategory = nil
                         withAnimation { categoryExpanded = false }
                     } label: {
                         HStack(spacing: 12) {
