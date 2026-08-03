@@ -1,0 +1,36 @@
+<journey name="Gaps add suggestion">
+    <description>
+        Verifies that "Add to Wardrobe" on a common suggestion opens the add-item sheet pre-filled
+        with that suggestion, in add mode rather than edit mode. Stops before the photo, which is
+        external input. Start state: fresh install with no API key configured.
+    </description>
+    <actions>
+        <action>
+            Tap the "GAPS" tab in the bottom navigation bar.
+        </action>
+        <action>
+            Verify the Gaps screen shows the "What's missing" heading and a "Polo shirt" suggestion
+            card.
+        </action>
+        <action>
+            Tap the "Polo shirt" suggestion card.
+        </action>
+        <action>
+            Verify the suggestion detail sheet is shown with an "Add to Wardrobe" button.
+        </action>
+        <action>
+            Tap the "Add to Wardrobe" button.
+        </action>
+        <action>
+            Verify the add-item sheet is shown with the "Add new item" title — not "Edit item" —
+            and the name field pre-filled with "Polo shirt".
+        </action>
+        <action>
+            Verify the category is pre-selected as "Tops" and the subcategory as "Polo".
+        </action>
+        <action>
+            Verify the save button reads "Save to wardrobe" — not "Save Changes" — and is disabled,
+            because no photo has been chosen yet.
+        </action>
+    </actions>
+</journey>

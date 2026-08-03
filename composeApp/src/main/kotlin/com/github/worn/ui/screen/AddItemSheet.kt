@@ -88,6 +88,7 @@ fun AddItemSheet(
     isSaving: Boolean,
     isAiAvailable: Boolean,
     existingItem: ClothingItem? = null,
+    prefillItem: ClothingItem? = null,
     onSave: (
         imageBytes: ByteArray, name: String, category: Category,
         colors: List<String>, seasons: List<Season>,
@@ -108,6 +109,7 @@ fun AddItemSheet(
             isSaving = isSaving,
             isAiAvailable = isAiAvailable,
             existingItem = existingItem,
+            prefillItem = prefillItem,
             onSave = onSave,
         )
     }
@@ -118,10 +120,16 @@ internal fun AddItemForm(
     isSaving: Boolean = false,
     isAiAvailable: Boolean = false,
     existingItem: ClothingItem? = null,
+    /**
+     * Seed values for a *new* item, e.g. a Gaps suggestion. Unlike [existingItem] it does not put
+     * the sheet in editing mode: a photo is still required and the button still says "Save to
+     * wardrobe", because nothing has been stored yet.
+     */
+    prefillItem: ClothingItem? = null,
     onSave: (ByteArray, String, Category, List<String>, List<Season>, Subcategory?, Fit?, Material?) -> Unit =
         { _, _, _, _, _, _, _, _ -> },
 ) {
-    val formState = rememberAddItemFormState(existingItem)
+    val formState = rememberAddItemFormState(existingItem, prefillItem)
     val backgroundRemover = koinInject<BackgroundRemover>()
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -248,9 +256,13 @@ private class AddItemFormState(existingItem: ClothingItem?) {
 }
 
 @Composable
-private fun rememberAddItemFormState(existingItem: ClothingItem?): AddItemFormState {
+private fun rememberAddItemFormState(
+    existingItem: ClothingItem?,
+    prefillItem: ClothingItem?,
+): AddItemFormState {
+    // Only a stored item has a photo on disk; a prefill's photoPath is empty by construction.
     val existingPhotoBitmap = rememberDecodedImage(existingItem?.photoPath)
-    val formState = remember { AddItemFormState(existingItem) }
+    val formState = remember { AddItemFormState(existingItem ?: prefillItem) }
     formState.existingPhotoBitmap = existingPhotoBitmap
     return formState
 }

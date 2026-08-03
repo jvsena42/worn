@@ -6,6 +6,10 @@ struct AddItemSheet: View {
     let isSaving: Bool
     let isAiAvailable: Bool
     var existingItem: ClothingItem?
+    /// Seed values for a *new* item, e.g. a Gaps suggestion. Unlike `existingItem` it does not put
+    /// the sheet in editing mode: a photo is still required and the button still says "Save to
+    /// wardrobe", because nothing has been stored yet.
+    var prefillItem: ClothingItem?
     let onSave: (Data, String, Shared.Category, [String], [Season], Subcategory?, Fit?, Shared.Material?) -> Void
     let onDismiss: () -> Void
 
@@ -124,7 +128,9 @@ struct AddItemSheet: View {
                 }
             }
             .onAppear {
-                if let item = existingItem, !didInitFromExisting {
+                // A prefill seeds the same fields; only a stored item has a photo on disk, which
+                // the `photoPath` check below already accounts for.
+                if let item = existingItem ?? prefillItem, !didInitFromExisting {
                     didInitFromExisting = true
                     name = item.name
                     selectedCategory = item.category
@@ -304,6 +310,11 @@ struct AddItemSheet: View {
                     let (category, label) = item
                     Button {
                         selectedCategory = category
+                        // Mirrors AddItemSheet.kt: the old subcategory is not offered by the new
+                        // category, and a stale one (e.g. BOTTOM + POLO) would wrongly suppress a
+                        // gap suggestion. Done here rather than in `.onChange(of: selectedCategory)`,
+                        // which would also fire while seeding from existingItem/prefillItem.
+                        selectedSubcategory = nil
                         withAnimation { categoryExpanded = false }
                     } label: {
                         HStack(spacing: 12) {

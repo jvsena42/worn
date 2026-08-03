@@ -18,8 +18,9 @@ Worn is a Kotlin Multiplatform wardrobe manager app for Android and iOS. Users c
 # Run all shared tests
 ./gradlew :shared:allTests
 
-# Run a single test class
-./gradlew :shared:allTests --tests "com.github.worn.repository.WardrobeRepositoryTest"
+# Run a single test class — `allTests` is an aggregate task and rejects `--tests`,
+# so target the per-target task instead
+./gradlew :shared:testAndroidHostTest --tests "com.github.worn.repository.WardrobeRepositoryTest"
 
 # Check dependency resolution
 ./gradlew :shared:dependencies
@@ -92,6 +93,7 @@ Reference these for version compatibility and best practices:
 
 ## Commits
 
+- **Always branch off `main`** — never commit directly to `main`. Before starting any work, create a branch from an up-to-date `main` (`git checkout main && git pull && git checkout -b <type>/<short-description>`, e.g. `fix/gaps-suggestions-refresh`). Merge back through a pull request.
 - **Atomic commits** — each commit should represent exactly one logical change. Don't mix unrelated changes (e.g., a bug fix and a refactor) in the same commit.
 - **Commit early, commit often** — break work into small, self-contained commits rather than one large commit at the end. Each commit should leave the project in a buildable state.
 - **Meaningful commit messages** — use the imperative mood (e.g., "add category filter" not "added category filter"). Keep the subject line concise (<72 chars) and add a body when the *why* isn't obvious from the diff.

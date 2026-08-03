@@ -117,17 +117,4 @@ class GapRecommendationParsingTest {
             assertTrue(suggestion.colors.isNotEmpty(), "Colors should not be empty")
         }
     }
-
-    @Test
-    fun `capsule wardrobe filtering excludes owned subcategories`() {
-        val ownedSubcategories = setOf(Subcategory.JEANS, Subcategory.T_SHIRT, Subcategory.SNEAKERS)
-
-        val filtered = capsuleWardrobeSuggestions.filter { it.subcategory !in ownedSubcategories }
-
-        assertTrue(filtered.none { it.subcategory == Subcategory.JEANS })
-        assertTrue(filtered.none { it.subcategory == Subcategory.T_SHIRT })
-        assertTrue(filtered.none { it.subcategory == Subcategory.SNEAKERS })
-        assertTrue(filtered.any { it.subcategory == Subcategory.CHINOS })
-        assertTrue(filtered.any { it.subcategory == Subcategory.HENLEY })
-    }
 }

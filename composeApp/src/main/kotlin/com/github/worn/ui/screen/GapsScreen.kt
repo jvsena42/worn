@@ -2,6 +2,7 @@
 
 package com.github.worn.ui.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,6 +61,7 @@ import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.GapRecommendation
 import com.github.worn.domain.model.Season
+import com.github.worn.presentation.viewmodel.GapsEffect
 import com.github.worn.presentation.viewmodel.GapsIntent
 import com.github.worn.presentation.viewmodel.GapsState
 import com.github.worn.presentation.viewmodel.GapsViewModel
@@ -80,6 +83,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun GapsScreen(onTabSelected: (Tab) -> Unit) {
     val viewModel: GapsViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     val windowInfo = currentWindowAdaptiveInfo()
     val isCompact = windowInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
@@ -87,6 +91,19 @@ fun GapsScreen(onTabSelected: (Tab) -> Unit) {
     var showAiLockedSheet by remember { mutableStateOf(false) }
     var showAddItemSheet by remember { mutableStateOf(false) }
     var addItemPreFill by remember { mutableStateOf<GapRecommendation?>(null) }
+
+    LaunchedEffect(Unit) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                is GapsEffect.ItemAdded -> {
+                    showAddItemSheet = false
+                    addItemPreFill = null
+                }
+                is GapsEffect.ShowError ->
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     GapsScaffold(
         state = state,
@@ -122,11 +139,27 @@ fun GapsScreen(onTabSelected: (Tab) -> Unit) {
     if (showAddItemSheet && addItemPreFill != null) {
         val gap = addItemPreFill!!
         AddItemSheet(
-            isSaving = false,
+            isSaving = state.isSaving,
             isAiAvailable = state.isAiAvailable,
-            existingItem = gap.toPreFilledItem(),
-            onSave = { _, _, _, _, _, _, _, _ -> showAddItemSheet = false },
-            onDismiss = { showAddItemSheet = false },
+            prefillItem = gap.toPreFilledItem(),
+            onSave = { imageBytes, name, category, colors, seasons, subcategory, fit, material ->
+                viewModel.onIntent(
+                    GapsIntent.AddItem(
+                        imageBytes = imageBytes,
+                        name = name,
+                        category = category,
+                        colors = colors,
+                        seasons = seasons,
+                        subcategory = subcategory,
+                        fit = fit,
+                        material = material,
+                    ),
+                )
+            },
+            onDismiss = {
+                showAddItemSheet = false
+                addItemPreFill = null
+            },
         )
     }
 }
