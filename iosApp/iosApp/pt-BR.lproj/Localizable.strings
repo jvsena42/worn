@@ -60,7 +60,7 @@
 /* Create Outfit Sheet */
 "create_outfit_title" = "Criar combinação";
 "create_outfit_title_edit" = "Editar combinação";
-"create_outfit_name_hint" = "Nome da combinação";
+"create_outfit_name_hint" = "Nome da combinação (opcional)";
 "create_outfit_select_items" = "Selecionar itens";
 "create_outfit_save" = "Salvar combinação";
 

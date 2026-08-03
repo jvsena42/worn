@@ -63,7 +63,7 @@
     <!-- Create Outfit Sheet -->
     <string name="create_outfit_title">Create outfit</string>
     <string name="create_outfit_title_edit">Edit outfit</string>
-    <string name="create_outfit_name_hint">Outfit name</string>
+    <string name="create_outfit_name_hint">Outfit name (optional)</string>
     <string name="create_outfit_select_items">Select items</string>
     <string name="create_outfit_save">Save outfit</string>
 

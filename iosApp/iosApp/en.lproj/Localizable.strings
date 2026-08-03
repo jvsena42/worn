@@ -60,7 +60,7 @@
 /* Create Outfit Sheet */
 "create_outfit_title" = "Create outfit";
 "create_outfit_title_edit" = "Edit outfit";
-"create_outfit_name_hint" = "Outfit name";
+"create_outfit_name_hint" = "Outfit name (optional)";
 "create_outfit_select_items" = "Select items";
 "create_outfit_save" = "Save outfit";
 

@@ -15,8 +15,9 @@ struct CreateOutfitSheet: View {
     @State private var name = ""
     @State private var didInitFromExisting = false
 
+    // The name is optional — an empty one is filled in with the selected items' names.
     private var canSave: Bool {
-        !name.isEmpty && !selectedItemIds.isEmpty && !isSaving
+        !selectedItemIds.isEmpty && !isSaving
     }
 
     var body: some View {

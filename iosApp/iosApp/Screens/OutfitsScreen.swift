@@ -322,9 +322,12 @@ private struct OutfitCardView: View {
     private var bottomRow: some View {
         HStack(alignment: .bottom) {
             VStack(alignment: .leading, spacing: 2) {
+                // Auto-generated names concatenate every item, so they can outgrow the card.
                 Text(outfit.name)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(WornColors.textPrimary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                 Text(formatDate(outfit.createdAt))
                     .font(.system(size: 12))
                     .foregroundColor(WornColors.textSecondary)

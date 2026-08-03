@@ -22,6 +22,12 @@ SELECT * FROM clothingItem ORDER BY createdAt DESC;
 getById:
 SELECT * FROM clothingItem WHERE id = ?;
 
+-- Only the columns needed to label a set of items, so building an outfit's default name is one
+-- query instead of one full row read per item. Never call with an empty collection: SQLDelight
+-- expands `IN ?` to `IN ()`, which SQLite rejects.
+getNamesByIds:
+SELECT id, name FROM clothingItem WHERE id IN ?;
+
 getByCategory:
 SELECT * FROM clothingItem WHERE category = ?
 ORDER BY createdAt DESC;

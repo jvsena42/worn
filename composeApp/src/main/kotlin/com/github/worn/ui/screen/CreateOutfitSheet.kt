@@ -114,7 +114,8 @@ internal fun CreateOutfitForm(
 ) {
     val isEditing = existingOutfit != null
     var name by remember { mutableStateOf(existingOutfit?.name ?: "") }
-    val canSave = name.isNotBlank() && selectedItemIds.isNotEmpty() && !isSaving
+    // The name is optional — an empty one is filled in with the selected items' names.
+    val canSave = selectedItemIds.isNotEmpty() && !isSaving
 
     Column(
         modifier = Modifier
