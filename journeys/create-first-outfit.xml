@@ -15,7 +15,7 @@
             Tap the "Create your first outfit" button.
         </action>
         <action>
-            Verify the "Create outfit" sheet is shown with an "Outfit name" field and a
+            Verify the "Create outfit" sheet is shown with an "Outfit name (optional)" field and a
             "Select items" section.
         </action>
         <action>

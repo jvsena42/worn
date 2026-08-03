@@ -63,7 +63,7 @@
     <!-- Create Outfit Sheet -->
     <string name="create_outfit_title">Criar combinação</string>
     <string name="create_outfit_title_edit">Editar combinação</string>
-    <string name="create_outfit_name_hint">Nome da combinação</string>
+    <string name="create_outfit_name_hint">Nome da combinação (opcional)</string>
     <string name="create_outfit_select_items">Selecionar itens</string>
     <string name="create_outfit_save">Salvar combinação</string>
 
