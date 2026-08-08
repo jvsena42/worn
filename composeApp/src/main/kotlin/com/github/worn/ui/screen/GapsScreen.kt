@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+
 @file:Suppress("TooManyFunctions")
 
 package com.github.worn.ui.screen
@@ -29,11 +31,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -48,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -71,9 +76,11 @@ import com.github.worn.ui.components.ErrorContentView
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
+import com.github.worn.ui.components.WornTopAppBarTitlePadding
 import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
 import com.github.worn.ui.components.iconRes
+import com.github.worn.ui.components.wornTopAppBarColors
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
@@ -177,9 +184,29 @@ private fun GapsScaffold(
 ) {
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
-        modifier = Modifier.testTag("gaps_screen"),
+        modifier = Modifier
+            .testTag("gaps_screen")
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = MaterialTheme.colorScheme.surface,
+        topBar = {
+            // Title and subtitle unchanged: journeys/gaps-common-suggestions.xml asserts on them.
+            LargeFlexibleTopAppBar(
+                title = {
+                    Text(stringResource(R.string.gaps_title), modifier = WornTopAppBarTitlePadding)
+                },
+                subtitle = {
+                    Text(
+                        stringResource(R.string.gaps_subtitle),
+                        modifier = WornTopAppBarTitlePadding,
+                    )
+                },
+                colors = wornTopAppBarColors(),
+                scrollBehavior = scrollBehavior,
+            )
+        },
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -187,21 +214,6 @@ private fun GapsScaffold(
                 .padding(paddingValues)
                 .padding(horizontal = contentPadding),
         ) {
-            item(key = "header") {
-                Spacer(Modifier.height(24.dp))
-                Text(
-                    text = stringResource(R.string.gaps_title),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.headlineMedium,
-                    letterSpacing = (-0.5).sp,
-                )
-                Text(
-                    text = stringResource(R.string.gaps_subtitle),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-                Spacer(Modifier.height(20.dp))
-            }
 
             when {
                 state.isLoading -> item(key = "loading") { LoadingContent() }
@@ -692,5 +704,6 @@ private fun GapsScreenErrorPreview() {
         )
     }
 }
+
 
 

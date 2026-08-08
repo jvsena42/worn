@@ -29,12 +29,16 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,6 +53,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -75,6 +80,8 @@ import com.github.worn.ui.components.SelectionHeader
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
+import com.github.worn.ui.components.WornTopAppBarTitlePadding
+import com.github.worn.ui.components.wornTopAppBarColors
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
@@ -208,9 +215,27 @@ private fun WardrobeScaffold(
     val sectionGap = if (isCompact) 24.dp else 28.dp
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    // exitUntilCollapsed: the title shrinks to a compact bar as the grid scrolls up and only
+    // returns once the user scrolls back to the top, which is the standard large-app-bar feel.
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
-        modifier = Modifier.testTag("wardrobe_screen"),
+        modifier = Modifier
+            .testTag("wardrobe_screen")
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = MaterialTheme.colorScheme.surface,
+        topBar = {
+            if (isSelectionMode) {
+                SelectionHeader(
+                    count = state.selectedIds.size,
+                    onCancel = onClearSelection,
+                    onDelete = { showDeleteDialog = true },
+                    modifier = Modifier.padding(horizontal = contentPadding),
+                )
+            } else {
+                WardrobeTopBar(itemCount = state.totalItemCount, scrollBehavior = scrollBehavior)
+            }
+        },
         floatingActionButton = {
             val isWardrobeEmpty = !state.isLoading && state.totalItemCount == 0
             if (!isSelectionMode && !isWardrobeEmpty) {
@@ -231,15 +256,6 @@ private fun WardrobeScaffold(
                 .padding(paddingValues)
                 .padding(horizontal = contentPadding),
         ) {
-            if (isSelectionMode) {
-                SelectionHeader(
-                    count = state.selectedIds.size,
-                    onCancel = onClearSelection,
-                    onDelete = { showDeleteDialog = true },
-                )
-            } else {
-                WardrobeHeader(itemCount = state.totalItemCount)
-            }
             if (isWardrobeEmpty) {
                 EmptyState(onAddItemClick = onAddItemClick)
             } else {
@@ -273,30 +289,28 @@ private fun WardrobeScaffold(
 }
 
 @Composable
-private fun WardrobeHeader(itemCount: Int) {
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        text = if (itemCount == 0) {
-            stringResource(R.string.wardrobe_title_empty)
-        } else {
-            stringResource(R.string.wardrobe_title)
+private fun WardrobeTopBar(itemCount: Int, scrollBehavior: TopAppBarScrollBehavior) {
+    // Title strings are unchanged: journeys/bottom-navigation.xml and add-first-item.xml assert
+    // on the visible heading text.
+    LargeFlexibleTopAppBar(
+        title = {
+            Text(
+                modifier = WornTopAppBarTitlePadding,
+                text = if (itemCount == 0) {
+                    stringResource(R.string.wardrobe_title_empty)
+                } else {
+                    stringResource(R.string.wardrobe_title)
+                },
+            )
         },
-        color = MaterialTheme.colorScheme.onSurface,
-        style = if (itemCount == 0) {
-            MaterialTheme.typography.titleLarge
+        subtitle = if (itemCount > 0) {
+            { Text(stringResource(R.string.wardrobe_subtitle, itemCount), modifier = WornTopAppBarTitlePadding) }
         } else {
-            MaterialTheme.typography.headlineMedium
+            null
         },
+        colors = wornTopAppBarColors(),
+        scrollBehavior = scrollBehavior,
     )
-    if (itemCount > 0) {
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(R.string.wardrobe_subtitle, itemCount),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
-            fontWeight = FontWeight.Medium,
-        )
-    }
 }
 
 
@@ -526,5 +540,6 @@ private fun WardrobeEmptyCategoryTabletPreview() {
         )
     }
 }
+
 
 

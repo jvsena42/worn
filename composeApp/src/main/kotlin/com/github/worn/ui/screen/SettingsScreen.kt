@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+
 @file:Suppress("TooManyFunctions")
 
 package com.github.worn.ui.screen
@@ -33,6 +35,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -42,6 +45,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -55,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -86,6 +91,8 @@ import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornChip
 import com.github.worn.ui.components.WornGradientButton
+import com.github.worn.ui.components.WornTopAppBarTitlePadding
+import com.github.worn.ui.components.wornTopAppBarColors
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
@@ -175,9 +182,25 @@ private fun SettingsScaffold(
 ) {
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
-        modifier = Modifier.testTag("settings_screen"),
+        modifier = Modifier
+            .testTag("settings_screen")
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = MaterialTheme.colorScheme.surface,
+        topBar = {
+            LargeFlexibleTopAppBar(
+                title = {
+                    Text(
+                        stringResource(R.string.settings_title),
+                        modifier = WornTopAppBarTitlePadding,
+                    )
+                },
+                colors = wornTopAppBarColors(),
+                scrollBehavior = scrollBehavior,
+            )
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -186,15 +209,7 @@ private fun SettingsScaffold(
                 .padding(horizontal = contentPadding)
                 .verticalScroll(rememberScrollState()),
         ) {
-            Spacer(Modifier.height(24.dp))
-            Text(
-                text = stringResource(R.string.settings_title),
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.headlineMedium,
-                letterSpacing = (-0.5).sp,
-            )
-
-            Spacer(Modifier.height(28.dp))
+            Spacer(Modifier.height(8.dp))
             SectionLabel(stringResource(R.string.settings_section_profile))
             Spacer(Modifier.height(10.dp))
             SettingsCard(
@@ -1069,5 +1084,6 @@ private fun SettingsScreenOnDeviceAiUnavailablePreview() {
         SettingsScaffold(state = SettingsState())
     }
 }
+
 
 
