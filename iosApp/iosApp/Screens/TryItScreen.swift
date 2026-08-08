@@ -58,7 +58,7 @@ struct TryItScreen: View {
                 CameraView(
                     onImageCaptured: { image in
                         photoImage = image
-                        photoData = image.jpegData(compressionQuality: 0.9)
+                        photoData = PhotoEncoding.jpegForStorage(image)
                         viewModel.reset()
                     },
                     onDismiss: { garmentCover = nil }
@@ -613,7 +613,7 @@ struct TryItScreen: View {
             case .camera:
                 CameraView(
                     onImageCaptured: { image in
-                        if let data = image.jpegData(compressionQuality: 0.9) {
+                        if let data = PhotoEncoding.jpegForStorage(image) {
                             viewModel.setPersonPhoto(imageData: data)
                         }
                     },

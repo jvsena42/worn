@@ -101,7 +101,7 @@ struct AddItemSheet: View {
                     CameraView(
                         onImageCaptured: { image in
                             photoImage = image
-                            let data = image.jpegData(compressionQuality: 0.9)
+                            let data = PhotoEncoding.jpegForStorage(image)
                             photoData = data
                             originalPhotoData = data
                             bgRemoved = false
