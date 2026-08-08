@@ -65,7 +65,9 @@ actual class BackgroundRemover(private val dispatcher: CoroutineContext) {
     }
 
     private companion object {
-        const val JPEG_QUALITY = 0.9
+        // Resolution is preserved, so this is a storage-quality re-encode: a photo can go through
+        // capture, then crop, then this, and each pass should be visually lossless.
+        const val JPEG_QUALITY = 0.95
         val NEUTRAL_BACKGROUND = CIColor(red = 1.0, green = 1.0, blue = 1.0)
     }
 }

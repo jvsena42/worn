@@ -420,24 +420,11 @@ struct TryItScreen: View {
     }
 
     private func itemThumbnail(item: ClothingItem, size: CGFloat) -> some View {
-        ZStack {
-            if FileManager.default.fileExists(atPath: item.photoPath) {
-                AsyncImage(url: URL(fileURLWithPath: item.photoPath)) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } placeholder: {
-                    Image(systemName: "tshirt")
-                        .font(.system(size: 28))
-                        .foregroundColor(WornColors.textSecondary)
-                }
-                .frame(width: size, height: size)
-                .clipped()
-            } else {
-                Image(systemName: "tshirt")
-                    .font(.system(size: 28))
-                    .foregroundColor(WornColors.textSecondary)
-            }
+        StoredPhotoImage(path: item.photoPath) {
+            Image(systemName: "tshirt")
+                .font(.system(size: 28))
+                .foregroundColor(WornColors.textSecondary)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(width: size, height: size)
         .background(WornColors.bgCard)
