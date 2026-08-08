@@ -106,9 +106,10 @@ fun CropEditorDialog(
             onApply = { selection, bounds ->
                 isProcessing = true
                 scope.launch {
+                    // Crops the original bytes, not the downsampled preview, so the saved photo
+                    // keeps its capture resolution.
                     val cropped = withContext(Dispatchers.Default) {
-                        val rect = CropGeometry.toSourceRect(selection, bounds, bitmap.width, bitmap.height)
-                        cropToJpeg(bitmap, rect)
+                        cropToJpeg(imageBytes, selection, bounds)
                     }
                     isProcessing = false
                     if (cropped != null) {
