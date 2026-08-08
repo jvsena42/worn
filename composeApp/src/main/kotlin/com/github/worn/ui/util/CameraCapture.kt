@@ -29,14 +29,15 @@ import java.io.File
 fun rememberCameraCapture(onPhoto: (ByteArray) -> Unit): () -> Unit {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    // `TakePicture` reports only success/failure, so the target has to outlive the launch.
-    val pending = remember { arrayOfNulls<Uri>(1) }
+    // `TakePicture` reports only success/failure, so the target has to outlive the launch. Plain
+    // state rather than `mutableStateOf`: nothing renders it, so a change should not recompose.
+    val pending = remember { PendingCapture() }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
     ) { saved ->
-        val uri = pending[0] ?: return@rememberLauncherForActivityResult
-        pending[0] = null
+        val uri = pending.uri ?: return@rememberLauncherForActivityResult
+        pending.uri = null
         scope.launch {
             val bytes = if (saved) readImageBytes(context, uri) else null
             withContext(Dispatchers.IO) { context.deleteCaptureFile() }
@@ -48,11 +49,15 @@ fun rememberCameraCapture(onPhoto: (ByteArray) -> Unit): () -> Unit {
         {
             val uri = context.createCaptureUri()
             if (uri != null) {
-                pending[0] = uri
+                pending.uri = uri
                 launcher.launch(uri)
             }
         }
     }
+}
+
+private class PendingCapture {
+    var uri: Uri? = null
 }
 
 /**
