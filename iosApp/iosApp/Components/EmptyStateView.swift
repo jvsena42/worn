@@ -24,7 +24,7 @@ struct EmptyStateView<Icon: View, Action: View>: View {
 
             ZStack {
                 Circle()
-                    .fill(Color.white)
+                    .fill(WornColors.bgCard)
                     .frame(width: 130, height: 130)
                     .shadow(color: WornColors.accentIndigo.opacity(0.08), radius: 15, x: 0, y: 0)
                     .overlay(
