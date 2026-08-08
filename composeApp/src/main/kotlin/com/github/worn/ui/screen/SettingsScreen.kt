@@ -201,7 +201,7 @@ private fun SettingsScaffold(
                 .padding(horizontal = contentPadding)
                 .verticalScroll(rememberScrollState()),
         ) {
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(20.dp))
             SectionLabel(stringResource(R.string.settings_section_profile))
             Spacer(Modifier.height(10.dp))
             SettingsCard(

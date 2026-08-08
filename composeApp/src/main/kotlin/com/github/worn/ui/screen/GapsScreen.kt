@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -86,6 +87,9 @@ import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.theme.sheetShape
 import com.github.worn.ui.theme.wornExtras
 import org.koin.compose.viewmodel.koinViewModel
+
+/** Gap between the app-bar header and the first card, matched to the iOS Gaps header. */
+private val HEADER_CONTENT_GAP = 20.dp
 
 @Composable
 fun GapsScreen(onTabSelected: (Tab) -> Unit) {
@@ -203,6 +207,10 @@ private fun GapsScaffold(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = contentPadding),
+            // Restores the gap the old inline header carried as a trailing Spacer before it moved
+            // into the app bar. contentPadding rather than a Spacer item so it scrolls away with
+            // the content and matches the 20pt the iOS Gaps header uses.
+            contentPadding = PaddingValues(top = HEADER_CONTENT_GAP),
         ) {
 
             when {
@@ -694,6 +702,7 @@ private fun GapsScreenErrorPreview() {
         )
     }
 }
+
 
 
 
