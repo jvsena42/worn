@@ -45,9 +45,13 @@ struct ClothingCard: View {
 
     private var itemInfo: some View {
         VStack(alignment: .leading, spacing: 2) {
+            // AI-generated names can run long; left unbounded they push the category row down and
+            // misalign the cards next to them in the grid row.
             Text(item.name)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(WornColors.textPrimary)
+                .lineLimit(2)
+                .truncationMode(.tail)
 
             HStack(spacing: 6) {
                 Circle()

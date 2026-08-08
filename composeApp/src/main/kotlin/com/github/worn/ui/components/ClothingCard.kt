@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -107,6 +108,10 @@ private fun ItemInfo(item: ClothingItem) {
             color = WornColors.TextPrimary,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
+            // AI-generated names can run long; left unbounded they push the category row down and
+            // misalign the cards next to them in the grid row.
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
