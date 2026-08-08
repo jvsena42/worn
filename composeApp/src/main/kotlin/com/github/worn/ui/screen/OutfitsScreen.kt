@@ -28,7 +28,7 @@ import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFlexibleTopAppBar
@@ -224,7 +224,7 @@ private fun OutfitsScaffold(
                 EmptyState(onCreateClick = onCreateClick)
             } else if (state.isLoading && state.outfits.isEmpty()) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    LoadingIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             } else {
                 Spacer(modifier = Modifier.height(sectionGap))

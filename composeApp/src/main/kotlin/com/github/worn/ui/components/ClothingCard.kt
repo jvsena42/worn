@@ -28,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -51,6 +53,7 @@ fun ClothingCard(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    val haptics = LocalHapticFeedback.current
     Column(
         // Deliberately no .clip() here and deliberately not a Card. The cell is a photo plus a
         // caption sitting on the page background, so a Card would put the caption on a white
@@ -59,7 +62,12 @@ fun ClothingCard(
         // combinedClickable already bounds its ripple to the item.
         modifier = modifier.combinedClickable(
             onClick = onClick,
-            onLongClick = onLongPress,
+            onLongClick = {
+                // Long-press is the only way into selection mode and it has no visual affordance
+                // before it fires, so the tick is what tells you it worked.
+                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                onLongPress()
+            },
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -150,4 +158,5 @@ internal fun Category.dotColor(): Color = when (this) {
     Category.SHOES -> MaterialTheme.wornExtras.categoryDotShoes
     Category.ACCESSORY -> MaterialTheme.wornExtras.categoryDotAccessory
 }
+
 

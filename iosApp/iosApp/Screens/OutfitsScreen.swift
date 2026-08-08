@@ -193,6 +193,9 @@ struct OutfitsContent: View {
                     }
                 }
                 .onLongPressGesture {
+                    // Long-press is the only way into selection mode and has no visual affordance
+                    // before it fires, so the impact is what confirms it.
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                     onToggleSelection(outfit.id)
                 }
             }

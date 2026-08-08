@@ -129,5 +129,7 @@ private struct TabItem: View {
             .clipShape(RoundedRectangle(cornerRadius: WornShape.extraLargeIncreased))
         }
         .buttonStyle(.plain)
+        // Mirrors the SegmentTick on Android: a discrete position change in a row of segments.
+        .sensoryFeedback(.selection, trigger: isActive)
     }
 }

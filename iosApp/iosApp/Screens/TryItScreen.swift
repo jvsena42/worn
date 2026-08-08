@@ -700,6 +700,9 @@ struct TryItScreen: View {
                 Image(systemName: "sparkles")
                     .font(.system(size: 18))
                     .foregroundColor(.white)
+                    // The sparkle is the app's "AI is here" mark; variableColor makes it read as
+                    // alive rather than as a static decoration.
+                    .symbolEffect(.variableColor.iterative.reversing)
             ),
             fixedHeight: nil,
             contentPadding: EdgeInsets(top: 14, leading: 0, bottom: 14, trailing: 0)

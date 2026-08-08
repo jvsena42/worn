@@ -20,6 +20,7 @@ struct WornChip: View {
                 )
         }
         .buttonStyle(.plain)
+        .sensoryFeedback(.selection, trigger: isActive)
     }
 }
 

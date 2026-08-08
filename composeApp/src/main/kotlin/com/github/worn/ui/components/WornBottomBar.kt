@@ -37,6 +37,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -130,6 +132,7 @@ private fun RowScope.TabItem(
     onClick: () -> Unit,
 ) {
     val label = stringResource(tab.labelRes)
+    val haptics = LocalHapticFeedback.current
     val containerColor by animateColorAsState(
         targetValue = if (isActive) {
             MaterialTheme.colorScheme.primary
@@ -157,7 +160,12 @@ private fun RowScope.TabItem(
             .clip(MaterialTheme.shapes.extraLargeIncreased)
             .selectable(
                 selected = isActive,
-                onClick = onClick,
+                onClick = {
+                    // SegmentTick, not LongPress: this is a discrete position change in a row of
+                    // segments, which is exactly what that constant is for.
+                    if (!isActive) haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    onClick()
+                },
                 role = Role.Tab,
                 indication = ripple(),
                 interactionSource = remember { MutableInteractionSource() },
@@ -186,5 +194,6 @@ private fun RowScope.TabItem(
         }
     }
 }
+
 
 

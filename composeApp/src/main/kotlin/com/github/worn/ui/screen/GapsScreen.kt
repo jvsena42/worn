@@ -27,7 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.AutoAwesome
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -244,7 +244,7 @@ private fun LoadingContent() {
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxWidth().padding(vertical = 80.dp),
     ) {
-        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        LoadingIndicator(color = MaterialTheme.colorScheme.primary)
     }
 }
 
