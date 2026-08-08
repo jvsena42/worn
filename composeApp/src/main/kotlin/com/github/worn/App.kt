@@ -93,7 +93,13 @@ fun App(
             HorizontalPager(
                 state = pagerState,
                 beyondViewportPageCount = 1,
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                // Bottom padding only. This Scaffold exists for the bottom bar; each screen owns
+                // its own top inset through its TopAppBar, and consuming innerPadding wholesale
+                // applied the status-bar inset twice — which showed up as a ~90dp dead band above
+                // every title that no app-bar height parameter could explain.
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = innerPadding.calculateBottomPadding()),
             ) { page ->
                 when (tabs[page]) {
                     Tab.WARDROBE -> WardrobeScreen(

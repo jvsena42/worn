@@ -35,7 +35,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -91,8 +90,7 @@ import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornChip
 import com.github.worn.ui.components.WornGradientButton
-import com.github.worn.ui.components.WornTopAppBarTitlePadding
-import com.github.worn.ui.components.wornTopAppBarColors
+import com.github.worn.ui.components.WornTopAppBar
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
@@ -190,14 +188,8 @@ private fun SettingsScaffold(
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
-            LargeFlexibleTopAppBar(
-                title = {
-                    Text(
-                        stringResource(R.string.settings_title),
-                        modifier = WornTopAppBarTitlePadding,
-                    )
-                },
-                colors = wornTopAppBarColors(),
+            WornTopAppBar(
+                title = stringResource(R.string.settings_title),
                 scrollBehavior = scrollBehavior,
             )
         },
@@ -1084,6 +1076,7 @@ private fun SettingsScreenOnDeviceAiUnavailablePreview() {
         SettingsScaffold(state = SettingsState())
     }
 }
+
 
 
 

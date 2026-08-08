@@ -28,11 +28,10 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -80,8 +79,7 @@ import com.github.worn.ui.components.SelectionHeader
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
-import com.github.worn.ui.components.WornTopAppBarTitlePadding
-import com.github.worn.ui.components.wornTopAppBarColors
+import com.github.worn.ui.components.WornTopAppBar
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
@@ -292,23 +290,17 @@ private fun WardrobeScaffold(
 private fun WardrobeTopBar(itemCount: Int, scrollBehavior: TopAppBarScrollBehavior) {
     // Title strings are unchanged: journeys/bottom-navigation.xml and add-first-item.xml assert
     // on the visible heading text.
-    LargeFlexibleTopAppBar(
-        title = {
-            Text(
-                modifier = WornTopAppBarTitlePadding,
-                text = if (itemCount == 0) {
-                    stringResource(R.string.wardrobe_title_empty)
-                } else {
-                    stringResource(R.string.wardrobe_title)
-                },
-            )
+    WornTopAppBar(
+        title = if (itemCount == 0) {
+            stringResource(R.string.wardrobe_title_empty)
+        } else {
+            stringResource(R.string.wardrobe_title)
         },
         subtitle = if (itemCount > 0) {
-            { Text(stringResource(R.string.wardrobe_subtitle, itemCount), modifier = WornTopAppBarTitlePadding) }
+            stringResource(R.string.wardrobe_subtitle, itemCount)
         } else {
             null
         },
-        colors = wornTopAppBarColors(),
         scrollBehavior = scrollBehavior,
     )
 }
@@ -540,6 +532,7 @@ private fun WardrobeEmptyCategoryTabletPreview() {
         )
     }
 }
+
 
 
 

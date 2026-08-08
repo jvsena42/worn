@@ -27,11 +27,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.AutoAwesome
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -76,11 +75,10 @@ import com.github.worn.ui.components.ErrorContentView
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
-import com.github.worn.ui.components.WornTopAppBarTitlePadding
+import com.github.worn.ui.components.WornTopAppBar
 import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
 import com.github.worn.ui.components.iconRes
-import com.github.worn.ui.components.wornTopAppBarColors
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
@@ -193,17 +191,9 @@ private fun GapsScaffold(
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
             // Title and subtitle unchanged: journeys/gaps-common-suggestions.xml asserts on them.
-            LargeFlexibleTopAppBar(
-                title = {
-                    Text(stringResource(R.string.gaps_title), modifier = WornTopAppBarTitlePadding)
-                },
-                subtitle = {
-                    Text(
-                        stringResource(R.string.gaps_subtitle),
-                        modifier = WornTopAppBarTitlePadding,
-                    )
-                },
-                colors = wornTopAppBarColors(),
+            WornTopAppBar(
+                title = stringResource(R.string.gaps_title),
+                subtitle = stringResource(R.string.gaps_subtitle),
                 scrollBehavior = scrollBehavior,
             )
         },
@@ -704,6 +694,7 @@ private fun GapsScreenErrorPreview() {
         )
     }
 }
+
 
 
 

@@ -28,10 +28,10 @@ import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFlexibleTopAppBar
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -75,8 +75,7 @@ import com.github.worn.ui.components.SelectionHeader
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
-import com.github.worn.ui.components.WornTopAppBarTitlePadding
-import com.github.worn.ui.components.wornTopAppBarColors
+import com.github.worn.ui.components.WornTopAppBar
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
@@ -195,6 +194,11 @@ private fun OutfitsScaffold(
             .testTag("outfits_screen")
             .nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = MaterialTheme.colorScheme.surface,
+        floatingActionButton = {
+            if (!isSelectionMode && state.outfits.isNotEmpty()) {
+                CreateOutfitFab(onCreateClick, Modifier.testTag("outfits_create_button"))
+            }
+        },
         topBar = {
             if (isSelectionMode) {
                 SelectionHeader(
@@ -204,11 +208,7 @@ private fun OutfitsScaffold(
                     modifier = Modifier.padding(horizontal = contentPadding),
                 )
             } else {
-                OutfitsTopBar(
-                    outfitCount = state.outfits.size,
-                    onCreateClick = onCreateClick,
-                    scrollBehavior = scrollBehavior,
-                )
+                OutfitsTopBar(outfitCount = state.outfits.size, scrollBehavior = scrollBehavior)
             }
         },
     ) { paddingValues ->
@@ -247,48 +247,43 @@ private fun OutfitsScaffold(
 }
 
 @Composable
-private fun OutfitsTopBar(
-    outfitCount: Int,
-    onCreateClick: () -> Unit,
-    scrollBehavior: TopAppBarScrollBehavior,
-) {
-    // Title and Create label are unchanged: journeys/create-first-outfit.xml asserts on both.
-    LargeFlexibleTopAppBar(
-        title = {
-            Text(stringResource(R.string.outfits_title), modifier = WornTopAppBarTitlePadding)
-        },
+private fun OutfitsTopBar(outfitCount: Int, scrollBehavior: TopAppBarScrollBehavior) {
+    // Title unchanged: journeys/create-first-outfit.xml asserts on it.
+    WornTopAppBar(
+        title = stringResource(R.string.outfits_title),
         subtitle = if (outfitCount > 0) {
-            {
-                Text(
-                    pluralStringResource(R.plurals.saved_combinations, outfitCount, outfitCount),
-                    modifier = WornTopAppBarTitlePadding,
-                )
-            }
+            pluralStringResource(R.plurals.saved_combinations, outfitCount, outfitCount)
         } else {
             null
         },
-        actions = {
-            if (outfitCount > 0) {
-                Button(
-                    onClick = onCreateClick,
-                    shape = MaterialTheme.shapes.largeIncreased,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .testTag("outfits_create_button"),
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = null, Modifier.size(16.dp))
-                    Spacer(Modifier.width(4.dp))
-                    Text(
-                        stringResource(R.string.outfits_button_create),
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
-            }
-        },
-        colors = wornTopAppBarColors(),
         scrollBehavior = scrollBehavior,
     )
+}
+
+/**
+ * Create as a FAB rather than a top-bar action.
+ *
+ * As an action it sat alone in the app bar's otherwise empty leading row, reading as a button
+ * floating above the title. A FAB also matches Wardrobe's "Add item", so the two list screens
+ * now offer their primary action in the same place.
+ */
+@Composable
+private fun CreateOutfitFab(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    ExtendedFloatingActionButton(
+        onClick = onClick,
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        shape = MaterialTheme.shapes.extraLargeIncreased,
+        modifier = modifier,
+    ) {
+        Icon(Icons.Default.Add, contentDescription = null)
+        Spacer(Modifier.width(8.dp))
+        Text(
+            text = stringResource(R.string.outfits_button_create),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+        )
+    }
 }
 
 
@@ -423,6 +418,8 @@ private fun OutfitsEmptyTabletPreview() {
         )
     }
 }
+
+
 
 
 
