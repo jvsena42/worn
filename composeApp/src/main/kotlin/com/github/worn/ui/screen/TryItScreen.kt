@@ -102,7 +102,6 @@ import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
-import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.theme.wornExtras
 import com.github.worn.ui.util.SharedPhoto
@@ -695,7 +694,6 @@ private fun TryItPhoneContent(
                 onPositioned = onTryOnSectionPositioned,
             )
         }
-        Spacer(Modifier.height(WornDimens.BottomBarClearance))
     }
 }
 
@@ -783,7 +781,6 @@ private fun TryItTabletContent(
                 }
             }
         }
-        Spacer(Modifier.height(WornDimens.BottomBarClearance))
     }
 }
 

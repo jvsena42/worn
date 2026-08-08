@@ -77,7 +77,6 @@ import com.github.worn.ui.components.iconRes
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
-import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.theme.sheetShape
 import com.github.worn.ui.theme.wornExtras
@@ -222,7 +221,6 @@ private fun GapsScaffold(
             }
 
             item(key = "bottom_clearance") {
-                Spacer(Modifier.height(WornDimens.BottomBarClearance))
             }
         }
     }

@@ -77,7 +77,6 @@ import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
-import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.util.ShortcutCommand
 import org.koin.compose.viewmodel.koinViewModel
@@ -219,7 +218,6 @@ private fun WardrobeScaffold(
                     onAddItemClick,
                     Modifier
                         .testTag("wardrobe_add_fab")
-                        .padding(bottom = WornDimens.BottomBarClearance),
                 )
             }
         },
@@ -322,7 +320,6 @@ private fun WardrobeContent(
             columns = GridCells.Adaptive(minSize = GRID_MIN_CELL_WIDTH),
             horizontalArrangement = Arrangement.spacedBy(gridGap),
             verticalArrangement = Arrangement.spacedBy(gridGap),
-            contentPadding = PaddingValues(bottom = WornDimens.BottomBarClearance),
             modifier = Modifier.fillMaxSize(),
         ) {
             items(state.items, key = { it.id }) { item ->

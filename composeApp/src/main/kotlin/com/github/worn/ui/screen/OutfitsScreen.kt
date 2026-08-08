@@ -72,7 +72,6 @@ import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
-import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -285,7 +284,6 @@ private fun OutfitsContent(
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(bottom = WornDimens.BottomBarClearance),
         modifier = Modifier.fillMaxSize(),
     ) {
         items(state.outfits, key = { it.id }) { outfit ->

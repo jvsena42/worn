@@ -4,11 +4,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.unit.dp
-
-object WornDimens {
-    val BottomBarClearance = 95.dp
-}
 
 @Composable
 fun WornTheme(

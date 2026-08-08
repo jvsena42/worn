@@ -4,9 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -72,16 +74,26 @@ fun App(
             }
         }
 
-        Box(
+        // Scaffold rather than a Box overlay: it measures the bar and hands the pager a bottom
+        // inset that already accounts for it, which is what lets every screen drop the hardcoded
+        // 95dp clearance they each used to subtract by hand.
+        Scaffold(
+            containerColor = MaterialTheme.colorScheme.surface,
+            bottomBar = {
+                WornBottomBar(
+                    activeTab = tabs[pagerState.currentPage],
+                    onTabSelected = onTabSelected,
+                    isCompact = isCompact,
+                )
+            },
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface)
                 .semantics { testTagsAsResourceId = true },
-        ) {
+        ) { innerPadding ->
             HorizontalPager(
                 state = pagerState,
                 beyondViewportPageCount = 1,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
             ) { page ->
                 when (tabs[page]) {
                     Tab.WARDROBE -> WardrobeScreen(
@@ -99,13 +111,7 @@ fun App(
                     Tab.SETTINGS -> SettingsScreen(onTabSelected = onTabSelected)
                 }
             }
-
-            WornBottomBar(
-                activeTab = tabs[pagerState.currentPage],
-                onTabSelected = onTabSelected,
-                isCompact = isCompact,
-                modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
-            )
         }
     }
 }
+

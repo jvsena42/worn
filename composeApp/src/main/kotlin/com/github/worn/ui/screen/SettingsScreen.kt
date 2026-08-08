@@ -89,7 +89,6 @@ import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
-import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.theme.sheetShape
 import com.github.worn.ui.theme.wornExtras
@@ -248,7 +247,6 @@ private fun SettingsScaffold(
             Spacer(Modifier.height(24.dp))
             DonationCard()
 
-            Spacer(Modifier.height(WornDimens.BottomBarClearance))
         }
     }
 }
