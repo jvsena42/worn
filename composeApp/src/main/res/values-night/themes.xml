@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark twin of Theme.Worn. Same reasoning as values/themes.xml; only the parent differs,
+         so the pre-Compose window and its decor match the dark scheme. -->
+    <style name="Theme.Worn" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+    </style>
+</resources>

@@ -4,8 +4,8 @@ package com.github.worn.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Extension
@@ -26,21 +27,20 @@ import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -107,12 +107,16 @@ fun WornBottomBar(
 }
 
 /**
- * One tab, built on [NavigationBarItem] rather than a bare `clickable` Surface.
+ * One tab: the app's full-width pill, with the touch feedback and semantics it was missing.
  *
- * That is what brings back the things the hand-rolled version had no way to provide: a ripple
- * bounded to the pill, the indicator animating between tabs instead of snapping, and the correct
- * selectable/tab semantics for TalkBack. The pill container in [WornBottomBar] keeps the custom
- * look; only the item behaviour is Material's.
+ * Deliberately *not* [NavigationBarItem]. That gives a ripple and an animated indicator for free,
+ * but its indicator only ever wraps the icon — the label sits outside it. Worn's pill wraps icon
+ * and label together, so the M3 item left the selected label stranded on the bar background in
+ * `onPrimary`, which is dark-green-on-dark in the dark scheme and nearly unreadable.
+ *
+ * So the pill container stays hand-built, and the two things that actually needed fixing are
+ * addressed directly: [selectable] supplies a ripple bounded to the pill plus proper
+ * selected/Tab semantics for TalkBack, and the fill animates between tabs rather than snapping.
  *
  * An earlier comment here blamed the ripple for repainting the bar for ~1s after each tap and
  * removed indication entirely. The cost was actually the pager recomposing the destination page,
@@ -126,25 +130,52 @@ private fun RowScope.TabItem(
     onClick: () -> Unit,
 ) {
     val label = stringResource(tab.labelRes)
-    NavigationBarItem(
-        selected = isActive,
-        onClick = onClick,
-        icon = {
-            if (tab.iconRes != null) {
-                Icon(
-                    painter = painterResource(id = tab.iconRes),
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
-            } else if (tab.icon != null) {
-                Icon(
-                    imageVector = tab.icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                )
-            }
+    val containerColor by animateColorAsState(
+        targetValue = if (isActive) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerHigh
         },
-        label = {
+        label = "tabContainer",
+    )
+    val contentColor by animateColorAsState(
+        targetValue = if (isActive) {
+            MaterialTheme.colorScheme.onPrimary
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        },
+        label = "tabContent",
+    )
+
+    Surface(
+        shape = MaterialTheme.shapes.extraLargeIncreased,
+        color = containerColor,
+        contentColor = contentColor,
+        modifier = Modifier
+            .weight(1f)
+            .fillMaxHeight()
+            .clip(MaterialTheme.shapes.extraLargeIncreased)
+            .selectable(
+                selected = isActive,
+                onClick = onClick,
+                role = Role.Tab,
+                indication = ripple(),
+                interactionSource = remember { MutableInteractionSource() },
+            )
+            .testTag(tab.testTag),
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxHeight(),
+        ) {
+            // contentDescription is null: the label below already names the tab, and TalkBack
+            // would otherwise announce it twice.
+            if (tab.iconRes != null) {
+                Icon(painterResource(id = tab.iconRes), null, Modifier.size(18.dp))
+            } else if (tab.icon != null) {
+                Icon(tab.icon, null, Modifier.size(18.dp))
+            }
             Text(
                 text = label,
                 // labelSmall already carries the 10sp/SemiBold/+0.5sp tracking these labels used.
@@ -152,16 +183,8 @@ private fun RowScope.TabItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-        },
-        colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
-            selectedTextColor = MaterialTheme.colorScheme.onPrimary,
-            indicatorColor = MaterialTheme.colorScheme.primary,
-            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        ),
-        // The item announces itself; the icon's contentDescription would double it up.
-        modifier = Modifier.testTag(tab.testTag).semantics { contentDescription = label },
-    )
+        }
+    }
 }
+
 

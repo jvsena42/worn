@@ -26,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -319,29 +320,29 @@ internal fun DetailActionButtons(
     deleteTestTag: String,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Surface(
+        // Edit is the primary action, so it takes the filled button. Delete was previously the
+        // filled one — a full-width solid red block ranked *below* a plain white Edit — which gave
+        // the destructive action more visual weight than the thing people actually came to do.
+        Button(
             onClick = onEdit,
             shape = MaterialTheme.shapes.extraLarge,
-            color = MaterialTheme.colorScheme.surfaceContainer,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             modifier = Modifier.fillMaxWidth().height(buttonHeight).testTag(editTestTag),
         ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Text(
-                    editLabel, color = MaterialTheme.colorScheme.onSurface,
-                    style = buttonStyle, fontWeight = FontWeight.SemiBold,
-                )
-            }
+            Text(editLabel, style = buttonStyle, fontWeight = FontWeight.SemiBold)
         }
-        Surface(
+        // Outlined rather than filled: still unmistakably destructive through the error colour,
+        // without shouting. Using `error` for content instead of a hardcoded white-on-red also
+        // survives dark mode, where `error` is a light #F2B8AC and white on it is unreadable.
+        OutlinedButton(
             onClick = onDelete,
             shape = MaterialTheme.shapes.extraLarge,
-            color = MaterialTheme.colorScheme.error,
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = MaterialTheme.colorScheme.error,
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error),
             modifier = Modifier.fillMaxWidth().height(buttonHeight).testTag(deleteTestTag),
         ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Text(deleteLabel, color = Color.White, style = buttonStyle, fontWeight = FontWeight.SemiBold)
-            }
+            Text(deleteLabel, style = buttonStyle, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -399,5 +400,6 @@ private fun ItemDetailSheetPhonePreview() {
 private fun ItemDetailSheetTabletPreview() {
     SheetPreview { ItemDetailContent(item = previewItem, isCompact = false) }
 }
+
 
 

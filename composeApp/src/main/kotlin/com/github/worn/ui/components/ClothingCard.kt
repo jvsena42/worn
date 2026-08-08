@@ -52,6 +52,11 @@ fun ClothingCard(
     modifier: Modifier = Modifier,
 ) {
     Column(
+        // Deliberately no .clip() here and deliberately not a Card. The cell is a photo plus a
+        // caption sitting on the page background, so a Card would put the caption on a white
+        // container, and clipping the Column to a rounded shape cuts its own bottom-left corner —
+        // which is exactly where the category dot sits, rendering it as a teardrop.
+        // combinedClickable already bounds its ripple to the item.
         modifier = modifier.combinedClickable(
             onClick = onClick,
             onLongClick = onLongPress,
@@ -145,3 +150,4 @@ internal fun Category.dotColor(): Color = when (this) {
     Category.SHOES -> MaterialTheme.wornExtras.categoryDotShoes
     Category.ACCESSORY -> MaterialTheme.wornExtras.categoryDotAccessory
 }
+

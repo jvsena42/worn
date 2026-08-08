@@ -135,29 +135,34 @@ struct ItemDetailSheet: View {
 
     private var buttons: some View {
         VStack(spacing: 12) {
+            // Edit is the primary action, so it takes the filled button. Delete was previously the
+            // filled one — a full-width solid red block ranked *below* a plain white Edit — which
+            // gave the destructive action more visual weight than the thing people came to do.
             Button { onEdit(item) } label: {
                 Text(String(localized: "item_detail_edit"))
                     .font(buttonFont.weight(.semibold))
-                    .foregroundColor(WornColors.textPrimary)
+                    .foregroundColor(WornColors.textOnColor)
                     .frame(maxWidth: .infinity)
                     .frame(height: buttonHeight)
-                    .background(WornColors.bgCard)
+                    .background(WornColors.accentGreen)
                     .clipShape(RoundedRectangle(cornerRadius: WornShape.extraLarge))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: WornShape.extraLarge)
-                            .stroke(WornColors.borderSubtle, lineWidth: 1)
-                    )
             }
             .accessibilityIdentifier("item_detail_edit")
 
-            Button { showDeleteAlert = true } label: {
+            // `role: .destructive` is what makes VoiceOver announce this as destructive and lets
+            // the system style it; the outline keeps it unmistakable without shouting. Tinting the
+            // label rather than filling also survives dark, where deleteRed is a light #F2B8AC and
+            // white on it is unreadable.
+            Button(role: .destructive) { showDeleteAlert = true } label: {
                 Text(String(localized: "item_detail_delete"))
                     .font(buttonFont.weight(.semibold))
-                    .foregroundColor(.white)
+                    .foregroundColor(WornColors.deleteRed)
                     .frame(maxWidth: .infinity)
                     .frame(height: buttonHeight)
-                    .background(WornColors.deleteRed)
-                    .clipShape(RoundedRectangle(cornerRadius: WornShape.extraLarge))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: WornShape.extraLarge)
+                            .stroke(WornColors.deleteRed, lineWidth: 1)
+                    )
             }
             .accessibilityIdentifier("item_detail_delete")
         }

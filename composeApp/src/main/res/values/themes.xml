@@ -5,11 +5,16 @@
       WornTheme. windowBackground is what shows between the splash handing off and Compose's
       first frame, so it tracks the app's page colour via values-night rather than being pinned.
 
+      The parent is the platform Material theme, not Theme.Material3.*: this project uses Compose
+      Multiplatform Material3 and does not depend on com.google.android.material, so the Material3
+      XML styles do not exist here. Day/night is handled by the values-night qualifier instead of
+      a DayNight parent.
+
       Deliberately no statusBarColor/navigationBarColor: enableEdgeToEdge() in MainActivity owns
       system bar appearance, and setting them here fights it (they were pinned to the splash
       green, which is why content ran under an opaque green status bar).
     -->
-    <style name="Theme.Worn" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Worn" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/window_background</item>
     </style>
 
