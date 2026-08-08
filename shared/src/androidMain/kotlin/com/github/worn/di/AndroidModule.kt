@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import com.github.worn.data.source.ai.AndroidOnDeviceAiEngine
 import com.github.worn.data.source.ai.OnDeviceAiEngine
 import com.github.worn.data.source.image.BackgroundRemover
+import com.github.worn.data.source.image.ImageDownscaler
 import com.github.worn.data.source.local.DatabaseDriverFactory
 import com.github.worn.data.source.local.PhotoFileStorage
 import com.github.worn.data.source.local.createDataStore
@@ -22,6 +23,7 @@ val androidModule = module {
     single { get<DatabaseDriverFactory>().create() }
     single { PhotoFileStorage(get()) }
     single { BackgroundRemover(get()) }
+    single { ImageDownscaler(get()) }
     single<OnDeviceAiEngine> { AndroidOnDeviceAiEngine(get()) }
     single<SecretStore> { AndroidSecretStore(get()) }
     single { RsaEncryptor() }
