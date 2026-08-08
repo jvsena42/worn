@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Paths the FileProvider may hand out to other apps.
+
+    Only the camera scratch directory is exposed: the camera app needs write access to a file we
+    own so it can save the full-resolution photo there. Everything else — including the wardrobe's
+    stored photos under files/photos — stays private.
+-->
+<paths>
+    <cache-path name="camera_capture" path="camera/" />
+</paths>

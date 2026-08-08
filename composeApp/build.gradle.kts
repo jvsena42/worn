@@ -83,6 +83,8 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.uiToolingPreview)
     implementation(libs.androidx.activity.compose)
+    // FileProvider, for handing the camera app a URI to write the full-resolution photo into.
+    implementation(libs.androidx.core)
     implementation(libs.androidx.splashscreen)
     implementation(libs.androidx.lifecycle.viewmodelCompose)
     implementation(libs.androidx.lifecycle.runtimeCompose)
