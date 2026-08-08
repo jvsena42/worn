@@ -219,7 +219,7 @@ struct GapsContent: View {
             }
             .padding(16)
             .background(state.isAiMode ? WornColors.accentGreen : WornColors.accentGreenDark)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("gaps_banner")
@@ -255,13 +255,13 @@ struct GapsContent: View {
             }
             .padding(12)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
         }
         .buttonStyle(.plain)
     }
 
     private func categoryIcon(for category: Shared.Category) -> some View {
-        RoundedRectangle(cornerRadius: 10)
+        RoundedRectangle(cornerRadius: WornShape.medium)
             .fill(dotColor(for: category))
             .frame(width: 36, height: 36)
             .overlay(
@@ -322,7 +322,7 @@ private struct GapDetailSheet: View {
     private var detailHeader: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack {
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: WornShape.large)
                     .fill(WornColors.bgCard)
                     .frame(height: 140)
                 Image(systemName: iconName(for: recommendation.mappedCategory))
@@ -362,7 +362,7 @@ private struct GapDetailSheet: View {
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.small))
     }
 
     private var detailRows: some View {
@@ -415,7 +415,7 @@ private struct GapDetailSheet: View {
                             startPoint: .top, endPoint: .bottom
                         )
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
             }
             .accessibilityIdentifier("gap_add_to_wardrobe")
 
@@ -426,7 +426,7 @@ private struct GapDetailSheet: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 48)
                     .background(WornColors.bgCard)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
             }
             .accessibilityIdentifier("gap_dismiss")
         }

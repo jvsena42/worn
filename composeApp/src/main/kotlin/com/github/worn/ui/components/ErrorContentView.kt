@@ -67,7 +67,7 @@ fun ErrorContentView(
         Spacer(Modifier.height(20.dp))
         Surface(
             onClick = onRetry,
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Text(

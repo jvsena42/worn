@@ -64,6 +64,7 @@ import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.TabletPreview
+import com.github.worn.ui.theme.sheetShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +82,7 @@ fun ItemDetailSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle(color = MaterialTheme.colorScheme.outline) },
     ) {
         ItemDetailContent(
@@ -320,7 +321,7 @@ internal fun DetailActionButtons(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Surface(
             onClick = onEdit,
-            shape = RoundedCornerShape(24.dp),
+            shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.surfaceContainer,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             modifier = Modifier.fillMaxWidth().height(buttonHeight).testTag(editTestTag),
@@ -334,7 +335,7 @@ internal fun DetailActionButtons(
         }
         Surface(
             onClick = onDelete,
-            shape = RoundedCornerShape(24.dp),
+            shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.error,
             modifier = Modifier.fillMaxWidth().height(buttonHeight).testTag(deleteTestTag),
         ) {
@@ -368,7 +369,7 @@ private fun DeleteItemDialog(itemName: String, onConfirm: () -> Unit, onDismiss:
             Button(
                 onClick = onConfirm,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                shape = RoundedCornerShape(24.dp),
+                shape = MaterialTheme.shapes.extraLarge,
             ) { Text(stringResource(R.string.common_delete), fontWeight = FontWeight.SemiBold) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
@@ -398,4 +399,5 @@ private fun ItemDetailSheetPhonePreview() {
 private fun ItemDetailSheetTabletPreview() {
     SheetPreview { ItemDetailContent(item = previewItem, isCompact = false) }
 }
+
 

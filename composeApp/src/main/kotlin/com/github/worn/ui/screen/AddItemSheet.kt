@@ -74,6 +74,7 @@ import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.TabletPreview
+import com.github.worn.ui.theme.sheetShape
 import com.github.worn.ui.util.decodePreviewImage
 import com.github.worn.ui.util.readImageBytes
 import com.github.worn.ui.util.rememberCameraCapture
@@ -101,7 +102,7 @@ fun AddItemSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle() },
     ) {
         AddItemForm(
@@ -484,4 +485,5 @@ private fun AddItemFormPhonePreview() {
 private fun AddItemFormTabletPreview() {
     SheetPreview { AddItemForm() }
 }
+
 

@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 package com.github.worn.ui.screen
 
 import androidx.compose.foundation.background
@@ -35,6 +37,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -246,7 +250,7 @@ private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
             Button(
                 onClick = onCreateClick,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                shape = RoundedCornerShape(20.dp),
+                shape = MaterialTheme.shapes.largeIncreased,
                 modifier = Modifier.testTag("outfits_create_button"),
             ) {
                 Icon(Icons.Default.Add, contentDescription = null, Modifier.size(16.dp))
@@ -302,7 +306,8 @@ private fun OutfitsContent(
     }
 }
 
-private val CtaShape = RoundedCornerShape(28.dp)
+private val CtaShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.extraLargeIncreased
 
 @Composable
 private fun EmptyState(onCreateClick: () -> Unit = {}) {
@@ -402,4 +407,5 @@ private fun OutfitsEmptyTabletPreview() {
         )
     }
 }
+
 

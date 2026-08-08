@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 package com.github.worn.ui.components
 
 import androidx.annotation.DrawableRes
@@ -73,7 +75,7 @@ fun WornBottomBar(
             ),
     ) {
         Surface(
-            shape = RoundedCornerShape(36.dp),
+            shape = MaterialTheme.shapes.extraExtraLarge,
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             modifier = Modifier
@@ -109,7 +111,7 @@ private fun TabItem(
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        shape = RoundedCornerShape(26.dp),
+        shape = MaterialTheme.shapes.extraLargeIncreased,
         color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh,
         // No ripple: it repaints the bar for ~1s after each tap, which reads as a slow page
         // switch. The active tab's fill already signals selection.

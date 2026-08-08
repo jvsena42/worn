@@ -63,7 +63,7 @@ fun WornGradientButton(
     enabled: Boolean = true,
     gradientColors: List<Color> = WornGradients.Save,
     disabledGradientColors: List<Color> = WornGradients.Disabled,
-    shape: Shape = RoundedCornerShape(16.dp),
+    shape: Shape = MaterialTheme.shapes.large,
     elevation: Dp = 0.dp,
     icon: (@Composable () -> Unit)? = null,
     fillMaxWidth: Boolean = true,

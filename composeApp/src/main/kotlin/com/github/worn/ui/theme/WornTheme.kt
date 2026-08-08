@@ -22,6 +22,7 @@ fun WornTheme(
         MaterialTheme(
             colorScheme = colorScheme,
             typography = WornTypography,
+            shapes = WornShapes,
             content = content,
         )
     }

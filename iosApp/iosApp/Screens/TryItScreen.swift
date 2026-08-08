@@ -329,9 +329,9 @@ struct TryItScreen: View {
             .frame(maxWidth: .infinity)
             .frame(height: height)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.largeIncreased))
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: WornShape.largeIncreased)
                     .stroke(WornColors.borderStrong, lineWidth: 1.5)
             )
             .shadow(color: .black.opacity(0.03), radius: 2, y: 1)
@@ -348,7 +348,7 @@ struct TryItScreen: View {
                 viewModel.analyzePhoto(imageData: data)
             },
             gradientColors: WornGradients.indigo,
-            cornerRadius: 28,
+            cornerRadius: WornShape.extraLargeIncreased,
             shadowRadius: 10,
             shadowColor: WornColors.accentIndigo.opacity(0.15),
             shadowY: 6,
@@ -428,9 +428,9 @@ struct TryItScreen: View {
         }
         .frame(width: size, height: size)
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: WornShape.large)
                 .stroke(WornColors.borderSubtle, lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
@@ -455,9 +455,9 @@ struct TryItScreen: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: cardHeight)
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.largeIncreased))
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: WornShape.largeIncreased)
                 .stroke(WornColors.borderSubtle, lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
@@ -508,7 +508,7 @@ struct TryItScreen: View {
         .background(
             LinearGradient(colors: gradientColors, startPoint: .top, endPoint: .bottom)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 28))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.extraLargeIncreased))
         .shadow(color: WornColors.accentGreen.opacity(0.15), radius: 10, y: 6)
     }
 
@@ -517,7 +517,7 @@ struct TryItScreen: View {
             text: text,
             action: action,
             gradientColors: WornGradients.indigo,
-            cornerRadius: 28,
+            cornerRadius: WornShape.extraLargeIncreased,
             shadowRadius: 10,
             shadowColor: WornColors.accentIndigo.opacity(0.15),
             shadowY: 6,
@@ -654,9 +654,9 @@ struct TryItScreen: View {
             .frame(maxWidth: .infinity)
             .frame(height: height)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.largeIncreased))
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: WornShape.largeIncreased)
                     .stroke(WornColors.borderStrong, lineWidth: 1.5)
             )
         }
@@ -692,7 +692,7 @@ struct TryItScreen: View {
             text: String(localized: "tryit_see_on_me"),
             action: { generateTryOn() },
             gradientColors: WornGradients.indigo,
-            cornerRadius: 28,
+            cornerRadius: WornShape.extraLargeIncreased,
             shadowRadius: 10,
             shadowColor: WornColors.accentIndigo.opacity(0.15),
             shadowY: 6,
@@ -736,9 +736,9 @@ struct TryItScreen: View {
             .frame(maxWidth: .infinity)
             .frame(height: height)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.largeIncreased))
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: WornShape.largeIncreased)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
             .accessibilityIdentifier("try_on_result")

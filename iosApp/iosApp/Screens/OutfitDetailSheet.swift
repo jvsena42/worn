@@ -71,9 +71,9 @@ struct OutfitDetailSheet: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: buttonHeight)
                             .background(WornColors.bgCard)
-                            .clipShape(RoundedRectangle(cornerRadius: 24))
+                            .clipShape(RoundedRectangle(cornerRadius: WornShape.extraLarge))
                             .overlay(
-                                RoundedRectangle(cornerRadius: 24)
+                                RoundedRectangle(cornerRadius: WornShape.extraLarge)
                                     .stroke(WornColors.borderSubtle, lineWidth: 1)
                             )
                     }
@@ -86,7 +86,7 @@ struct OutfitDetailSheet: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: buttonHeight)
                             .background(WornColors.deleteRed)
-                            .clipShape(RoundedRectangle(cornerRadius: 24))
+                            .clipShape(RoundedRectangle(cornerRadius: WornShape.extraLarge))
                     }
                     .accessibilityIdentifier("outfit_detail_delete")
                 }

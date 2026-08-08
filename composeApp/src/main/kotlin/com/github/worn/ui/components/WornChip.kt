@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 package com.github.worn.ui.components
 
 import androidx.compose.foundation.BorderStroke
@@ -10,7 +12,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -18,7 +22,8 @@ import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
 
-private val chipShape = RoundedCornerShape(20.dp)
+private val chipShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.largeIncreased
 
 @Composable
 fun WornChip(

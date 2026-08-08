@@ -21,9 +21,9 @@ struct ClothingCard: View {
             .frame(maxWidth: .infinity)
             .frame(height: photoHeight)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: WornShape.large)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
             .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)

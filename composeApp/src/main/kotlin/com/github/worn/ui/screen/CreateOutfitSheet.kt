@@ -37,6 +37,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -66,6 +68,7 @@ import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.TabletPreview
+import com.github.worn.ui.theme.sheetShape
 import com.github.worn.ui.theme.wornExtras
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -87,7 +90,7 @@ fun CreateOutfitSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle() },
     ) {
         CreateOutfitForm(
@@ -174,10 +177,10 @@ private fun OutfitNameField(name: String, onNameChange: (String) -> Unit, modifi
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp)),
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
     )
 }
 
@@ -226,7 +229,8 @@ private fun ItemSelectionGrid(
     }
 }
 
-private val cellShape = RoundedCornerShape(16.dp)
+private val cellShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.large
 
 // The cell is the photo alone: a name label here only ever sat on top of the garment, where it was
 // unreadable. The photo carries the item's name as its content description for screen readers.
@@ -324,4 +328,6 @@ private fun CreateOutfitFormTabletPreview() {
         )
     }
 }
+
+
 

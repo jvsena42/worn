@@ -39,6 +39,7 @@ import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.TabletPreview
+import com.github.worn.ui.theme.sheetShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +50,7 @@ fun AiLockedSheet(onDismiss: () -> Unit, onGoToSettings: () -> Unit = {}) {
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle() },
     ) {
         AiLockedContent(onGoToSettings = onGoToSettings, onDismiss = onDismiss)
@@ -74,7 +75,7 @@ internal fun AiLockedContent(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(44.dp)
-                .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(12.dp)),
+                .background(MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.medium),
         ) {
             Icon(
                 Icons.Outlined.SmartToy,
@@ -131,4 +132,5 @@ private fun AiLockedPhonePreview() {
 private fun AiLockedTabletPreview() {
     SheetPreview { AiLockedContent() }
 }
+
 

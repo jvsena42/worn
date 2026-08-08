@@ -214,7 +214,7 @@ struct OutfitsContent: View {
                     text: String(localized: "outfits_empty_cta"),
                     action: onCreateClick,
                     gradientColors: WornGradients.greenCta,
-                    cornerRadius: 28,
+                    cornerRadius: WornShape.extraLargeIncreased,
                     shadowRadius: 10,
                     shadowColor: WornColors.accentIndigo.opacity(0.15),
                     shadowY: 6,
@@ -264,9 +264,9 @@ private struct OutfitCardView: View {
         .frame(height: 170)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.largeIncreased))
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: WornShape.largeIncreased)
                 .stroke(
                     isSelected ? WornColors.accentGreen : WornColors.borderSubtle,
                     lineWidth: 1
@@ -289,7 +289,7 @@ private struct OutfitCardView: View {
 
     private func itemThumbnail(for category: Shared.Category?) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: WornShape.medium)
                 .fill(WornColors.bgElevated)
                 .frame(width: 40, height: 40)
             Image(systemName: iconName(for: category))
@@ -316,7 +316,7 @@ private struct OutfitCardView: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 4)
             .background(badgeColor)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.small))
     }
 
     private var bottomRow: some View {

@@ -58,6 +58,7 @@ import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.theme.TabletPreview
+import com.github.worn.ui.theme.sheetShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +76,7 @@ fun OutfitDetailSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle(color = MaterialTheme.colorScheme.outline) },
     ) {
         OutfitDetailContent(
@@ -232,7 +233,7 @@ private fun DeleteOutfitDialog(outfitName: String, onConfirm: () -> Unit, onDism
             Button(
                 onClick = onConfirm,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                shape = RoundedCornerShape(24.dp),
+                shape = MaterialTheme.shapes.extraLarge,
             ) { Text(stringResource(R.string.common_delete), fontWeight = FontWeight.SemiBold) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
@@ -330,4 +331,5 @@ private fun OutfitDetailSheetTabletPreview() {
         )
     }
 }
+
 

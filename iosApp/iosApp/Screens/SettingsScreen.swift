@@ -178,7 +178,7 @@ struct SettingsContent: View {
     private func settingsCard(iconColor: Color, iconName: String, title: String, subtitle: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: WornShape.medium)
                     .fill(iconColor)
                     .frame(width: 40, height: 40)
                     .overlay(
@@ -201,7 +201,7 @@ struct SettingsContent: View {
             }
             .padding(16)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
         }
         .buttonStyle(.plain)
     }
@@ -217,7 +217,7 @@ struct SettingsContent: View {
         enabled: Bool
     ) -> some View {
         HStack(spacing: 14) {
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: WornShape.medium)
                 .fill(iconColor)
                 .frame(width: 40, height: 40)
                 .overlay(
@@ -241,7 +241,7 @@ struct SettingsContent: View {
         }
         .padding(16)
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
     }
 
     private var appVersion: String {
@@ -302,7 +302,7 @@ struct SettingsContent: View {
             .buttonStyle(.plain)
         }
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
     }
 
     @State private var showCopied = false
@@ -332,9 +332,9 @@ struct SettingsContent: View {
                 }
                 .padding(12)
                 .background(WornColors.bgElevated)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: WornShape.medium)
                         .stroke(WornColors.borderSubtle, lineWidth: 1)
                 )
             }
@@ -343,7 +343,7 @@ struct SettingsContent: View {
         }
         .padding(16)
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
     }
 }
 
@@ -462,9 +462,9 @@ private struct ApiKeySheet: View {
             }
             .padding(14)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: WornShape.medium)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
             .accessibilityIdentifier("api_key_field")
@@ -596,9 +596,9 @@ private struct YouCamCredentialsSheet: View {
         }
         .padding(14)
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: WornShape.medium)
                 .stroke(WornColors.borderSubtle, lineWidth: 1)
         )
     }

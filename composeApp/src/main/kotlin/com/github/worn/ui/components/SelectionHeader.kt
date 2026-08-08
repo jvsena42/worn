@@ -54,7 +54,7 @@ fun SelectionHeader(
             Button(
                 onClick = onDelete,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                shape = RoundedCornerShape(22.dp),
+                shape = MaterialTheme.shapes.extraLarge,
             ) {
                 Icon(Icons.Outlined.Delete, contentDescription = null, tint = Color.White)
                 Spacer(Modifier.width(6.dp))

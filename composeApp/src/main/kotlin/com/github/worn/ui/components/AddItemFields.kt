@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 @file:Suppress("TooManyFunctions")
 
 package com.github.worn.ui.components
@@ -94,7 +96,7 @@ fun PhotoUploadZone(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = Color.Transparent,
         border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
         modifier = modifier.fillMaxWidth().height(140.dp),
@@ -105,7 +107,7 @@ fun PhotoUploadZone(
                     bitmap = bitmap,
                     contentDescription = "Selected photo",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),
+                    modifier = Modifier.fillMaxSize().clip(MaterialTheme.shapes.large),
                 )
             } else {
                 Column(
@@ -133,7 +135,7 @@ fun PhotoUploadZone(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(16.dp))
+                        .clip(MaterialTheme.shapes.large)
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f)),
                 ) {
                     CircularProgressIndicator(
@@ -180,7 +182,7 @@ fun RemoveBackgroundToggle(
 fun AiBadge(onClick: () -> Unit = {}, modifier: Modifier = Modifier) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(28.dp),
+        shape = MaterialTheme.shapes.extraLargeIncreased,
         color = MaterialTheme.colorScheme.secondary,
         modifier = modifier,
     ) {
@@ -219,10 +221,10 @@ fun ItemNameField(value: String, onValueChange: (String) -> Unit, modifier: Modi
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp)),
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
     )
 }
 
@@ -230,7 +232,7 @@ fun ItemNameField(value: String, onValueChange: (String) -> Unit, modifier: Modi
 fun CategoryDropdown(selected: Category?, onSelected: (Category) -> Unit, modifier: Modifier = Modifier) {
     var expanded by remember { mutableStateOf(false) }
     Surface(
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = modifier.fillMaxWidth(),
@@ -429,7 +431,7 @@ fun SubcategoryDropdown(category: Category, selected: Subcategory?, onSelected: 
     val options = subcategoriesFor(category)
     var expanded by remember { mutableStateOf(false) }
     Surface(
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = Modifier.fillMaxWidth(),

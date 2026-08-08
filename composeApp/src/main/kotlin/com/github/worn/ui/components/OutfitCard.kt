@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 package com.github.worn.ui.components
 
 import androidx.compose.foundation.BorderStroke
@@ -26,6 +28,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,10 +43,13 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private val cardShape = RoundedCornerShape(20.dp)
+private val cardShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.largeIncreased
 
-private val thumbnailShape = RoundedCornerShape(10.dp)
-private val badgeShape = RoundedCornerShape(8.dp)
+private val thumbnailShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.medium
+private val badgeShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.small
 
 private val badgeColors: List<Color>
     @Composable @ReadOnlyComposable

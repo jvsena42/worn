@@ -79,6 +79,7 @@ import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
+import com.github.worn.ui.theme.sheetShape
 import com.github.worn.ui.theme.wornExtras
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -306,7 +307,7 @@ private fun GapsBanner(isAiMode: Boolean, onClick: () -> Unit) {
     val bgColor = if (isAiMode) MaterialTheme.colorScheme.primary else MaterialTheme.wornExtras.accentGreenDark
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = bgColor,
         modifier = Modifier.testTag("gaps_banner"),
     ) {
@@ -359,7 +360,7 @@ private fun GapCard(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Row(
@@ -402,7 +403,7 @@ private fun CategoryIcon(category: Category) {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(36.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .clip(MaterialTheme.shapes.medium)
             .background(color),
     ) {
         Icon(
@@ -440,7 +441,7 @@ private fun GapDetailSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle(color = MaterialTheme.colorScheme.outline) },
     ) {
         GapDetailContent(
@@ -482,7 +483,7 @@ private fun DetailHeader(recommendation: GapRecommendation) {
         modifier = Modifier
             .fillMaxWidth()
             .height(140.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .clip(MaterialTheme.shapes.large)
             .background(MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Icon(
@@ -518,7 +519,7 @@ private fun DetailHeader(recommendation: GapRecommendation) {
 @Composable
 private fun DetailPairingInfo(recommendation: GapRecommendation, isAiMode: Boolean) {
     Surface(
-        shape = RoundedCornerShape(8.dp),
+        shape = MaterialTheme.shapes.small,
         color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -601,7 +602,7 @@ private fun DetailActions(onAddToWardrobe: () -> Unit, onDismiss: () -> Unit) {
     Spacer(Modifier.height(8.dp))
     Surface(
         onClick = onDismiss,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = Modifier.fillMaxWidth().testTag("gap_dismiss"),
     ) {
@@ -693,4 +694,5 @@ private fun GapsScreenErrorPreview() {
         )
     }
 }
+
 

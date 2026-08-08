@@ -63,9 +63,9 @@ struct CreateOutfitSheet: View {
             .font(.subheadline)
             .padding(16)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: WornShape.medium)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
             .accessibilityIdentifier("create_outfit_name_field")
@@ -129,9 +129,9 @@ private struct SelectableItemCell: View {
             .frame(maxWidth: .infinity)
             .frame(height: 100)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: WornShape.large)
                     .stroke(
                         isSelected ? WornColors.accentGreen : WornColors.borderSubtle,
                         lineWidth: isSelected ? 2 : 1

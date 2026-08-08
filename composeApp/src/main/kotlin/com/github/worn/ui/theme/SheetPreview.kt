@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.github.worn.ui.theme.sheetShape
 import com.github.worn.ui.theme.wornExtras
 
 @Composable
@@ -28,7 +29,7 @@ fun SheetPreview(content: @Composable () -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                    .clip(MaterialTheme.sheetShape)
                     .background(MaterialTheme.colorScheme.surfaceContainerHigh),
             ) {
                 Spacer(modifier = Modifier.height(12.dp))
@@ -46,3 +47,4 @@ fun SheetPreview(content: @Composable () -> Unit) {
         }
     }
 }
+

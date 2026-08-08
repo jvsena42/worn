@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 package com.github.worn.ui.screen
 
 import androidx.compose.foundation.background
@@ -36,6 +38,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -340,7 +344,8 @@ private fun WardrobeContent(
     }
 }
 
-private val CtaShape = RoundedCornerShape(28.dp)
+private val CtaShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.extraLargeIncreased
 
 @Composable
 private fun CategoryEmptyState() {
@@ -408,7 +413,7 @@ private fun AddItemFab(onClick: () -> Unit, modifier: Modifier = Modifier) {
         onClick = onClick,
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary,
-        shape = RoundedCornerShape(30.dp),
+        shape = MaterialTheme.shapes.extraLargeIncreased,
         modifier = modifier,
     ) {
         Icon(Icons.Default.Add, contentDescription = null)
@@ -524,4 +529,5 @@ private fun WardrobeEmptyCategoryTabletPreview() {
         )
     }
 }
+
 

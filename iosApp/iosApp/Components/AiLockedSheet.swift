@@ -17,7 +17,7 @@ struct AiLockedSheet: View {
             }
 
             ZStack {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: WornShape.medium)
                     .fill(WornColors.accentIndigo)
                     .frame(width: 44, height: 44)
                 Image(systemName: "cpu")

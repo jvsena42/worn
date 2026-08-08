@@ -49,7 +49,7 @@ fun DeleteConfirmationDialog(
                 onClick = onConfirm,
                 enabled = !isDeleting,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                shape = RoundedCornerShape(24.dp),
+                shape = MaterialTheme.shapes.extraLarge,
                 modifier = Modifier.testTag("delete_dialog_confirm"),
             ) {
                 Text(

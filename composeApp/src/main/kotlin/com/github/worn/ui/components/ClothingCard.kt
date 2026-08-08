@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -36,7 +37,8 @@ import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.ui.theme.wornExtras
 
-private val photoShape = RoundedCornerShape(16.dp)
+private val photoShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.large
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

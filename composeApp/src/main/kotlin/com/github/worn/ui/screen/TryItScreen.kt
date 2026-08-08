@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 @file:Suppress("TooManyFunctions")
 
 package com.github.worn.ui.screen
@@ -570,7 +572,7 @@ private fun IndigoCtaButton(text: String, onClick: () -> Unit, modifier: Modifie
         onClick = onClick,
         modifier = modifier,
         gradientColors = WornGradients.Indigo,
-        shape = RoundedCornerShape(28.dp),
+        shape = MaterialTheme.shapes.extraLargeIncreased,
         elevation = 6.dp,
         fillMaxWidth = false,
         fixedHeight = null,
@@ -804,7 +806,7 @@ private fun UploadZone(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(20.dp),
+        shape = MaterialTheme.shapes.largeIncreased,
         color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
         shadowElevation = 1.dp,
@@ -815,7 +817,7 @@ private fun UploadZone(
                 bitmap = photoBitmap,
                 contentDescription = "Selected photo",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
+                modifier = Modifier.fillMaxSize().clip(MaterialTheme.shapes.largeIncreased),
             )
         } else {
             Column(
@@ -848,7 +850,7 @@ private fun AnalyzeButton(onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier.testTag("try_it_analyze_button"),
         gradientColors = WornGradients.Indigo,
-        shape = RoundedCornerShape(28.dp),
+        shape = MaterialTheme.shapes.extraLargeIncreased,
         elevation = 6.dp,
         fixedHeight = null,
         contentPadding = PaddingValues(vertical = 14.dp),
@@ -919,7 +921,7 @@ private fun PairsSection(
 private fun ItemThumbnail(item: ClothingItem, size: Dp, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 2.dp,
@@ -928,7 +930,7 @@ private fun ItemThumbnail(item: ClothingItem, size: Dp, onClick: () -> Unit) {
         ClothingPhoto(
             photoPath = item.photoPath,
             contentDescription = item.name,
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             placeholderIconSize = 28.dp,
             placeholderTint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -941,7 +943,7 @@ private fun CombinationsCard(count: Int, isCompact: Boolean) {
     val valueStyle = MaterialTheme.typography.displaySmall
 
     Surface(
-        shape = RoundedCornerShape(20.dp),
+        shape = MaterialTheme.shapes.largeIncreased,
         color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 2.dp,
@@ -1026,7 +1028,7 @@ private fun DecisionBanner(worthAdding: Boolean, isCompact: Boolean) {
         modifier = Modifier
             .fillMaxWidth()
             .height(bannerHeight)
-            .clip(RoundedCornerShape(28.dp))
+            .clip(MaterialTheme.shapes.extraLargeIncreased)
             .background(gradient),
     ) {
         Row(
@@ -1124,7 +1126,7 @@ private fun PersonPhotoZone(personImage: ByteArray?, height: Dp, onClick: () -> 
     val bitmap = rememberDecodedImage(personImage)
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(20.dp),
+        shape = MaterialTheme.shapes.largeIncreased,
         color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
         shadowElevation = 1.dp,
@@ -1135,7 +1137,7 @@ private fun PersonPhotoZone(personImage: ByteArray?, height: Dp, onClick: () -> 
                 bitmap = bitmap,
                 contentDescription = stringResource(R.string.tryit_your_photo_title),
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
+                modifier = Modifier.fillMaxSize().clip(MaterialTheme.shapes.largeIncreased),
             )
         } else {
             Column(
@@ -1199,7 +1201,7 @@ private fun SeeItOnMeButton(onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier.testTag("try_on_generate_button"),
         gradientColors = WornGradients.Indigo,
-        shape = RoundedCornerShape(28.dp),
+        shape = MaterialTheme.shapes.extraLargeIncreased,
         elevation = 6.dp,
         fixedHeight = null,
         contentPadding = PaddingValues(vertical = 14.dp),
@@ -1241,7 +1243,7 @@ private fun TryOnResultView(imageBytes: ByteArray, height: Dp) {
             letterSpacing = (-0.2).sp,
         )
         Surface(
-            shape = RoundedCornerShape(20.dp),
+            shape = MaterialTheme.shapes.largeIncreased,
             color = MaterialTheme.colorScheme.surfaceContainer,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shadowElevation = 2.dp,
@@ -1252,7 +1254,7 @@ private fun TryOnResultView(imageBytes: ByteArray, height: Dp) {
                     bitmap = bitmap,
                     contentDescription = stringResource(R.string.tryit_tryon_result_title),
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
+                    modifier = Modifier.fillMaxSize().clip(MaterialTheme.shapes.largeIncreased),
                 )
             }
         }

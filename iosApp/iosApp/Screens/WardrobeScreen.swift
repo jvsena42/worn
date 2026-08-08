@@ -243,7 +243,7 @@ struct WardrobeContent: View {
                     text: String(localized: "wardrobe_empty_cta"),
                     action: onAddItemClick,
                     gradientColors: WornGradients.greenCta,
-                    cornerRadius: 28,
+                    cornerRadius: WornShape.extraLargeIncreased,
                     shadowRadius: 10,
                     shadowColor: WornColors.accentIndigo.opacity(0.15),
                     shadowY: 6,

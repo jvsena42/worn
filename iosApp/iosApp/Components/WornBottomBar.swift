@@ -63,9 +63,9 @@ struct WornBottomBar: View {
             .frame(height: 62)
             .padding(4)
             .background(WornColors.bgElevated)
-            .clipShape(RoundedRectangle(cornerRadius: 36))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.extraExtraLarge))
             .overlay(
-                RoundedRectangle(cornerRadius: 36)
+                RoundedRectangle(cornerRadius: WornShape.extraExtraLarge)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
             .accessibilityIdentifier("bottom_bar")
@@ -126,7 +126,7 @@ private struct TabItem: View {
                     ? WornColors.accentGreen
                     : Color.clear
             )
-            .clipShape(RoundedRectangle(cornerRadius: 26))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.extraLargeIncreased))
         }
         .buttonStyle(.plain)
     }

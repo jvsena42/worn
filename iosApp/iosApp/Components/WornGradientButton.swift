@@ -72,7 +72,7 @@ struct WornGradientButton: View {
             text: "Analyze",
             action: {},
             gradientColors: WornGradients.indigo,
-            cornerRadius: 28,
+            cornerRadius: WornShape.extraLargeIncreased,
             shadowRadius: 10,
             shadowColor: WornColors.accentIndigo.opacity(0.15),
             shadowY: 6

@@ -30,7 +30,7 @@ struct ErrorContentView: View {
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                     .background(WornColors.bgCard)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
             }
             .buttonStyle(.plain)
             .padding(.top, 20)

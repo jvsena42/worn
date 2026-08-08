@@ -188,9 +188,9 @@ struct AddItemSheet: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 140)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: WornShape.large)
                     .stroke(WornColors.borderStrong, lineWidth: 1.5)
             )
         }
@@ -272,9 +272,9 @@ struct AddItemSheet: View {
             .font(.subheadline)
             .padding(16)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: WornShape.medium)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
             .accessibilityIdentifier("add_item_name_field")
@@ -339,9 +339,9 @@ struct AddItemSheet: View {
             }
         }
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: WornShape.medium)
                 .stroke(WornColors.borderSubtle, lineWidth: 1)
         )
         .accessibilityIdentifier("add_item_category_dropdown")
@@ -513,9 +513,9 @@ struct AddItemSheet: View {
             }
         }
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: WornShape.medium)
                 .stroke(WornColors.borderSubtle, lineWidth: 1)
         )
     }

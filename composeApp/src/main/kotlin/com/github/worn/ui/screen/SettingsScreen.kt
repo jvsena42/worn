@@ -91,6 +91,7 @@ import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
+import com.github.worn.ui.theme.sheetShape
 import com.github.worn.ui.theme.wornExtras
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -268,7 +269,7 @@ private fun SettingsIcon(color: Color, icon: androidx.compose.ui.graphics.vector
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(40.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(MaterialTheme.shapes.medium)
             .background(color),
     ) {
         Icon(
@@ -298,7 +299,7 @@ private fun SettingsToggleCard(
     Surface(
         onClick = { onCheckedChange(!checked) },
         enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = modifier,
     ) {
@@ -360,7 +361,7 @@ private fun SettingsCard(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = modifier,
     ) {
@@ -404,7 +405,7 @@ private fun AboutCard() {
     val uriHandler = LocalUriHandler.current
 
     Surface(
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column {
@@ -462,7 +463,7 @@ private fun DonationCard() {
     var showCopied by remember { mutableStateOf(false) }
 
     Surface(
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -484,7 +485,7 @@ private fun DonationCard() {
                     clipboardManager.setText(AnnotatedString(DONATION_LN_ADDRESS))
                     showCopied = true
                 },
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             ) {
@@ -530,7 +531,7 @@ private fun ProfileSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle() },
     ) {
         ProfileSheetContent(state = state, onIntent = onIntent, onSave = onSave)
@@ -626,7 +627,7 @@ private fun ApiKeySheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle() },
     ) {
         ApiKeySheetContent(hasApiKey = hasApiKey, onSave = onSave, onClear = onClear)
@@ -749,7 +750,7 @@ private fun ApiKeyTextField(
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
     )
@@ -774,7 +775,7 @@ private fun YouCamCredentialsSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle() },
     ) {
         YouCamCredentialsSheetContent(
@@ -1070,4 +1071,5 @@ private fun SettingsScreenOnDeviceAiUnavailablePreview() {
         SettingsScaffold(state = SettingsState())
     }
 }
+
 
