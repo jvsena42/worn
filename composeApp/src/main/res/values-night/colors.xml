@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- WornDarkColorScheme.surface. Without this the window flashes light before first frame. -->
+    <color name="window_background">#FF211D18</color>
+</resources>
