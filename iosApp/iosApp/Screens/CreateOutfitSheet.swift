@@ -121,6 +121,8 @@ private struct SelectableItemCell: View {
     let isSelected: Bool
     let onTap: () -> Void
 
+    // The cell is the photo alone: a name label here only ever sat on top of the garment, where it
+    // was unreadable. The photo carries the item's name as its accessibility label.
     var body: some View {
         ZStack(alignment: .topLeading) {
             StoredPhotoImage(path: item.photoPath) { placeholderIcon }
@@ -139,18 +141,9 @@ private struct SelectableItemCell: View {
 
             SelectionIndicator(isSelected: isSelected, size: 20, iconSize: 10)
                 .padding(8)
-
-            VStack {
-                Spacer()
-                Text(item.name)
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(WornColors.textPrimary)
-                    .padding(.horizontal, 12)
-                    .padding(.bottom, 8)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
         }
         .frame(height: 100)
+        .accessibilityIdentifier("outfit_item_cell")
         .onTapGesture(perform: onTap)
     }
 

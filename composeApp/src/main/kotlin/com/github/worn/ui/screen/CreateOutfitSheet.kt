@@ -229,7 +229,8 @@ private fun ItemSelectionGrid(
 
 private val cellShape = RoundedCornerShape(16.dp)
 
-
+// The cell is the photo alone: a name label here only ever sat on top of the garment, where it was
+// unreadable. The photo carries the item's name as its content description for screen readers.
 @Composable
 private fun SelectableItemCell(
     item: ClothingItem,
@@ -241,6 +242,7 @@ private fun SelectableItemCell(
         modifier = modifier
             .fillMaxWidth()
             .height(100.dp)
+            .testTag("outfit_item_cell")
             .clip(cellShape)
             .border(
                 width = if (isSelected) 2.dp else 1.dp,
@@ -250,13 +252,6 @@ private fun SelectableItemCell(
             .clickable(onClick = onClick),
     ) {
         ItemThumbnail(item = item)
-        Text(
-            text = item.name,
-            color = WornColors.TextPrimary,
-            fontSize = 10.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.align(Alignment.BottomStart).padding(start = 12.dp, bottom = 8.dp),
-        )
         SelectionIndicator(isSelected = isSelected, size = 20.dp, iconSize = 12.dp, modifier = Modifier.padding(8.dp))
     }
 }
