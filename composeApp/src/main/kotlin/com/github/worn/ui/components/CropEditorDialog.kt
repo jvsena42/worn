@@ -2,6 +2,7 @@ package com.github.worn.ui.components
 
 import android.graphics.Bitmap
 import android.widget.Toast
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,14 +30,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.ClipOp
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -43,17 +46,16 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.compose.foundation.Canvas
-import androidx.compose.ui.input.pointer.pointerInput
 import com.github.worn.R
 import com.github.worn.ui.exposeTestTagsAsResourceId
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
+import com.github.worn.ui.theme.wornExtras
 import com.github.worn.ui.util.cropToJpeg
 import com.github.worn.ui.util.decodeForEditing
 import com.github.worn.util.image.CropCorner
@@ -203,7 +205,7 @@ private fun CropCanvas(
             Canvas(modifier = Modifier.fillMaxSize()) { drawCropOverlay(current) }
         }
         if (isProcessing) {
-            CircularProgressIndicator(color = WornColors.AccentGreen, modifier = Modifier.size(36.dp))
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary, modifier = Modifier.size(36.dp))
         }
     }
 }
@@ -268,13 +270,16 @@ private fun CropEditorTopBar(canApply: Boolean, onCancel: () -> Unit, onApply: (
         modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
     ) {
         TextButton(onClick = onCancel, modifier = Modifier.testTag("crop_editor_cancel")) {
-            Text(stringResource(R.string.common_cancel), color = Color.White, fontSize = 16.sp)
+            Text(
+                stringResource(R.string.common_cancel),
+                color = Color.White,
+                style = MaterialTheme.typography.titleSmall,
+            )
         }
         Text(
             text = stringResource(R.string.crop_title),
             color = Color.White,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.titleSmall,
         )
         TextButton(
             onClick = onApply,
@@ -283,9 +288,8 @@ private fun CropEditorTopBar(canApply: Boolean, onCancel: () -> Unit, onApply: (
         ) {
             Text(
                 text = stringResource(R.string.crop_apply),
-                color = if (canApply) WornColors.AccentGreen else WornColors.TextMuted,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
+                color = if (canApply) MaterialTheme.colorScheme.primary else MaterialTheme.wornExtras.textMuted,
+                style = MaterialTheme.typography.titleSmall,
             )
         }
     }
@@ -298,7 +302,7 @@ private fun CropEditorBottomBar(enabled: Boolean, onReset: () -> Unit) {
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
     ) {
         TextButton(onClick = onReset, enabled = enabled, modifier = Modifier.testTag("crop_editor_reset")) {
-            Text(stringResource(R.string.crop_reset), color = Color.White, fontSize = 15.sp)
+            Text(stringResource(R.string.crop_reset), color = Color.White, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
@@ -367,22 +371,25 @@ private const val GUIDE_WIDTH_PX = 1.5f
 private const val HANDLE_WIDTH_PX = 8f
 private const val HANDLE_ARM_PX = 56f
 
+// Preview-only stand-in for a real photo; the exact fill is irrelevant, so it stays a literal
+// rather than a theme lookup that would force this helper to become @Composable.
 private fun previewBitmap(): ImageBitmap =
     Bitmap.createBitmap(PREVIEW_WIDTH, PREVIEW_HEIGHT, Bitmap.Config.ARGB_8888)
-        .apply { eraseColor(WornColors.AccentGreen.toArgb()) }
+        .apply { eraseColor(android.graphics.Color.rgb(0x7A, 0x94, 0x68)) }
         .asImageBitmap()
 
 private const val PREVIEW_WIDTH = 600
 private const val PREVIEW_HEIGHT = 800
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun CropEditorContentPhonePreview() {
     WornTheme { CropEditorContent(bitmap = previewBitmap()) }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun CropEditorContentTabletPreview() {
     WornTheme { CropEditorContent(bitmap = previewBitmap()) }
 }
+

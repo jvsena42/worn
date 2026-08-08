@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -11,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
 
 @Composable
@@ -32,14 +33,14 @@ fun DeleteConfirmationDialog(
             Text(
                 title,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 22.sp,
+                style = MaterialTheme.typography.titleLarge,
             )
         },
         text = {
             Text(
                 message,
-                color = WornColors.TextSecondary,
-                fontSize = 15.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
                 lineHeight = 22.sp,
             )
         },
@@ -47,8 +48,8 @@ fun DeleteConfirmationDialog(
             Button(
                 onClick = onConfirm,
                 enabled = !isDeleting,
-                colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
-                shape = RoundedCornerShape(24.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                shape = MaterialTheme.shapes.extraLarge,
                 modifier = Modifier.testTag("delete_dialog_confirm"),
             ) {
                 Text(
@@ -70,7 +71,7 @@ fun DeleteConfirmationDialog(
     )
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun DeleteConfirmationDialogPhonePreview() {
     WornTheme {
@@ -84,7 +85,7 @@ private fun DeleteConfirmationDialogPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "spec:width=800dp,height=1280dp,dpi=240")
+@TabletPreview
 @Composable
 private fun DeleteConfirmationDialogTabletPreview() {
     WornTheme {
@@ -97,3 +98,5 @@ private fun DeleteConfirmationDialogTabletPreview() {
         )
     }
 }
+
+

@@ -14,7 +14,7 @@ struct CropPhotoButton: View {
                     .font(.system(size: 15))
                     .foregroundColor(WornColors.textSecondary)
                 Text(String(localized: "crop_photo_button"))
-                    .font(.system(size: 15, weight: .medium))
+                    .font(.subheadline.weight(.medium))
                     .foregroundColor(WornColors.textPrimary)
             }
         }

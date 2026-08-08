@@ -1,7 +1,10 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+
 @file:Suppress("TooManyFunctions")
 
 package com.github.worn.ui.screen
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +35,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -40,6 +44,8 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,25 +55,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.annotation.StringRes
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.github.worn.R
 import com.github.worn.domain.model.AgeRange
 import com.github.worn.domain.model.BodyType
@@ -82,14 +86,17 @@ import com.github.worn.presentation.viewmodel.SettingsEffect
 import com.github.worn.presentation.viewmodel.SettingsIntent
 import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
-import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.SheetDragHandle
+import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornChip
 import com.github.worn.ui.components.WornGradientButton
-import com.github.worn.ui.components.Tab
-import com.github.worn.ui.theme.WornColors
-import com.github.worn.ui.theme.WornDimens
+import com.github.worn.ui.components.WornTopAppBar
+import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
+import com.github.worn.ui.theme.sheetShape
+import com.github.worn.ui.theme.wornExtras
 import org.koin.compose.viewmodel.koinViewModel
 
 @Suppress("UnusedParameter")
@@ -173,9 +180,19 @@ private fun SettingsScaffold(
 ) {
     val contentPadding = if (isCompact) 24.dp else 32.dp
 
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
-        modifier = Modifier.testTag("settings_screen"),
-        containerColor = WornColors.BgPage,
+        modifier = Modifier
+            .testTag("settings_screen")
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = MaterialTheme.colorScheme.surface,
+        topBar = {
+            WornTopAppBar(
+                title = stringResource(R.string.settings_title),
+                scrollBehavior = scrollBehavior,
+            )
+        },
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -184,20 +201,11 @@ private fun SettingsScaffold(
                 .padding(horizontal = contentPadding)
                 .verticalScroll(rememberScrollState()),
         ) {
-            Spacer(Modifier.height(24.dp))
-            Text(
-                text = stringResource(R.string.settings_title),
-                color = WornColors.TextPrimary,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = (-0.5).sp,
-            )
-
-            Spacer(Modifier.height(28.dp))
+            Spacer(Modifier.height(20.dp))
             SectionLabel(stringResource(R.string.settings_section_profile))
             Spacer(Modifier.height(10.dp))
             SettingsCard(
-                icon = { SettingsIcon(color = WornColors.AccentGreen, icon = Icons.Outlined.Person) },
+                icon = { SettingsIcon(color = MaterialTheme.colorScheme.primary, icon = Icons.Outlined.Person) },
                 title = stringResource(R.string.settings_your_profile),
                 subtitle = state.userProfile.summaryText(),
                 onClick = onProfileClick,
@@ -209,7 +217,7 @@ private fun SettingsScaffold(
             Spacer(Modifier.height(10.dp))
             // Listed before the key card: it is free and private, so it should be the first option.
             SettingsToggleCard(
-                icon = { SettingsIcon(color = WornColors.AccentGreen, icon = Icons.Outlined.PhoneAndroid) },
+                icon = { SettingsIcon(color = MaterialTheme.colorScheme.primary, icon = Icons.Outlined.PhoneAndroid) },
                 title = stringResource(R.string.settings_on_device_ai_title),
                 subtitle = stringResource(state.onDeviceAiAvailability.subtitleRes()),
                 checked = state.onDeviceAiEnabled,
@@ -219,7 +227,7 @@ private fun SettingsScaffold(
             )
             Spacer(Modifier.height(10.dp))
             SettingsCard(
-                icon = { SettingsIcon(color = WornColors.AccentIndigo, icon = Icons.Outlined.AutoAwesome) },
+                icon = { SettingsIcon(color = MaterialTheme.colorScheme.secondary, icon = Icons.Outlined.AutoAwesome) },
                 title = stringResource(R.string.settings_api_key_title),
                 subtitle = stringResource(
                     if (state.hasApiKey) R.string.settings_api_key_connected else R.string.settings_api_key_required,
@@ -229,7 +237,7 @@ private fun SettingsScaffold(
             )
             Spacer(Modifier.height(10.dp))
             SettingsCard(
-                icon = { SettingsIcon(color = WornColors.AccentIndigo, icon = Icons.Outlined.Checkroom) },
+                icon = { SettingsIcon(color = MaterialTheme.colorScheme.secondary, icon = Icons.Outlined.Checkroom) },
                 title = stringResource(R.string.settings_youcam_title),
                 subtitle = stringResource(
                     if (state.hasYouCamKey) R.string.settings_youcam_connected else R.string.settings_youcam_required,
@@ -246,7 +254,6 @@ private fun SettingsScaffold(
             Spacer(Modifier.height(24.dp))
             DonationCard()
 
-            Spacer(Modifier.height(WornDimens.BottomBarClearance))
         }
     }
 }
@@ -255,9 +262,8 @@ private fun SettingsScaffold(
 private fun SectionLabel(text: String) {
     Text(
         text = text,
-        color = WornColors.TextSecondary,
-        fontSize = 12.sp,
-        fontWeight = FontWeight.Medium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.labelMedium,
         letterSpacing = 0.5.sp,
     )
 }
@@ -268,7 +274,7 @@ private fun SettingsIcon(color: Color, icon: androidx.compose.ui.graphics.vector
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(40.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(MaterialTheme.shapes.medium)
             .background(color),
     ) {
         Icon(
@@ -298,8 +304,8 @@ private fun SettingsToggleCard(
     Surface(
         onClick = { onCheckedChange(!checked) },
         enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
-        color = WornColors.BgCard,
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = modifier,
     ) {
         Row(
@@ -309,8 +315,17 @@ private fun SettingsToggleCard(
             icon()
             Spacer(Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(title, color = WornColors.TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                Text(subtitle, color = WornColors.TextSecondary, fontSize = 13.sp)
+                Text(
+                    title,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium,
+                )
+                Text(
+                    subtitle,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge,
+                )
             }
             Spacer(Modifier.width(8.dp))
             Switch(
@@ -319,7 +334,7 @@ private fun SettingsToggleCard(
                 enabled = enabled,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color.White,
-                    checkedTrackColor = WornColors.AccentGreen,
+                    checkedTrackColor = MaterialTheme.colorScheme.primary,
                 ),
             )
         }
@@ -351,8 +366,8 @@ private fun SettingsCard(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
-        color = WornColors.BgCard,
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = modifier,
     ) {
         Row(
@@ -362,13 +377,22 @@ private fun SettingsCard(
             icon()
             Spacer(Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(title, color = WornColors.TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                Text(subtitle, color = WornColors.TextSecondary, fontSize = 13.sp)
+                Text(
+                    title,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium,
+                )
+                Text(
+                    subtitle,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge,
+                )
             }
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                 contentDescription = null,
-                tint = WornColors.IconMuted,
+                tint = MaterialTheme.wornExtras.iconMuted,
                 modifier = Modifier.size(20.dp),
             )
         }
@@ -386,8 +410,8 @@ private fun AboutCard() {
     val uriHandler = LocalUriHandler.current
 
     Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = WornColors.BgCard,
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column {
             Row(
@@ -396,15 +420,19 @@ private fun AboutCard() {
             ) {
                 Text(
                     stringResource(R.string.settings_version),
-                    color = WornColors.TextPrimary,
-                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f),
                 )
-                Text(versionName ?: "1.0", color = WornColors.TextSecondary, fontSize = 15.sp)
+                Text(
+                    versionName ?: "1.0",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
-            HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             AboutLinkRow(stringResource(R.string.settings_suggestions_bugs)) { uriHandler.openUri(FEEDBACK_URL) }
-            HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             AboutLinkRow(stringResource(R.string.settings_licenses)) { uriHandler.openUri(LICENSE_URL) }
         }
     }
@@ -417,11 +445,16 @@ private fun AboutLinkRow(label: String, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth().padding(16.dp),
         ) {
-            Text(label, color = WornColors.TextPrimary, fontSize = 15.sp, modifier = Modifier.weight(1f))
+            Text(
+                label,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f),
+            )
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                 contentDescription = null,
-                tint = WornColors.IconMuted,
+                tint = MaterialTheme.wornExtras.iconMuted,
                 modifier = Modifier.size(20.dp),
             )
         }
@@ -435,21 +468,21 @@ private fun DonationCard() {
     var showCopied by remember { mutableStateOf(false) }
 
     Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = WornColors.BgCard,
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 stringResource(R.string.settings_donate_title),
-                color = WornColors.TextPrimary,
-                fontSize = 15.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 stringResource(R.string.settings_donate_subtitle),
-                color = WornColors.TextSecondary,
-                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelLarge,
             )
             Spacer(Modifier.height(12.dp))
             Surface(
@@ -457,9 +490,9 @@ private fun DonationCard() {
                     clipboardManager.setText(AnnotatedString(DONATION_LN_ADDRESS))
                     showCopied = true
                 },
-                shape = RoundedCornerShape(12.dp),
-                color = WornColors.BgElevated,
-                border = BorderStroke(1.dp, WornColors.BorderSubtle),
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -467,17 +500,15 @@ private fun DonationCard() {
                 ) {
                     Text(
                         DONATION_LN_ADDRESS,
-                        color = WornColors.AccentGreen,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.weight(1f),
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
                         if (showCopied) copiedText else stringResource(R.string.settings_donate_copy),
-                        color = WornColors.TextSecondary,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelMedium,
                     )
                 }
             }
@@ -504,8 +535,8 @@ private fun ProfileSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle() },
     ) {
         ProfileSheetContent(state = state, onIntent = onIntent, onSave = onSave)
@@ -538,14 +569,13 @@ private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent)
     ) {
         Text(
             text = stringResource(R.string.settings_your_profile),
-            color = WornColors.TextPrimary,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.headlineSmall,
         )
         Text(
             text = stringResource(R.string.settings_profile_help),
-            color = WornColors.TextSecondary,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
         )
         ChipGroup(
             title = stringResource(R.string.label_body_type),
@@ -601,8 +631,8 @@ private fun ApiKeySheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle() },
     ) {
         ApiKeySheetContent(hasApiKey = hasApiKey, onSave = onSave, onClear = onClear)
@@ -653,8 +683,8 @@ private fun ApiKeySheetContent(
                 ) {
                     Text(
                         text = stringResource(R.string.settings_remove_key),
-                        color = WornColors.TextSecondary,
-                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(vertical = 8.dp),
                     )
@@ -668,20 +698,18 @@ private fun ApiKeySheetContent(
 private fun ApiKeySheetHeader() {
     Text(
         text = stringResource(R.string.settings_connect_claude),
-        color = WornColors.TextPrimary,
-        fontSize = 24.sp,
-        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.onSurface,
+        style = MaterialTheme.typography.headlineSmall,
     )
     Text(
         text = stringResource(R.string.settings_api_description),
-        color = WornColors.TextSecondary,
-        fontSize = 14.sp,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodySmall,
     )
     Text(
         text = stringResource(R.string.settings_api_get_key),
-        color = WornColors.AccentGreen,
-        fontSize = 13.sp,
-        fontWeight = FontWeight.Medium,
+        color = MaterialTheme.colorScheme.primary,
+        style = MaterialTheme.typography.labelLarge,
     )
 }
 
@@ -715,19 +743,19 @@ private fun ApiKeyTextField(
                     contentDescription = stringResource(
                         if (passwordVisible) R.string.settings_api_hide else R.string.settings_api_show,
                     ),
-                    tint = WornColors.IconMuted,
+                    tint = MaterialTheme.wornExtras.iconMuted,
                 )
             }
         },
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = WornColors.BgCard,
-            unfocusedContainerColor = WornColors.BgCard,
-            disabledContainerColor = WornColors.BgCard,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
     )
@@ -751,8 +779,8 @@ private fun YouCamCredentialsSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle() },
     ) {
         YouCamCredentialsSheetContent(
@@ -788,20 +816,18 @@ private fun YouCamCredentialsSheetContent(
     ) {
         Text(
             text = stringResource(R.string.settings_youcam_title),
-            color = WornColors.TextPrimary,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.headlineSmall,
         )
         Text(
             text = stringResource(R.string.settings_youcam_description),
-            color = WornColors.TextSecondary,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
         )
         Text(
             text = stringResource(R.string.settings_youcam_get_key),
-            color = WornColors.AccentGreen,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.labelLarge,
         )
         FieldLabel(stringResource(R.string.settings_youcam_client_id_hint))
         ApiKeyTextField(
@@ -832,8 +858,8 @@ private fun YouCamCredentialsSheetContent(
         if (errorMessage != null && !verifying) {
             Text(
                 text = errorMessage,
-                color = WornColors.DeleteRed,
-                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.testTag("youcam_error"),
             )
         }
@@ -846,8 +872,8 @@ private fun YouCamCredentialsSheetContent(
                 ) {
                     Text(
                         text = stringResource(R.string.settings_youcam_remove),
-                        color = WornColors.TextSecondary,
-                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(vertical = 8.dp),
                     )
@@ -859,7 +885,12 @@ private fun YouCamCredentialsSheetContent(
 
 @Composable
 private fun FieldLabel(text: String) {
-    Text(text, color = WornColors.TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+    Text(
+        text,
+        color = MaterialTheme.colorScheme.onSurface,
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.SemiBold,
+    )
 }
 
 // endregion
@@ -885,7 +916,12 @@ private fun <T> ChipGroup(
     onSelected: (T?) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text(title, color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+        Text(
+            title,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.SemiBold,
+        )
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -911,9 +947,18 @@ private fun <T> MultiChipGroup(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row {
-            Text(title, color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                title,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.SemiBold,
+            )
             Spacer(Modifier.width(6.dp))
-            Text(stringResource(R.string.settings_multi_select), color = WornColors.TextMuted, fontSize = 12.sp)
+            Text(
+                stringResource(R.string.settings_multi_select),
+                color = MaterialTheme.wornExtras.textMuted,
+                style = MaterialTheme.typography.labelMedium,
+            )
         }
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -996,7 +1041,7 @@ private const val DONATION_LN_ADDRESS = "jvsena42@blink.sv"
 private const val FEEDBACK_URL = "https://github.com/jvsena42/worn/issues/new"
 private const val LICENSE_URL = "https://github.com/jvsena42/worn/blob/main/LICENSE"
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun SettingsScreenPhonePreview() {
     WornTheme {
@@ -1009,7 +1054,7 @@ private fun SettingsScreenPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun SettingsScreenTabletPreview() {
     WornTheme {
@@ -1024,10 +1069,14 @@ private fun SettingsScreenTabletPreview() {
 }
 
 /** The default [SettingsState] already reports on-device AI as unavailable. */
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun SettingsScreenOnDeviceAiUnavailablePreview() {
     WornTheme {
         SettingsScaffold(state = SettingsState())
     }
 }
+
+
+
+

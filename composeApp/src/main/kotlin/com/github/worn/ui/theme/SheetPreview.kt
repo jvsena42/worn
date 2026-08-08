@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.github.worn.ui.theme.sheetShape
+import com.github.worn.ui.theme.wornExtras
 
 @Composable
 fun SheetPreview(content: @Composable () -> Unit) {
@@ -21,20 +24,20 @@ fun SheetPreview(content: @Composable () -> Unit) {
             contentAlignment = Alignment.BottomCenter,
             modifier = Modifier
                 .fillMaxSize()
-                .background(WornColors.BgPage.copy(alpha = 0.5f)),
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f)),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                    .background(WornColors.BgElevated),
+                    .clip(MaterialTheme.sheetShape)
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
             ) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .clip(RoundedCornerShape(2.dp))
-                        .background(WornColors.IconMuted)
+                        .background(MaterialTheme.wornExtras.iconMuted)
                         .height(4.dp)
                         .fillMaxWidth(0.1f),
                 )
@@ -44,3 +47,4 @@ fun SheetPreview(content: @Composable () -> Unit) {
         }
     }
 }
+

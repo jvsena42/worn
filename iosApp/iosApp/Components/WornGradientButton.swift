@@ -1,10 +1,15 @@
 import SwiftUI
 
+/// Gradient stops for the filled CTAs.
+///
+/// These read from the dedicated `*Gradient*` tokens rather than the accent roles: the accents
+/// invert between appearances while these buttons always draw white label text, so pairing them
+/// with `accentGreen` would leave the label at roughly 1.8:1 in dark. See `WornColors`.
 enum WornGradients {
     static let save = [WornColors.saveGradientStart, WornColors.saveGradientEnd]
-    static let green = [WornColors.accentGreen, WornColors.accentGreenDark]
-    static let greenCta = [WornColors.accentGreen, WornColors.accentGreenEnd]
-    static let indigo = [WornColors.accentIndigo, Color(hex: 0x556070)]
+    static let green = [WornColors.greenCtaStart, WornColors.accentGreenDark]
+    static let greenCta = [WornColors.greenCtaStart, WornColors.greenCtaEnd]
+    static let indigo = [WornColors.indigoGradientStart, WornColors.indigoGradientEnd]
     static let disabled = [WornColors.textMuted, WornColors.iconMuted]
 }
 
@@ -54,18 +59,8 @@ struct WornGradientButton: View {
 
     private var buttonText: some View {
         Text(text)
-            .font(.system(size: 16, weight: .semibold))
+            .font(.callout.weight(.semibold))
             .foregroundColor(.white)
-    }
-}
-
-private extension Color {
-    init(hex: UInt) {
-        self.init(
-            red: Double((hex >> 16) & 0xFF) / 255.0,
-            green: Double((hex >> 8) & 0xFF) / 255.0,
-            blue: Double(hex & 0xFF) / 255.0
-        )
     }
 }
 
@@ -77,7 +72,7 @@ private extension Color {
             text: "Analyze",
             action: {},
             gradientColors: WornGradients.indigo,
-            cornerRadius: 28,
+            cornerRadius: WornShape.extraLargeIncreased,
             shadowRadius: 10,
             shadowColor: WornColors.accentIndigo.opacity(0.15),
             shadowY: 6

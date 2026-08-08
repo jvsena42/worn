@@ -25,6 +25,7 @@ import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -44,7 +45,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
@@ -55,9 +55,7 @@ import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.Subcategory
-import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.AiBadge
-import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.AiLockedSheet
 import com.github.worn.ui.components.CategoryDropdown
 import com.github.worn.ui.components.ColorSection
@@ -70,13 +68,17 @@ import com.github.worn.ui.components.PhotoUploadZone
 import com.github.worn.ui.components.RemoveBackgroundToggle
 import com.github.worn.ui.components.SaveButton
 import com.github.worn.ui.components.SeasonSection
+import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.SubcategoryDropdown
+import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.SheetPreview
+import com.github.worn.ui.theme.TabletPreview
+import com.github.worn.ui.theme.sheetShape
 import com.github.worn.ui.util.decodePreviewImage
 import com.github.worn.ui.util.readImageBytes
 import com.github.worn.ui.util.rememberCameraCapture
 import com.github.worn.ui.util.rememberDecodedImage
-import com.github.worn.ui.theme.WornColors
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -99,8 +101,8 @@ fun AddItemSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle() },
     ) {
         AddItemForm(
@@ -355,9 +357,8 @@ private fun AddItemFormContent(
     ) {
         Text(
             text = stringResource(if (isEditing) R.string.add_item_title_edit else R.string.add_item_title),
-            color = WornColors.TextPrimary,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.headlineSmall,
             letterSpacing = (-0.5).sp,
         )
         PhotoUploadZone(
@@ -440,7 +441,7 @@ private fun PhotoSourceDialog(
                     ) {
                         Icon(Icons.Outlined.CameraAlt, contentDescription = null, modifier = Modifier.size(24.dp))
                         Spacer(Modifier.width(12.dp))
-                        Text(stringResource(R.string.add_item_take_photo), fontSize = 16.sp)
+                        Text(stringResource(R.string.add_item_take_photo), style = MaterialTheme.typography.titleSmall)
                     }
                 }
                 TextButton(
@@ -454,7 +455,10 @@ private fun PhotoSourceDialog(
                     ) {
                         Icon(Icons.Outlined.PhotoLibrary, contentDescription = null, modifier = Modifier.size(24.dp))
                         Spacer(Modifier.width(12.dp))
-                        Text(stringResource(R.string.add_item_choose_gallery), fontSize = 16.sp)
+                        Text(
+                            stringResource(R.string.add_item_choose_gallery),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
                     }
                 }
             }
@@ -470,14 +474,16 @@ private inline fun <T> toggleInSet(item: T, current: Set<T>, update: (Set<T>) ->
     update(if (item in current) current - item else current + item)
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun AddItemFormPhonePreview() {
     SheetPreview { AddItemForm() }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun AddItemFormTabletPreview() {
     SheetPreview { AddItemForm() }
 }
+
+

@@ -12,14 +12,14 @@ struct OutfitDetailSheet: View {
 
     private var contentPadding: CGFloat { isCompact ? 24 : 32 }
     private var sectionGap: CGFloat { isCompact ? 20 : 24 }
-    private var nameSize: CGFloat { isCompact ? 22 : 26 }
+    private var nameFont: Font { isCompact ? .title2 : .title }
     private var cardSize: CGFloat { isCompact ? 200 : 300 }
     private var cardRadius: CGFloat { isCompact ? 18 : 20 }
     private var cardGap: CGFloat { isCompact ? 12 : 16 }
-    private var propFontSize: CGFloat { isCompact ? 14 : 15 }
+    private var propFont: Font { isCompact ? .subheadline : .callout }
     private var propGap: CGFloat { isCompact ? 14 : 16 }
     private var buttonHeight: CGFloat { isCompact ? 48 : 52 }
-    private var buttonFontSize: CGFloat { isCompact ? 15 : 16 }
+    private var buttonFont: Font { isCompact ? .subheadline : .callout }
 
     private var outfitItems: [ClothingItem] {
         outfit.itemIds.compactMap { id in
@@ -32,7 +32,7 @@ struct OutfitDetailSheet: View {
             VStack(spacing: sectionGap) {
                 // Title
                 Text(outfit.name)
-                    .font(.system(size: nameSize, weight: .semibold))
+                    .font(nameFont.weight(.semibold))
                     .foregroundColor(WornColors.textPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, contentPadding)
@@ -57,8 +57,8 @@ struct OutfitDetailSheet: View {
 
                 // Properties
                 VStack(spacing: propGap) {
-                    PropertyRow(label: String(localized: "label_items"), value: String(format: String(localized: "outfit_detail_items_count"), outfit.itemIds.count), fontSize: propFontSize)
-                    PropertyRow(label: String(localized: "label_season"), value: deriveSeasonText(), fontSize: propFontSize)
+                    PropertyRow(label: String(localized: "label_items"), value: String(format: String(localized: "outfit_detail_items_count"), outfit.itemIds.count), textFont: propFont)
+                    PropertyRow(label: String(localized: "label_season"), value: deriveSeasonText(), textFont: propFont)
                 }
                 .padding(.horizontal, contentPadding)
 
@@ -66,14 +66,14 @@ struct OutfitDetailSheet: View {
                 VStack(spacing: 12) {
                     Button { onEdit(outfit) } label: {
                         Text(String(localized: "outfit_detail_edit"))
-                            .font(.system(size: buttonFontSize, weight: .semibold))
+                            .font(buttonFont.weight(.semibold))
                             .foregroundColor(WornColors.textPrimary)
                             .frame(maxWidth: .infinity)
                             .frame(height: buttonHeight)
                             .background(WornColors.bgCard)
-                            .clipShape(RoundedRectangle(cornerRadius: 24))
+                            .clipShape(RoundedRectangle(cornerRadius: WornShape.extraLarge))
                             .overlay(
-                                RoundedRectangle(cornerRadius: 24)
+                                RoundedRectangle(cornerRadius: WornShape.extraLarge)
                                     .stroke(WornColors.borderSubtle, lineWidth: 1)
                             )
                     }
@@ -81,12 +81,12 @@ struct OutfitDetailSheet: View {
 
                     Button { showDeleteAlert = true } label: {
                         Text(String(localized: "outfit_detail_delete"))
-                            .font(.system(size: buttonFontSize, weight: .semibold))
+                            .font(buttonFont.weight(.semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: buttonHeight)
                             .background(WornColors.deleteRed)
-                            .clipShape(RoundedRectangle(cornerRadius: 24))
+                            .clipShape(RoundedRectangle(cornerRadius: WornShape.extraLarge))
                     }
                     .accessibilityIdentifier("outfit_detail_delete")
                 }
@@ -117,7 +117,7 @@ struct OutfitDetailSheet: View {
             .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
 
             Text(item.name)
-                .font(.system(size: 13, weight: .medium))
+                .font(.footnote.weight(.medium))
                 .foregroundColor(WornColors.textPrimary)
         }
     }
@@ -162,6 +162,14 @@ private let previewOutfit = Outfit(id: "1", name: "Weekend Casual", itemIds: ["i
         outfit: previewOutfit, clothingItems: previewItems,
         isCompact: true, onEdit: { _ in }, onDelete: { _ in }
     )
+}
+
+#Preview("iPhone · Dark") {
+    OutfitDetailSheet(
+        outfit: previewOutfit, clothingItems: previewItems,
+        isCompact: true, onEdit: { _ in }, onDelete: { _ in }
+    )
+    .preferredColorScheme(.dark)
 }
 
 #Preview("iPad Portrait", traits: .portrait) {

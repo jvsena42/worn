@@ -63,9 +63,9 @@ struct WornBottomBar: View {
             .frame(height: 62)
             .padding(4)
             .background(WornColors.bgElevated)
-            .clipShape(RoundedRectangle(cornerRadius: 36))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.extraExtraLarge))
             .overlay(
-                RoundedRectangle(cornerRadius: 36)
+                RoundedRectangle(cornerRadius: WornShape.extraExtraLarge)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
             .accessibilityIdentifier("bottom_bar")
@@ -105,7 +105,7 @@ private struct TabItem: View {
                 Image(systemName: tab.icon)
                     .font(.system(size: 18))
                 Text(tab.label)
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.caption2.weight(.semibold))
                     .tracking(0.5)
                     // Labels wrap on a 5-tab compact bar, which clips the descender. Shrink
                     // instead, down far enough for the longest translation to fit its slot, and
@@ -115,6 +115,10 @@ private struct TabItem: View {
                     .truncationMode(.tail)
                     .padding(.horizontal, 2)
             }
+            // The bar is a fixed-height row of five equal slots, so it cannot grow with the
+            // largest accessibility sizes the way flowing text can. Cap the scaling here and let
+            // minimumScaleFactor absorb the rest; the rest of the app stays uncapped.
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
@@ -122,8 +126,10 @@ private struct TabItem: View {
                     ? WornColors.accentGreen
                     : Color.clear
             )
-            .clipShape(RoundedRectangle(cornerRadius: 26))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.extraLargeIncreased))
         }
         .buttonStyle(.plain)
+        // Mirrors the SegmentTick on Android: a discrete position change in a row of segments.
+        .sensoryFeedback(.selection, trigger: isActive)
     }
 }

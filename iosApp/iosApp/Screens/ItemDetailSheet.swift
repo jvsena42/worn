@@ -12,11 +12,11 @@ struct ItemDetailSheet: View {
 
     private var photoHeight: CGFloat { isCompact ? 280 : 360 }
     private var photoRadius: CGFloat { isCompact ? 20 : 24 }
-    private var nameSize: CGFloat { isCompact ? 22 : 26 }
-    private var propFontSize: CGFloat { isCompact ? 14 : 15 }
+    private var nameFont: Font { isCompact ? .title2 : .title }
+    private var propFont: Font { isCompact ? .subheadline : .callout }
     private var propGap: CGFloat { isCompact ? 14 : 16 }
     private var buttonHeight: CGFloat { isCompact ? 48 : 52 }
-    private var buttonFontSize: CGFloat { isCompact ? 15 : 16 }
+    private var buttonFont: Font { isCompact ? .subheadline : .callout }
     private var contentPadding: CGFloat { isCompact ? 24 : 32 }
     private var sectionGap: CGFloat { isCompact ? 20 : 24 }
     private var placeholderIconSize: CGFloat { isCompact ? 64 : 80 }
@@ -68,7 +68,7 @@ struct ItemDetailSheet: View {
     private var nameGroup: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(item.name)
-                .font(.system(size: nameSize, weight: .semibold))
+                .font(nameFont.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
 
             HStack(spacing: 8) {
@@ -76,7 +76,7 @@ struct ItemDetailSheet: View {
                     .fill(dotColor(for: item.category))
                     .frame(width: 10, height: 10)
                 Text(displayLabel(for: item.category))
-                    .font(.system(size: 14))
+                    .font(.subheadline)
                     .foregroundColor(WornColors.textSecondary)
             }
         }
@@ -94,7 +94,7 @@ struct ItemDetailSheet: View {
             if !item.colors.isEmpty {
                 HStack {
                     Text(String(localized: "label_color"))
-                        .font(.system(size: propFontSize, weight: .medium))
+                        .font(propFont.weight(.medium))
                         .foregroundColor(WornColors.textSecondary)
                     Spacer()
                     HStack(spacing: 8) {
@@ -105,7 +105,7 @@ struct ItemDetailSheet: View {
                                 Circle().stroke(WornColors.borderSubtle, lineWidth: 1)
                             )
                         Text(item.colors.map { $0.capitalized }.joined(separator: ", "))
-                            .font(.system(size: propFontSize, weight: .medium))
+                            .font(propFont.weight(.medium))
                             .foregroundColor(WornColors.textPrimary)
                     }
                 }
@@ -115,19 +115,19 @@ struct ItemDetailSheet: View {
                 let seasonText = item.seasons.count == Season.entries.count
                     ? String(localized: "common_all_seasons")
                     : item.seasons.map { seasonDisplayName($0) }.joined(separator: ", ")
-                PropertyRow(label: String(localized: "label_season"), value: seasonText, fontSize: propFontSize)
+                PropertyRow(label: String(localized: "label_season"), value: seasonText, textFont: propFont)
             }
 
             if let fit = item.fit {
-                PropertyRow(label: String(localized: "label_fit"), value: fitDisplayName(fit), fontSize: propFontSize)
+                PropertyRow(label: String(localized: "label_fit"), value: fitDisplayName(fit), textFont: propFont)
             }
 
             if let subcategory = item.subcategory {
-                PropertyRow(label: String(localized: "label_subcategory"), value: subcategoryDisplayName(subcategory), fontSize: propFontSize)
+                PropertyRow(label: String(localized: "label_subcategory"), value: subcategoryDisplayName(subcategory), textFont: propFont)
             }
 
             if let material = item.material {
-                PropertyRow(label: String(localized: "label_material"), value: materialDisplayName(material), fontSize: propFontSize)
+                PropertyRow(label: String(localized: "label_material"), value: materialDisplayName(material), textFont: propFont)
             }
         }
     }
@@ -135,29 +135,34 @@ struct ItemDetailSheet: View {
 
     private var buttons: some View {
         VStack(spacing: 12) {
+            // Edit is the primary action, so it takes the filled button. Delete was previously the
+            // filled one — a full-width solid red block ranked *below* a plain white Edit — which
+            // gave the destructive action more visual weight than the thing people came to do.
             Button { onEdit(item) } label: {
                 Text(String(localized: "item_detail_edit"))
-                    .font(.system(size: buttonFontSize, weight: .semibold))
-                    .foregroundColor(WornColors.textPrimary)
+                    .font(buttonFont.weight(.semibold))
+                    .foregroundColor(WornColors.textOnColor)
                     .frame(maxWidth: .infinity)
                     .frame(height: buttonHeight)
-                    .background(WornColors.bgCard)
-                    .clipShape(RoundedRectangle(cornerRadius: 24))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 24)
-                            .stroke(WornColors.borderSubtle, lineWidth: 1)
-                    )
+                    .background(WornColors.accentGreen)
+                    .clipShape(RoundedRectangle(cornerRadius: WornShape.extraLarge))
             }
             .accessibilityIdentifier("item_detail_edit")
 
-            Button { showDeleteAlert = true } label: {
+            // `role: .destructive` is what makes VoiceOver announce this as destructive and lets
+            // the system style it; the outline keeps it unmistakable without shouting. Tinting the
+            // label rather than filling also survives dark, where deleteRed is a light #F2B8AC and
+            // white on it is unreadable.
+            Button(role: .destructive) { showDeleteAlert = true } label: {
                 Text(String(localized: "item_detail_delete"))
-                    .font(.system(size: buttonFontSize, weight: .semibold))
-                    .foregroundColor(.white)
+                    .font(buttonFont.weight(.semibold))
+                    .foregroundColor(WornColors.deleteRed)
                     .frame(maxWidth: .infinity)
                     .frame(height: buttonHeight)
-                    .background(WornColors.deleteRed)
-                    .clipShape(RoundedRectangle(cornerRadius: 24))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: WornShape.extraLarge)
+                            .stroke(WornColors.deleteRed, lineWidth: 1)
+                    )
             }
             .accessibilityIdentifier("item_detail_delete")
         }
@@ -243,6 +248,14 @@ private let previewItem = ClothingItem(
         item: previewItem, isCompact: true,
         onEdit: { _ in }, onDelete: { _ in }
     )
+}
+
+#Preview("iPhone · Dark") {
+    ItemDetailSheet(
+        item: previewItem, isCompact: true,
+        onEdit: { _ in }, onDelete: { _ in }
+    )
+    .preferredColorScheme(.dark)
 }
 
 #Preview("iPad Portrait", traits: .portrait) {

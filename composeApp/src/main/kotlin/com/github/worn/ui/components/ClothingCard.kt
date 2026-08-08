@@ -18,13 +18,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -32,9 +37,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.wornExtras
 
-private val photoShape = RoundedCornerShape(16.dp)
+private val photoShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.large
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -47,10 +53,21 @@ fun ClothingCard(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    val haptics = LocalHapticFeedback.current
     Column(
+        // Deliberately no .clip() here and deliberately not a Card. The cell is a photo plus a
+        // caption sitting on the page background, so a Card would put the caption on a white
+        // container, and clipping the Column to a rounded shape cuts its own bottom-left corner —
+        // which is exactly where the category dot sits, rendering it as a teardrop.
+        // combinedClickable already bounds its ripple to the item.
         modifier = modifier.combinedClickable(
             onClick = onClick,
-            onLongClick = onLongPress,
+            onLongClick = {
+                // Long-press is the only way into selection mode and it has no visual affordance
+                // before it fires, so the tick is what tells you it worked.
+                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                onLongPress()
+            },
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -74,8 +91,8 @@ private fun PhotoArea(
     Box(modifier = Modifier.fillMaxWidth().height(height)) {
         Surface(
             shape = photoShape,
-            color = WornColors.BgCard,
-            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shadowElevation = 4.dp,
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -105,8 +122,8 @@ private fun ItemInfo(item: ClothingItem) {
     ) {
         Text(
             text = item.name,
-            color = WornColors.TextPrimary,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Medium,
             // AI-generated names can run long; left unbounded they push the category row down and
             // misalign the cards next to them in the grid row.
@@ -125,17 +142,21 @@ private fun ItemInfo(item: ClothingItem) {
             )
             Text(
                 text = item.category.displayLabel(),
-                color = WornColors.TextMuted,
-                fontSize = 12.sp,
+                color = MaterialTheme.wornExtras.textMuted,
+                style = MaterialTheme.typography.labelMedium,
             )
         }
     }
 }
 
+@Composable
+@ReadOnlyComposable
 internal fun Category.dotColor(): Color = when (this) {
-    Category.TOP -> WornColors.CategoryDotTop
-    Category.BOTTOM -> WornColors.CategoryDotBottom
-    Category.OUTERWEAR -> WornColors.CategoryDotOuterwear
-    Category.SHOES -> WornColors.CategoryDotShoes
-    Category.ACCESSORY -> WornColors.CategoryDotAccessory
+    Category.TOP -> MaterialTheme.wornExtras.categoryDotTop
+    Category.BOTTOM -> MaterialTheme.wornExtras.categoryDotBottom
+    Category.OUTERWEAR -> MaterialTheme.wornExtras.categoryDotOuterwear
+    Category.SHOES -> MaterialTheme.wornExtras.categoryDotShoes
+    Category.ACCESSORY -> MaterialTheme.wornExtras.categoryDotAccessory
 }
+
+

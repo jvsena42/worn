@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 package com.github.worn.ui.components
 
 import androidx.compose.foundation.BorderStroke
@@ -18,12 +20,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,21 +40,26 @@ import androidx.compose.ui.unit.sp
 import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.Outfit
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.wornExtras
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private val cardShape = RoundedCornerShape(20.dp)
+private val cardShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.largeIncreased
 
-private val thumbnailShape = RoundedCornerShape(10.dp)
-private val badgeShape = RoundedCornerShape(8.dp)
+private val thumbnailShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.medium
+private val badgeShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.small
 
-private val badgeColors = listOf(
-    WornColors.AccentIndigo,
-    WornColors.AccentCoral,
-    WornColors.AccentGreen,
-)
+private val badgeColors: List<Color>
+    @Composable @ReadOnlyComposable
+    get() = listOf(
+        MaterialTheme.colorScheme.secondary,
+        MaterialTheme.colorScheme.tertiary,
+        MaterialTheme.colorScheme.primary,
+    )
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -60,18 +72,27 @@ fun OutfitCard(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    val haptics = LocalHapticFeedback.current
     Surface(
         shape = cardShape,
-        color = WornColors.BgCard,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(
             1.dp,
-            if (isSelected) WornColors.AccentGreen else WornColors.BorderSubtle,
+            if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
         ),
         shadowElevation = 4.dp,
         modifier = modifier
             .fillMaxWidth()
             .height(170.dp)
-            .combinedClickable(onClick = onClick, onLongClick = onLongPress),
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = {
+                    // Long-press is the only way into selection mode and it has no visual
+                    // affordance before it fires, so the tick is what tells you it worked.
+                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onLongPress()
+                },
+            ),
     ) {
         Row(modifier = Modifier.padding(20.dp)) {
             if (isSelectionMode) {
@@ -112,14 +133,14 @@ private fun ItemThumbnailRow(
 private fun ItemThumbnail(category: Category?) {
     Surface(
         shape = thumbnailShape,
-        color = WornColors.BgElevated,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         modifier = Modifier.size(40.dp),
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             Icon(
                 painter = painterResource(id = (category ?: Category.TOP).iconRes()),
                 contentDescription = null,
-                tint = WornColors.IconMuted,
+                tint = MaterialTheme.wornExtras.iconMuted,
                 modifier = Modifier.size(20.dp),
             )
         }
@@ -132,8 +153,8 @@ private fun ItemCountBadge(outfit: Outfit) {
     Surface(shape = badgeShape, color = badgeColor) {
         Text(
             text = stringResource(R.string.outfit_detail_items_count, outfit.itemIds.size),
-            color = WornColors.TextOnColor,
-            fontSize = 11.sp,
+            color = MaterialTheme.colorScheme.onPrimary,
+            style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
         )
@@ -150,23 +171,22 @@ private fun BottomRow(outfit: Outfit) {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier = Modifier.weight(1f)) {
             Text(
                 text = outfit.name,
-                color = WornColors.TextPrimary,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleSmall,
                 // Auto-generated names concatenate every item, so they can outgrow the card.
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = formatDate(outfit.createdAt),
-                color = WornColors.TextSecondary,
-                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelMedium,
             )
         }
         Icon(
             imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
             contentDescription = null,
-            tint = WornColors.IconMuted,
+            tint = MaterialTheme.wornExtras.iconMuted,
             modifier = Modifier.size(20.dp),
         )
     }
@@ -180,3 +200,4 @@ private val dateFormat = SimpleDateFormat("MMM d", Locale.getDefault())
 private fun formatDate(epochMillis: Long): String {
     return dateFormat.format(Date(epochMillis))
 }
+

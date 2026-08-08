@@ -1,7 +1,10 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 @file:Suppress("TooManyFunctions")
 
 package com.github.worn.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -23,7 +26,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.CameraAlt
@@ -34,6 +36,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -65,7 +68,7 @@ import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.Subcategory
 import com.github.worn.domain.model.subcategoriesFor
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.wornExtras
 
 val addItemColorPalette = listOf(
     "White" to Color(0xFFFFFFFF),
@@ -93,9 +96,9 @@ fun PhotoUploadZone(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
+        shape = MaterialTheme.shapes.large,
         color = Color.Transparent,
-        border = BorderStroke(1.5.dp, WornColors.BorderStrong),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
         modifier = modifier.fillMaxWidth().height(140.dp),
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -104,7 +107,7 @@ fun PhotoUploadZone(
                     bitmap = bitmap,
                     contentDescription = "Selected photo",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),
+                    modifier = Modifier.fillMaxSize().clip(MaterialTheme.shapes.large),
                 )
             } else {
                 Column(
@@ -115,14 +118,14 @@ fun PhotoUploadZone(
                     Icon(
                         imageVector = Icons.Outlined.CameraAlt,
                         contentDescription = null,
-                        tint = WornColors.IconMuted,
+                        tint = MaterialTheme.wornExtras.iconMuted,
                         modifier = Modifier.size(32.dp),
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
                         text = stringResource(R.string.add_item_photo_hint),
-                        color = WornColors.TextSecondary,
-                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                     )
                 }
@@ -132,10 +135,13 @@ fun PhotoUploadZone(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(WornColors.BgElevated.copy(alpha = 0.6f)),
+                        .clip(MaterialTheme.shapes.large)
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f)),
                 ) {
-                    CircularProgressIndicator(color = WornColors.AccentGreen, modifier = Modifier.size(28.dp))
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(28.dp),
+                    )
                 }
             }
         }
@@ -155,8 +161,8 @@ fun RemoveBackgroundToggle(
     ) {
         Text(
             text = stringResource(R.string.add_item_remove_background),
-            color = WornColors.TextPrimary,
-            fontSize = 15.sp,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.weight(1f),
         )
@@ -166,7 +172,7 @@ fun RemoveBackgroundToggle(
             enabled = enabled,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
-                checkedTrackColor = WornColors.AccentGreen,
+                checkedTrackColor = MaterialTheme.colorScheme.primary,
             ),
         )
     }
@@ -176,16 +182,21 @@ fun RemoveBackgroundToggle(
 fun AiBadge(onClick: () -> Unit = {}, modifier: Modifier = Modifier) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(28.dp),
-        color = WornColors.AccentIndigo,
+        shape = MaterialTheme.shapes.extraLargeIncreased,
+        color = MaterialTheme.colorScheme.secondary,
         modifier = modifier,
     ) {
         Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)) {
-            Text("✦ ", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                "✦ ",
+                color = Color.White,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.SemiBold,
+            )
             Text(
                 stringResource(R.string.add_item_ai_badge),
                 color = Color.White,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
             )
         }
@@ -200,18 +211,20 @@ fun ItemNameField(value: String, onValueChange: (String) -> Unit, modifier: Modi
         placeholder = {
             Text(
                 stringResource(R.string.add_item_name_hint),
-                color = WornColors.IconMuted,
-                fontSize = 15.sp,
+                color = MaterialTheme.wornExtras.iconMuted,
+                style = MaterialTheme.typography.bodyMedium,
             )
         },
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = WornColors.BgCard,
-            unfocusedContainerColor = WornColors.BgCard,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
         ),
-        shape = RoundedCornerShape(12.dp),
-        modifier = modifier.fillMaxWidth().border(1.dp, WornColors.BorderSubtle, RoundedCornerShape(12.dp)),
+        shape = MaterialTheme.shapes.medium,
+        modifier = modifier
+            .fillMaxWidth()
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
     )
 }
 
@@ -219,9 +232,9 @@ fun ItemNameField(value: String, onValueChange: (String) -> Unit, modifier: Modi
 fun CategoryDropdown(selected: Category?, onSelected: (Category) -> Unit, modifier: Modifier = Modifier) {
     var expanded by remember { mutableStateOf(false) }
     Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = WornColors.BgCard,
-        border = BorderStroke(1.dp, WornColors.BorderSubtle),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = modifier.fillMaxWidth(),
     ) {
         Column {
@@ -237,22 +250,26 @@ fun CategoryDropdown(selected: Category?, onSelected: (Category) -> Unit, modifi
                         Icon(
                             painter = painterResource(selected.iconRes()),
                             contentDescription = null,
-                            tint = WornColors.TextSecondary,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(20.dp),
                         )
                         Spacer(Modifier.size(12.dp))
                     }
                     Text(
                         text = selected?.displayName() ?: stringResource(R.string.label_category),
-                        color = if (selected != null) WornColors.TextPrimary else WornColors.IconMuted,
-                        fontSize = 15.sp,
+                        color = if (selected != null) {
+                            MaterialTheme.colorScheme.onSurface
+                        } else {
+                            MaterialTheme.wornExtras.iconMuted
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f),
                     )
                     Icon(
                         imageVector = if (expanded) Icons.Outlined.KeyboardArrowUp
                         else Icons.Outlined.KeyboardArrowDown,
                         contentDescription = null,
-                        tint = WornColors.IconMuted,
+                        tint = MaterialTheme.wornExtras.iconMuted,
                         modifier = Modifier.size(18.dp),
                     )
                 }
@@ -274,7 +291,7 @@ fun CategoryDropdown(selected: Category?, onSelected: (Category) -> Unit, modifi
 @Composable
 private fun CategoryOptionList(onSelected: (Category) -> Unit) {
     Column {
-        HorizontalDivider(color = WornColors.BorderSubtle)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         Category.entries.forEach { category ->
             Surface(
                 onClick = { onSelected(category) },
@@ -287,20 +304,20 @@ private fun CategoryOptionList(onSelected: (Category) -> Unit) {
                     Icon(
                         painter = painterResource(category.iconRes()),
                         contentDescription = null,
-                        tint = WornColors.TextSecondary,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(20.dp),
                     )
                     Spacer(Modifier.size(12.dp))
                     Text(
                         text = category.displayName(),
-                        color = WornColors.TextPrimary,
-                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                     )
                 }
             }
             if (category != Category.entries.last()) {
-                HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             }
         }
     }
@@ -312,8 +329,8 @@ fun ColorSection(selectedColors: Set<String>, onToggle: (String) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Text(
             stringResource(R.string.label_color),
-            color = WornColors.TextPrimary,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
         )
         FlowRow(
@@ -326,7 +343,7 @@ fun ColorSection(selectedColors: Set<String>, onToggle: (String) -> Unit) {
                     onClick = { onToggle(name) },
                     shape = CircleShape,
                     color = color,
-                    border = if (isSelected) BorderStroke(2.dp, WornColors.AccentGreen) else null,
+                    border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null,
                     modifier = Modifier.size(28.dp),
                 ) {
                     if (isSelected) {
@@ -355,8 +372,8 @@ fun SeasonSection(selectedSeasons: Set<Season>, onToggle: (Season) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Text(
             stringResource(R.string.label_season),
-            color = WornColors.TextPrimary,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -396,7 +413,7 @@ internal fun Category.iconRes(): Int = when (this) {
     Category.TOP -> R.drawable.ic_shirt
     Category.BOTTOM -> R.drawable.ic_rectangle_horizontal
     Category.OUTERWEAR -> R.drawable.ic_wind
-    Category.SHOES -> R.drawable.ic_footprints
+    Category.SHOES -> R.drawable.ic_sneaker
     Category.ACCESSORY -> R.drawable.ic_glasses
 }
 
@@ -414,9 +431,9 @@ fun SubcategoryDropdown(category: Category, selected: Subcategory?, onSelected: 
     val options = subcategoriesFor(category)
     var expanded by remember { mutableStateOf(false) }
     Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = WornColors.BgCard,
-        border = BorderStroke(1.dp, WornColors.BorderSubtle),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column {
@@ -452,15 +469,15 @@ private fun DropdownHeader(text: String, hasSelection: Boolean, expanded: Boolea
     ) {
         Text(
             text = text,
-            color = if (hasSelection) WornColors.TextPrimary else WornColors.IconMuted,
-            fontSize = 15.sp,
+            color = if (hasSelection) MaterialTheme.colorScheme.onSurface else MaterialTheme.wornExtras.iconMuted,
+            style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f),
         )
         Icon(
             imageVector = if (expanded) Icons.Outlined.KeyboardArrowUp
             else Icons.Outlined.KeyboardArrowDown,
             contentDescription = null,
-            tint = WornColors.IconMuted,
+            tint = MaterialTheme.wornExtras.iconMuted,
             modifier = Modifier.size(18.dp),
         )
     }
@@ -469,13 +486,13 @@ private fun DropdownHeader(text: String, hasSelection: Boolean, expanded: Boolea
 @Composable
 private fun SubcategoryOptionList(options: List<Subcategory>, onSelected: (Subcategory) -> Unit) {
     Column {
-        HorizontalDivider(color = WornColors.BorderSubtle)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         options.forEach { subcategory ->
             Surface(onClick = { onSelected(subcategory) }, color = Color.Transparent) {
                 Text(
                     text = subcategory.displayName(),
-                    color = WornColors.TextPrimary,
-                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -483,7 +500,7 @@ private fun SubcategoryOptionList(options: List<Subcategory>, onSelected: (Subca
                 )
             }
             if (subcategory != options.last()) {
-                HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             }
         }
     }
@@ -495,8 +512,8 @@ fun FitSection(selected: Fit?, onSelected: (Fit?) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Text(
             stringResource(R.string.label_fit),
-            color = WornColors.TextPrimary,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
         )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -517,8 +534,8 @@ fun MaterialSection(selected: Material?, onSelected: (Material?) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Text(
             stringResource(R.string.label_material),
-            color = WornColors.TextPrimary,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
         )
         FlowRow(

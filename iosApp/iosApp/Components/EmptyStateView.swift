@@ -24,7 +24,7 @@ struct EmptyStateView<Icon: View, Action: View>: View {
 
             ZStack {
                 Circle()
-                    .fill(Color.white)
+                    .fill(WornColors.bgCard)
                     .frame(width: 130, height: 130)
                     .shadow(color: WornColors.accentIndigo.opacity(0.08), radius: 15, x: 0, y: 0)
                     .overlay(
@@ -36,12 +36,12 @@ struct EmptyStateView<Icon: View, Action: View>: View {
             }
 
             Text(title)
-                .font(.system(size: 24, weight: .semibold))
+                .font(.title2.weight(.semibold))
                 .tracking(-0.5)
                 .foregroundColor(WornColors.textPrimary)
 
             Text(description)
-                .font(.system(size: 15))
+                .font(.subheadline)
                 .lineSpacing(4)
                 .multilineTextAlignment(.center)
                 .foregroundColor(WornColors.textSecondary)

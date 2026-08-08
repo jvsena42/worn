@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,11 +24,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
 
 @Composable
@@ -35,7 +36,7 @@ fun ErrorContentView(
     message: String,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
-    retryButtonColor: Color = WornColors.AccentGreen,
+    retryButtonColor: Color = MaterialTheme.colorScheme.primary,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -46,33 +47,33 @@ fun ErrorContentView(
             modifier = Modifier
                 .size(72.dp)
                 .clip(CircleShape)
-                .background(WornColors.DeleteRed.copy(alpha = 0.1f)),
+                .background(MaterialTheme.colorScheme.error.copy(alpha = 0.1f)),
         ) {
             Icon(
                 imageVector = Icons.Outlined.ErrorOutline,
                 contentDescription = null,
-                tint = WornColors.DeleteRed,
+                tint = MaterialTheme.colorScheme.error,
                 modifier = Modifier.size(32.dp),
             )
         }
         Spacer(Modifier.height(24.dp))
         Text(
             text = message,
-            color = WornColors.TextSecondary,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
             lineHeight = 20.sp,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(20.dp))
         Surface(
             onClick = onRetry,
-            shape = RoundedCornerShape(16.dp),
-            color = WornColors.BgCard,
+            shape = MaterialTheme.shapes.large,
+            color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Text(
                 text = stringResource(R.string.common_retry),
                 color = retryButtonColor,
-                fontSize = 15.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
             )
@@ -80,7 +81,7 @@ fun ErrorContentView(
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun ErrorContentViewPhonePreview() {
     WornTheme {
@@ -92,7 +93,7 @@ private fun ErrorContentViewPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun ErrorContentViewTabletPreview() {
     WornTheme {
@@ -100,7 +101,8 @@ private fun ErrorContentViewTabletPreview() {
             message = "Something went wrong. Please try again.",
             onRetry = {},
             modifier = Modifier.padding(vertical = 60.dp),
-            retryButtonColor = WornColors.AccentIndigo,
+            retryButtonColor = MaterialTheme.colorScheme.secondary,
         )
     }
 }
+

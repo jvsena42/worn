@@ -67,7 +67,7 @@ struct SettingsContent: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(String(localized: "settings_title"))
-                        .font(.system(size: 28, weight: .semibold))
+                        .font(.title.weight(.semibold))
                         .foregroundColor(WornColors.textPrimary)
                         .padding(.top, 24)
                         .padding(.bottom, 28)
@@ -170,7 +170,7 @@ struct SettingsContent: View {
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 12, weight: .medium))
+            .font(.caption.weight(.medium))
             .foregroundColor(WornColors.textSecondary)
             .tracking(0.5)
     }
@@ -178,7 +178,7 @@ struct SettingsContent: View {
     private func settingsCard(iconColor: Color, iconName: String, title: String, subtitle: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: WornShape.medium)
                     .fill(iconColor)
                     .frame(width: 40, height: 40)
                     .overlay(
@@ -188,10 +188,10 @@ struct SettingsContent: View {
                     )
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.system(size: 16, weight: .medium))
+                        .font(.callout.weight(.medium))
                         .foregroundColor(WornColors.textPrimary)
                     Text(subtitle)
-                        .font(.system(size: 13))
+                        .font(.footnote)
                         .foregroundColor(WornColors.textSecondary)
                 }
                 Spacer()
@@ -201,7 +201,7 @@ struct SettingsContent: View {
             }
             .padding(16)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
         }
         .buttonStyle(.plain)
     }
@@ -217,7 +217,7 @@ struct SettingsContent: View {
         enabled: Bool
     ) -> some View {
         HStack(spacing: 14) {
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: WornShape.medium)
                 .fill(iconColor)
                 .frame(width: 40, height: 40)
                 .overlay(
@@ -227,10 +227,10 @@ struct SettingsContent: View {
                 )
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.callout.weight(.medium))
                     .foregroundColor(WornColors.textPrimary)
                 Text(subtitle)
-                    .font(.system(size: 13))
+                    .font(.footnote)
                     .foregroundColor(WornColors.textSecondary)
             }
             Spacer()
@@ -241,7 +241,7 @@ struct SettingsContent: View {
         }
         .padding(16)
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
     }
 
     private var appVersion: String {
@@ -252,11 +252,11 @@ struct SettingsContent: View {
         VStack(spacing: 0) {
             HStack {
                 Text(String(localized: "settings_version"))
-                    .font(.system(size: 15))
+                    .font(.subheadline)
                     .foregroundColor(WornColors.textPrimary)
                 Spacer()
                 Text(appVersion)
-                    .font(.system(size: 15))
+                    .font(.subheadline)
                     .foregroundColor(WornColors.textSecondary)
             }
             .padding(16)
@@ -270,7 +270,7 @@ struct SettingsContent: View {
             } label: {
                 HStack {
                     Text(String(localized: "settings_suggestions_bugs"))
-                        .font(.system(size: 15))
+                        .font(.subheadline)
                         .foregroundColor(WornColors.textPrimary)
                     Spacer()
                     Image(systemName: "chevron.right")
@@ -290,7 +290,7 @@ struct SettingsContent: View {
             } label: {
                 HStack {
                     Text(String(localized: "settings_licenses"))
-                        .font(.system(size: 15))
+                        .font(.subheadline)
                         .foregroundColor(WornColors.textPrimary)
                     Spacer()
                     Image(systemName: "chevron.right")
@@ -302,7 +302,7 @@ struct SettingsContent: View {
             .buttonStyle(.plain)
         }
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
     }
 
     @State private var showCopied = false
@@ -310,11 +310,11 @@ struct SettingsContent: View {
     private var donationCard: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(String(localized: "settings_donate_title"))
-                .font(.system(size: 15, weight: .medium))
+                .font(.subheadline.weight(.medium))
                 .foregroundColor(WornColors.textPrimary)
 
             Text(String(localized: "settings_donate_subtitle"))
-                .font(.system(size: 13))
+                .font(.footnote)
                 .foregroundColor(WornColors.textSecondary)
 
             Button {
@@ -323,18 +323,18 @@ struct SettingsContent: View {
             } label: {
                 HStack {
                     Text(donationLNAddress)
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.footnote.weight(.medium))
                         .foregroundColor(WornColors.accentGreen)
                     Spacer()
                     Text(showCopied ? String(localized: "settings_donate_copied") : String(localized: "settings_donate_copy"))
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.caption.weight(.medium))
                         .foregroundColor(WornColors.textSecondary)
                 }
                 .padding(12)
                 .background(WornColors.bgElevated)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: WornShape.medium)
                         .stroke(WornColors.borderSubtle, lineWidth: 1)
                 )
             }
@@ -343,7 +343,7 @@ struct SettingsContent: View {
         }
         .padding(16)
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
     }
 }
 
@@ -362,10 +362,10 @@ private struct ProfileSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     Text(String(localized: "settings_your_profile"))
-                        .font(.system(size: 24, weight: .semibold))
+                        .font(.title2.weight(.semibold))
                         .foregroundColor(WornColors.textPrimary)
                     Text(String(localized: "settings_profile_help"))
-                        .font(.system(size: 14))
+                        .font(.subheadline)
                         .foregroundColor(WornColors.textSecondary)
 
                     chipGroup(title: String(localized: "label_body_type"), options: bodyTypeOptions,
@@ -435,13 +435,13 @@ private struct ApiKeySheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(String(localized: "settings_connect_claude"))
-                .font(.system(size: 24, weight: .semibold))
+                .font(.title2.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
             Text(String(localized: "settings_api_description"))
-                .font(.system(size: 14))
+                .font(.subheadline)
                 .foregroundColor(WornColors.textSecondary)
             Text(String(localized: "settings_api_get_key"))
-                .font(.system(size: 13, weight: .medium))
+                .font(.footnote.weight(.medium))
                 .foregroundColor(WornColors.accentGreen)
 
             HStack {
@@ -453,7 +453,7 @@ private struct ApiKeySheet: View {
                     }
                 }
                 .disabled(hasApiKey)
-                .font(.system(size: 15))
+                .font(.subheadline)
 
                 Button { passwordVisible.toggle() } label: {
                     Image(systemName: passwordVisible ? "eye" : "eye.slash")
@@ -462,9 +462,9 @@ private struct ApiKeySheet: View {
             }
             .padding(14)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: WornShape.medium)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
             .accessibilityIdentifier("api_key_field")
@@ -484,7 +484,7 @@ private struct ApiKeySheet: View {
                         dismiss()
                     } label: {
                         Text(String(localized: "settings_remove_key"))
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.subheadline.weight(.medium))
                             .foregroundColor(WornColors.textSecondary)
                     }
                     .accessibilityIdentifier("api_key_remove_button")
@@ -517,13 +517,13 @@ private struct YouCamCredentialsSheet: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
                 Text(String(localized: "settings_youcam_title"))
-                    .font(.system(size: 24, weight: .semibold))
+                    .font(.title2.weight(.semibold))
                     .foregroundColor(WornColors.textPrimary)
                 Text(String(localized: "settings_youcam_description"))
-                    .font(.system(size: 14))
+                    .font(.subheadline)
                     .foregroundColor(WornColors.textSecondary)
                 Text(String(localized: "settings_youcam_get_key"))
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.footnote.weight(.medium))
                     .foregroundColor(WornColors.accentGreen)
 
                 fieldLabel(String(localized: "settings_youcam_client_id_hint"))
@@ -543,7 +543,7 @@ private struct YouCamCredentialsSheet: View {
 
                 if let errorMessage, !verifying {
                     Text(errorMessage)
-                        .font(.system(size: 13))
+                        .font(.footnote)
                         .foregroundColor(WornColors.deleteRed)
                         .accessibilityIdentifier("youcam_error")
                 }
@@ -556,7 +556,7 @@ private struct YouCamCredentialsSheet: View {
                             dismiss()
                         } label: {
                             Text(String(localized: "settings_youcam_remove"))
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.subheadline.weight(.medium))
                                 .foregroundColor(WornColors.textSecondary)
                         }
                         .accessibilityIdentifier("youcam_remove_button")
@@ -573,7 +573,7 @@ private struct YouCamCredentialsSheet: View {
 
     private func fieldLabel(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 13, weight: .semibold))
+            .font(.footnote.weight(.semibold))
             .foregroundColor(WornColors.textPrimary)
     }
 
@@ -587,7 +587,7 @@ private struct YouCamCredentialsSheet: View {
                 }
             }
             .disabled(!enabled)
-            .font(.system(size: 15))
+            .font(.subheadline)
 
             Button { visible.wrappedValue.toggle() } label: {
                 Image(systemName: visible.wrappedValue ? "eye" : "eye.slash")
@@ -596,9 +596,9 @@ private struct YouCamCredentialsSheet: View {
         }
         .padding(14)
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: WornShape.medium)
                 .stroke(WornColors.borderSubtle, lineWidth: 1)
         )
     }
@@ -611,7 +611,7 @@ private func chipGroup<T: Equatable>(
 ) -> some View {
     VStack(alignment: .leading, spacing: 10) {
         Text(title)
-            .font(.system(size: 14, weight: .semibold))
+            .font(.subheadline.weight(.semibold))
             .foregroundColor(WornColors.textPrimary)
         FlowLayout(spacing: 8) {
             ForEach(Array(options.enumerated()), id: \.offset) { _, item in
@@ -631,10 +631,10 @@ private func multiChipGroup<T: Hashable>(
     VStack(alignment: .leading, spacing: 10) {
         HStack(spacing: 6) {
             Text(title)
-                .font(.system(size: 14, weight: .semibold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
             Text(String(localized: "settings_multi_select"))
-                .font(.system(size: 12))
+                .font(.caption)
                 .foregroundColor(WornColors.textMuted)
         }
         FlowLayout(spacing: 8) {
@@ -759,6 +759,14 @@ private func previewSettingsState(
     )
 }
 
+#Preview("iPhone · Dark") {
+    SettingsContent(
+        state: previewSettingsState(availability: OnDeviceAiAvailabilityAvailable()),
+        isCompact: true
+    )
+    .preferredColorScheme(.dark)
+}
+
 #Preview("iPhone - AI unavailable") {
     SettingsContent(
         state: previewSettingsState(
@@ -766,6 +774,16 @@ private func previewSettingsState(
         ),
         isCompact: true
     )
+}
+
+#Preview("iPhone - AI unavailable · Dark") {
+    SettingsContent(
+        state: previewSettingsState(
+            availability: OnDeviceAiAvailabilityUnavailable(reason: .unsupportedDevice)
+        ),
+        isCompact: true
+    )
+    .preferredColorScheme(.dark)
 }
 
 #Preview("iPad Portrait", traits: .portrait) {

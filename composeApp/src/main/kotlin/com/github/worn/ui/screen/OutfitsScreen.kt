@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 package com.github.worn.ui.screen
 
 import androidx.compose.foundation.background
@@ -6,8 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,14 +28,20 @@ import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,12 +51,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,14 +69,15 @@ import com.github.worn.presentation.viewmodel.OutfitIntent
 import com.github.worn.presentation.viewmodel.OutfitState
 import com.github.worn.presentation.viewmodel.OutfitViewModel
 import com.github.worn.ui.components.DeleteConfirmationDialog
-import com.github.worn.ui.components.SelectionHeader
 import com.github.worn.ui.components.EmptyStateView
 import com.github.worn.ui.components.OutfitCard
+import com.github.worn.ui.components.SelectionHeader
+import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
-import com.github.worn.ui.components.Tab
-import com.github.worn.ui.theme.WornColors
-import com.github.worn.ui.theme.WornDimens
+import com.github.worn.ui.components.WornTopAppBar
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -177,9 +187,30 @@ private fun OutfitsScaffold(
     val sectionGap = if (isCompact) 24.dp else 28.dp
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
-        modifier = Modifier.testTag("outfits_screen"),
-        containerColor = WornColors.BgPage,
+        modifier = Modifier
+            .testTag("outfits_screen")
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = MaterialTheme.colorScheme.surface,
+        floatingActionButton = {
+            if (!isSelectionMode && state.outfits.isNotEmpty()) {
+                CreateOutfitFab(onCreateClick, Modifier.testTag("outfits_create_button"))
+            }
+        },
+        topBar = {
+            if (isSelectionMode) {
+                SelectionHeader(
+                    count = state.selectedIds.size,
+                    onCancel = onClearSelection,
+                    onDelete = { showDeleteDialog = true },
+                    modifier = Modifier.padding(horizontal = contentPadding),
+                )
+            } else {
+                OutfitsTopBar(outfitCount = state.outfits.size, scrollBehavior = scrollBehavior)
+            }
+        },
     ) { paddingValues ->
         val isEmpty = !state.isLoading && state.outfits.isEmpty()
 
@@ -189,20 +220,11 @@ private fun OutfitsScaffold(
                 .padding(paddingValues)
                 .padding(horizontal = contentPadding),
         ) {
-            if (isSelectionMode) {
-                SelectionHeader(
-                    count = state.selectedIds.size,
-                    onCancel = onClearSelection,
-                    onDelete = { showDeleteDialog = true },
-                )
-            } else {
-                OutfitsHeader(outfitCount = state.outfits.size, onCreateClick = onCreateClick)
-            }
             if (isEmpty) {
                 EmptyState(onCreateClick = onCreateClick)
             } else if (state.isLoading && state.outfits.isEmpty()) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    CircularProgressIndicator(color = WornColors.AccentGreen)
+                    LoadingIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             } else {
                 Spacer(modifier = Modifier.height(sectionGap))
@@ -225,40 +247,41 @@ private fun OutfitsScaffold(
 }
 
 @Composable
-private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
-    Spacer(modifier = Modifier.height(8.dp))
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+private fun OutfitsTopBar(outfitCount: Int, scrollBehavior: TopAppBarScrollBehavior) {
+    // Title unchanged: journeys/create-first-outfit.xml asserts on it.
+    WornTopAppBar(
+        title = stringResource(R.string.outfits_title),
+        subtitle = if (outfitCount > 0) {
+            pluralStringResource(R.plurals.saved_combinations, outfitCount, outfitCount)
+        } else {
+            null
+        },
+        scrollBehavior = scrollBehavior,
+    )
+}
+
+/**
+ * Create as a FAB rather than a top-bar action.
+ *
+ * As an action it sat alone in the app bar's otherwise empty leading row, reading as a button
+ * floating above the title. A FAB also matches Wardrobe's "Add item", so the two list screens
+ * now offer their primary action in the same place.
+ */
+@Composable
+private fun CreateOutfitFab(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    ExtendedFloatingActionButton(
+        onClick = onClick,
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        shape = MaterialTheme.shapes.extraLargeIncreased,
+        modifier = modifier,
     ) {
+        Icon(Icons.Default.Add, contentDescription = null)
+        Spacer(Modifier.width(8.dp))
         Text(
-            text = stringResource(R.string.outfits_title),
-            color = WornColors.TextPrimary,
-            fontSize = if (outfitCount == 0) 22.sp else 28.sp,
+            text = stringResource(R.string.outfits_button_create),
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
-            letterSpacing = (-0.5).sp,
-        )
-        if (outfitCount > 0) {
-            Button(
-                onClick = onCreateClick,
-                colors = ButtonDefaults.buttonColors(containerColor = WornColors.AccentGreen),
-                shape = RoundedCornerShape(20.dp),
-                modifier = Modifier.testTag("outfits_create_button"),
-            ) {
-                Icon(Icons.Default.Add, contentDescription = null, Modifier.size(16.dp))
-                Spacer(Modifier.width(4.dp))
-                Text(stringResource(R.string.outfits_button_create), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-            }
-        }
-    }
-    if (outfitCount > 0) {
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = pluralStringResource(R.plurals.saved_combinations, outfitCount, outfitCount),
-            color = WornColors.TextSecondary,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
         )
     }
 }
@@ -274,7 +297,6 @@ private fun OutfitsContent(
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(bottom = WornDimens.BottomBarClearance),
         modifier = Modifier.fillMaxSize(),
     ) {
         items(state.outfits, key = { it.id }) { outfit ->
@@ -295,8 +317,8 @@ private fun OutfitsContent(
     }
 }
 
-private val CtaShape = RoundedCornerShape(28.dp)
-private val CtaGradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenEnd))
+private val CtaShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.extraLargeIncreased
 
 @Composable
 private fun EmptyState(onCreateClick: () -> Unit = {}) {
@@ -306,7 +328,7 @@ private fun EmptyState(onCreateClick: () -> Unit = {}) {
                 imageVector = Icons.Outlined.Layers,
                 contentDescription = null,
                 modifier = Modifier.size(52.dp),
-                tint = WornColors.TextSecondary,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
         title = stringResource(R.string.outfits_empty_title),
@@ -323,7 +345,12 @@ private fun EmptyState(onCreateClick: () -> Unit = {}) {
                 fixedHeight = null,
                 contentPadding = PaddingValues(horizontal = 36.dp, vertical = 16.dp),
                 icon = {
-                    Icon(Icons.Default.Add, contentDescription = null, Modifier.size(18.dp), WornColors.BgPage)
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = null,
+                        Modifier.size(18.dp),
+                        MaterialTheme.colorScheme.surface,
+                    )
                 },
             )
         },
@@ -337,7 +364,7 @@ private val previewOutfits = listOf(
     Outfit("3", "Evening Out", listOf("i1", "i2", "i3", "i4", "i5"), 1_709_856_000_000),
 )
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun OutfitsPhonePreview() {
     WornTheme {
@@ -348,7 +375,7 @@ private fun OutfitsPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun OutfitsSelectionPreview() {
     WornTheme {
@@ -359,7 +386,7 @@ private fun OutfitsSelectionPreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun OutfitsEmptyPhonePreview() {
     WornTheme {
@@ -370,7 +397,7 @@ private fun OutfitsEmptyPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun OutfitsTabletPreview() {
     WornTheme {
@@ -381,7 +408,7 @@ private fun OutfitsTabletPreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun OutfitsEmptyTabletPreview() {
     WornTheme {
@@ -391,3 +418,8 @@ private fun OutfitsEmptyTabletPreview() {
         )
     }
 }
+
+
+
+
+

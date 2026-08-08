@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 @file:Suppress("TooManyFunctions")
 
 package com.github.worn.ui.screen
@@ -46,6 +48,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -76,12 +79,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.github.worn.R
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.GarmentCategory
@@ -91,20 +93,21 @@ import com.github.worn.presentation.viewmodel.TryItEffect
 import com.github.worn.presentation.viewmodel.TryItIntent
 import com.github.worn.presentation.viewmodel.TryItState
 import com.github.worn.presentation.viewmodel.TryItViewModel
+import com.github.worn.ui.components.ClothingPhoto
 import com.github.worn.ui.components.CropEditorDialog
 import com.github.worn.ui.components.CropPhotoButton
 import com.github.worn.ui.components.ErrorContentView
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
-import com.github.worn.ui.components.ClothingPhoto
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
+import com.github.worn.ui.theme.WornTheme
+import com.github.worn.ui.theme.wornExtras
 import com.github.worn.ui.util.SharedPhoto
 import com.github.worn.ui.util.readImageBytes
 import com.github.worn.ui.util.rememberCameraCapture
 import com.github.worn.ui.util.rememberDecodedImage
-import com.github.worn.ui.theme.WornColors
-import com.github.worn.ui.theme.WornDimens
-import com.github.worn.ui.theme.WornTheme
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -301,7 +304,7 @@ private fun PhotoSourceDialog(
                     ) {
                         Icon(Icons.Outlined.CameraAlt, contentDescription = null, modifier = Modifier.size(24.dp))
                         Spacer(Modifier.width(12.dp))
-                        Text(stringResource(R.string.add_item_take_photo), fontSize = 16.sp)
+                        Text(stringResource(R.string.add_item_take_photo), style = MaterialTheme.typography.titleSmall)
                     }
                 }
                 TextButton(onClick = onGallery, modifier = Modifier.fillMaxWidth()) {
@@ -316,7 +319,10 @@ private fun PhotoSourceDialog(
                             modifier = Modifier.size(24.dp),
                         )
                         Spacer(Modifier.width(12.dp))
-                        Text(stringResource(R.string.add_item_choose_gallery), fontSize = 16.sp)
+                        Text(
+                            stringResource(R.string.add_item_choose_gallery),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
                     }
                 }
             }
@@ -423,7 +429,7 @@ private fun FeatureChoiceRow(
         ) {
             Icon(icon, contentDescription = null, modifier = Modifier.size(24.dp))
             Spacer(Modifier.width(12.dp))
-            Text(label, fontSize = 16.sp)
+            Text(label, style = MaterialTheme.typography.titleSmall)
         }
     }
 }
@@ -452,7 +458,7 @@ private fun TryItScaffold(
 
     Scaffold(
         modifier = Modifier.testTag("try_it_screen"),
-        containerColor = WornColors.BgPage,
+        containerColor = MaterialTheme.colorScheme.surface,
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         if (!state.hasApiKey && !state.hasYouCamKey) {
@@ -500,7 +506,11 @@ private fun AiEmptyContent(
 ) {
     val circleSize = if (isCompact) 130.dp else 150.dp
     val iconSize = if (isCompact) 52.dp else 60.dp
-    val titleSize = if (isCompact) 24.sp else 26.sp
+    val titleStyle = if (isCompact) {
+        MaterialTheme.typography.headlineSmall
+    } else {
+        MaterialTheme.typography.headlineLarge
+    }
     val descWidth = if (isCompact) 280.dp else 380.dp
 
     Column(
@@ -510,8 +520,8 @@ private fun AiEmptyContent(
     ) {
         Surface(
             shape = CircleShape,
-            color = WornColors.BgCard,
-            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shadowElevation = 8.dp,
             modifier = Modifier.size(circleSize),
         ) {
@@ -519,7 +529,7 @@ private fun AiEmptyContent(
                 Icon(
                     imageVector = Icons.Outlined.SmartToy,
                     contentDescription = null,
-                    tint = WornColors.AccentIndigo,
+                    tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.size(iconSize),
                 )
             }
@@ -527,16 +537,20 @@ private fun AiEmptyContent(
         Spacer(Modifier.height(24.dp))
         Text(
             text = stringResource(R.string.tryit_locked_title),
-            color = WornColors.TextPrimary,
-            fontSize = titleSize,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = titleStyle,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(12.dp))
         Text(
             text = stringResource(R.string.tryit_locked_description),
-            color = WornColors.TextSecondary,
-            fontSize = if (isCompact) 15.sp else 16.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = if (isCompact) {
+                MaterialTheme.typography.bodyMedium
+            } else {
+                MaterialTheme.typography.bodyLarge
+            },
             lineHeight = if (isCompact) 22.sp else 24.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.widthIn(max = descWidth),
@@ -557,7 +571,7 @@ private fun IndigoCtaButton(text: String, onClick: () -> Unit, modifier: Modifie
         onClick = onClick,
         modifier = modifier,
         gradientColors = WornGradients.Indigo,
-        shape = RoundedCornerShape(28.dp),
+        shape = MaterialTheme.shapes.extraLargeIncreased,
         elevation = 6.dp,
         fillMaxWidth = false,
         fixedHeight = null,
@@ -642,7 +656,7 @@ private fun TryItPhoneContent(
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Spacer(Modifier.height(4.dp))
-        TryItTitle(fontSize = 28.sp)
+        TryItTitle(style = MaterialTheme.typography.headlineMedium)
         UploadZone(photoBitmap = photoBitmap, height = 200.dp, onClick = onPhotoClick)
         if (hasPhoto) {
             CropPhotoButton(onClick = onCropClick, modifier = Modifier.testTag("try_it_crop_button"))
@@ -660,7 +674,7 @@ private fun TryItPhoneContent(
                         message = errorMsg,
                         onRetry = onAnalyze,
                         modifier = Modifier.padding(vertical = 40.dp),
-                        retryButtonColor = WornColors.AccentIndigo,
+                        retryButtonColor = MaterialTheme.colorScheme.secondary,
                     )
                 }
             }
@@ -680,7 +694,6 @@ private fun TryItPhoneContent(
                 onPositioned = onTryOnSectionPositioned,
             )
         }
-        Spacer(Modifier.height(WornDimens.BottomBarClearance))
     }
 }
 
@@ -703,7 +716,7 @@ private fun TryItTabletContent(
 ) {
     Column(modifier = modifier.verticalScroll(scrollState)) {
         Spacer(Modifier.height(4.dp))
-        TryItTitle(fontSize = 32.sp)
+        TryItTitle(style = MaterialTheme.typography.headlineLarge)
         Spacer(Modifier.height(28.dp))
         Row(
             horizontalArrangement = Arrangement.spacedBy(32.dp),
@@ -730,7 +743,7 @@ private fun TryItTabletContent(
                                 message = errorMsg,
                                 onRetry = onAnalyze,
                                 modifier = Modifier.padding(vertical = 40.dp),
-                                retryButtonColor = WornColors.AccentIndigo,
+                                retryButtonColor = MaterialTheme.colorScheme.secondary,
                             )
                         }
                     }
@@ -768,16 +781,15 @@ private fun TryItTabletContent(
                 }
             }
         }
-        Spacer(Modifier.height(WornDimens.BottomBarClearance))
     }
 }
 
 @Composable
-private fun TryItTitle(fontSize: androidx.compose.ui.unit.TextUnit) {
+private fun TryItTitle(style: androidx.compose.ui.text.TextStyle) {
     Text(
         text = stringResource(R.string.tryit_title),
-        color = WornColors.TextPrimary,
-        fontSize = fontSize,
+        color = MaterialTheme.colorScheme.onSurface,
+        style = style,
         fontWeight = FontWeight.SemiBold,
         letterSpacing = (-0.8).sp,
     )
@@ -791,9 +803,9 @@ private fun UploadZone(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(20.dp),
-        color = WornColors.BgCard,
-        border = BorderStroke(1.5.dp, WornColors.BorderStrong),
+        shape = MaterialTheme.shapes.largeIncreased,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
         shadowElevation = 1.dp,
         modifier = Modifier.fillMaxWidth().height(height).testTag("try_it_upload_zone"),
     ) {
@@ -802,7 +814,7 @@ private fun UploadZone(
                 bitmap = photoBitmap,
                 contentDescription = "Selected photo",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
+                modifier = Modifier.fillMaxSize().clip(MaterialTheme.shapes.largeIncreased),
             )
         } else {
             Column(
@@ -813,15 +825,14 @@ private fun UploadZone(
                 Icon(
                     imageVector = Icons.Outlined.CameraAlt,
                     contentDescription = null,
-                    tint = WornColors.IconMuted,
+                    tint = MaterialTheme.wornExtras.iconMuted,
                     modifier = Modifier.size(44.dp),
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
                     text = stringResource(R.string.tryit_upload_hint),
-                    color = WornColors.TextSecondary,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
                 )
             }
@@ -836,7 +847,7 @@ private fun AnalyzeButton(onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier.testTag("try_it_analyze_button"),
         gradientColors = WornGradients.Indigo,
-        shape = RoundedCornerShape(28.dp),
+        shape = MaterialTheme.shapes.extraLargeIncreased,
         elevation = 6.dp,
         fixedHeight = null,
         contentPadding = PaddingValues(vertical = 14.dp),
@@ -857,7 +868,7 @@ private fun LoadingIndicator() {
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxWidth().padding(vertical = 40.dp),
     ) {
-        CircularProgressIndicator(color = WornColors.AccentIndigo)
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.secondary)
     }
 }
 
@@ -885,9 +896,8 @@ private fun PairsSection(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = stringResource(R.string.tryit_pairs_with),
-            color = WornColors.TextPrimary,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleMedium,
             letterSpacing = (-0.2).sp,
         )
         LazyRow(
@@ -908,18 +918,18 @@ private fun PairsSection(
 private fun ItemThumbnail(item: ClothingItem, size: Dp, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
-        color = WornColors.BgCard,
-        border = BorderStroke(1.dp, WornColors.BorderSubtle),
+        shape = MaterialTheme.shapes.large,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 2.dp,
         modifier = Modifier.size(size),
     ) {
         ClothingPhoto(
             photoPath = item.photoPath,
             contentDescription = item.name,
-            shape = RoundedCornerShape(16.dp),
+            shape = MaterialTheme.shapes.large,
             placeholderIconSize = 28.dp,
-            placeholderTint = WornColors.TextSecondary,
+            placeholderTint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -927,12 +937,12 @@ private fun ItemThumbnail(item: ClothingItem, size: Dp, onClick: () -> Unit) {
 @Composable
 private fun CombinationsCard(count: Int, isCompact: Boolean) {
     val cardHeight = if (isCompact) 90.dp else 110.dp
-    val valueSize = if (isCompact) 40.sp else 44.sp
+    val valueStyle = MaterialTheme.typography.displaySmall
 
     Surface(
-        shape = RoundedCornerShape(20.dp),
-        color = WornColors.BgCard,
-        border = BorderStroke(1.dp, WornColors.BorderSubtle),
+        shape = MaterialTheme.shapes.largeIncreased,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 2.dp,
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -944,15 +954,15 @@ private fun CombinationsCard(count: Int, isCompact: Boolean) {
         ) {
             Text(
                 text = stringResource(R.string.tryit_combinations_unlocked),
-                color = WornColors.TextSecondary,
-                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.5.sp,
             )
             Text(
                 text = count.toString(),
-                color = WornColors.AccentGreen,
-                fontSize = valueSize,
+                color = MaterialTheme.colorScheme.primary,
+                style = valueStyle,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-1.2).sp,
             )
@@ -964,14 +974,17 @@ private fun CombinationsCard(count: Int, isCompact: Boolean) {
 private fun GapsFilledSection(gaps: List<String>, isCompact: Boolean) {
     if (gaps.isEmpty()) return
 
-    val fontSize = if (isCompact) 14.sp else 15.sp
+    val bodyStyle = if (isCompact) {
+        MaterialTheme.typography.bodySmall
+    } else {
+        MaterialTheme.typography.bodyMedium
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = stringResource(R.string.tryit_gaps_filled),
-            color = WornColors.TextPrimary,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleMedium,
             letterSpacing = (-0.2).sp,
         )
         gaps.forEach { gap ->
@@ -984,12 +997,12 @@ private fun GapsFilledSection(gaps: List<String>, isCompact: Boolean) {
                     modifier = Modifier
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(WornColors.AccentGreen),
+                        .background(MaterialTheme.colorScheme.primary),
                 )
                 Text(
                     text = gap,
-                    color = WornColors.TextPrimary,
-                    fontSize = fontSize,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = bodyStyle,
                 )
             }
         }
@@ -1000,7 +1013,7 @@ private fun GapsFilledSection(gaps: List<String>, isCompact: Boolean) {
 private fun DecisionBanner(worthAdding: Boolean, isCompact: Boolean) {
     val bannerHeight = if (isCompact) 56.dp else 60.dp
     val gradient = if (worthAdding) {
-        Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenDark))
+        Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.wornExtras.accentGreenDark))
     } else {
         Brush.verticalGradient(listOf(Color(0xFF8B7D7D), Color(0xFF6B5E5E)))
     }
@@ -1012,7 +1025,7 @@ private fun DecisionBanner(worthAdding: Boolean, isCompact: Boolean) {
         modifier = Modifier
             .fillMaxWidth()
             .height(bannerHeight)
-            .clip(RoundedCornerShape(28.dp))
+            .clip(MaterialTheme.shapes.extraLargeIncreased)
             .background(gradient),
     ) {
         Row(
@@ -1028,8 +1041,7 @@ private fun DecisionBanner(worthAdding: Boolean, isCompact: Boolean) {
             Text(
                 text = text,
                 color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.titleSmall,
             )
         }
     }
@@ -1055,9 +1067,8 @@ private fun TryOnSection(
     ) {
         Text(
             text = stringResource(R.string.tryit_your_photo_title),
-            color = WornColors.TextPrimary,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleMedium,
             letterSpacing = (-0.2).sp,
         )
         PersonPhotoZone(
@@ -1073,9 +1084,8 @@ private fun TryOnSection(
         }
         Text(
             text = stringResource(R.string.tryit_tryon_category_title),
-            color = WornColors.TextPrimary,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleMedium,
             letterSpacing = (-0.2).sp,
         )
         GarmentCategorySelector(selected = state.selectedCategory, onSelect = onSelectCategory)
@@ -1093,7 +1103,7 @@ private fun TryOnSection(
                     message = errorMsg,
                     onRetry = onGenerateTryOn,
                     modifier = Modifier.padding(vertical = 24.dp),
-                    retryButtonColor = WornColors.AccentIndigo,
+                    retryButtonColor = MaterialTheme.colorScheme.secondary,
                 )
             }
         }
@@ -1102,8 +1112,8 @@ private fun TryOnSection(
         }
         Text(
             text = stringResource(R.string.tryit_tryon_cost_note),
-            color = WornColors.TextSecondary,
-            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium,
         )
     }
 }
@@ -1113,9 +1123,9 @@ private fun PersonPhotoZone(personImage: ByteArray?, height: Dp, onClick: () -> 
     val bitmap = rememberDecodedImage(personImage)
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(20.dp),
-        color = WornColors.BgCard,
-        border = BorderStroke(1.5.dp, WornColors.BorderStrong),
+        shape = MaterialTheme.shapes.largeIncreased,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
         shadowElevation = 1.dp,
         modifier = Modifier.fillMaxWidth().height(height).testTag("try_on_person_zone"),
     ) {
@@ -1124,7 +1134,7 @@ private fun PersonPhotoZone(personImage: ByteArray?, height: Dp, onClick: () -> 
                 bitmap = bitmap,
                 contentDescription = stringResource(R.string.tryit_your_photo_title),
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
+                modifier = Modifier.fillMaxSize().clip(MaterialTheme.shapes.largeIncreased),
             )
         } else {
             Column(
@@ -1135,15 +1145,14 @@ private fun PersonPhotoZone(personImage: ByteArray?, height: Dp, onClick: () -> 
                 Icon(
                     imageVector = Icons.Outlined.CameraAlt,
                     contentDescription = null,
-                    tint = WornColors.IconMuted,
+                    tint = MaterialTheme.wornExtras.iconMuted,
                     modifier = Modifier.size(44.dp),
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
                     text = stringResource(R.string.tryit_your_photo_hint),
-                    color = WornColors.TextSecondary,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
                 )
             }
@@ -1167,7 +1176,7 @@ private fun GarmentCategorySelector(
                 onClick = { onSelect(category) },
                 label = { Text(stringResource(categoryLabelRes(category))) },
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = WornColors.AccentIndigo,
+                    selectedContainerColor = MaterialTheme.colorScheme.secondary,
                     selectedLabelColor = Color.White,
                 ),
             )
@@ -1189,7 +1198,7 @@ private fun SeeItOnMeButton(onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier.testTag("try_on_generate_button"),
         gradientColors = WornGradients.Indigo,
-        shape = RoundedCornerShape(28.dp),
+        shape = MaterialTheme.shapes.extraLargeIncreased,
         elevation = 6.dp,
         fixedHeight = null,
         contentPadding = PaddingValues(vertical = 14.dp),
@@ -1211,11 +1220,11 @@ private fun TryOnLoadingIndicator() {
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
     ) {
-        CircularProgressIndicator(color = WornColors.AccentIndigo)
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.secondary)
         Text(
             text = stringResource(R.string.tryit_tryon_generating),
-            color = WornColors.TextSecondary,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
         )
     }
 }
@@ -1226,15 +1235,14 @@ private fun TryOnResultView(imageBytes: ByteArray, height: Dp) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = stringResource(R.string.tryit_tryon_result_title),
-            color = WornColors.TextPrimary,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleMedium,
             letterSpacing = (-0.2).sp,
         )
         Surface(
-            shape = RoundedCornerShape(20.dp),
-            color = WornColors.BgCard,
-            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            shape = MaterialTheme.shapes.largeIncreased,
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shadowElevation = 2.dp,
             modifier = Modifier.fillMaxWidth().height(height).testTag("try_on_result"),
         ) {
@@ -1243,7 +1251,7 @@ private fun TryOnResultView(imageBytes: ByteArray, height: Dp) {
                     bitmap = bitmap,
                     contentDescription = stringResource(R.string.tryit_tryon_result_title),
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(20.dp)),
+                    modifier = Modifier.fillMaxSize().clip(MaterialTheme.shapes.largeIncreased),
                 )
             }
         }
@@ -1276,7 +1284,7 @@ private val previewResult = TryItResult(
     worthAdding = true,
 )
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun TryItResultsPhonePreview() {
     WornTheme {
@@ -1289,7 +1297,7 @@ private fun TryItResultsPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun TryItEmptyPhonePreview() {
     WornTheme {
@@ -1302,7 +1310,7 @@ private fun TryItEmptyPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun TryItResultsTabletPreview() {
     WornTheme {
@@ -1315,7 +1323,7 @@ private fun TryItResultsTabletPreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun TryItShareChooserPhonePreview() {
     WornTheme {
@@ -1329,7 +1337,7 @@ private fun TryItShareChooserPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun TryItShareChooserTabletPreview() {
     WornTheme {
@@ -1343,7 +1351,7 @@ private fun TryItShareChooserTabletPreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun TryItTryOnPhonePreview() {
     WornTheme {
@@ -1360,3 +1368,4 @@ private fun TryItTryOnPhonePreview() {
 }
 
 // endregion
+

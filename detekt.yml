@@ -8,8 +8,10 @@ naming:
 
 complexity:
   TooManyFunctions:
-    # Preview composables inflate count but are not real logic
-    ignoreAnnotatedFunctions: ['Preview']
+    # Preview composables inflate count but are not real logic. PhonePreview/TabletPreview are the
+    # project's multipreview annotations (see ui/theme/WornPreviews.kt) — detekt matches on the
+    # annotation name written at the call site, so the aliases have to be listed too.
+    ignoreAnnotatedFunctions: ['Preview', 'PhonePreview', 'TabletPreview']
   LongParameterList:
     # Composable functions pass many state + callback params with defaults
     ignoreDefaultParameters: true

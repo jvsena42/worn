@@ -1,20 +1,24 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 package com.github.worn.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Extension
@@ -22,24 +26,29 @@ import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
-import com.github.worn.ui.theme.WornColors
 
 enum class Tab(
     @StringRes val labelRes: Int,
@@ -73,9 +82,9 @@ fun WornBottomBar(
             ),
     ) {
         Surface(
-            shape = RoundedCornerShape(36.dp),
-            color = WornColors.BgElevated,
-            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            shape = MaterialTheme.shapes.extraExtraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             modifier = Modifier
                 .then(
                     if (isCompact) Modifier.fillMaxWidth()
@@ -88,12 +97,10 @@ fun WornBottomBar(
                 modifier = Modifier.padding(4.dp),
             ) {
                 Tab.entries.forEach { tab ->
-                    val isActive = tab == activeTab
                     TabItem(
                         tab = tab,
-                        isActive = isActive,
+                        isActive = tab == activeTab,
                         onClick = { onTabSelected(tab) },
-                        modifier = Modifier.weight(1f).fillMaxHeight(),
                     )
                 }
             }
@@ -101,24 +108,67 @@ fun WornBottomBar(
     }
 }
 
+/**
+ * One tab: the app's full-width pill, with the touch feedback and semantics it was missing.
+ *
+ * Deliberately *not* [NavigationBarItem]. That gives a ripple and an animated indicator for free,
+ * but its indicator only ever wraps the icon — the label sits outside it. Worn's pill wraps icon
+ * and label together, so the M3 item left the selected label stranded on the bar background in
+ * `onPrimary`, which is dark-green-on-dark in the dark scheme and nearly unreadable.
+ *
+ * So the pill container stays hand-built, and the two things that actually needed fixing are
+ * addressed directly: [selectable] supplies a ripple bounded to the pill plus proper
+ * selected/Tab semantics for TalkBack, and the fill animates between tabs rather than snapping.
+ *
+ * An earlier comment here blamed the ripple for repainting the bar for ~1s after each tap and
+ * removed indication entirely. The cost was actually the pager recomposing the destination page,
+ * which `beyondViewportPageCount` and the snap-scroll in App.kt already address — suppressing
+ * touch feedback only hid it.
+ */
 @Composable
-private fun TabItem(
+private fun RowScope.TabItem(
     tab: Tab,
     isActive: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
+    val label = stringResource(tab.labelRes)
+    val haptics = LocalHapticFeedback.current
+    val containerColor by animateColorAsState(
+        targetValue = if (isActive) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerHigh
+        },
+        label = "tabContainer",
+    )
+    val contentColor by animateColorAsState(
+        targetValue = if (isActive) {
+            MaterialTheme.colorScheme.onPrimary
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        },
+        label = "tabContent",
+    )
+
     Surface(
-        shape = RoundedCornerShape(26.dp),
-        color = if (isActive) WornColors.AccentGreen else WornColors.BgElevated,
-        // No ripple: it repaints the bar for ~1s after each tap, which reads as a slow page
-        // switch. The active tab's fill already signals selection.
-        modifier = modifier
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
+        shape = MaterialTheme.shapes.extraLargeIncreased,
+        color = containerColor,
+        contentColor = contentColor,
+        modifier = Modifier
+            .weight(1f)
+            .fillMaxHeight()
+            .clip(MaterialTheme.shapes.extraLargeIncreased)
+            .selectable(
+                selected = isActive,
+                onClick = {
+                    // SegmentTick, not LongPress: this is a discrete position change in a row of
+                    // segments, which is exactly what that constant is for.
+                    if (!isActive) haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    onClick()
+                },
                 role = Role.Tab,
-                onClick = onClick,
+                indication = ripple(),
+                interactionSource = remember { MutableInteractionSource() },
             )
             .testTag(tab.testTag),
     ) {
@@ -127,34 +177,23 @@ private fun TabItem(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxHeight(),
         ) {
-            val tint = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary
-            val label = stringResource(tab.labelRes)
+            // contentDescription is null: the label below already names the tab, and TalkBack
+            // would otherwise announce it twice.
             if (tab.iconRes != null) {
-                Icon(
-                    painter = painterResource(id = tab.iconRes),
-                    contentDescription = label,
-                    tint = tint,
-                    modifier = Modifier.size(18.dp),
-                )
+                Icon(painterResource(id = tab.iconRes), null, Modifier.size(18.dp))
             } else if (tab.icon != null) {
-                Icon(
-                    imageVector = tab.icon,
-                    contentDescription = label,
-                    tint = tint,
-                    modifier = Modifier.size(18.dp),
-                )
+                Icon(tab.icon, null, Modifier.size(18.dp))
             }
             Text(
                 text = label,
-                style = TextStyle(
-                    color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 0.5.sp,
-                ),
+                // labelSmall already carries the 10sp/SemiBold/+0.5sp tracking these labels used.
+                style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
         }
     }
 }
+
+
+

@@ -29,6 +29,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,6 +37,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,26 +47,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
-import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.CategoryFilterChips
+import com.github.worn.ui.components.ClothingPhoto
 import com.github.worn.ui.components.SelectionIndicator
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
+import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.SheetPreview
-import com.github.worn.ui.components.ClothingPhoto
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.TabletPreview
+import com.github.worn.ui.theme.sheetShape
+import com.github.worn.ui.theme.wornExtras
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,8 +89,8 @@ fun CreateOutfitSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle() },
     ) {
         CreateOutfitForm(
@@ -128,9 +133,8 @@ internal fun CreateOutfitForm(
     ) {
         Text(
             text = stringResource(if (isEditing) R.string.create_outfit_title_edit else R.string.create_outfit_title),
-            color = WornColors.TextPrimary,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.headlineSmall,
             letterSpacing = (-0.5).sp,
         )
         OutfitNameField(
@@ -163,20 +167,20 @@ private fun OutfitNameField(name: String, onNameChange: (String) -> Unit, modifi
         placeholder = {
             Text(
                 stringResource(R.string.create_outfit_name_hint),
-                color = WornColors.IconMuted,
-                fontSize = 15.sp,
+                color = MaterialTheme.wornExtras.iconMuted,
+                style = MaterialTheme.typography.bodyMedium,
             )
         },
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = WornColors.BgCard,
-            unfocusedContainerColor = WornColors.BgCard,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, WornColors.BorderSubtle, RoundedCornerShape(12.dp)),
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
     )
 }
 
@@ -189,16 +193,14 @@ private fun SelectItemsHeader(selectedCount: Int) {
     ) {
         Text(
             text = stringResource(R.string.create_outfit_select_items),
-            color = WornColors.TextPrimary,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleSmall,
         )
         if (selectedCount > 0) {
             Text(
                 text = pluralStringResource(R.plurals.selected_count, selectedCount, selectedCount),
-                color = WornColors.AccentGreen,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.labelLarge,
             )
         }
     }
@@ -227,7 +229,8 @@ private fun ItemSelectionGrid(
     }
 }
 
-private val cellShape = RoundedCornerShape(16.dp)
+private val cellShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.large
 
 // The cell is the photo alone: a name label here only ever sat on top of the garment, where it was
 // unreadable. The photo carries the item's name as its content description for screen readers.
@@ -246,7 +249,7 @@ private fun SelectableItemCell(
             .clip(cellShape)
             .border(
                 width = if (isSelected) 2.dp else 1.dp,
-                color = if (isSelected) WornColors.AccentGreen else WornColors.BorderSubtle,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
                 shape = cellShape,
             )
             .clickable(onClick = onClick),
@@ -258,7 +261,12 @@ private fun SelectableItemCell(
 
 @Composable
 private fun ItemThumbnail(item: ClothingItem) {
-    Surface(shape = cellShape, color = WornColors.BgCard, shadowElevation = 4.dp, modifier = Modifier.fillMaxSize()) {
+    Surface(
+        shape = cellShape,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        shadowElevation = 4.dp,
+        modifier = Modifier.fillMaxSize(),
+    ) {
         ClothingPhoto(
             photoPath = item.photoPath,
             contentDescription = item.name,
@@ -299,7 +307,7 @@ private val previewItems = listOf(
     ClothingItem("6", "Chinos", Category.BOTTOM, listOf("khaki"), photoPath = "", createdAt = 0),
 )
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun CreateOutfitFormPhonePreview() {
     SheetPreview {
@@ -310,7 +318,7 @@ private fun CreateOutfitFormPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun CreateOutfitFormTabletPreview() {
     SheetPreview {
@@ -320,3 +328,6 @@ private fun CreateOutfitFormTabletPreview() {
         )
     }
 }
+
+
+

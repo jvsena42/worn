@@ -1,11 +1,10 @@
 package com.github.worn.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -28,19 +28,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
 import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.SheetPreview
-import com.github.worn.ui.theme.WornColors
-
-private val IndigoAccent = WornColors.AccentIndigo
+import com.github.worn.ui.theme.TabletPreview
+import com.github.worn.ui.theme.sheetShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,8 +49,8 @@ fun AiLockedSheet(onDismiss: () -> Unit, onGoToSettings: () -> Unit = {}) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
-        shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = MaterialTheme.sheetShape,
         dragHandle = { SheetDragHandle() },
     ) {
         AiLockedContent(onGoToSettings = onGoToSettings, onDismiss = onDismiss)
@@ -76,7 +75,7 @@ internal fun AiLockedContent(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(44.dp)
-                .background(IndigoAccent, RoundedCornerShape(12.dp)),
+                .background(MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.medium),
         ) {
             Icon(
                 Icons.Outlined.SmartToy,
@@ -88,15 +87,15 @@ internal fun AiLockedContent(
 
         Text(
             text = stringResource(R.string.ai_locked_title),
-            color = WornColors.TextPrimary,
-            fontSize = 22.sp,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Medium,
         )
 
         Text(
             text = stringResource(R.string.ai_locked_description),
-            color = WornColors.TextSecondary,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center,
             lineHeight = 21.sp,
             modifier = Modifier.widthIn(max = 280.dp),
@@ -122,14 +121,16 @@ private fun SettingsCta(onClick: () -> Unit) {
     )
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun AiLockedPhonePreview() {
     SheetPreview { AiLockedContent() }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun AiLockedTabletPreview() {
     SheetPreview { AiLockedContent() }
 }
+
+

@@ -177,7 +177,7 @@ struct AddItemSheet: View {
                             .font(.system(size: 32))
                             .foregroundColor(WornColors.iconMuted)
                         Text(String(localized: "add_item_photo_hint"))
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.subheadline.weight(.medium))
                             .foregroundColor(WornColors.textSecondary)
                     }
                 }
@@ -188,9 +188,9 @@ struct AddItemSheet: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 140)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: WornShape.large)
                     .stroke(WornColors.borderStrong, lineWidth: 1.5)
             )
         }
@@ -211,7 +211,7 @@ struct AddItemSheet: View {
             set: { onRemoveBackgroundChange($0) }
         )) {
             Text(String(localized: "add_item_remove_background"))
-                .font(.system(size: 15, weight: .medium))
+                .font(.subheadline.weight(.medium))
                 .foregroundColor(WornColors.textPrimary)
         }
         .tint(WornColors.accentGreen)
@@ -248,10 +248,10 @@ struct AddItemSheet: View {
         } label: {
             HStack(spacing: 6) {
                 Text("✦")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.caption.weight(.semibold))
                     .foregroundColor(.white)
                 Text(String(localized: "add_item_ai_badge"))
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.caption.weight(.semibold))
                     .foregroundColor(.white)
             }
             .padding(.horizontal, 12)
@@ -269,12 +269,12 @@ struct AddItemSheet: View {
 
     private var nameField: some View {
         TextField(String(localized: "add_item_name_hint"), text: $name)
-            .font(.system(size: 15))
+            .font(.subheadline)
             .padding(16)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: WornShape.medium)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
             .accessibilityIdentifier("add_item_name_field")
@@ -293,7 +293,7 @@ struct AddItemSheet: View {
                             .frame(width: 20, height: 20)
                     }
                     Text(selectedCategory.map { displayName(for: $0) } ?? String(localized: "label_category"))
-                        .font(.system(size: 15))
+                        .font(.subheadline)
                         .foregroundColor(selectedCategory != nil ? WornColors.textPrimary : WornColors.iconMuted)
                     Spacer()
                     Image(systemName: categoryExpanded ? "chevron.up" : "chevron.down")
@@ -323,7 +323,7 @@ struct AddItemSheet: View {
                                 .foregroundColor(WornColors.textSecondary)
                                 .frame(width: 20, height: 20)
                             Text(label)
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.subheadline.weight(.medium))
                                 .foregroundColor(WornColors.textPrimary)
                             Spacer()
                         }
@@ -339,9 +339,9 @@ struct AddItemSheet: View {
             }
         }
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: WornShape.medium)
                 .stroke(WornColors.borderSubtle, lineWidth: 1)
         )
         .accessibilityIdentifier("add_item_category_dropdown")
@@ -350,7 +350,7 @@ struct AddItemSheet: View {
     private var colorSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(String(localized: "label_color"))
-                .font(.system(size: 14, weight: .semibold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
 
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 7), spacing: 12) {
@@ -387,7 +387,7 @@ struct AddItemSheet: View {
     private var seasonSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(String(localized: "label_season"))
-                .font(.system(size: 14, weight: .semibold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
 
             HStack(spacing: 8) {
@@ -478,7 +478,7 @@ struct AddItemSheet: View {
                     Text(selectedSubcategory.map {
                         localizedSubcategoryName($0)
                     } ?? String(localized: "label_subcategory"))
-                        .font(.system(size: 15))
+                        .font(.subheadline)
                         .foregroundColor(selectedSubcategory != nil ? WornColors.textPrimary : WornColors.iconMuted)
                     Spacer()
                     Image(systemName: subcategoryExpanded ? "chevron.up" : "chevron.down")
@@ -498,7 +498,7 @@ struct AddItemSheet: View {
                         withAnimation { subcategoryExpanded = false }
                     } label: {
                         Text(label)
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.subheadline.weight(.medium))
                             .foregroundColor(WornColors.textPrimary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 16)
@@ -513,9 +513,9 @@ struct AddItemSheet: View {
             }
         }
         .background(WornColors.bgCard)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: WornShape.medium)
                 .stroke(WornColors.borderSubtle, lineWidth: 1)
         )
     }
@@ -532,7 +532,7 @@ struct AddItemSheet: View {
     private var fitSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(String(localized: "label_fit"))
-                .font(.system(size: 14, weight: .semibold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
 
             HStack(spacing: 8) {
@@ -560,7 +560,7 @@ struct AddItemSheet: View {
     private var materialSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(String(localized: "label_material"))
-                .font(.system(size: 14, weight: .semibold))
+                .font(.subheadline.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
 
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
@@ -577,6 +577,11 @@ struct AddItemSheet: View {
 
 #Preview("iPhone") {
     AddItemSheet(isSaving: false, isAiAvailable: false, onSave: { _, _, _, _, _, _, _, _ in }, onDismiss: {})
+}
+
+#Preview("iPhone · Dark") {
+    AddItemSheet(isSaving: false, isAiAvailable: false, onSave: { _, _, _, _, _, _, _, _ in }, onDismiss: {})
+    .preferredColorScheme(.dark)
 }
 
 #Preview("iPad Portrait", traits: .portrait) {

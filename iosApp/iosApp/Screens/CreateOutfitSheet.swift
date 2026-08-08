@@ -60,12 +60,12 @@ struct CreateOutfitSheet: View {
 
     private var nameField: some View {
         TextField(String(localized: "create_outfit_name_hint"), text: $name)
-            .font(.system(size: 15))
+            .font(.subheadline)
             .padding(16)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.medium))
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: WornShape.medium)
                     .stroke(WornColors.borderSubtle, lineWidth: 1)
             )
             .accessibilityIdentifier("create_outfit_name_field")
@@ -74,12 +74,12 @@ struct CreateOutfitSheet: View {
     private var selectItemsHeader: some View {
         HStack {
             Text(String(localized: "create_outfit_select_items"))
-                .font(.system(size: 16, weight: .semibold))
+                .font(.callout.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
             Spacer()
             if !selectedItemIds.isEmpty {
                 Text(String(format: String(localized: "selected_count"), selectedItemIds.count))
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.footnote.weight(.medium))
                     .foregroundColor(WornColors.accentGreen)
             }
         }
@@ -129,9 +129,9 @@ private struct SelectableItemCell: View {
             .frame(maxWidth: .infinity)
             .frame(height: 100)
             .background(WornColors.bgCard)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: WornShape.large)
                     .stroke(
                         isSelected ? WornColors.accentGreen : WornColors.borderSubtle,
                         lineWidth: isSelected ? 2 : 1
@@ -176,6 +176,20 @@ private let previewItems: [ClothingItem] = [
         onSave: { _ in },
         onDismiss: {}
     )
+}
+
+#Preview("iPhone · Dark") {
+    CreateOutfitSheet(
+        clothingItems: previewItems,
+        selectedItemIds: Set(["1", "2"]),
+        activeCategory: nil,
+        isSaving: false,
+        onCategorySelected: { _ in },
+        onToggleItem: { _ in },
+        onSave: { _ in },
+        onDismiss: {}
+    )
+    .preferredColorScheme(.dark)
 }
 
 #Preview("iPad Portrait", traits: .portrait) {

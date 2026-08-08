@@ -18,19 +18,19 @@ struct ErrorContentView: View {
             .frame(maxWidth: .infinity)
 
             Text(message)
-                .font(.system(size: 14))
+                .font(.subheadline)
                 .foregroundColor(WornColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.top, 24)
 
             Button(action: onRetry) {
                 Text(String(localized: "common_retry"))
-                    .font(.system(size: 15, weight: .medium))
+                    .font(.subheadline.weight(.medium))
                     .foregroundColor(retryButtonColor)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 12)
                     .background(WornColors.bgCard)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .clipShape(RoundedRectangle(cornerRadius: WornShape.large))
             }
             .buttonStyle(.plain)
             .padding(.top, 20)

@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3ExpressiveApi::class)
+
 package com.github.worn.ui.screen
 
 import androidx.compose.foundation.background
@@ -6,9 +8,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,14 +28,20 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,19 +51,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.window.core.layout.WindowWidthSizeClass
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
@@ -64,15 +72,16 @@ import com.github.worn.presentation.viewmodel.WardrobeIntent
 import com.github.worn.presentation.viewmodel.WardrobeState
 import com.github.worn.presentation.viewmodel.WardrobeViewModel
 import com.github.worn.ui.components.CategoryFilterChips
+import com.github.worn.ui.components.ClothingCard
 import com.github.worn.ui.components.DeleteConfirmationDialog
-import com.github.worn.ui.components.SelectionHeader
 import com.github.worn.ui.components.EmptyStateView
+import com.github.worn.ui.components.SelectionHeader
+import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
-import com.github.worn.ui.components.ClothingCard
-import com.github.worn.ui.components.Tab
-import com.github.worn.ui.theme.WornColors
-import com.github.worn.ui.theme.WornDimens
+import com.github.worn.ui.components.WornTopAppBar
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.util.ShortcutCommand
 import org.koin.compose.viewmodel.koinViewModel
@@ -204,9 +213,27 @@ private fun WardrobeScaffold(
     val sectionGap = if (isCompact) 24.dp else 28.dp
     var showDeleteDialog by remember { mutableStateOf(false) }
 
+    // exitUntilCollapsed: the title shrinks to a compact bar as the grid scrolls up and only
+    // returns once the user scrolls back to the top, which is the standard large-app-bar feel.
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
-        modifier = Modifier.testTag("wardrobe_screen"),
-        containerColor = WornColors.BgPage,
+        modifier = Modifier
+            .testTag("wardrobe_screen")
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = MaterialTheme.colorScheme.surface,
+        topBar = {
+            if (isSelectionMode) {
+                SelectionHeader(
+                    count = state.selectedIds.size,
+                    onCancel = onClearSelection,
+                    onDelete = { showDeleteDialog = true },
+                    modifier = Modifier.padding(horizontal = contentPadding),
+                )
+            } else {
+                WardrobeTopBar(itemCount = state.totalItemCount, scrollBehavior = scrollBehavior)
+            }
+        },
         floatingActionButton = {
             val isWardrobeEmpty = !state.isLoading && state.totalItemCount == 0
             if (!isSelectionMode && !isWardrobeEmpty) {
@@ -214,7 +241,6 @@ private fun WardrobeScaffold(
                     onAddItemClick,
                     Modifier
                         .testTag("wardrobe_add_fab")
-                        .padding(bottom = WornDimens.BottomBarClearance),
                 )
             }
         },
@@ -228,15 +254,6 @@ private fun WardrobeScaffold(
                 .padding(paddingValues)
                 .padding(horizontal = contentPadding),
         ) {
-            if (isSelectionMode) {
-                SelectionHeader(
-                    count = state.selectedIds.size,
-                    onCancel = onClearSelection,
-                    onDelete = { showDeleteDialog = true },
-                )
-            } else {
-                WardrobeHeader(itemCount = state.totalItemCount)
-            }
             if (isWardrobeEmpty) {
                 EmptyState(onAddItemClick = onAddItemClick)
             } else {
@@ -270,28 +287,22 @@ private fun WardrobeScaffold(
 }
 
 @Composable
-private fun WardrobeHeader(itemCount: Int) {
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        text = if (itemCount == 0) {
+private fun WardrobeTopBar(itemCount: Int, scrollBehavior: TopAppBarScrollBehavior) {
+    // Title strings are unchanged: journeys/bottom-navigation.xml and add-first-item.xml assert
+    // on the visible heading text.
+    WornTopAppBar(
+        title = if (itemCount == 0) {
             stringResource(R.string.wardrobe_title_empty)
         } else {
             stringResource(R.string.wardrobe_title)
         },
-        color = WornColors.TextPrimary,
-        fontSize = if (itemCount == 0) 22.sp else 28.sp,
-        fontWeight = FontWeight.SemiBold,
-        letterSpacing = (-0.5).sp,
+        subtitle = if (itemCount > 0) {
+            stringResource(R.string.wardrobe_subtitle, itemCount)
+        } else {
+            null
+        },
+        scrollBehavior = scrollBehavior,
     )
-    if (itemCount > 0) {
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(R.string.wardrobe_subtitle, itemCount),
-            color = WornColors.TextSecondary,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-        )
-    }
 }
 
 
@@ -308,14 +319,13 @@ private fun WardrobeContent(
 
     if (state.isLoading && state.items.isEmpty()) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator(color = WornColors.AccentGreen)
+            LoadingIndicator(color = MaterialTheme.colorScheme.primary)
         }
     } else {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = GRID_MIN_CELL_WIDTH),
             horizontalArrangement = Arrangement.spacedBy(gridGap),
             verticalArrangement = Arrangement.spacedBy(gridGap),
-            contentPadding = PaddingValues(bottom = WornDimens.BottomBarClearance),
             modifier = Modifier.fillMaxSize(),
         ) {
             items(state.items, key = { it.id }) { item ->
@@ -337,8 +347,8 @@ private fun WardrobeContent(
     }
 }
 
-private val CtaShape = RoundedCornerShape(28.dp)
-private val CtaGradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenEnd))
+private val CtaShape: Shape
+    @Composable @ReadOnlyComposable get() = MaterialTheme.shapes.extraLargeIncreased
 
 @Composable
 private fun CategoryEmptyState() {
@@ -351,13 +361,13 @@ private fun CategoryEmptyState() {
             painter = painterResource(id = R.drawable.ic_shirt),
             contentDescription = null,
             modifier = Modifier.size(48.dp),
-            tint = WornColors.TextSecondary.copy(alpha = 0.5f),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
         )
         Spacer(Modifier.height(16.dp))
         Text(
             stringResource(R.string.wardrobe_category_empty),
-            color = WornColors.TextSecondary,
-            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Medium,
         )
     }
@@ -371,7 +381,7 @@ private fun EmptyState(onAddItemClick: () -> Unit) {
                 painter = painterResource(id = R.drawable.ic_shirt),
                 contentDescription = null,
                 modifier = Modifier.size(52.dp),
-                tint = WornColors.TextSecondary,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
         title = stringResource(R.string.wardrobe_empty_title),
@@ -388,7 +398,12 @@ private fun EmptyState(onAddItemClick: () -> Unit) {
                 fixedHeight = null,
                 contentPadding = PaddingValues(horizontal = 36.dp, vertical = 16.dp),
                 icon = {
-                    Icon(Icons.Default.Add, contentDescription = null, Modifier.size(18.dp), WornColors.BgPage)
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = null,
+                        Modifier.size(18.dp),
+                        MaterialTheme.colorScheme.surface,
+                    )
                 },
             )
         },
@@ -399,14 +414,18 @@ private fun EmptyState(onAddItemClick: () -> Unit) {
 private fun AddItemFab(onClick: () -> Unit, modifier: Modifier = Modifier) {
     ExtendedFloatingActionButton(
         onClick = onClick,
-        containerColor = WornColors.AccentGreen,
-        contentColor = WornColors.TextOnColor,
-        shape = RoundedCornerShape(30.dp),
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        shape = MaterialTheme.shapes.extraLargeIncreased,
         modifier = modifier,
     ) {
         Icon(Icons.Default.Add, contentDescription = null)
         Spacer(Modifier.width(8.dp))
-        Text(text = stringResource(R.string.wardrobe_fab_add), fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+        Text(
+            text = stringResource(R.string.wardrobe_fab_add),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+        )
     }
 }
 
@@ -420,7 +439,7 @@ private val previewItems = listOf(
     ClothingItem("6", "Chinos", Category.BOTTOM, listOf("khaki"), photoPath = "", createdAt = 0),
 )
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun WardrobeScreenPhonePreview() {
     WornTheme {
@@ -432,7 +451,7 @@ private fun WardrobeScreenPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun WardrobeSelectModePreview() {
     WornTheme {
@@ -448,7 +467,7 @@ private fun WardrobeSelectModePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun WardrobeEmptyPhonePreview() {
     WornTheme {
@@ -460,7 +479,7 @@ private fun WardrobeEmptyPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun WardrobeScreenTabletPreview() {
     WornTheme {
@@ -472,7 +491,7 @@ private fun WardrobeScreenTabletPreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun WardrobeEmptyTabletPreview() {
     WornTheme {
@@ -484,7 +503,7 @@ private fun WardrobeEmptyTabletPreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun WardrobeEmptyCategoryPhonePreview() {
     WornTheme {
@@ -499,7 +518,7 @@ private fun WardrobeEmptyCategoryPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun WardrobeEmptyCategoryTabletPreview() {
     WornTheme {
@@ -513,3 +532,7 @@ private fun WardrobeEmptyCategoryTabletPreview() {
         )
     }
 }
+
+
+
+
