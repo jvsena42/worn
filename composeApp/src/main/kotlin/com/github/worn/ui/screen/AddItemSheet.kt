@@ -25,6 +25,7 @@ import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -55,9 +56,7 @@ import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.Subcategory
-import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.AiBadge
-import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.AiLockedSheet
 import com.github.worn.ui.components.CategoryDropdown
 import com.github.worn.ui.components.ColorSection
@@ -70,13 +69,14 @@ import com.github.worn.ui.components.PhotoUploadZone
 import com.github.worn.ui.components.RemoveBackgroundToggle
 import com.github.worn.ui.components.SaveButton
 import com.github.worn.ui.components.SeasonSection
+import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.SubcategoryDropdown
+import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.SheetPreview
 import com.github.worn.ui.util.decodePreviewImage
 import com.github.worn.ui.util.readImageBytes
 import com.github.worn.ui.util.rememberCameraCapture
 import com.github.worn.ui.util.rememberDecodedImage
-import com.github.worn.ui.theme.WornColors
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -99,7 +99,7 @@ fun AddItemSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
         dragHandle = { SheetDragHandle() },
     ) {
@@ -355,7 +355,7 @@ private fun AddItemFormContent(
     ) {
         Text(
             text = stringResource(if (isEditing) R.string.add_item_title_edit else R.string.add_item_title),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.5).sp,

@@ -29,6 +29,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -56,15 +57,15 @@ import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
-import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.CategoryFilterChips
+import com.github.worn.ui.components.ClothingPhoto
 import com.github.worn.ui.components.SelectionIndicator
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
+import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.SheetPreview
-import com.github.worn.ui.components.ClothingPhoto
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.wornExtras
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,7 +85,7 @@ fun CreateOutfitSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
         dragHandle = { SheetDragHandle() },
     ) {
@@ -128,7 +129,7 @@ internal fun CreateOutfitForm(
     ) {
         Text(
             text = stringResource(if (isEditing) R.string.create_outfit_title_edit else R.string.create_outfit_title),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.5).sp,
@@ -163,20 +164,20 @@ private fun OutfitNameField(name: String, onNameChange: (String) -> Unit, modifi
         placeholder = {
             Text(
                 stringResource(R.string.create_outfit_name_hint),
-                color = WornColors.IconMuted,
+                color = MaterialTheme.wornExtras.iconMuted,
                 fontSize = 15.sp,
             )
         },
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = WornColors.BgCard,
-            unfocusedContainerColor = WornColors.BgCard,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
         ),
         shape = RoundedCornerShape(12.dp),
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, WornColors.BorderSubtle, RoundedCornerShape(12.dp)),
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp)),
     )
 }
 
@@ -189,14 +190,14 @@ private fun SelectItemsHeader(selectedCount: Int) {
     ) {
         Text(
             text = stringResource(R.string.create_outfit_select_items),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
         )
         if (selectedCount > 0) {
             Text(
                 text = pluralStringResource(R.plurals.selected_count, selectedCount, selectedCount),
-                color = WornColors.AccentGreen,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Medium,
             )
@@ -246,7 +247,7 @@ private fun SelectableItemCell(
             .clip(cellShape)
             .border(
                 width = if (isSelected) 2.dp else 1.dp,
-                color = if (isSelected) WornColors.AccentGreen else WornColors.BorderSubtle,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
                 shape = cellShape,
             )
             .clickable(onClick = onClick),
@@ -258,7 +259,12 @@ private fun SelectableItemCell(
 
 @Composable
 private fun ItemThumbnail(item: ClothingItem) {
-    Surface(shape = cellShape, color = WornColors.BgCard, shadowElevation = 4.dp, modifier = Modifier.fillMaxSize()) {
+    Surface(
+        shape = cellShape,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        shadowElevation = 4.dp,
+        modifier = Modifier.fillMaxSize(),
+    ) {
         ClothingPhoto(
             photoPath = item.photoPath,
             contentDescription = item.name,

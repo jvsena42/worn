@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,30 +40,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Fit
 import com.github.worn.domain.model.Material
 import com.github.worn.domain.model.Season
 import com.github.worn.domain.model.Subcategory
-import androidx.compose.ui.res.stringResource
-import com.github.worn.R
+import com.github.worn.ui.components.ClothingPhoto
 import com.github.worn.ui.components.PropertyRow
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.addItemColorPalette
 import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
 import com.github.worn.ui.components.dotColor
+import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.SheetPreview
-import com.github.worn.ui.components.ClothingPhoto
-import com.github.worn.ui.theme.WornColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,9 +79,9 @@ fun ItemDetailSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { SheetDragHandle(color = WornColors.BorderStrong) },
+        dragHandle = { SheetDragHandle(color = MaterialTheme.colorScheme.outline) },
     ) {
         ItemDetailContent(
             item = item,
@@ -158,8 +158,8 @@ private data class ItemDetailDimens(val isCompact: Boolean) {
 private fun ItemPhoto(item: ClothingItem, dims: ItemDetailDimens) {
     Surface(
         shape = RoundedCornerShape(dims.photoRadius),
-        color = WornColors.BgCard,
-        border = BorderStroke(1.dp, WornColors.BorderSubtle),
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 8.dp,
         modifier = Modifier.fillMaxWidth().height(dims.photoHeight),
     ) {
@@ -177,7 +177,7 @@ private fun ItemNameGroup(item: ClothingItem, nameSize: TextUnit) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
             text = item.name,
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = nameSize,
             fontWeight = FontWeight.SemiBold,
         )
@@ -193,7 +193,7 @@ private fun ItemNameGroup(item: ClothingItem, nameSize: TextUnit) {
             )
             Text(
                 text = item.category.displayLabel(),
-                color = WornColors.TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp,
             )
         }
@@ -206,7 +206,7 @@ private fun HorizontalDivider() {
         modifier = Modifier
             .fillMaxWidth()
             .height(1.dp)
-            .background(WornColors.BorderSubtle),
+            .background(MaterialTheme.colorScheme.outlineVariant),
     )
 }
 
@@ -249,7 +249,7 @@ private fun ColorPropertyRow(item: ClothingItem, fontSize: TextUnit) {
     ) {
         Text(
             stringResource(R.string.label_color),
-            color = WornColors.TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = fontSize,
             fontWeight = FontWeight.Medium,
         )
@@ -257,12 +257,12 @@ private fun ColorPropertyRow(item: ClothingItem, fontSize: TextUnit) {
             Surface(
                 shape = CircleShape,
                 color = colorForName(item.colors.first()),
-                border = BorderStroke(1.dp, WornColors.BorderSubtle),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 modifier = Modifier.size(14.dp),
             ) {}
             Text(
                 text = item.colors.joinToString(", ") { it.replaceFirstChar(Char::uppercase) },
-                color = WornColors.TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = fontSize,
                 fontWeight = FontWeight.Medium,
             )
@@ -286,13 +286,13 @@ internal fun DetailActionButtons(
         Surface(
             onClick = onEdit,
             shape = RoundedCornerShape(24.dp),
-            color = WornColors.BgCard,
-            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             modifier = Modifier.fillMaxWidth().height(buttonHeight).testTag(editTestTag),
         ) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 Text(
-                    editLabel, color = WornColors.TextPrimary,
+                    editLabel, color = MaterialTheme.colorScheme.onSurface,
                     fontSize = buttonFontSize, fontWeight = FontWeight.SemiBold,
                 )
             }
@@ -300,7 +300,7 @@ internal fun DetailActionButtons(
         Surface(
             onClick = onDelete,
             shape = RoundedCornerShape(24.dp),
-            color = WornColors.DeleteRed,
+            color = MaterialTheme.colorScheme.error,
             modifier = Modifier.fillMaxWidth().height(buttonHeight).testTag(deleteTestTag),
         ) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -324,13 +324,13 @@ private fun DeleteItemDialog(itemName: String, onConfirm: () -> Unit, onDismiss:
         text = {
             Text(
                 stringResource(R.string.item_detail_delete_dialog_message, itemName),
-                color = WornColors.TextSecondary, fontSize = 15.sp, lineHeight = 22.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 15.sp, lineHeight = 22.sp,
             )
         },
         confirmButton = {
             Button(
                 onClick = onConfirm,
-                colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                 shape = RoundedCornerShape(24.dp),
             ) { Text(stringResource(R.string.common_delete), fontWeight = FontWeight.SemiBold) }
         },

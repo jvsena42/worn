@@ -18,9 +18,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.Outfit
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.wornExtras
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -43,11 +45,13 @@ private val cardShape = RoundedCornerShape(20.dp)
 private val thumbnailShape = RoundedCornerShape(10.dp)
 private val badgeShape = RoundedCornerShape(8.dp)
 
-private val badgeColors = listOf(
-    WornColors.AccentIndigo,
-    WornColors.AccentCoral,
-    WornColors.AccentGreen,
-)
+private val badgeColors: List<Color>
+    @Composable @ReadOnlyComposable
+    get() = listOf(
+        MaterialTheme.colorScheme.secondary,
+        MaterialTheme.colorScheme.tertiary,
+        MaterialTheme.colorScheme.primary,
+    )
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -62,10 +66,10 @@ fun OutfitCard(
 ) {
     Surface(
         shape = cardShape,
-        color = WornColors.BgCard,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
         border = BorderStroke(
             1.dp,
-            if (isSelected) WornColors.AccentGreen else WornColors.BorderSubtle,
+            if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
         ),
         shadowElevation = 4.dp,
         modifier = modifier
@@ -112,14 +116,14 @@ private fun ItemThumbnailRow(
 private fun ItemThumbnail(category: Category?) {
     Surface(
         shape = thumbnailShape,
-        color = WornColors.BgElevated,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         modifier = Modifier.size(40.dp),
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             Icon(
                 painter = painterResource(id = (category ?: Category.TOP).iconRes()),
                 contentDescription = null,
-                tint = WornColors.IconMuted,
+                tint = MaterialTheme.wornExtras.iconMuted,
                 modifier = Modifier.size(20.dp),
             )
         }
@@ -132,7 +136,7 @@ private fun ItemCountBadge(outfit: Outfit) {
     Surface(shape = badgeShape, color = badgeColor) {
         Text(
             text = stringResource(R.string.outfit_detail_items_count, outfit.itemIds.size),
-            color = WornColors.TextOnColor,
+            color = MaterialTheme.colorScheme.onPrimary,
             fontSize = 11.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
@@ -150,7 +154,7 @@ private fun BottomRow(outfit: Outfit) {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier = Modifier.weight(1f)) {
             Text(
                 text = outfit.name,
-                color = WornColors.TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 // Auto-generated names concatenate every item, so they can outgrow the card.
@@ -159,14 +163,14 @@ private fun BottomRow(outfit: Outfit) {
             )
             Text(
                 text = formatDate(outfit.createdAt),
-                color = WornColors.TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp,
             )
         }
         Icon(
             imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
             contentDescription = null,
-            tint = WornColors.IconMuted,
+            tint = MaterialTheme.wornExtras.iconMuted,
             modifier = Modifier.size(20.dp),
         )
     }

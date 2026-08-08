@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
 
 @Composable
@@ -31,8 +31,8 @@ fun SelectionIndicator(
 ) {
     Surface(
         shape = RoundedCornerShape(size / 2),
-        color = if (isSelected) WornColors.AccentGreen else WornColors.BgCard,
-        border = if (isSelected) null else BorderStroke(1.5.dp, WornColors.BorderSubtle),
+        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLowest,
+        border = if (isSelected) null else BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = modifier.size(size),
     ) {
         if (isSelected) {

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,7 +25,6 @@ import com.github.worn.ui.screen.OutfitsScreen
 import com.github.worn.ui.screen.SettingsScreen
 import com.github.worn.ui.screen.TryItScreen
 import com.github.worn.ui.screen.WardrobeScreen
-import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.util.SharedPhoto
 import com.github.worn.ui.util.ShortcutCommand
@@ -75,7 +75,7 @@ fun App(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(WornColors.BgPage)
+                .background(MaterialTheme.colorScheme.surface)
                 .semantics { testTagsAsResourceId = true },
         ) {
             HorizontalPager(

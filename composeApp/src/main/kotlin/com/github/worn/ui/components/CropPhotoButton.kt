@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Crop
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -18,7 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
-import com.github.worn.ui.theme.WornColors
 
 /**
  * Opens the crop editor for the photo shown above it. Rendered under a photo preview zone rather
@@ -35,13 +35,13 @@ fun CropPhotoButton(
             Icon(
                 imageVector = Icons.Outlined.Crop,
                 contentDescription = null,
-                tint = WornColors.TextSecondary,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(18.dp),
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = stringResource(R.string.crop_photo_button),
-                color = WornColors.TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
             )

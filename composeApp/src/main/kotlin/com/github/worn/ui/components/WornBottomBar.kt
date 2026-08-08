@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,16 +31,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
-import com.github.worn.ui.theme.WornColors
 
 enum class Tab(
     @StringRes val labelRes: Int,
@@ -74,8 +74,8 @@ fun WornBottomBar(
     ) {
         Surface(
             shape = RoundedCornerShape(36.dp),
-            color = WornColors.BgElevated,
-            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             modifier = Modifier
                 .then(
                     if (isCompact) Modifier.fillMaxWidth()
@@ -110,7 +110,7 @@ private fun TabItem(
 ) {
     Surface(
         shape = RoundedCornerShape(26.dp),
-        color = if (isActive) WornColors.AccentGreen else WornColors.BgElevated,
+        color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerHigh,
         // No ripple: it repaints the bar for ~1s after each tap, which reads as a slow page
         // switch. The active tab's fill already signals selection.
         modifier = modifier
@@ -127,7 +127,7 @@ private fun TabItem(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxHeight(),
         ) {
-            val tint = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary
+            val tint = if (isActive) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
             val label = stringResource(tab.labelRes)
             if (tab.iconRes != null) {
                 Icon(
@@ -147,7 +147,11 @@ private fun TabItem(
             Text(
                 text = label,
                 style = TextStyle(
-                    color = if (isActive) WornColors.TextOnColor else WornColors.TextSecondary,
+                    color = if (isActive) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
                     fontSize = 10.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = 0.5.sp,

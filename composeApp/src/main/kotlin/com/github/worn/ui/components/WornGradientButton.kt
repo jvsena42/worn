@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -24,15 +26,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.LocalWornExtras
 import com.github.worn.ui.theme.WornTheme
+import com.github.worn.ui.theme.wornExtras
 
+/**
+ * Gradient stops, resolved per theme.
+ *
+ * These are `@Composable` getters rather than top-level `val`s: captured in a `val` the stops
+ * would freeze to whichever theme was active at class-init time and never follow dark mode.
+ */
 object WornGradients {
-    val Save = listOf(WornColors.SaveGradientStart, WornColors.SaveGradientEnd)
-    val Green = listOf(WornColors.AccentGreen, WornColors.AccentGreenDark)
-    val GreenCta = listOf(WornColors.AccentGreen, WornColors.AccentGreenEnd)
-    val Indigo = listOf(WornColors.AccentIndigo, Color(0xFF556070))
-    val Disabled = listOf(WornColors.TextMuted, WornColors.IconMuted)
+    val Save: List<Color>
+        @Composable @ReadOnlyComposable
+        get() = LocalWornExtras.current.let { listOf(it.saveGradientStart, it.saveGradientEnd) }
+    val Green: List<Color>
+        @Composable @ReadOnlyComposable
+        get() = LocalWornExtras.current.let { listOf(it.greenCtaStart, it.accentGreenDark) }
+    val GreenCta: List<Color>
+        @Composable @ReadOnlyComposable
+        get() = LocalWornExtras.current.let { listOf(it.greenCtaStart, it.greenCtaEnd) }
+    val Indigo: List<Color>
+        @Composable @ReadOnlyComposable
+        get() = LocalWornExtras.current.let { listOf(it.indigoGradientStart, it.indigoGradientEnd) }
+    val Disabled: List<Color>
+        @Composable @ReadOnlyComposable
+        get() = listOf(MaterialTheme.wornExtras.textMuted, MaterialTheme.wornExtras.iconMuted)
 }
 
 @Composable

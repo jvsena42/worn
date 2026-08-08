@@ -23,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,27 +37,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.res.stringResource
 import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.Outfit
 import com.github.worn.domain.model.Season
-import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.ui.components.ClothingPhoto
 import com.github.worn.ui.components.PropertyRow
 import com.github.worn.ui.components.SheetDragHandle
+import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.SheetPreview
-import com.github.worn.ui.components.ClothingPhoto
-import com.github.worn.ui.theme.WornColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,9 +73,9 @@ fun OutfitDetailSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { SheetDragHandle(color = WornColors.BorderStrong) },
+        dragHandle = { SheetDragHandle(color = MaterialTheme.colorScheme.outline) },
     ) {
         OutfitDetailContent(
             outfit = outfit,
@@ -116,7 +116,7 @@ internal fun OutfitDetailContent(
         if (!isCompact) {
             Box(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = contentPadding)
-                    .height(1.dp).background(WornColors.BorderSubtle),
+                    .height(1.dp).background(MaterialTheme.colorScheme.outlineVariant),
             )
         }
         OutfitProperties(outfit = outfit, items = outfitItems, isCompact = isCompact, padding = contentPadding)
@@ -147,7 +147,7 @@ internal fun OutfitDetailContent(
 private fun OutfitTitle(name: String, nameSize: TextUnit, padding: Dp) {
     Text(
         text = name,
-        color = WornColors.TextPrimary,
+        color = MaterialTheme.colorScheme.onSurface,
         fontSize = nameSize,
         fontWeight = FontWeight.SemiBold,
         modifier = Modifier.padding(horizontal = padding),
@@ -206,13 +206,13 @@ private fun DeleteOutfitDialog(outfitName: String, onConfirm: () -> Unit, onDism
         text = {
             Text(
                 stringResource(R.string.outfit_detail_delete_dialog_message, outfitName),
-                color = WornColors.TextSecondary, fontSize = 15.sp, lineHeight = 22.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 15.sp, lineHeight = 22.sp,
             )
         },
         confirmButton = {
             Button(
                 onClick = onConfirm,
-                colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                 shape = RoundedCornerShape(24.dp),
             ) { Text(stringResource(R.string.common_delete), fontWeight = FontWeight.SemiBold) }
         },
@@ -232,8 +232,8 @@ private fun OutfitItemCard(
     ) {
         Surface(
             shape = RoundedCornerShape(cornerRadius),
-            color = WornColors.BgCard,
-            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shadowElevation = 8.dp,
             modifier = Modifier.size(size),
         ) {
@@ -246,7 +246,7 @@ private fun OutfitItemCard(
         }
         Text(
             text = item.name,
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
         )

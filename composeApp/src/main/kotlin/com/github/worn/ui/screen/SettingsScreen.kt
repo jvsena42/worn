@@ -2,6 +2,7 @@
 
 package com.github.worn.ui.screen
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -40,6 +42,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,25 +52,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.annotation.StringRes
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.github.worn.R
 import com.github.worn.domain.model.AgeRange
 import com.github.worn.domain.model.BodyType
@@ -82,14 +83,14 @@ import com.github.worn.presentation.viewmodel.SettingsEffect
 import com.github.worn.presentation.viewmodel.SettingsIntent
 import com.github.worn.presentation.viewmodel.SettingsState
 import com.github.worn.presentation.viewmodel.SettingsViewModel
-import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.SheetDragHandle
+import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornChip
 import com.github.worn.ui.components.WornGradientButton
-import com.github.worn.ui.components.Tab
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
+import com.github.worn.ui.theme.wornExtras
 import org.koin.compose.viewmodel.koinViewModel
 
 @Suppress("UnusedParameter")
@@ -175,7 +176,7 @@ private fun SettingsScaffold(
 
     Scaffold(
         modifier = Modifier.testTag("settings_screen"),
-        containerColor = WornColors.BgPage,
+        containerColor = MaterialTheme.colorScheme.surface,
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -187,7 +188,7 @@ private fun SettingsScaffold(
             Spacer(Modifier.height(24.dp))
             Text(
                 text = stringResource(R.string.settings_title),
-                color = WornColors.TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = (-0.5).sp,
@@ -197,7 +198,7 @@ private fun SettingsScaffold(
             SectionLabel(stringResource(R.string.settings_section_profile))
             Spacer(Modifier.height(10.dp))
             SettingsCard(
-                icon = { SettingsIcon(color = WornColors.AccentGreen, icon = Icons.Outlined.Person) },
+                icon = { SettingsIcon(color = MaterialTheme.colorScheme.primary, icon = Icons.Outlined.Person) },
                 title = stringResource(R.string.settings_your_profile),
                 subtitle = state.userProfile.summaryText(),
                 onClick = onProfileClick,
@@ -209,7 +210,7 @@ private fun SettingsScaffold(
             Spacer(Modifier.height(10.dp))
             // Listed before the key card: it is free and private, so it should be the first option.
             SettingsToggleCard(
-                icon = { SettingsIcon(color = WornColors.AccentGreen, icon = Icons.Outlined.PhoneAndroid) },
+                icon = { SettingsIcon(color = MaterialTheme.colorScheme.primary, icon = Icons.Outlined.PhoneAndroid) },
                 title = stringResource(R.string.settings_on_device_ai_title),
                 subtitle = stringResource(state.onDeviceAiAvailability.subtitleRes()),
                 checked = state.onDeviceAiEnabled,
@@ -219,7 +220,7 @@ private fun SettingsScaffold(
             )
             Spacer(Modifier.height(10.dp))
             SettingsCard(
-                icon = { SettingsIcon(color = WornColors.AccentIndigo, icon = Icons.Outlined.AutoAwesome) },
+                icon = { SettingsIcon(color = MaterialTheme.colorScheme.secondary, icon = Icons.Outlined.AutoAwesome) },
                 title = stringResource(R.string.settings_api_key_title),
                 subtitle = stringResource(
                     if (state.hasApiKey) R.string.settings_api_key_connected else R.string.settings_api_key_required,
@@ -229,7 +230,7 @@ private fun SettingsScaffold(
             )
             Spacer(Modifier.height(10.dp))
             SettingsCard(
-                icon = { SettingsIcon(color = WornColors.AccentIndigo, icon = Icons.Outlined.Checkroom) },
+                icon = { SettingsIcon(color = MaterialTheme.colorScheme.secondary, icon = Icons.Outlined.Checkroom) },
                 title = stringResource(R.string.settings_youcam_title),
                 subtitle = stringResource(
                     if (state.hasYouCamKey) R.string.settings_youcam_connected else R.string.settings_youcam_required,
@@ -255,7 +256,7 @@ private fun SettingsScaffold(
 private fun SectionLabel(text: String) {
     Text(
         text = text,
-        color = WornColors.TextSecondary,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = 12.sp,
         fontWeight = FontWeight.Medium,
         letterSpacing = 0.5.sp,
@@ -299,7 +300,7 @@ private fun SettingsToggleCard(
         onClick = { onCheckedChange(!checked) },
         enabled = enabled,
         shape = RoundedCornerShape(16.dp),
-        color = WornColors.BgCard,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
         modifier = modifier,
     ) {
         Row(
@@ -309,8 +310,13 @@ private fun SettingsToggleCard(
             icon()
             Spacer(Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(title, color = WornColors.TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                Text(subtitle, color = WornColors.TextSecondary, fontSize = 13.sp)
+                Text(
+                    title,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+                Text(subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
             }
             Spacer(Modifier.width(8.dp))
             Switch(
@@ -319,7 +325,7 @@ private fun SettingsToggleCard(
                 enabled = enabled,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color.White,
-                    checkedTrackColor = WornColors.AccentGreen,
+                    checkedTrackColor = MaterialTheme.colorScheme.primary,
                 ),
             )
         }
@@ -352,7 +358,7 @@ private fun SettingsCard(
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        color = WornColors.BgCard,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
         modifier = modifier,
     ) {
         Row(
@@ -362,13 +368,18 @@ private fun SettingsCard(
             icon()
             Spacer(Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(title, color = WornColors.TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                Text(subtitle, color = WornColors.TextSecondary, fontSize = 13.sp)
+                Text(
+                    title,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+                Text(subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
             }
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                 contentDescription = null,
-                tint = WornColors.IconMuted,
+                tint = MaterialTheme.wornExtras.iconMuted,
                 modifier = Modifier.size(20.dp),
             )
         }
@@ -387,7 +398,7 @@ private fun AboutCard() {
 
     Surface(
         shape = RoundedCornerShape(16.dp),
-        color = WornColors.BgCard,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
     ) {
         Column {
             Row(
@@ -396,15 +407,15 @@ private fun AboutCard() {
             ) {
                 Text(
                     stringResource(R.string.settings_version),
-                    color = WornColors.TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 15.sp,
                     modifier = Modifier.weight(1f),
                 )
-                Text(versionName ?: "1.0", color = WornColors.TextSecondary, fontSize = 15.sp)
+                Text(versionName ?: "1.0", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 15.sp)
             }
-            HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             AboutLinkRow(stringResource(R.string.settings_suggestions_bugs)) { uriHandler.openUri(FEEDBACK_URL) }
-            HorizontalDivider(color = WornColors.BorderSubtle.copy(alpha = 0.5f))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             AboutLinkRow(stringResource(R.string.settings_licenses)) { uriHandler.openUri(LICENSE_URL) }
         }
     }
@@ -417,11 +428,11 @@ private fun AboutLinkRow(label: String, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth().padding(16.dp),
         ) {
-            Text(label, color = WornColors.TextPrimary, fontSize = 15.sp, modifier = Modifier.weight(1f))
+            Text(label, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, modifier = Modifier.weight(1f))
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                 contentDescription = null,
-                tint = WornColors.IconMuted,
+                tint = MaterialTheme.wornExtras.iconMuted,
                 modifier = Modifier.size(20.dp),
             )
         }
@@ -436,19 +447,19 @@ private fun DonationCard() {
 
     Surface(
         shape = RoundedCornerShape(16.dp),
-        color = WornColors.BgCard,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 stringResource(R.string.settings_donate_title),
-                color = WornColors.TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 stringResource(R.string.settings_donate_subtitle),
-                color = WornColors.TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp,
             )
             Spacer(Modifier.height(12.dp))
@@ -458,8 +469,8 @@ private fun DonationCard() {
                     showCopied = true
                 },
                 shape = RoundedCornerShape(12.dp),
-                color = WornColors.BgElevated,
-                border = BorderStroke(1.dp, WornColors.BorderSubtle),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -467,7 +478,7 @@ private fun DonationCard() {
                 ) {
                     Text(
                         DONATION_LN_ADDRESS,
-                        color = WornColors.AccentGreen,
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.weight(1f),
@@ -475,7 +486,7 @@ private fun DonationCard() {
                     Spacer(Modifier.width(8.dp))
                     Text(
                         if (showCopied) copiedText else stringResource(R.string.settings_donate_copy),
-                        color = WornColors.TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                     )
@@ -504,7 +515,7 @@ private fun ProfileSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
         dragHandle = { SheetDragHandle() },
     ) {
@@ -538,13 +549,13 @@ private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent)
     ) {
         Text(
             text = stringResource(R.string.settings_your_profile),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
         )
         Text(
             text = stringResource(R.string.settings_profile_help),
-            color = WornColors.TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
         )
         ChipGroup(
@@ -601,7 +612,7 @@ private fun ApiKeySheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
         dragHandle = { SheetDragHandle() },
     ) {
@@ -653,7 +664,7 @@ private fun ApiKeySheetContent(
                 ) {
                     Text(
                         text = stringResource(R.string.settings_remove_key),
-                        color = WornColors.TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(vertical = 8.dp),
@@ -668,18 +679,18 @@ private fun ApiKeySheetContent(
 private fun ApiKeySheetHeader() {
     Text(
         text = stringResource(R.string.settings_connect_claude),
-        color = WornColors.TextPrimary,
+        color = MaterialTheme.colorScheme.onSurface,
         fontSize = 24.sp,
         fontWeight = FontWeight.SemiBold,
     )
     Text(
         text = stringResource(R.string.settings_api_description),
-        color = WornColors.TextSecondary,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = 14.sp,
     )
     Text(
         text = stringResource(R.string.settings_api_get_key),
-        color = WornColors.AccentGreen,
+        color = MaterialTheme.colorScheme.primary,
         fontSize = 13.sp,
         fontWeight = FontWeight.Medium,
     )
@@ -715,14 +726,14 @@ private fun ApiKeyTextField(
                     contentDescription = stringResource(
                         if (passwordVisible) R.string.settings_api_hide else R.string.settings_api_show,
                     ),
-                    tint = WornColors.IconMuted,
+                    tint = MaterialTheme.wornExtras.iconMuted,
                 )
             }
         },
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = WornColors.BgCard,
-            unfocusedContainerColor = WornColors.BgCard,
-            disabledContainerColor = WornColors.BgCard,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
@@ -751,7 +762,7 @@ private fun YouCamCredentialsSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
         dragHandle = { SheetDragHandle() },
     ) {
@@ -788,18 +799,18 @@ private fun YouCamCredentialsSheetContent(
     ) {
         Text(
             text = stringResource(R.string.settings_youcam_title),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
         )
         Text(
             text = stringResource(R.string.settings_youcam_description),
-            color = WornColors.TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
         )
         Text(
             text = stringResource(R.string.settings_youcam_get_key),
-            color = WornColors.AccentGreen,
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
         )
@@ -832,7 +843,7 @@ private fun YouCamCredentialsSheetContent(
         if (errorMessage != null && !verifying) {
             Text(
                 text = errorMessage,
-                color = WornColors.DeleteRed,
+                color = MaterialTheme.colorScheme.error,
                 fontSize = 13.sp,
                 modifier = Modifier.testTag("youcam_error"),
             )
@@ -846,7 +857,7 @@ private fun YouCamCredentialsSheetContent(
                 ) {
                     Text(
                         text = stringResource(R.string.settings_youcam_remove),
-                        color = WornColors.TextSecondary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(vertical = 8.dp),
@@ -859,7 +870,7 @@ private fun YouCamCredentialsSheetContent(
 
 @Composable
 private fun FieldLabel(text: String) {
-    Text(text, color = WornColors.TextPrimary, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+    Text(text, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
 }
 
 // endregion
@@ -885,7 +896,7 @@ private fun <T> ChipGroup(
     onSelected: (T?) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text(title, color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+        Text(title, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -911,9 +922,13 @@ private fun <T> MultiChipGroup(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row {
-            Text(title, color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+            Text(title, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.width(6.dp))
-            Text(stringResource(R.string.settings_multi_select), color = WornColors.TextMuted, fontSize = 12.sp)
+            Text(
+                stringResource(R.string.settings_multi_select),
+                color = MaterialTheme.wornExtras.textMuted,
+                fontSize = 12.sp,
+            )
         }
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),

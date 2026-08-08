@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -15,7 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
-import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
 
 @Composable
@@ -38,7 +38,7 @@ fun DeleteConfirmationDialog(
         text = {
             Text(
                 message,
-                color = WornColors.TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 15.sp,
                 lineHeight = 22.sp,
             )
@@ -47,7 +47,7 @@ fun DeleteConfirmationDialog(
             Button(
                 onClick = onConfirm,
                 enabled = !isDeleting,
-                colors = ButtonDefaults.buttonColors(containerColor = WornColors.DeleteRed),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.testTag("delete_dialog_confirm"),
             ) {

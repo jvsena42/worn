@@ -3,6 +3,7 @@
 package com.github.worn.ui.screen
 
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,25 +29,27 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.annotation.StringRes
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,9 +57,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.github.worn.R
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.GapRecommendation
@@ -65,18 +67,18 @@ import com.github.worn.presentation.viewmodel.GapsEffect
 import com.github.worn.presentation.viewmodel.GapsIntent
 import com.github.worn.presentation.viewmodel.GapsState
 import com.github.worn.presentation.viewmodel.GapsViewModel
-import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.components.AiLockedSheet
 import com.github.worn.ui.components.ErrorContentView
 import com.github.worn.ui.components.SheetDragHandle
-import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.Tab
+import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
 import com.github.worn.ui.components.iconRes
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.exposeTestTagsAsResourceId
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
+import com.github.worn.ui.theme.wornExtras
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -176,7 +178,7 @@ private fun GapsScaffold(
 
     Scaffold(
         modifier = Modifier.testTag("gaps_screen"),
-        containerColor = WornColors.BgPage,
+        containerColor = MaterialTheme.colorScheme.surface,
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -188,14 +190,14 @@ private fun GapsScaffold(
                 Spacer(Modifier.height(24.dp))
                 Text(
                     text = stringResource(R.string.gaps_title),
-                    color = WornColors.TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.5).sp,
                 )
                 Text(
                     text = stringResource(R.string.gaps_subtitle),
-                    color = WornColors.TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp,
                 )
                 Spacer(Modifier.height(20.dp))
@@ -231,7 +233,7 @@ private fun LoadingContent() {
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxWidth().padding(vertical = 80.dp),
     ) {
-        CircularProgressIndicator(color = WornColors.AccentGreen)
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
     }
 }
 
@@ -246,26 +248,26 @@ private fun CompleteContent() {
             modifier = Modifier
                 .size(72.dp)
                 .clip(CircleShape)
-                .background(WornColors.BgElevated),
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,
-                tint = WornColors.AccentGreen,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(32.dp),
             )
         }
         Spacer(Modifier.height(24.dp))
         Text(
             text = stringResource(R.string.gaps_complete_title),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
         )
         Spacer(Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.gaps_complete_description),
-            color = WornColors.TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
             lineHeight = 20.sp,
         )
@@ -302,7 +304,7 @@ private fun LazyListScope.gapsContent(
 
 @Composable
 private fun GapsBanner(isAiMode: Boolean, onClick: () -> Unit) {
-    val bgColor = if (isAiMode) WornColors.AccentGreen else WornColors.AccentGreenDark
+    val bgColor = if (isAiMode) MaterialTheme.colorScheme.primary else MaterialTheme.wornExtras.accentGreenDark
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
@@ -345,7 +347,7 @@ private fun GapsBanner(isAiMode: Boolean, onClick: () -> Unit) {
 private fun SectionLabel(text: String) {
     Text(
         text = text.uppercase(),
-        color = WornColors.TextSecondary,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = 12.sp,
         fontWeight = FontWeight.Medium,
         letterSpacing = 0.5.sp,
@@ -361,7 +363,7 @@ private fun GapCard(
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
-        color = WornColors.BgCard,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -372,7 +374,7 @@ private fun GapCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = recommendation.itemName,
-                    color = WornColors.TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                 )
@@ -382,14 +384,14 @@ private fun GapCard(
                     } else {
                         stringResource(R.string.gaps_pairing_common)
                     },
-                    color = WornColors.TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
                 )
             }
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                 contentDescription = null,
-                tint = WornColors.IconMuted,
+                tint = MaterialTheme.wornExtras.iconMuted,
                 modifier = Modifier.size(18.dp),
             )
         }
@@ -415,12 +417,14 @@ private fun CategoryIcon(category: Category) {
     }
 }
 
+@Composable
+@ReadOnlyComposable
 private fun Category.dotColor(): Color = when (this) {
-    Category.TOP -> WornColors.CategoryDotTop
-    Category.BOTTOM -> WornColors.CategoryDotBottom
-    Category.OUTERWEAR -> WornColors.CategoryDotOuterwear
-    Category.SHOES -> WornColors.CategoryDotShoes
-    Category.ACCESSORY -> WornColors.CategoryDotAccessory
+    Category.TOP -> MaterialTheme.wornExtras.categoryDotTop
+    Category.BOTTOM -> MaterialTheme.wornExtras.categoryDotBottom
+    Category.OUTERWEAR -> MaterialTheme.wornExtras.categoryDotOuterwear
+    Category.SHOES -> MaterialTheme.wornExtras.categoryDotShoes
+    Category.ACCESSORY -> MaterialTheme.wornExtras.categoryDotAccessory
 }
 
 // region Detail Sheet
@@ -438,9 +442,9 @@ private fun GapDetailSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = WornColors.BgElevated,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
-        dragHandle = { SheetDragHandle(color = WornColors.BorderStrong) },
+        dragHandle = { SheetDragHandle(color = MaterialTheme.colorScheme.outline) },
     ) {
         GapDetailContent(
             recommendation = recommendation,
@@ -482,19 +486,19 @@ private fun DetailHeader(recommendation: GapRecommendation) {
             .fillMaxWidth()
             .height(140.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(WornColors.BgCard),
+            .background(MaterialTheme.colorScheme.surfaceContainerLowest),
     ) {
         Icon(
             painter = painterResource(recommendation.mappedCategory.iconRes()),
             contentDescription = null,
-            tint = WornColors.IconMuted,
+            tint = MaterialTheme.wornExtras.iconMuted,
             modifier = Modifier.size(48.dp),
         )
     }
     Spacer(Modifier.height(16.dp))
     Text(
         text = recommendation.itemName,
-        color = WornColors.TextPrimary,
+        color = MaterialTheme.colorScheme.onSurface,
         fontSize = 22.sp,
         fontWeight = FontWeight.SemiBold,
     )
@@ -509,7 +513,7 @@ private fun DetailHeader(recommendation: GapRecommendation) {
         Spacer(Modifier.width(6.dp))
         Text(
             text = recommendation.mappedCategory.displayLabel(),
-            color = WornColors.TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
         )
     }
@@ -519,7 +523,7 @@ private fun DetailHeader(recommendation: GapRecommendation) {
 private fun DetailPairingInfo(recommendation: GapRecommendation, isAiMode: Boolean) {
     Surface(
         shape = RoundedCornerShape(8.dp),
-        color = WornColors.BgCard,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
@@ -529,7 +533,7 @@ private fun DetailPairingInfo(recommendation: GapRecommendation, isAiMode: Boole
             Icon(
                 imageVector = Icons.Outlined.AutoAwesome,
                 contentDescription = null,
-                tint = WornColors.AccentGreen,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(16.dp),
             )
             Spacer(Modifier.width(8.dp))
@@ -539,7 +543,7 @@ private fun DetailPairingInfo(recommendation: GapRecommendation, isAiMode: Boole
                 } else {
                     stringResource(R.string.gaps_pairing_common)
                 },
-                color = WornColors.TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp,
             )
         }
@@ -581,8 +585,8 @@ private fun DetailRow(label: String, value: String) {
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(label, color = WornColors.TextSecondary, fontSize = 14.sp)
-        Text(value, color = WornColors.TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+        Text(value, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, fontWeight = FontWeight.Medium)
     }
 }
 
@@ -597,7 +601,7 @@ private fun DetailActions(onAddToWardrobe: () -> Unit, onDismiss: () -> Unit) {
     Surface(
         onClick = onDismiss,
         shape = RoundedCornerShape(16.dp),
-        color = WornColors.BgCard,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
         modifier = Modifier.fillMaxWidth().testTag("gap_dismiss"),
     ) {
         Box(
@@ -606,7 +610,7 @@ private fun DetailActions(onAddToWardrobe: () -> Unit, onDismiss: () -> Unit) {
         ) {
             Text(
                 stringResource(R.string.gaps_dismiss),
-                color = WornColors.TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
             )

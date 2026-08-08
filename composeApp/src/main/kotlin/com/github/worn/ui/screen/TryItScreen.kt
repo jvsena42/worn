@@ -46,6 +46,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -80,8 +81,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.window.core.layout.WindowWidthSizeClass
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.github.worn.R
 import com.github.worn.domain.model.ClothingItem
 import com.github.worn.domain.model.GarmentCategory
@@ -91,20 +92,20 @@ import com.github.worn.presentation.viewmodel.TryItEffect
 import com.github.worn.presentation.viewmodel.TryItIntent
 import com.github.worn.presentation.viewmodel.TryItState
 import com.github.worn.presentation.viewmodel.TryItViewModel
+import com.github.worn.ui.components.ClothingPhoto
 import com.github.worn.ui.components.CropEditorDialog
 import com.github.worn.ui.components.CropPhotoButton
 import com.github.worn.ui.components.ErrorContentView
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
-import com.github.worn.ui.components.ClothingPhoto
+import com.github.worn.ui.theme.WornDimens
+import com.github.worn.ui.theme.WornTheme
+import com.github.worn.ui.theme.wornExtras
 import com.github.worn.ui.util.SharedPhoto
 import com.github.worn.ui.util.readImageBytes
 import com.github.worn.ui.util.rememberCameraCapture
 import com.github.worn.ui.util.rememberDecodedImage
-import com.github.worn.ui.theme.WornColors
-import com.github.worn.ui.theme.WornDimens
-import com.github.worn.ui.theme.WornTheme
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -452,7 +453,7 @@ private fun TryItScaffold(
 
     Scaffold(
         modifier = Modifier.testTag("try_it_screen"),
-        containerColor = WornColors.BgPage,
+        containerColor = MaterialTheme.colorScheme.surface,
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         if (!state.hasApiKey && !state.hasYouCamKey) {
@@ -510,8 +511,8 @@ private fun AiEmptyContent(
     ) {
         Surface(
             shape = CircleShape,
-            color = WornColors.BgCard,
-            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shadowElevation = 8.dp,
             modifier = Modifier.size(circleSize),
         ) {
@@ -519,7 +520,7 @@ private fun AiEmptyContent(
                 Icon(
                     imageVector = Icons.Outlined.SmartToy,
                     contentDescription = null,
-                    tint = WornColors.AccentIndigo,
+                    tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.size(iconSize),
                 )
             }
@@ -527,7 +528,7 @@ private fun AiEmptyContent(
         Spacer(Modifier.height(24.dp))
         Text(
             text = stringResource(R.string.tryit_locked_title),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = titleSize,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,
@@ -535,7 +536,7 @@ private fun AiEmptyContent(
         Spacer(Modifier.height(12.dp))
         Text(
             text = stringResource(R.string.tryit_locked_description),
-            color = WornColors.TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = if (isCompact) 15.sp else 16.sp,
             lineHeight = if (isCompact) 22.sp else 24.sp,
             textAlign = TextAlign.Center,
@@ -660,7 +661,7 @@ private fun TryItPhoneContent(
                         message = errorMsg,
                         onRetry = onAnalyze,
                         modifier = Modifier.padding(vertical = 40.dp),
-                        retryButtonColor = WornColors.AccentIndigo,
+                        retryButtonColor = MaterialTheme.colorScheme.secondary,
                     )
                 }
             }
@@ -730,7 +731,7 @@ private fun TryItTabletContent(
                                 message = errorMsg,
                                 onRetry = onAnalyze,
                                 modifier = Modifier.padding(vertical = 40.dp),
-                                retryButtonColor = WornColors.AccentIndigo,
+                                retryButtonColor = MaterialTheme.colorScheme.secondary,
                             )
                         }
                     }
@@ -776,7 +777,7 @@ private fun TryItTabletContent(
 private fun TryItTitle(fontSize: androidx.compose.ui.unit.TextUnit) {
     Text(
         text = stringResource(R.string.tryit_title),
-        color = WornColors.TextPrimary,
+        color = MaterialTheme.colorScheme.onSurface,
         fontSize = fontSize,
         fontWeight = FontWeight.SemiBold,
         letterSpacing = (-0.8).sp,
@@ -792,8 +793,8 @@ private fun UploadZone(
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(20.dp),
-        color = WornColors.BgCard,
-        border = BorderStroke(1.5.dp, WornColors.BorderStrong),
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
         shadowElevation = 1.dp,
         modifier = Modifier.fillMaxWidth().height(height).testTag("try_it_upload_zone"),
     ) {
@@ -813,13 +814,13 @@ private fun UploadZone(
                 Icon(
                     imageVector = Icons.Outlined.CameraAlt,
                     contentDescription = null,
-                    tint = WornColors.IconMuted,
+                    tint = MaterialTheme.wornExtras.iconMuted,
                     modifier = Modifier.size(44.dp),
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
                     text = stringResource(R.string.tryit_upload_hint),
-                    color = WornColors.TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center,
@@ -857,7 +858,7 @@ private fun LoadingIndicator() {
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxWidth().padding(vertical = 40.dp),
     ) {
-        CircularProgressIndicator(color = WornColors.AccentIndigo)
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.secondary)
     }
 }
 
@@ -885,7 +886,7 @@ private fun PairsSection(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = stringResource(R.string.tryit_pairs_with),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.2).sp,
@@ -909,8 +910,8 @@ private fun ItemThumbnail(item: ClothingItem, size: Dp, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        color = WornColors.BgCard,
-        border = BorderStroke(1.dp, WornColors.BorderSubtle),
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 2.dp,
         modifier = Modifier.size(size),
     ) {
@@ -919,7 +920,7 @@ private fun ItemThumbnail(item: ClothingItem, size: Dp, onClick: () -> Unit) {
             contentDescription = item.name,
             shape = RoundedCornerShape(16.dp),
             placeholderIconSize = 28.dp,
-            placeholderTint = WornColors.TextSecondary,
+            placeholderTint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -931,8 +932,8 @@ private fun CombinationsCard(count: Int, isCompact: Boolean) {
 
     Surface(
         shape = RoundedCornerShape(20.dp),
-        color = WornColors.BgCard,
-        border = BorderStroke(1.dp, WornColors.BorderSubtle),
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 2.dp,
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -944,14 +945,14 @@ private fun CombinationsCard(count: Int, isCompact: Boolean) {
         ) {
             Text(
                 text = stringResource(R.string.tryit_combinations_unlocked),
-                color = WornColors.TextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.5.sp,
             )
             Text(
                 text = count.toString(),
-                color = WornColors.AccentGreen,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = valueSize,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-1.2).sp,
@@ -969,7 +970,7 @@ private fun GapsFilledSection(gaps: List<String>, isCompact: Boolean) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = stringResource(R.string.tryit_gaps_filled),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.2).sp,
@@ -984,11 +985,11 @@ private fun GapsFilledSection(gaps: List<String>, isCompact: Boolean) {
                     modifier = Modifier
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(WornColors.AccentGreen),
+                        .background(MaterialTheme.colorScheme.primary),
                 )
                 Text(
                     text = gap,
-                    color = WornColors.TextPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = fontSize,
                 )
             }
@@ -1000,7 +1001,7 @@ private fun GapsFilledSection(gaps: List<String>, isCompact: Boolean) {
 private fun DecisionBanner(worthAdding: Boolean, isCompact: Boolean) {
     val bannerHeight = if (isCompact) 56.dp else 60.dp
     val gradient = if (worthAdding) {
-        Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenDark))
+        Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.wornExtras.accentGreenDark))
     } else {
         Brush.verticalGradient(listOf(Color(0xFF8B7D7D), Color(0xFF6B5E5E)))
     }
@@ -1055,7 +1056,7 @@ private fun TryOnSection(
     ) {
         Text(
             text = stringResource(R.string.tryit_your_photo_title),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.2).sp,
@@ -1073,7 +1074,7 @@ private fun TryOnSection(
         }
         Text(
             text = stringResource(R.string.tryit_tryon_category_title),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.2).sp,
@@ -1093,7 +1094,7 @@ private fun TryOnSection(
                     message = errorMsg,
                     onRetry = onGenerateTryOn,
                     modifier = Modifier.padding(vertical = 24.dp),
-                    retryButtonColor = WornColors.AccentIndigo,
+                    retryButtonColor = MaterialTheme.colorScheme.secondary,
                 )
             }
         }
@@ -1102,7 +1103,7 @@ private fun TryOnSection(
         }
         Text(
             text = stringResource(R.string.tryit_tryon_cost_note),
-            color = WornColors.TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 12.sp,
         )
     }
@@ -1114,8 +1115,8 @@ private fun PersonPhotoZone(personImage: ByteArray?, height: Dp, onClick: () -> 
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(20.dp),
-        color = WornColors.BgCard,
-        border = BorderStroke(1.5.dp, WornColors.BorderStrong),
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
         shadowElevation = 1.dp,
         modifier = Modifier.fillMaxWidth().height(height).testTag("try_on_person_zone"),
     ) {
@@ -1135,13 +1136,13 @@ private fun PersonPhotoZone(personImage: ByteArray?, height: Dp, onClick: () -> 
                 Icon(
                     imageVector = Icons.Outlined.CameraAlt,
                     contentDescription = null,
-                    tint = WornColors.IconMuted,
+                    tint = MaterialTheme.wornExtras.iconMuted,
                     modifier = Modifier.size(44.dp),
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
                     text = stringResource(R.string.tryit_your_photo_hint),
-                    color = WornColors.TextSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center,
@@ -1167,7 +1168,7 @@ private fun GarmentCategorySelector(
                 onClick = { onSelect(category) },
                 label = { Text(stringResource(categoryLabelRes(category))) },
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = WornColors.AccentIndigo,
+                    selectedContainerColor = MaterialTheme.colorScheme.secondary,
                     selectedLabelColor = Color.White,
                 ),
             )
@@ -1211,10 +1212,10 @@ private fun TryOnLoadingIndicator() {
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
     ) {
-        CircularProgressIndicator(color = WornColors.AccentIndigo)
+        CircularProgressIndicator(color = MaterialTheme.colorScheme.secondary)
         Text(
             text = stringResource(R.string.tryit_tryon_generating),
-            color = WornColors.TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
         )
     }
@@ -1226,15 +1227,15 @@ private fun TryOnResultView(imageBytes: ByteArray, height: Dp) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = stringResource(R.string.tryit_tryon_result_title),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.2).sp,
         )
         Surface(
             shape = RoundedCornerShape(20.dp),
-            color = WornColors.BgCard,
-            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shadowElevation = 2.dp,
             modifier = Modifier.fillMaxWidth().height(height).testTag("try_on_result"),
         ) {

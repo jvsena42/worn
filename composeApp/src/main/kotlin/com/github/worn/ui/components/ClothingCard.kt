@@ -18,9 +18,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.domain.model.Category
 import com.github.worn.domain.model.ClothingItem
-import com.github.worn.ui.theme.WornColors
+import com.github.worn.ui.theme.wornExtras
 
 private val photoShape = RoundedCornerShape(16.dp)
 
@@ -74,8 +76,8 @@ private fun PhotoArea(
     Box(modifier = Modifier.fillMaxWidth().height(height)) {
         Surface(
             shape = photoShape,
-            color = WornColors.BgCard,
-            border = BorderStroke(1.dp, WornColors.BorderSubtle),
+            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shadowElevation = 4.dp,
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -105,7 +107,7 @@ private fun ItemInfo(item: ClothingItem) {
     ) {
         Text(
             text = item.name,
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             // AI-generated names can run long; left unbounded they push the category row down and
@@ -125,17 +127,19 @@ private fun ItemInfo(item: ClothingItem) {
             )
             Text(
                 text = item.category.displayLabel(),
-                color = WornColors.TextMuted,
+                color = MaterialTheme.wornExtras.textMuted,
                 fontSize = 12.sp,
             )
         }
     }
 }
 
+@Composable
+@ReadOnlyComposable
 internal fun Category.dotColor(): Color = when (this) {
-    Category.TOP -> WornColors.CategoryDotTop
-    Category.BOTTOM -> WornColors.CategoryDotBottom
-    Category.OUTERWEAR -> WornColors.CategoryDotOuterwear
-    Category.SHOES -> WornColors.CategoryDotShoes
-    Category.ACCESSORY -> WornColors.CategoryDotAccessory
+    Category.TOP -> MaterialTheme.wornExtras.categoryDotTop
+    Category.BOTTOM -> MaterialTheme.wornExtras.categoryDotBottom
+    Category.OUTERWEAR -> MaterialTheme.wornExtras.categoryDotOuterwear
+    Category.SHOES -> MaterialTheme.wornExtras.categoryDotShoes
+    Category.ACCESSORY -> MaterialTheme.wornExtras.categoryDotAccessory
 }

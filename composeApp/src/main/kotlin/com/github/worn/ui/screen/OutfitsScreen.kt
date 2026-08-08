@@ -6,8 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +28,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -60,13 +61,12 @@ import com.github.worn.presentation.viewmodel.OutfitIntent
 import com.github.worn.presentation.viewmodel.OutfitState
 import com.github.worn.presentation.viewmodel.OutfitViewModel
 import com.github.worn.ui.components.DeleteConfirmationDialog
-import com.github.worn.ui.components.SelectionHeader
 import com.github.worn.ui.components.EmptyStateView
 import com.github.worn.ui.components.OutfitCard
+import com.github.worn.ui.components.SelectionHeader
+import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
-import com.github.worn.ui.components.Tab
-import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
@@ -179,7 +179,7 @@ private fun OutfitsScaffold(
 
     Scaffold(
         modifier = Modifier.testTag("outfits_screen"),
-        containerColor = WornColors.BgPage,
+        containerColor = MaterialTheme.colorScheme.surface,
     ) { paddingValues ->
         val isEmpty = !state.isLoading && state.outfits.isEmpty()
 
@@ -202,7 +202,7 @@ private fun OutfitsScaffold(
                 EmptyState(onCreateClick = onCreateClick)
             } else if (state.isLoading && state.outfits.isEmpty()) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    CircularProgressIndicator(color = WornColors.AccentGreen)
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             } else {
                 Spacer(modifier = Modifier.height(sectionGap))
@@ -234,7 +234,7 @@ private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
     ) {
         Text(
             text = stringResource(R.string.outfits_title),
-            color = WornColors.TextPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             fontSize = if (outfitCount == 0) 22.sp else 28.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.5).sp,
@@ -242,7 +242,7 @@ private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
         if (outfitCount > 0) {
             Button(
                 onClick = onCreateClick,
-                colors = ButtonDefaults.buttonColors(containerColor = WornColors.AccentGreen),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(20.dp),
                 modifier = Modifier.testTag("outfits_create_button"),
             ) {
@@ -256,7 +256,7 @@ private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = pluralStringResource(R.plurals.saved_combinations, outfitCount, outfitCount),
-            color = WornColors.TextSecondary,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
         )
@@ -296,7 +296,6 @@ private fun OutfitsContent(
 }
 
 private val CtaShape = RoundedCornerShape(28.dp)
-private val CtaGradient = Brush.verticalGradient(listOf(WornColors.AccentGreen, WornColors.AccentGreenEnd))
 
 @Composable
 private fun EmptyState(onCreateClick: () -> Unit = {}) {
@@ -306,7 +305,7 @@ private fun EmptyState(onCreateClick: () -> Unit = {}) {
                 imageVector = Icons.Outlined.Layers,
                 contentDescription = null,
                 modifier = Modifier.size(52.dp),
-                tint = WornColors.TextSecondary,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
         title = stringResource(R.string.outfits_empty_title),
@@ -323,7 +322,12 @@ private fun EmptyState(onCreateClick: () -> Unit = {}) {
                 fixedHeight = null,
                 contentPadding = PaddingValues(horizontal = 36.dp, vertical = 16.dp),
                 icon = {
-                    Icon(Icons.Default.Add, contentDescription = null, Modifier.size(18.dp), WornColors.BgPage)
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = null,
+                        Modifier.size(18.dp),
+                        MaterialTheme.colorScheme.surface,
+                    )
                 },
             )
         },

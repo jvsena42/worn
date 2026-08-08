@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,13 +15,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornTheme
+import com.github.worn.ui.theme.wornExtras
 
 @Composable
 fun SheetDragHandle(
     modifier: Modifier = Modifier,
-    color: Color = WornColors.IconMuted,
+    color: Color = MaterialTheme.wornExtras.iconMuted,
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -40,7 +41,7 @@ fun SheetDragHandle(
 @Composable
 private fun SheetDragHandlePhonePreview() {
     WornTheme {
-        Box(modifier = Modifier.background(WornColors.BgElevated)) {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh)) {
             SheetDragHandle()
         }
     }
@@ -50,7 +51,7 @@ private fun SheetDragHandlePhonePreview() {
 @Composable
 private fun SheetDragHandleTabletPreview() {
     WornTheme {
-        Box(modifier = Modifier.background(WornColors.BgElevated)) {
+        Box(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh)) {
             SheetDragHandle()
         }
     }
