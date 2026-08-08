@@ -36,12 +36,12 @@ struct EmptyStateView<Icon: View, Action: View>: View {
             }
 
             Text(title)
-                .font(.system(size: 24, weight: .semibold))
+                .font(.title2.weight(.semibold))
                 .tracking(-0.5)
                 .foregroundColor(WornColors.textPrimary)
 
             Text(description)
-                .font(.system(size: 15))
+                .font(.subheadline)
                 .lineSpacing(4)
                 .multilineTextAlignment(.center)
                 .foregroundColor(WornColors.textSecondary)

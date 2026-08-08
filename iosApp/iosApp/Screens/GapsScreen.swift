@@ -96,11 +96,11 @@ struct GapsContent: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(String(localized: "gaps_title"))
-                        .font(.system(size: 28, weight: .semibold))
+                        .font(.title.weight(.semibold))
                         .foregroundColor(WornColors.textPrimary)
                         .padding(.top, 24)
                     Text(String(localized: "gaps_subtitle"))
-                        .font(.system(size: 14))
+                        .font(.subheadline)
                         .foregroundColor(WornColors.textSecondary)
                         .padding(.top, 4)
                         .padding(.bottom, 20)
@@ -155,13 +155,13 @@ struct GapsContent: View {
             .frame(maxWidth: .infinity)
 
             Text(String(localized: "gaps_complete_title"))
-                .font(.system(size: 18, weight: .semibold))
+                .font(.headline.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
                 .padding(.top, 24)
                 .multilineTextAlignment(.center)
 
             Text(String(localized: "gaps_complete_description"))
-                .font(.system(size: 14))
+                .font(.subheadline)
                 .foregroundColor(WornColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.top, 8)
@@ -204,12 +204,12 @@ struct GapsContent: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(state.isAiMode ? String(localized: "gaps_banner_ai_title") : String(localized: "gaps_banner_common_title"))
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundColor(.white)
                     Text(state.isAiMode
                          ? String(localized: "gaps_banner_ai_subtitle")
                          : String(localized: "gaps_banner_common_subtitle"))
-                        .font(.system(size: 13))
+                        .font(.footnote)
                         .foregroundColor(.white.opacity(0.8))
                 }
                 Spacer()
@@ -227,7 +227,7 @@ struct GapsContent: View {
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text.uppercased())
-            .font(.system(size: 12, weight: .medium))
+            .font(.caption.weight(.medium))
             .foregroundColor(WornColors.textSecondary)
             .tracking(0.5)
     }
@@ -240,12 +240,12 @@ struct GapsContent: View {
                 categoryIcon(for: recommendation.mappedCategory)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(recommendation.itemName)
-                        .font(.system(size: 15, weight: .medium))
+                        .font(.subheadline.weight(.medium))
                         .foregroundColor(WornColors.textPrimary)
                     Text(state.isAiMode
                          ? String(format: String(localized: "gaps_pairing_ai"), recommendation.pairingCount)
                          : String(localized: "gaps_pairing_common"))
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(WornColors.textSecondary)
                 }
                 Spacer()
@@ -332,7 +332,7 @@ private struct GapDetailSheet: View {
             .frame(maxWidth: .infinity)
 
             Text(recommendation.itemName)
-                .font(.system(size: 22, weight: .semibold))
+                .font(.title2.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
                 .padding(.top, 16)
 
@@ -341,7 +341,7 @@ private struct GapDetailSheet: View {
                     .fill(dotColor(for: recommendation.mappedCategory))
                     .frame(width: 8, height: 8)
                 Text(displayLabel(for: recommendation.mappedCategory))
-                    .font(.system(size: 14))
+                    .font(.subheadline)
                     .foregroundColor(WornColors.textSecondary)
             }
             .padding(.top, 4)
@@ -356,7 +356,7 @@ private struct GapDetailSheet: View {
             Text(isAiMode
                  ? String(format: String(localized: "gaps_pairing_ai"), recommendation.pairingCount)
                  : String(localized: "gaps_pairing_common"))
-                .font(.system(size: 13))
+                .font(.footnote)
                 .foregroundColor(WornColors.textSecondary)
         }
         .padding(12)
@@ -391,11 +391,11 @@ private struct GapDetailSheet: View {
     private func detailRow(_ label: String, _ value: String) -> some View {
         HStack {
             Text(label)
-                .font(.system(size: 14))
+                .font(.subheadline)
                 .foregroundColor(WornColors.textSecondary)
             Spacer()
             Text(value)
-                .font(.system(size: 14, weight: .medium))
+                .font(.subheadline.weight(.medium))
                 .foregroundColor(WornColors.textPrimary)
         }
         .padding(.vertical, 8)
@@ -405,7 +405,7 @@ private struct GapDetailSheet: View {
         VStack(spacing: 8) {
             Button(action: onAddToWardrobe) {
                 Text(String(localized: "gaps_add_to_wardrobe"))
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.callout.weight(.semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 52)
@@ -421,7 +421,7 @@ private struct GapDetailSheet: View {
 
             Button(action: onDismiss) {
                 Text(String(localized: "gaps_dismiss"))
-                    .font(.system(size: 15, weight: .medium))
+                    .font(.subheadline.weight(.medium))
                     .foregroundColor(WornColors.textSecondary)
                     .frame(maxWidth: .infinity)
                     .frame(height: 48)
@@ -514,6 +514,17 @@ private let previewGaps: [GapRecommendation] = [
     )
 }
 
+#Preview("iPhone · Dark") {
+    GapsContent(
+        state: GapsState(
+            recommendations: previewGaps, isLoading: false, isSaving: false,
+            isAiAvailable: true, isAiMode: true, error: nil
+        ),
+        isCompact: true
+    )
+    .preferredColorScheme(.dark)
+}
+
 #Preview("iPhone - Complete") {
     GapsContent(
         state: GapsState(
@@ -522,6 +533,17 @@ private let previewGaps: [GapRecommendation] = [
         ),
         isCompact: true
     )
+}
+
+#Preview("iPhone - Complete · Dark") {
+    GapsContent(
+        state: GapsState(
+            recommendations: [], isLoading: false, isSaving: false,
+            isAiAvailable: false, isAiMode: false, error: nil
+        ),
+        isCompact: true
+    )
+    .preferredColorScheme(.dark)
 }
 
 #Preview("iPad Portrait", traits: .portrait) {

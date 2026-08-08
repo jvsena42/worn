@@ -50,7 +50,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
@@ -64,7 +63,9 @@ import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
 import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.SheetPreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.wornExtras
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -130,8 +131,7 @@ internal fun CreateOutfitForm(
         Text(
             text = stringResource(if (isEditing) R.string.create_outfit_title_edit else R.string.create_outfit_title),
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.headlineSmall,
             letterSpacing = (-0.5).sp,
         )
         OutfitNameField(
@@ -165,7 +165,7 @@ private fun OutfitNameField(name: String, onNameChange: (String) -> Unit, modifi
             Text(
                 stringResource(R.string.create_outfit_name_hint),
                 color = MaterialTheme.wornExtras.iconMuted,
-                fontSize = 15.sp,
+                style = MaterialTheme.typography.bodyMedium,
             )
         },
         colors = TextFieldDefaults.colors(
@@ -191,15 +191,13 @@ private fun SelectItemsHeader(selectedCount: Int) {
         Text(
             text = stringResource(R.string.create_outfit_select_items),
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.titleSmall,
         )
         if (selectedCount > 0) {
             Text(
                 text = pluralStringResource(R.plurals.selected_count, selectedCount, selectedCount),
                 color = MaterialTheme.colorScheme.primary,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.labelLarge,
             )
         }
     }
@@ -305,7 +303,7 @@ private val previewItems = listOf(
     ClothingItem("6", "Chinos", Category.BOTTOM, listOf("khaki"), photoPath = "", createdAt = 0),
 )
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun CreateOutfitFormPhonePreview() {
     SheetPreview {
@@ -316,7 +314,7 @@ private fun CreateOutfitFormPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun CreateOutfitFormTabletPreview() {
     SheetPreview {
@@ -326,3 +324,4 @@ private fun CreateOutfitFormTabletPreview() {
         )
     }
 }
+

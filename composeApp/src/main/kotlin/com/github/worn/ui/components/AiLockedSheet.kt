@@ -32,12 +32,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
 import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.SheetPreview
+import com.github.worn.ui.theme.TabletPreview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,14 +87,14 @@ internal fun AiLockedContent(
         Text(
             text = stringResource(R.string.ai_locked_title),
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 22.sp,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Medium,
         )
 
         Text(
             text = stringResource(R.string.ai_locked_description),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center,
             lineHeight = 21.sp,
             modifier = Modifier.widthIn(max = 280.dp),
@@ -119,14 +120,15 @@ private fun SettingsCta(onClick: () -> Unit) {
     )
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun AiLockedPhonePreview() {
     SheetPreview { AiLockedContent() }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun AiLockedTabletPreview() {
     SheetPreview { AiLockedContent() }
 }
+

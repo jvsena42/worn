@@ -9,7 +9,7 @@ struct SelectionHeader: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(String(format: String(localized: "selected_count"), count))
-                    .font(.system(size: 28, weight: .medium))
+                    .font(.title.weight(.medium))
                     .tracking(-0.8)
                     .foregroundColor(WornColors.textPrimary)
                 Spacer()
@@ -20,7 +20,7 @@ struct SelectionHeader: View {
                         Image(systemName: "trash")
                             .font(.system(size: 15))
                         Text(String(localized: "common_delete"))
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.subheadline.weight(.semibold))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
@@ -30,7 +30,7 @@ struct SelectionHeader: View {
                 }
             }
             Button(String(localized: "common_cancel")) { onCancel() }
-                .font(.system(size: 15, weight: .medium))
+                .font(.subheadline.weight(.medium))
                 .foregroundColor(WornColors.textSecondary)
         }
     }

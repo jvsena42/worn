@@ -18,9 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
 
 @Composable
@@ -49,15 +50,14 @@ fun EmptyStateView(
         Text(
             title,
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.headlineSmall,
             letterSpacing = (-0.5).sp,
         )
         Spacer(Modifier.height(24.dp))
         Text(
             description,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 15.sp,
+            style = MaterialTheme.typography.bodyMedium,
             lineHeight = 22.sp,
             textAlign = TextAlign.Center,
         )
@@ -68,13 +68,13 @@ fun EmptyStateView(
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun EmptyStatePhonePreview() {
     WornTheme {
         EmptyStateView(
             icon = {
-                Text("👕", fontSize = 42.sp)
+                Text("👕", style = MaterialTheme.typography.displaySmall)
             },
             title = "Your wardrobe is empty",
             description = "Add your first item to get started",
@@ -82,16 +82,17 @@ private fun EmptyStatePhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun EmptyStateTabletPreview() {
     WornTheme {
         EmptyStateView(
             icon = {
-                Text("👕", fontSize = 42.sp)
+                Text("👕", style = MaterialTheme.typography.displaySmall)
             },
             title = "Your wardrobe is empty",
             description = "Add your first item to get started",
         )
     }
 }
+

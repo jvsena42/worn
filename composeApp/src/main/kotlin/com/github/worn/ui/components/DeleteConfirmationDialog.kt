@@ -12,10 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
 
 @Composable
@@ -32,14 +33,14 @@ fun DeleteConfirmationDialog(
             Text(
                 title,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 22.sp,
+                style = MaterialTheme.typography.titleLarge,
             )
         },
         text = {
             Text(
                 message,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 15.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 lineHeight = 22.sp,
             )
         },
@@ -70,7 +71,7 @@ fun DeleteConfirmationDialog(
     )
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun DeleteConfirmationDialogPhonePreview() {
     WornTheme {
@@ -84,7 +85,7 @@ private fun DeleteConfirmationDialogPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "spec:width=800dp,height=1280dp,dpi=240")
+@TabletPreview
 @Composable
 private fun DeleteConfirmationDialogTabletPreview() {
     WornTheme {
@@ -97,3 +98,5 @@ private fun DeleteConfirmationDialogTabletPreview() {
         )
     }
 }
+
+

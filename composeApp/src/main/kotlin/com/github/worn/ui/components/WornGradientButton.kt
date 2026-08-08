@@ -22,11 +22,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.ui.theme.LocalWornExtras
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.theme.wornExtras
 
@@ -102,16 +103,16 @@ fun WornGradientButton(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     icon()
-                    Text(text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                    Text(text, color = Color.White, style = MaterialTheme.typography.titleSmall)
                 }
             } else {
-                Text(text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                Text(text, color = Color.White, style = MaterialTheme.typography.titleSmall)
             }
         }
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun WornGradientButtonPhonePreview() {
     WornTheme {
@@ -121,7 +122,7 @@ private fun WornGradientButtonPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun WornGradientButtonTabletPreview() {
     WornTheme {
@@ -130,3 +131,4 @@ private fun WornGradientButtonTabletPreview() {
         }
     }
 }
+

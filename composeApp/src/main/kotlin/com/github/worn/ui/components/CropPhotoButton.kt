@@ -42,7 +42,7 @@ fun CropPhotoButton(
             Text(
                 text = stringResource(R.string.crop_photo_button),
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 15.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
             )
         }

@@ -8,7 +8,7 @@ struct WornChip: View {
     var body: some View {
         Button(action: onTap) {
             Text(label)
-                .font(.system(size: 13, weight: .medium))
+                .font(.footnote.weight(.medium))
                 .foregroundColor(isActive ? WornColors.textOnColor : WornColors.textSecondary)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)

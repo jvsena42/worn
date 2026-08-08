@@ -146,16 +146,13 @@ private fun TabItem(
             }
             Text(
                 text = label,
-                style = TextStyle(
-                    color = if (isActive) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 0.5.sp,
-                ),
+                // labelSmall already carries the 10sp/SemiBold/+0.5sp tracking these labels used.
+                style = MaterialTheme.typography.labelSmall,
+                color = if (isActive) {
+                    MaterialTheme.colorScheme.onPrimary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

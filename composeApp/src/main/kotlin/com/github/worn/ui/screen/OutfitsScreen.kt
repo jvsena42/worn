@@ -49,7 +49,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -67,6 +66,8 @@ import com.github.worn.ui.components.SelectionHeader
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import org.koin.compose.viewmodel.koinViewModel
@@ -235,9 +236,11 @@ private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
         Text(
             text = stringResource(R.string.outfits_title),
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = if (outfitCount == 0) 22.sp else 28.sp,
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = (-0.5).sp,
+            style = if (outfitCount == 0) {
+                MaterialTheme.typography.titleLarge
+            } else {
+                MaterialTheme.typography.headlineMedium
+            },
         )
         if (outfitCount > 0) {
             Button(
@@ -248,7 +251,11 @@ private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
             ) {
                 Icon(Icons.Default.Add, contentDescription = null, Modifier.size(16.dp))
                 Spacer(Modifier.width(4.dp))
-                Text(stringResource(R.string.outfits_button_create), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+                Text(
+                    stringResource(R.string.outfits_button_create),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
         }
     }
@@ -257,7 +264,7 @@ private fun OutfitsHeader(outfitCount: Int, onCreateClick: () -> Unit = {}) {
         Text(
             text = pluralStringResource(R.plurals.saved_combinations, outfitCount, outfitCount),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Medium,
         )
     }
@@ -341,7 +348,7 @@ private val previewOutfits = listOf(
     Outfit("3", "Evening Out", listOf("i1", "i2", "i3", "i4", "i5"), 1_709_856_000_000),
 )
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun OutfitsPhonePreview() {
     WornTheme {
@@ -352,7 +359,7 @@ private fun OutfitsPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun OutfitsSelectionPreview() {
     WornTheme {
@@ -363,7 +370,7 @@ private fun OutfitsSelectionPreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun OutfitsEmptyPhonePreview() {
     WornTheme {
@@ -374,7 +381,7 @@ private fun OutfitsEmptyPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun OutfitsTabletPreview() {
     WornTheme {
@@ -385,7 +392,7 @@ private fun OutfitsTabletPreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun OutfitsEmptyTabletPreview() {
     WornTheme {
@@ -395,3 +402,4 @@ private fun OutfitsEmptyTabletPreview() {
         )
     }
 }
+

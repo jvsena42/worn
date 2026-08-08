@@ -46,13 +46,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.github.worn.R
 import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.theme.wornExtras
 import com.github.worn.ui.util.cropToJpeg
@@ -269,13 +270,16 @@ private fun CropEditorTopBar(canApply: Boolean, onCancel: () -> Unit, onApply: (
         modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
     ) {
         TextButton(onClick = onCancel, modifier = Modifier.testTag("crop_editor_cancel")) {
-            Text(stringResource(R.string.common_cancel), color = Color.White, fontSize = 16.sp)
+            Text(
+                stringResource(R.string.common_cancel),
+                color = Color.White,
+                style = MaterialTheme.typography.titleSmall,
+            )
         }
         Text(
             text = stringResource(R.string.crop_title),
             color = Color.White,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.titleSmall,
         )
         TextButton(
             onClick = onApply,
@@ -285,8 +289,7 @@ private fun CropEditorTopBar(canApply: Boolean, onCancel: () -> Unit, onApply: (
             Text(
                 text = stringResource(R.string.crop_apply),
                 color = if (canApply) MaterialTheme.colorScheme.primary else MaterialTheme.wornExtras.textMuted,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.titleSmall,
             )
         }
     }
@@ -299,7 +302,7 @@ private fun CropEditorBottomBar(enabled: Boolean, onReset: () -> Unit) {
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
     ) {
         TextButton(onClick = onReset, enabled = enabled, modifier = Modifier.testTag("crop_editor_reset")) {
-            Text(stringResource(R.string.crop_reset), color = Color.White, fontSize = 15.sp)
+            Text(stringResource(R.string.crop_reset), color = Color.White, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
@@ -378,14 +381,15 @@ private fun previewBitmap(): ImageBitmap =
 private const val PREVIEW_WIDTH = 600
 private const val PREVIEW_HEIGHT = 800
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun CropEditorContentPhonePreview() {
     WornTheme { CropEditorContent(bitmap = previewBitmap()) }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun CropEditorContentTabletPreview() {
     WornTheme { CropEditorContent(bitmap = previewBitmap()) }
 }
+

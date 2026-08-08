@@ -154,12 +154,12 @@ struct TryItScreen: View {
             }
 
             Text(String(localized: "tryit_locked_title"))
-                .font(.system(size: isCompact ? 24 : 26, weight: .medium))
+                .font((isCompact ? Font.title2 : Font.title).weight(.medium))
                 .foregroundColor(WornColors.textPrimary)
                 .multilineTextAlignment(.center)
 
             Text(String(localized: "tryit_locked_description"))
-                .font(.system(size: isCompact ? 15 : 16))
+                .font(isCompact ? .subheadline : .callout)
                 .foregroundColor(WornColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
@@ -205,7 +205,7 @@ struct TryItScreen: View {
 
     private var phoneContent: some View {
         VStack(alignment: .leading, spacing: 20) {
-            tryItTitle(fontSize: 28)
+            tryItTitle(font: .title)
                 .id(Self.analysisAnchor)
             uploadZone(height: 200)
             if photoData != nil { garmentCropButton }
@@ -241,7 +241,7 @@ struct TryItScreen: View {
 
     private var tabletContent: some View {
         VStack(alignment: .leading, spacing: 28) {
-            tryItTitle(fontSize: 32)
+            tryItTitle(font: .largeTitle)
                 .id(Self.analysisAnchor)
 
             HStack(alignment: .top, spacing: 32) {
@@ -293,9 +293,9 @@ struct TryItScreen: View {
 
     // MARK: - Components
 
-    private func tryItTitle(fontSize: CGFloat) -> some View {
+    private func tryItTitle(font: Font) -> some View {
         Text(String(localized: "tryit_title"))
-            .font(.system(size: fontSize, weight: .semibold))
+            .font(font.weight(.semibold))
             .foregroundColor(WornColors.textPrimary)
             .tracking(-0.8)
     }
@@ -320,7 +320,7 @@ struct TryItScreen: View {
                             .font(.system(size: 44))
                             .foregroundColor(WornColors.iconMuted)
                         Text(String(localized: "tryit_upload_hint"))
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.footnote.weight(.medium))
                             .foregroundColor(WornColors.textSecondary)
                             .multilineTextAlignment(.center)
                     }
@@ -400,7 +400,7 @@ struct TryItScreen: View {
             if !matchingItems.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(String(localized: "tryit_pairs_with"))
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(.headline.weight(.semibold))
                         .foregroundColor(WornColors.textPrimary)
                         .tracking(-0.2)
 
@@ -438,15 +438,15 @@ struct TryItScreen: View {
 
     private func combinationsCard(count: Int, isCompact: Bool) -> some View {
         let cardHeight: CGFloat = isCompact ? 90 : 110
-        let valueSize: CGFloat = isCompact ? 40 : 44
+        let valueFont: Font = .largeTitle
 
         return VStack(alignment: .leading, spacing: 4) {
             Text(String(localized: "tryit_combinations_unlocked"))
-                .font(.system(size: 12, weight: .semibold))
+                .font(.caption.weight(.semibold))
                 .foregroundColor(WornColors.textSecondary)
                 .tracking(0.5)
             Text("\(count)")
-                .font(.system(size: valueSize, weight: .bold))
+                .font(valueFont.weight(.bold))
                 .foregroundColor(WornColors.accentGreen)
                 .tracking(-1.2)
         }
@@ -468,7 +468,7 @@ struct TryItScreen: View {
             if !gaps.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(String(localized: "tryit_gaps_filled"))
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(.headline.weight(.semibold))
                         .foregroundColor(WornColors.textPrimary)
                         .tracking(-0.2)
 
@@ -478,7 +478,7 @@ struct TryItScreen: View {
                                 .fill(WornColors.accentGreen)
                                 .frame(width: 8, height: 8)
                             Text(gap)
-                                .font(.system(size: isCompact ? 14 : 15))
+                                .font(isCompact ? .subheadline : .callout)
                                 .foregroundColor(WornColors.textPrimary)
                         }
                     }
@@ -500,7 +500,7 @@ struct TryItScreen: View {
                 .font(.system(size: 22))
                 .foregroundColor(.white)
             Text(text)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.callout.weight(.semibold))
                 .foregroundColor(.white)
         }
         .frame(maxWidth: .infinity)
@@ -542,7 +542,7 @@ struct TryItScreen: View {
     private func tryOnSection(isCompact: Bool) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(String(localized: "tryit_your_photo_title"))
-                .font(.system(size: 18, weight: .semibold))
+                .font(.headline.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
                 .tracking(-0.2)
 
@@ -554,7 +554,7 @@ struct TryItScreen: View {
             }
 
             Text(String(localized: "tryit_tryon_category_title"))
-                .font(.system(size: 18, weight: .semibold))
+                .font(.headline.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
                 .tracking(-0.2)
 
@@ -584,7 +584,7 @@ struct TryItScreen: View {
             }
 
             Text(String(localized: "tryit_tryon_cost_note"))
-                .font(.system(size: 12))
+                .font(.caption)
                 .foregroundColor(WornColors.textSecondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -645,7 +645,7 @@ struct TryItScreen: View {
                             .font(.system(size: 44))
                             .foregroundColor(WornColors.iconMuted)
                         Text(String(localized: "tryit_your_photo_hint"))
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.footnote.weight(.medium))
                             .foregroundColor(WornColors.textSecondary)
                             .multilineTextAlignment(.center)
                     }
@@ -672,7 +672,7 @@ struct TryItScreen: View {
                     let selected = viewModel.state.selectedCategory == category
                     Button { viewModel.selectCategory(category) } label: {
                         Text(label)
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.subheadline.weight(.medium))
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
                             .background(selected ? WornColors.accentIndigo : WornColors.bgCard)
@@ -711,7 +711,7 @@ struct TryItScreen: View {
         VStack(spacing: 12) {
             ProgressView().tint(WornColors.accentIndigo)
             Text(String(localized: "tryit_tryon_generating"))
-                .font(.system(size: 14))
+                .font(.subheadline)
                 .foregroundColor(WornColors.textSecondary)
         }
         .frame(maxWidth: .infinity)
@@ -721,7 +721,7 @@ struct TryItScreen: View {
     private func tryOnResultView(imageData: Data, height: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(String(localized: "tryit_tryon_result_title"))
-                .font(.system(size: 18, weight: .semibold))
+                .font(.headline.weight(.semibold))
                 .foregroundColor(WornColors.textPrimary)
                 .tracking(-0.2)
 
@@ -755,6 +755,11 @@ struct TryItScreen: View {
 
 #Preview("iPhone") {
     TryItScreen(onTabSelected: { _ in })
+}
+
+#Preview("iPhone · Dark") {
+    TryItScreen(onTabSelected: { _ in })
+    .preferredColorScheme(.dark)
 }
 
 #Preview("iPad Portrait", traits: .portrait) {

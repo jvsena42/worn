@@ -48,11 +48,11 @@ struct CropEditorView: View {
                 .accessibilityIdentifier("crop_editor_cancel")
             Spacer()
             Text(String(localized: "crop_title"))
-                .font(.system(size: 16, weight: .semibold))
+                .font(.callout.weight(.semibold))
                 .foregroundColor(.white)
             Spacer()
             Button(String(localized: "crop_apply"), action: applyCrop)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.callout.weight(.semibold))
                 .foregroundColor(canApply ? WornColors.accentGreen : WornColors.textMuted)
                 .disabled(!canApply)
                 .accessibilityIdentifier("crop_editor_apply")
@@ -63,7 +63,7 @@ struct CropEditorView: View {
 
     private var bottomBar: some View {
         Button(String(localized: "crop_reset")) { selection = bounds }
-            .font(.system(size: 15))
+            .font(.subheadline)
             .foregroundColor(.white)
             .disabled(bounds == nil || isProcessing)
             .padding(.vertical, 12)

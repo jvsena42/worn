@@ -26,11 +26,11 @@ struct AiLockedSheet: View {
             }
 
             Text(String(localized: "ai_locked_title"))
-                .font(.system(size: 22, weight: .medium))
+                .font(.title2.weight(.medium))
                 .foregroundColor(WornColors.textPrimary)
 
             Text(String(localized: "ai_locked_description"))
-                .font(.system(size: 14))
+                .font(.subheadline)
                 .foregroundColor(WornColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(7)

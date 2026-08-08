@@ -41,10 +41,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
@@ -62,7 +61,9 @@ import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
 import com.github.worn.ui.components.dotColor
 import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.SheetPreview
+import com.github.worn.ui.theme.TabletPreview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,7 +102,7 @@ internal fun ItemDetailContent(
     onDelete: (String) -> Unit = {},
     showActions: Boolean = true,
 ) {
-    val dims = ItemDetailDimens(isCompact)
+    val dims = itemDetailDimens(isCompact)
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Column(
@@ -115,15 +116,15 @@ internal fun ItemDetailContent(
         verticalArrangement = Arrangement.spacedBy(dims.sectionGap),
     ) {
         ItemPhoto(item = item, dims = dims)
-        ItemNameGroup(item = item, nameSize = dims.nameSize)
+        ItemNameGroup(item = item, nameStyle = dims.nameStyle)
         HorizontalDivider()
-        ItemProperties(item = item, fontSize = dims.propFontSize, gap = dims.propGap)
+        ItemProperties(item = item, textStyle = dims.propStyle, gap = dims.propGap)
         if (showActions) {
             DetailActionButtons(
                 editLabel = stringResource(R.string.item_detail_edit),
                 deleteLabel = stringResource(R.string.item_detail_delete),
                 buttonHeight = dims.buttonHeight,
-                buttonFontSize = dims.buttonFontSize,
+                buttonStyle = dims.buttonStyle,
                 onEdit = { onEdit(item) },
                 onDelete = { showDeleteDialog = true },
                 editTestTag = "item_detail_edit",
@@ -141,18 +142,48 @@ internal fun ItemDetailContent(
     }
 }
 
-private data class ItemDetailDimens(val isCompact: Boolean) {
-    val contentPadding: Dp = if (isCompact) 24.dp else 32.dp
-    val sectionGap: Dp = if (isCompact) 20.dp else 24.dp
-    val photoHeight: Dp = if (isCompact) 280.dp else 360.dp
-    val photoRadius: Dp = if (isCompact) 20.dp else 24.dp
-    val nameSize: TextUnit = if (isCompact) 22.sp else 26.sp
-    val propFontSize: TextUnit = if (isCompact) 14.sp else 15.sp
-    val propGap: Dp = if (isCompact) 14.dp else 16.dp
-    val buttonHeight: Dp = if (isCompact) 48.dp else 52.dp
-    val buttonFontSize: TextUnit = if (isCompact) 15.sp else 16.sp
-    val placeholderIconSize: Dp = if (isCompact) 64.dp else 80.dp
-}
+private data class ItemDetailDimens(
+    val contentPadding: Dp,
+    val sectionGap: Dp,
+    val photoHeight: Dp,
+    val photoRadius: Dp,
+    val nameStyle: TextStyle,
+    val propStyle: TextStyle,
+    val propGap: Dp,
+    val buttonHeight: Dp,
+    val buttonStyle: TextStyle,
+    val placeholderIconSize: Dp,
+)
+
+/**
+ * Composable rather than a plain constructor so the text styles come from the shared type scale
+ * instead of loose `sp` literals; only the spacing still varies by raw dimension.
+ */
+@Composable
+private fun itemDetailDimens(isCompact: Boolean): ItemDetailDimens = ItemDetailDimens(
+    contentPadding = if (isCompact) 24.dp else 32.dp,
+    sectionGap = if (isCompact) 20.dp else 24.dp,
+    photoHeight = if (isCompact) 280.dp else 360.dp,
+    photoRadius = if (isCompact) 20.dp else 24.dp,
+    nameStyle = if (isCompact) {
+        MaterialTheme.typography.titleLarge
+    } else {
+        MaterialTheme.typography.headlineSmall
+    },
+    propStyle = if (isCompact) {
+        MaterialTheme.typography.bodySmall
+    } else {
+        MaterialTheme.typography.bodyMedium
+    },
+    propGap = if (isCompact) 14.dp else 16.dp,
+    buttonHeight = if (isCompact) 48.dp else 52.dp,
+    buttonStyle = if (isCompact) {
+        MaterialTheme.typography.bodyMedium
+    } else {
+        MaterialTheme.typography.titleSmall
+    },
+    placeholderIconSize = if (isCompact) 64.dp else 80.dp,
+)
 
 @Composable
 private fun ItemPhoto(item: ClothingItem, dims: ItemDetailDimens) {
@@ -173,12 +204,12 @@ private fun ItemPhoto(item: ClothingItem, dims: ItemDetailDimens) {
 }
 
 @Composable
-private fun ItemNameGroup(item: ClothingItem, nameSize: TextUnit) {
+private fun ItemNameGroup(item: ClothingItem, nameStyle: TextStyle) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
             text = item.name,
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = nameSize,
+            style = nameStyle,
             fontWeight = FontWeight.SemiBold,
         )
         Row(
@@ -194,7 +225,7 @@ private fun ItemNameGroup(item: ClothingItem, nameSize: TextUnit) {
             Text(
                 text = item.category.displayLabel(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 14.sp,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
     }
@@ -211,10 +242,10 @@ private fun HorizontalDivider() {
 }
 
 @Composable
-private fun ItemProperties(item: ClothingItem, fontSize: TextUnit, gap: Dp) {
+private fun ItemProperties(item: ClothingItem, textStyle: TextStyle, gap: Dp) {
     Column(verticalArrangement = Arrangement.spacedBy(gap)) {
         if (item.colors.isNotEmpty()) {
-            ColorPropertyRow(item = item, fontSize = fontSize)
+            ColorPropertyRow(item = item, textStyle = textStyle)
         }
         if (item.seasons.isNotEmpty()) {
             val seasonText = if (item.seasons.size == Season.entries.size) {
@@ -222,26 +253,30 @@ private fun ItemProperties(item: ClothingItem, fontSize: TextUnit, gap: Dp) {
             } else {
                 item.seasons.map { it.displayName() }.joinToString(", ")
             }
-            PropertyRow(label = stringResource(R.string.label_season), value = seasonText, fontSize = fontSize)
+            PropertyRow(label = stringResource(R.string.label_season), value = seasonText, textStyle = textStyle)
         }
         item.fit?.let {
-            PropertyRow(label = stringResource(R.string.label_fit), value = it.displayName(), fontSize = fontSize)
+            PropertyRow(label = stringResource(R.string.label_fit), value = it.displayName(), textStyle = textStyle)
         }
         item.subcategory?.let {
             PropertyRow(
                 label = stringResource(R.string.label_subcategory),
                 value = it.displayName(),
-                fontSize = fontSize,
+                textStyle = textStyle,
             )
         }
         item.material?.let {
-            PropertyRow(label = stringResource(R.string.label_material), value = it.displayName(), fontSize = fontSize)
+            PropertyRow(
+                label = stringResource(R.string.label_material),
+                value = it.displayName(),
+                textStyle = textStyle,
+            )
         }
     }
 }
 
 @Composable
-private fun ColorPropertyRow(item: ClothingItem, fontSize: TextUnit) {
+private fun ColorPropertyRow(item: ClothingItem, textStyle: TextStyle) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -250,7 +285,7 @@ private fun ColorPropertyRow(item: ClothingItem, fontSize: TextUnit) {
         Text(
             stringResource(R.string.label_color),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = fontSize,
+            style = textStyle,
             fontWeight = FontWeight.Medium,
         )
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -263,7 +298,7 @@ private fun ColorPropertyRow(item: ClothingItem, fontSize: TextUnit) {
             Text(
                 text = item.colors.joinToString(", ") { it.replaceFirstChar(Char::uppercase) },
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = fontSize,
+                style = textStyle,
                 fontWeight = FontWeight.Medium,
             )
         }
@@ -276,7 +311,7 @@ internal fun DetailActionButtons(
     editLabel: String,
     deleteLabel: String,
     buttonHeight: Dp,
-    buttonFontSize: TextUnit,
+    buttonStyle: TextStyle,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     editTestTag: String,
@@ -293,7 +328,7 @@ internal fun DetailActionButtons(
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 Text(
                     editLabel, color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = buttonFontSize, fontWeight = FontWeight.SemiBold,
+                    style = buttonStyle, fontWeight = FontWeight.SemiBold,
                 )
             }
         }
@@ -304,7 +339,7 @@ internal fun DetailActionButtons(
             modifier = Modifier.fillMaxWidth().height(buttonHeight).testTag(deleteTestTag),
         ) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Text(deleteLabel, color = Color.White, fontSize = buttonFontSize, fontWeight = FontWeight.SemiBold)
+                Text(deleteLabel, color = Color.White, style = buttonStyle, fontWeight = FontWeight.SemiBold)
             }
         }
     }
@@ -318,13 +353,15 @@ private fun DeleteItemDialog(itemName: String, onConfirm: () -> Unit, onDismiss:
             Text(
                 stringResource(R.string.item_detail_delete_dialog_title),
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 22.sp,
+                style = MaterialTheme.typography.titleLarge,
             )
         },
         text = {
             Text(
                 stringResource(R.string.item_detail_delete_dialog_message, itemName),
-                color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 15.sp, lineHeight = 22.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+                lineHeight = 22.sp,
             )
         },
         confirmButton = {
@@ -350,14 +387,15 @@ private val previewItem = ClothingItem(
     photoPath = "", createdAt = 0,
 )
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun ItemDetailSheetPhonePreview() {
     SheetPreview { ItemDetailContent(item = previewItem, isCompact = true) }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun ItemDetailSheetTabletPreview() {
     SheetPreview { ItemDetailContent(item = previewItem, isCompact = false) }
 }
+

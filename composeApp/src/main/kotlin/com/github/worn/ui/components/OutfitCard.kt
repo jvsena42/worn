@@ -137,7 +137,7 @@ private fun ItemCountBadge(outfit: Outfit) {
         Text(
             text = stringResource(R.string.outfit_detail_items_count, outfit.itemIds.size),
             color = MaterialTheme.colorScheme.onPrimary,
-            fontSize = 11.sp,
+            style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
         )
@@ -155,8 +155,7 @@ private fun BottomRow(outfit: Outfit) {
             Text(
                 text = outfit.name,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.titleSmall,
                 // Auto-generated names concatenate every item, so they can outgrow the card.
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -164,7 +163,7 @@ private fun BottomRow(outfit: Outfit) {
             Text(
                 text = formatDate(outfit.createdAt),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.labelMedium,
             )
         }
         Icon(

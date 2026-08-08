@@ -45,7 +45,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
@@ -72,7 +71,9 @@ import com.github.worn.ui.components.SeasonSection
 import com.github.worn.ui.components.SheetDragHandle
 import com.github.worn.ui.components.SubcategoryDropdown
 import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.ui.theme.PhonePreview
 import com.github.worn.ui.theme.SheetPreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.util.decodePreviewImage
 import com.github.worn.ui.util.readImageBytes
 import com.github.worn.ui.util.rememberCameraCapture
@@ -356,8 +357,7 @@ private fun AddItemFormContent(
         Text(
             text = stringResource(if (isEditing) R.string.add_item_title_edit else R.string.add_item_title),
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.headlineSmall,
             letterSpacing = (-0.5).sp,
         )
         PhotoUploadZone(
@@ -440,7 +440,7 @@ private fun PhotoSourceDialog(
                     ) {
                         Icon(Icons.Outlined.CameraAlt, contentDescription = null, modifier = Modifier.size(24.dp))
                         Spacer(Modifier.width(12.dp))
-                        Text(stringResource(R.string.add_item_take_photo), fontSize = 16.sp)
+                        Text(stringResource(R.string.add_item_take_photo), style = MaterialTheme.typography.titleSmall)
                     }
                 }
                 TextButton(
@@ -454,7 +454,10 @@ private fun PhotoSourceDialog(
                     ) {
                         Icon(Icons.Outlined.PhotoLibrary, contentDescription = null, modifier = Modifier.size(24.dp))
                         Spacer(Modifier.width(12.dp))
-                        Text(stringResource(R.string.add_item_choose_gallery), fontSize = 16.sp)
+                        Text(
+                            stringResource(R.string.add_item_choose_gallery),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
                     }
                 }
             }
@@ -470,14 +473,15 @@ private inline fun <T> toggleInSet(item: T, current: Set<T>, update: (Set<T>) ->
     update(if (item in current) current - item else current + item)
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun AddItemFormPhonePreview() {
     SheetPreview { AddItemForm() }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun AddItemFormTabletPreview() {
     SheetPreview { AddItemForm() }
 }
+

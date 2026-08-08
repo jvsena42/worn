@@ -54,7 +54,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -76,6 +75,8 @@ import com.github.worn.ui.components.displayLabel
 import com.github.worn.ui.components.displayName
 import com.github.worn.ui.components.iconRes
 import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.theme.wornExtras
@@ -191,14 +192,13 @@ private fun GapsScaffold(
                 Text(
                     text = stringResource(R.string.gaps_title),
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.headlineMedium,
                     letterSpacing = (-0.5).sp,
                 )
                 Text(
                     text = stringResource(R.string.gaps_subtitle),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 14.sp,
+                    style = MaterialTheme.typography.bodySmall,
                 )
                 Spacer(Modifier.height(20.dp))
             }
@@ -261,14 +261,13 @@ private fun CompleteContent() {
         Text(
             text = stringResource(R.string.gaps_complete_title),
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.titleMedium,
         )
         Spacer(Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.gaps_complete_description),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodySmall,
             lineHeight = 20.sp,
         )
     }
@@ -323,13 +322,12 @@ private fun GapsBanner(isAiMode: Boolean, onClick: () -> Unit) {
                 Text(
                     text = stringResource(titleRes),
                     color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.titleSmall,
                 )
                 Text(
                     text = stringResource(subtitleRes),
                     color = Color.White.copy(alpha = 0.8f),
-                    fontSize = 13.sp,
+                    style = MaterialTheme.typography.labelLarge,
                 )
             }
             Spacer(Modifier.width(12.dp))
@@ -348,8 +346,7 @@ private fun SectionLabel(text: String) {
     Text(
         text = text.uppercase(),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        fontSize = 12.sp,
-        fontWeight = FontWeight.Medium,
+        style = MaterialTheme.typography.labelMedium,
         letterSpacing = 0.5.sp,
     )
 }
@@ -375,7 +372,7 @@ private fun GapCard(
                 Text(
                     text = recommendation.itemName,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 15.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                 )
                 Text(
@@ -385,7 +382,7 @@ private fun GapCard(
                         stringResource(R.string.gaps_pairing_common)
                     },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 12.sp,
+                    style = MaterialTheme.typography.labelMedium,
                 )
             }
             Icon(
@@ -499,8 +496,7 @@ private fun DetailHeader(recommendation: GapRecommendation) {
     Text(
         text = recommendation.itemName,
         color = MaterialTheme.colorScheme.onSurface,
-        fontSize = 22.sp,
-        fontWeight = FontWeight.SemiBold,
+        style = MaterialTheme.typography.titleLarge,
     )
     Spacer(Modifier.height(4.dp))
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -514,7 +510,7 @@ private fun DetailHeader(recommendation: GapRecommendation) {
         Text(
             text = recommendation.mappedCategory.displayLabel(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodySmall,
         )
     }
 }
@@ -544,7 +540,7 @@ private fun DetailPairingInfo(recommendation: GapRecommendation, isAiMode: Boole
                     stringResource(R.string.gaps_pairing_common)
                 },
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 13.sp,
+                style = MaterialTheme.typography.labelLarge,
             )
         }
     }
@@ -585,8 +581,13 @@ private fun DetailRow(label: String, value: String) {
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
-        Text(value, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+        Text(
+            value,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Medium,
+        )
     }
 }
 
@@ -611,7 +612,7 @@ private fun DetailActions(onAddToWardrobe: () -> Unit, onDismiss: () -> Unit) {
             Text(
                 stringResource(R.string.gaps_dismiss),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 15.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
             )
         }
@@ -642,7 +643,7 @@ private fun GapRecommendation.toPreFilledItem() =
         createdAt = 0L,
     )
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun GapsScreenPhonePreview() {
     WornTheme {
@@ -656,7 +657,7 @@ private fun GapsScreenPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun GapsScreenTabletPreview() {
     WornTheme {
@@ -671,7 +672,7 @@ private fun GapsScreenTabletPreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun GapsScreenCompletePreview() {
     WornTheme {
@@ -679,7 +680,7 @@ private fun GapsScreenCompletePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun GapsScreenErrorPreview() {
     WornTheme {
@@ -692,3 +693,4 @@ private fun GapsScreenErrorPreview() {
         )
     }
 }
+

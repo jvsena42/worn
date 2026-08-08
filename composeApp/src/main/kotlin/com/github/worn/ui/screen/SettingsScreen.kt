@@ -64,7 +64,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -88,6 +87,8 @@ import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornChip
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.exposeTestTagsAsResourceId
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.theme.wornExtras
@@ -189,8 +190,7 @@ private fun SettingsScaffold(
             Text(
                 text = stringResource(R.string.settings_title),
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.headlineMedium,
                 letterSpacing = (-0.5).sp,
             )
 
@@ -257,8 +257,7 @@ private fun SectionLabel(text: String) {
     Text(
         text = text,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        fontSize = 12.sp,
-        fontWeight = FontWeight.Medium,
+        style = MaterialTheme.typography.labelMedium,
         letterSpacing = 0.5.sp,
     )
 }
@@ -313,10 +312,14 @@ private fun SettingsToggleCard(
                 Text(
                     title,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Medium,
                 )
-                Text(subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                Text(
+                    subtitle,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge,
+                )
             }
             Spacer(Modifier.width(8.dp))
             Switch(
@@ -371,10 +374,14 @@ private fun SettingsCard(
                 Text(
                     title,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Medium,
                 )
-                Text(subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+                Text(
+                    subtitle,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge,
+                )
             }
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
@@ -408,10 +415,14 @@ private fun AboutCard() {
                 Text(
                     stringResource(R.string.settings_version),
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 15.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f),
                 )
-                Text(versionName ?: "1.0", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 15.sp)
+                Text(
+                    versionName ?: "1.0",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
             AboutLinkRow(stringResource(R.string.settings_suggestions_bugs)) { uriHandler.openUri(FEEDBACK_URL) }
@@ -428,7 +439,12 @@ private fun AboutLinkRow(label: String, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth().padding(16.dp),
         ) {
-            Text(label, color = MaterialTheme.colorScheme.onSurface, fontSize = 15.sp, modifier = Modifier.weight(1f))
+            Text(
+                label,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f),
+            )
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                 contentDescription = null,
@@ -453,14 +469,14 @@ private fun DonationCard() {
             Text(
                 stringResource(R.string.settings_donate_title),
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 15.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 stringResource(R.string.settings_donate_subtitle),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 13.sp,
+                style = MaterialTheme.typography.labelLarge,
             )
             Spacer(Modifier.height(12.dp))
             Surface(
@@ -479,16 +495,14 @@ private fun DonationCard() {
                     Text(
                         DONATION_LN_ADDRESS,
                         color = MaterialTheme.colorScheme.primary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Medium,
+                        style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.weight(1f),
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
                         if (showCopied) copiedText else stringResource(R.string.settings_donate_copy),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
+                        style = MaterialTheme.typography.labelMedium,
                     )
                 }
             }
@@ -550,13 +564,12 @@ private fun ProfileSheetContent(state: SettingsState, onIntent: (SettingsIntent)
         Text(
             text = stringResource(R.string.settings_your_profile),
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.headlineSmall,
         )
         Text(
             text = stringResource(R.string.settings_profile_help),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodySmall,
         )
         ChipGroup(
             title = stringResource(R.string.label_body_type),
@@ -665,7 +678,7 @@ private fun ApiKeySheetContent(
                     Text(
                         text = stringResource(R.string.settings_remove_key),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 14.sp,
+                        style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(vertical = 8.dp),
                     )
@@ -680,19 +693,17 @@ private fun ApiKeySheetHeader() {
     Text(
         text = stringResource(R.string.settings_connect_claude),
         color = MaterialTheme.colorScheme.onSurface,
-        fontSize = 24.sp,
-        fontWeight = FontWeight.SemiBold,
+        style = MaterialTheme.typography.headlineSmall,
     )
     Text(
         text = stringResource(R.string.settings_api_description),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        fontSize = 14.sp,
+        style = MaterialTheme.typography.bodySmall,
     )
     Text(
         text = stringResource(R.string.settings_api_get_key),
         color = MaterialTheme.colorScheme.primary,
-        fontSize = 13.sp,
-        fontWeight = FontWeight.Medium,
+        style = MaterialTheme.typography.labelLarge,
     )
 }
 
@@ -800,19 +811,17 @@ private fun YouCamCredentialsSheetContent(
         Text(
             text = stringResource(R.string.settings_youcam_title),
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.headlineSmall,
         )
         Text(
             text = stringResource(R.string.settings_youcam_description),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodySmall,
         )
         Text(
             text = stringResource(R.string.settings_youcam_get_key),
             color = MaterialTheme.colorScheme.primary,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.labelLarge,
         )
         FieldLabel(stringResource(R.string.settings_youcam_client_id_hint))
         ApiKeyTextField(
@@ -844,7 +853,7 @@ private fun YouCamCredentialsSheetContent(
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colorScheme.error,
-                fontSize = 13.sp,
+                style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.testTag("youcam_error"),
             )
         }
@@ -858,7 +867,7 @@ private fun YouCamCredentialsSheetContent(
                     Text(
                         text = stringResource(R.string.settings_youcam_remove),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 14.sp,
+                        style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(vertical = 8.dp),
                     )
@@ -870,7 +879,12 @@ private fun YouCamCredentialsSheetContent(
 
 @Composable
 private fun FieldLabel(text: String) {
-    Text(text, color = MaterialTheme.colorScheme.onSurface, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+    Text(
+        text,
+        color = MaterialTheme.colorScheme.onSurface,
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.SemiBold,
+    )
 }
 
 // endregion
@@ -896,7 +910,12 @@ private fun <T> ChipGroup(
     onSelected: (T?) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text(title, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+        Text(
+            title,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.SemiBold,
+        )
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -922,12 +941,17 @@ private fun <T> MultiChipGroup(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row {
-            Text(title, color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                title,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.SemiBold,
+            )
             Spacer(Modifier.width(6.dp))
             Text(
                 stringResource(R.string.settings_multi_select),
                 color = MaterialTheme.wornExtras.textMuted,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.labelMedium,
             )
         }
         FlowRow(
@@ -1011,7 +1035,7 @@ private const val DONATION_LN_ADDRESS = "jvsena42@blink.sv"
 private const val FEEDBACK_URL = "https://github.com/jvsena42/worn/issues/new"
 private const val LICENSE_URL = "https://github.com/jvsena42/worn/blob/main/LICENSE"
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun SettingsScreenPhonePreview() {
     WornTheme {
@@ -1024,7 +1048,7 @@ private fun SettingsScreenPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun SettingsScreenTabletPreview() {
     WornTheme {
@@ -1039,10 +1063,11 @@ private fun SettingsScreenTabletPreview() {
 }
 
 /** The default [SettingsState] already reports on-device AI as unavailable. */
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun SettingsScreenOnDeviceAiUnavailablePreview() {
     WornTheme {
         SettingsScaffold(state = SettingsState())
     }
 }
+

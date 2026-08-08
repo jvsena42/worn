@@ -59,7 +59,7 @@ struct WornGradientButton: View {
 
     private var buttonText: some View {
         Text(text)
-            .font(.system(size: 16, weight: .semibold))
+            .font(.callout.weight(.semibold))
             .foregroundColor(.white)
     }
 }

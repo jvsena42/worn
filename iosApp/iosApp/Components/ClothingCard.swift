@@ -48,7 +48,7 @@ struct ClothingCard: View {
             // AI-generated names can run long; left unbounded they push the category row down and
             // misalign the cards next to them in the grid row.
             Text(item.name)
-                .font(.system(size: 14, weight: .medium))
+                .font(.subheadline.weight(.medium))
                 .foregroundColor(WornColors.textPrimary)
                 .lineLimit(2)
                 .truncationMode(.tail)
@@ -58,7 +58,7 @@ struct ClothingCard: View {
                     .fill(dotColor(for: item.category))
                     .frame(width: 8, height: 8)
                 Text(displayLabel(for: item.category))
-                    .font(.system(size: 12))
+                    .font(.caption)
                     .foregroundColor(WornColors.textMuted)
             }
         }

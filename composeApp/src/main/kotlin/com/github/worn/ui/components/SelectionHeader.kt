@@ -23,10 +23,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.worn.R
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
 
 @Composable
@@ -46,7 +47,7 @@ fun SelectionHeader(
             Text(
                 text = pluralStringResource(R.plurals.selected_count, count, count),
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 28.sp,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Medium,
                 letterSpacing = (-0.8).sp,
             )
@@ -61,7 +62,7 @@ fun SelectionHeader(
                     stringResource(R.string.common_delete),
                     color = Color.White,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }
@@ -69,14 +70,14 @@ fun SelectionHeader(
         Text(
             text = stringResource(R.string.common_cancel),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 15.sp,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.clickable(onClick = onCancel),
         )
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun SelectionHeaderPhonePreview() {
     WornTheme {
@@ -84,10 +85,11 @@ private fun SelectionHeaderPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun SelectionHeaderTabletPreview() {
     WornTheme {
         SelectionHeader(count = 5, onCancel = {}, onDelete = {})
     }
 }
+

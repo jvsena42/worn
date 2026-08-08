@@ -13,8 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.theme.wornExtras
 
@@ -37,7 +38,7 @@ fun SheetDragHandle(
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun SheetDragHandlePhonePreview() {
     WornTheme {
@@ -47,7 +48,7 @@ private fun SheetDragHandlePhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun SheetDragHandleTabletPreview() {
     WornTheme {
@@ -56,3 +57,4 @@ private fun SheetDragHandleTabletPreview() {
         }
     }
 }
+

@@ -3,16 +3,16 @@ import SwiftUI
 struct PropertyRow: View {
     let label: String
     let value: String
-    var fontSize: CGFloat = 15
+    var textFont: Font = .subheadline
 
     var body: some View {
         HStack {
             Text(label)
-                .font(.system(size: fontSize, weight: .medium))
+                .font(textFont.weight(.medium))
                 .foregroundColor(WornColors.textSecondary)
             Spacer()
             Text(value)
-                .font(.system(size: fontSize, weight: .medium))
+                .font(textFont.weight(.medium))
                 .foregroundColor(WornColors.textPrimary)
         }
     }

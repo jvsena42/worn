@@ -157,17 +157,17 @@ struct WardrobeContent: View {
         VStack(alignment: .leading, spacing: 8) {
             if state.totalItemCount == 0 {
                 Text(String(localized: "wardrobe_title_empty"))
-                    .font(.system(size: 22, weight: .semibold))
+                    .font(.title2.weight(.semibold))
                     .tracking(-0.5)
                     .foregroundColor(WornColors.textPrimary)
             } else {
                 Text(String(localized: "wardrobe_title"))
-                    .font(.system(size: 28, weight: .semibold))
+                    .font(.title.weight(.semibold))
                     .tracking(-0.8)
                     .foregroundColor(WornColors.textPrimary)
 
                 Text(String(format: String(localized: "wardrobe_subtitle"), state.totalItemCount))
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.subheadline.weight(.medium))
                     .foregroundColor(WornColors.textSecondary)
             }
         }
@@ -222,7 +222,7 @@ struct WardrobeContent: View {
                 .foregroundColor(WornColors.textSecondary.opacity(0.5))
 
             Text(String(localized: "wardrobe_category_empty"))
-                .font(.system(size: 16, weight: .medium))
+                .font(.callout.weight(.medium))
                 .foregroundColor(WornColors.textSecondary)
 
             Spacer()
@@ -267,7 +267,7 @@ struct WardrobeContent: View {
                 Image(systemName: "plus")
                     .font(.system(size: 15, weight: .semibold))
                 Text(String(localized: "wardrobe_fab_add"))
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.subheadline.weight(.semibold))
             }
             .foregroundColor(WornColors.textOnColor)
             .padding(.horizontal, 20)
@@ -296,6 +296,14 @@ private let previewItems: [ClothingItem] = [
     )
 }
 
+#Preview("iPhone · Dark") {
+    WardrobeContent(
+        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
+        isCompact: true
+    )
+    .preferredColorScheme(.dark)
+}
+
 #Preview("iPhone - Selection") {
     WardrobeContent(
         state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(["1", "3"]), activeCategory: nil, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
@@ -303,11 +311,27 @@ private let previewItems: [ClothingItem] = [
     )
 }
 
+#Preview("iPhone - Selection · Dark") {
+    WardrobeContent(
+        state: WardrobeState(items: previewItems, isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(["1", "3"]), activeCategory: nil, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
+        isCompact: true
+    )
+    .preferredColorScheme(.dark)
+}
+
 #Preview("iPhone - Empty") {
     WardrobeContent(
         state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, isAiAvailable: false, error: nil, totalItemCount: 0),
         isCompact: true
     )
+}
+
+#Preview("iPhone - Empty · Dark") {
+    WardrobeContent(
+        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: nil, isAiAvailable: false, error: nil, totalItemCount: 0),
+        isCompact: true
+    )
+    .preferredColorScheme(.dark)
 }
 
 #Preview("iPad Portrait", traits: .portrait) {
@@ -329,6 +353,14 @@ private let previewItems: [ClothingItem] = [
         state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: .top, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
         isCompact: true
     )
+}
+
+#Preview("iPhone - Empty Category · Dark") {
+    WardrobeContent(
+        state: WardrobeState(items: [], isLoading: false, isSaving: false, isDeleting: false, selectedIds: Set(), activeCategory: .top, isAiAvailable: false, error: nil, totalItemCount: Int32(previewItems.count)),
+        isCompact: true
+    )
+    .preferredColorScheme(.dark)
 }
 
 #Preview("iPad Portrait - Empty Category", traits: .portrait) {

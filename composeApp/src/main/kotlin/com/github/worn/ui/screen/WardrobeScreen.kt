@@ -51,7 +51,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,6 +71,8 @@ import com.github.worn.ui.components.SelectionHeader
 import com.github.worn.ui.components.Tab
 import com.github.worn.ui.components.WornGradientButton
 import com.github.worn.ui.components.WornGradients
+import com.github.worn.ui.theme.PhonePreview
+import com.github.worn.ui.theme.TabletPreview
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import com.github.worn.ui.util.ShortcutCommand
@@ -279,16 +280,18 @@ private fun WardrobeHeader(itemCount: Int) {
             stringResource(R.string.wardrobe_title)
         },
         color = MaterialTheme.colorScheme.onSurface,
-        fontSize = if (itemCount == 0) 22.sp else 28.sp,
-        fontWeight = FontWeight.SemiBold,
-        letterSpacing = (-0.5).sp,
+        style = if (itemCount == 0) {
+            MaterialTheme.typography.titleLarge
+        } else {
+            MaterialTheme.typography.headlineMedium
+        },
     )
     if (itemCount > 0) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.wardrobe_subtitle, itemCount),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Medium,
         )
     }
@@ -356,7 +359,7 @@ private fun CategoryEmptyState() {
         Text(
             stringResource(R.string.wardrobe_category_empty),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 16.sp,
+            style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Medium,
         )
     }
@@ -410,7 +413,11 @@ private fun AddItemFab(onClick: () -> Unit, modifier: Modifier = Modifier) {
     ) {
         Icon(Icons.Default.Add, contentDescription = null)
         Spacer(Modifier.width(8.dp))
-        Text(text = stringResource(R.string.wardrobe_fab_add), fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+        Text(
+            text = stringResource(R.string.wardrobe_fab_add),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+        )
     }
 }
 
@@ -424,7 +431,7 @@ private val previewItems = listOf(
     ClothingItem("6", "Chinos", Category.BOTTOM, listOf("khaki"), photoPath = "", createdAt = 0),
 )
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun WardrobeScreenPhonePreview() {
     WornTheme {
@@ -436,7 +443,7 @@ private fun WardrobeScreenPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun WardrobeSelectModePreview() {
     WornTheme {
@@ -452,7 +459,7 @@ private fun WardrobeSelectModePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun WardrobeEmptyPhonePreview() {
     WornTheme {
@@ -464,7 +471,7 @@ private fun WardrobeEmptyPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun WardrobeScreenTabletPreview() {
     WornTheme {
@@ -476,7 +483,7 @@ private fun WardrobeScreenTabletPreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun WardrobeEmptyTabletPreview() {
     WornTheme {
@@ -488,7 +495,7 @@ private fun WardrobeEmptyTabletPreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_8")
+@PhonePreview
 @Composable
 private fun WardrobeEmptyCategoryPhonePreview() {
     WornTheme {
@@ -503,7 +510,7 @@ private fun WardrobeEmptyCategoryPhonePreview() {
     }
 }
 
-@Preview(showSystemUi = true, device = "id:pixel_tablet")
+@TabletPreview
 @Composable
 private fun WardrobeEmptyCategoryTabletPreview() {
     WornTheme {
@@ -517,3 +524,4 @@ private fun WardrobeEmptyCategoryTabletPreview() {
         )
     }
 }
+

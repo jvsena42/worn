@@ -108,7 +108,7 @@ private fun ItemInfo(item: ClothingItem) {
         Text(
             text = item.name,
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Medium,
             // AI-generated names can run long; left unbounded they push the category row down and
             // misalign the cards next to them in the grid row.
@@ -128,7 +128,7 @@ private fun ItemInfo(item: ClothingItem) {
             Text(
                 text = item.category.displayLabel(),
                 color = MaterialTheme.wornExtras.textMuted,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.labelMedium,
             )
         }
     }
