@@ -58,7 +58,7 @@ struct TryItScreen: View {
                 CameraView(
                     onImageCaptured: { image in
                         photoImage = image
-                        photoData = image.jpegData(compressionQuality: 0.9)
+                        photoData = PhotoEncoding.jpegForStorage(image)
                         viewModel.reset()
                     },
                     onDismiss: { garmentCover = nil }
@@ -420,24 +420,11 @@ struct TryItScreen: View {
     }
 
     private func itemThumbnail(item: ClothingItem, size: CGFloat) -> some View {
-        ZStack {
-            if FileManager.default.fileExists(atPath: item.photoPath) {
-                AsyncImage(url: URL(fileURLWithPath: item.photoPath)) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } placeholder: {
-                    Image(systemName: "tshirt")
-                        .font(.system(size: 28))
-                        .foregroundColor(WornColors.textSecondary)
-                }
-                .frame(width: size, height: size)
-                .clipped()
-            } else {
-                Image(systemName: "tshirt")
-                    .font(.system(size: 28))
-                    .foregroundColor(WornColors.textSecondary)
-            }
+        StoredPhotoImage(path: item.photoPath) {
+            Image(systemName: "tshirt")
+                .font(.system(size: 28))
+                .foregroundColor(WornColors.textSecondary)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(width: size, height: size)
         .background(WornColors.bgCard)
@@ -613,7 +600,7 @@ struct TryItScreen: View {
             case .camera:
                 CameraView(
                     onImageCaptured: { image in
-                        if let data = image.jpegData(compressionQuality: 0.9) {
+                        if let data = PhotoEncoding.jpegForStorage(image) {
                             viewModel.setPersonPhoto(imageData: data)
                         }
                     },

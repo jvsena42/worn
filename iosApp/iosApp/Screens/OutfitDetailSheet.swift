@@ -106,22 +106,7 @@ struct OutfitDetailSheet: View {
 
     private func outfitItemCard(item: ClothingItem) -> some View {
         VStack(spacing: 6) {
-            ZStack {
-                if FileManager.default.fileExists(atPath: item.photoPath) {
-                    let url = URL(fileURLWithPath: item.photoPath)
-                    AsyncImage(url: url) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        cardPlaceholder
-                    }
-                    .frame(width: cardSize, height: cardSize)
-                    .clipped()
-                } else {
-                    cardPlaceholder
-                }
-            }
+            StoredPhotoImage(path: item.photoPath) { cardPlaceholder }
             .frame(width: cardSize, height: cardSize)
             .background(WornColors.bgCard)
             .clipShape(RoundedRectangle(cornerRadius: cardRadius))

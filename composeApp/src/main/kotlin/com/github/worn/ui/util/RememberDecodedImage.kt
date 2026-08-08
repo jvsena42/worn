@@ -10,17 +10,23 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
- * Decodes [bytes] into an [ImageBitmap] off the main thread, returning null until it is ready.
+ * Decodes [bytes] into a preview-sized [ImageBitmap] off the main thread.
+ *
+ * Stored photos keep their capture resolution, so decoding one at full size would allocate ~48MB
+ * for a 12MP source just to fill a preview slot; [decodeForEditing] downsamples instead.
+ */
+suspend fun decodePreviewImage(bytes: ByteArray): ImageBitmap? =
+    withContext(Dispatchers.Default) { decodeForEditing(bytes)?.asImageBitmap() }
+
+/**
+ * [decodePreviewImage] as composable state, returning null until the decode finishes.
  *
  * Decoding inside `remember { }` would run during the composition pass and stall the frame.
- * [decodeForEditing] also downsamples rather than decoding at full resolution.
  */
 @Composable
 fun rememberDecodedImage(bytes: ByteArray?): ImageBitmap? {
     val image by produceState<ImageBitmap?>(initialValue = null, bytes) {
-        value = bytes?.let {
-            withContext(Dispatchers.Default) { decodeForEditing(it)?.asImageBitmap() }
-        }
+        value = bytes?.let { decodePreviewImage(it) }
     }
     return image
 }
@@ -30,11 +36,8 @@ fun rememberDecodedImage(bytes: ByteArray?): ImageBitmap? {
 fun rememberDecodedImage(photoPath: String?): ImageBitmap? {
     val image by produceState<ImageBitmap?>(initialValue = null, photoPath) {
         value = photoPath?.takeIf { it.isNotEmpty() }?.let { path ->
-            withContext(Dispatchers.Default) {
-                runCatching { File(path).readBytes() }
-                    .getOrNull()
-                    ?.let { decodeForEditing(it)?.asImageBitmap() }
-            }
+            withContext(Dispatchers.IO) { runCatching { File(path).readBytes() }.getOrNull() }
+                ?.let { decodePreviewImage(it) }
         }
     }
     return image

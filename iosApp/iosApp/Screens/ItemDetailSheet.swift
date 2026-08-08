@@ -46,22 +46,7 @@ struct ItemDetailSheet: View {
     }
 
     private var photoArea: some View {
-        ZStack {
-            if FileManager.default.fileExists(atPath: item.photoPath) {
-                let url = URL(fileURLWithPath: item.photoPath)
-                AsyncImage(url: url) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } placeholder: {
-                    placeholderIcon
-                }
-                .frame(maxWidth: .infinity, maxHeight: photoHeight)
-                .clipped()
-            } else {
-                placeholderIcon
-            }
-        }
+        StoredPhotoImage(path: item.photoPath) { placeholderIcon }
         .frame(maxWidth: .infinity)
         .frame(height: photoHeight)
         .background(WornColors.bgCard)

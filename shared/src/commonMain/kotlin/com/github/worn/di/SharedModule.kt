@@ -36,7 +36,12 @@ val sharedModule = module {
         )
     }
     single<TryOnRepository> {
-        TryOnRepositoryImpl(youCamClient = get(), settingsRepository = get(), dispatcher = get())
+        TryOnRepositoryImpl(
+            youCamClient = get(),
+            settingsRepository = get(),
+            imageDownscaler = get(),
+            dispatcher = get(),
+        )
     }
     single<WardrobeRepository> {
         WardrobeRepositoryImpl(
@@ -44,6 +49,7 @@ val sharedModule = module {
             fileStorage = get(),
             aiClient = get(),
             onDeviceAi = get(),
+            imageDownscaler = get(),
             settingsRepository = get(),
             dispatcher = get(),
         )

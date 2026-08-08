@@ -4,6 +4,7 @@ import app.cash.sqldelight.Query
 import app.cash.sqldelight.TransactionWithoutReturn
 import com.github.worn.data.repository.WardrobeRepositoryImpl
 import com.github.worn.data.source.ai.OnDeviceAiSource
+import com.github.worn.data.source.image.ImageDownscaler
 import com.github.worn.data.source.local.PhotoFileStorage
 import com.github.worn.data.source.local.db.ClothingItemQueries
 import com.github.worn.data.source.local.db.OutfitItemQueries
@@ -45,6 +46,11 @@ class WardrobeRepositoryImplTest {
     private val fileStorage = mockk<PhotoFileStorage>()
     private val aiClient = mockk<ClaudeApiClient>()
     private val onDeviceAi = mockk<OnDeviceAiSource>()
+
+    // Downscaling is a request-path detail; these tests care about what reaches the AI client.
+    private val imageDownscaler = mockk<ImageDownscaler> {
+        coEvery { downscale(any(), any()) } answers { firstArg() }
+    }
     private val onDeviceAiEnabled = MutableStateFlow(false)
     private val settingsRepository = mockk<SettingsRepository> {
         every { getUserProfile() } returns flowOf(UserProfile())
@@ -80,7 +86,15 @@ class WardrobeRepositoryImplTest {
         }
         onDeviceAiEnabled.value = false
         repository =
-            WardrobeRepositoryImpl(db, fileStorage, aiClient, onDeviceAi, settingsRepository, testDispatcher)
+            WardrobeRepositoryImpl(
+                db,
+                fileStorage,
+                aiClient,
+                onDeviceAi,
+                imageDownscaler,
+                settingsRepository,
+                testDispatcher,
+            )
     }
 
     // region getAll

@@ -1,7 +1,6 @@
 package com.github.worn.ui.screen
 
 import android.Manifest
-import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -73,14 +72,13 @@ import com.github.worn.ui.components.SaveButton
 import com.github.worn.ui.components.SeasonSection
 import com.github.worn.ui.components.SubcategoryDropdown
 import com.github.worn.ui.theme.SheetPreview
+import com.github.worn.ui.util.decodePreviewImage
 import com.github.worn.ui.util.readImageBytes
+import com.github.worn.ui.util.rememberCameraCapture
 import com.github.worn.ui.util.rememberDecodedImage
 import com.github.worn.ui.theme.WornColors
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.compose.koinInject
-import java.io.ByteArrayOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -155,10 +153,9 @@ internal fun AddItemForm(
                     // Rebase the background-removal baseline so toggling it off reverts to the
                     // cropped photo rather than resurrecting the pre-crop frame.
                     formState.originalPhotoBytes = cropped
-                    formState.photoBitmap =
-                        BitmapFactory.decodeByteArray(cropped, 0, cropped.size)?.asImageBitmap()
                     formState.bgRemoved = false
                     formState.showCropEditor = false
+                    scope.launch { formState.photoBitmap = decodePreviewImage(cropped) }
                 },
             )
         }
@@ -172,8 +169,8 @@ internal fun AddItemForm(
         val original = formState.originalPhotoBytes ?: return
         if (!enabled) {
             formState.photoBytes = original
-            formState.photoBitmap = BitmapFactory.decodeByteArray(original, 0, original.size)?.asImageBitmap()
             formState.bgRemoved = false
+            scope.launch { formState.photoBitmap = decodePreviewImage(original) }
             return
         }
         formState.isProcessingBg = true
@@ -181,8 +178,7 @@ internal fun AddItemForm(
             runCatching { backgroundRemover.removeBackground(original) }
                 .onSuccess { processed ->
                     formState.photoBytes = processed
-                    BitmapFactory.decodeByteArray(processed, 0, processed.size)?.asImageBitmap()
-                        ?.let { formState.photoBitmap = it }
+                    decodePreviewImage(processed)?.let { formState.photoBitmap = it }
                     formState.bgRemoved = true
                 }
                 .onFailure {
@@ -282,28 +278,23 @@ private fun PhotoSourceChooser(
         uri?.let {
             scope.launch {
                 val bytes = readImageBytes(context, it) ?: return@launch
-                val bitmap = withContext(Dispatchers.Default) {
-                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)?.asImageBitmap()
-                } ?: return@launch
+                val bitmap = decodePreviewImage(bytes) ?: return@launch
                 onPhoto(bytes, bitmap)
             }
         }
     }
 
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicturePreview(),
-    ) { bitmap ->
-        bitmap?.let {
-            val stream = ByteArrayOutputStream()
-            it.compress(android.graphics.Bitmap.CompressFormat.JPEG, JPEG_QUALITY, stream)
-            onPhoto(stream.toByteArray(), it.asImageBitmap())
+    val takePicture = rememberCameraCapture { bytes ->
+        scope.launch {
+            val bitmap = decodePreviewImage(bytes) ?: return@launch
+            onPhoto(bytes, bitmap)
         }
     }
 
     val cameraPermission = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { granted ->
-        if (granted) cameraLauncher.launch(null)
+        if (granted) takePicture()
     }
 
     if (show) {
@@ -478,8 +469,6 @@ private fun PhotoSourceDialog(
 private inline fun <T> toggleInSet(item: T, current: Set<T>, update: (Set<T>) -> Unit) {
     update(if (item in current) current - item else current + item)
 }
-
-private const val JPEG_QUALITY = 90
 
 @Preview(showSystemUi = true, device = "id:pixel_8")
 @Composable

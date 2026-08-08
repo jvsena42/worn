@@ -40,7 +40,9 @@ actual class BackgroundRemover(private val dispatcher: CoroutineContext) {
     }
 
     private companion object {
-        const val JPEG_QUALITY = 90
+        // Resolution is preserved, so this is a storage-quality re-encode: a photo can go through
+        // capture, then crop, then this, and each pass should be visually lossless.
+        const val JPEG_QUALITY = 95
         const val NEUTRAL_BACKGROUND = Color.WHITE
     }
 }

@@ -1,6 +1,8 @@
 package com.github.worn.data.repository
 
 import com.github.worn.data.source.ai.OnDeviceAiSource
+import com.github.worn.data.source.image.AiImageLimits
+import com.github.worn.data.source.image.ImageDownscaler
 import com.github.worn.data.source.local.PhotoFileStorage
 import com.github.worn.data.source.local.db.WardrobeDatabase
 import com.github.worn.data.source.remote.ClaudeApiClient
@@ -33,6 +35,7 @@ class WardrobeRepositoryImpl(
     private val fileStorage: PhotoFileStorage,
     private val aiClient: ClaudeApiClient,
     private val onDeviceAi: OnDeviceAiSource,
+    private val imageDownscaler: ImageDownscaler,
     private val settingsRepository: SettingsRepository,
     private val dispatcher: CoroutineContext,
 ) : WardrobeRepository {
@@ -119,7 +122,11 @@ class WardrobeRepositoryImpl(
     override suspend fun analyzeAndTag(itemId: String): Result<ClothingItem> = runCatching {
         withContext(dispatcher) {
             val item = findById(itemId) ?: error("Item not found: $itemId")
-            val imageBytes = fileStorage.read(item.photoPath)
+            // The stored photo keeps its capture resolution; only the request copy is shrunk.
+            val imageBytes = imageDownscaler.downscale(
+                bytes = fileStorage.read(item.photoPath),
+                maxEdge = AiImageLimits.CLAUDE_MAX_EDGE,
+            )
             val analysis = if (useOnDeviceAi()) {
                 onDeviceAi.analyzeImage(imageBytes)
             } else {
@@ -205,7 +212,9 @@ class WardrobeRepositoryImpl(
             withContext(dispatcher) {
                 val items = db.clothingItemQueries.getAll().executeAsList().map { it.toDomain() }
                 val userProfile = settingsRepository.getUserProfile().first()
-                aiClient.analyzeProspectiveItem(imageBytes, items, userProfile)
+                val requestBytes =
+                    imageDownscaler.downscale(imageBytes, AiImageLimits.CLAUDE_MAX_EDGE)
+                aiClient.analyzeProspectiveItem(requestBytes, items, userProfile)
             }
         }
 

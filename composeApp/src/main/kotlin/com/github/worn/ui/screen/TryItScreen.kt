@@ -100,13 +100,13 @@ import com.github.worn.ui.components.WornGradients
 import com.github.worn.ui.components.ClothingPhoto
 import com.github.worn.ui.util.SharedPhoto
 import com.github.worn.ui.util.readImageBytes
+import com.github.worn.ui.util.rememberCameraCapture
 import com.github.worn.ui.util.rememberDecodedImage
 import com.github.worn.ui.theme.WornColors
 import com.github.worn.ui.theme.WornDimens
 import com.github.worn.ui.theme.WornTheme
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
-import java.io.ByteArrayOutputStream
 
 @Composable
 fun TryItScreen(
@@ -257,20 +257,12 @@ private fun PhotoSourceChooser(
         }
     }
 
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicturePreview(),
-    ) { bitmap ->
-        bitmap?.let {
-            val stream = ByteArrayOutputStream()
-            it.compress(android.graphics.Bitmap.CompressFormat.JPEG, JPEG_QUALITY, stream)
-            onPhoto(stream.toByteArray())
-        }
-    }
+    val takePicture = rememberCameraCapture(onPhoto)
 
     val cameraPermission = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { granted ->
-        if (granted) cameraLauncher.launch(null)
+        if (granted) takePicture()
     }
 
     if (show) {
@@ -1258,7 +1250,6 @@ private fun TryOnResultView(imageBytes: ByteArray, height: Dp) {
     }
 }
 
-private const val JPEG_QUALITY = 90
 
 // region Previews
 

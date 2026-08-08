@@ -123,22 +123,7 @@ private struct SelectableItemCell: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            ZStack {
-                if FileManager.default.fileExists(atPath: item.photoPath) {
-                    let url = URL(fileURLWithPath: item.photoPath)
-                    AsyncImage(url: url) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        placeholderIcon
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: 100)
-                    .clipped()
-                } else {
-                    placeholderIcon
-                }
-            }
+            StoredPhotoImage(path: item.photoPath) { placeholderIcon }
             .frame(maxWidth: .infinity)
             .frame(height: 100)
             .background(WornColors.bgCard)

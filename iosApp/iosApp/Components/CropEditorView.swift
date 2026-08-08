@@ -213,17 +213,14 @@ struct CropEditorView: View {
     }
 
     private func applyCrop() {
-        guard let image, let selection, let bounds else { return }
+        guard let selection, let bounds else { return }
         isProcessing = true
+        // Crops the original data, not the downsampled preview, so the saved photo keeps its
+        // capture resolution.
+        let data = imageData
         Task {
             let cropped = await Task.detached(priority: .userInitiated) {
-                let rect = CropGeometry.shared.toSourceRect(
-                    selection: selection,
-                    bounds: bounds,
-                    imageWidth: Int32(image.size.width),
-                    imageHeight: Int32(image.size.height)
-                )
-                return ImageCropService.crop(image, to: rect)
+                ImageCropService.crop(data, selection: selection, bounds: bounds)
             }.value
             isProcessing = false
             if let cropped {

@@ -1,6 +1,7 @@
 package com.github.worn.repository
 
 import com.github.worn.data.repository.TryOnRepositoryImpl
+import com.github.worn.data.source.image.ImageDownscaler
 import com.github.worn.data.source.remote.YouCamApiClient
 import com.github.worn.domain.model.GarmentCategory
 import com.github.worn.domain.repository.SettingsRepository
@@ -22,6 +23,11 @@ class TryOnRepositoryImplTest {
     private val youCamClient = mockk<YouCamApiClient>()
     private val settingsRepository = mockk<SettingsRepository>()
 
+    // Downscaling is a request-path detail; these tests care about what reaches the client.
+    private val imageDownscaler = mockk<ImageDownscaler> {
+        coEvery { downscale(any(), any()) } answers { firstArg() }
+    }
+
     private lateinit var repository: TryOnRepositoryImpl
 
     private val garmentBytes = byteArrayOf(1, 2, 3)
@@ -30,7 +36,12 @@ class TryOnRepositoryImplTest {
 
     @BeforeTest
     fun setup() {
-        repository = TryOnRepositoryImpl(youCamClient, settingsRepository, testDispatcher)
+        repository = TryOnRepositoryImpl(
+            youCamClient,
+            settingsRepository,
+            imageDownscaler,
+            testDispatcher,
+        )
     }
 
     @Test
