@@ -158,7 +158,7 @@ private data class ItemDetailDimens(val isCompact: Boolean) {
 private fun ItemPhoto(item: ClothingItem, dims: ItemDetailDimens) {
     Surface(
         shape = RoundedCornerShape(dims.photoRadius),
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 8.dp,
         modifier = Modifier.fillMaxWidth().height(dims.photoHeight),
@@ -286,7 +286,7 @@ internal fun DetailActionButtons(
         Surface(
             onClick = onEdit,
             shape = RoundedCornerShape(24.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            color = MaterialTheme.colorScheme.surfaceContainer,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             modifier = Modifier.fillMaxWidth().height(buttonHeight).testTag(editTestTag),
         ) {

@@ -39,7 +39,7 @@ fun EmptyStateView(
         Box(
             modifier = Modifier.size(130.dp)
                 .shadow(15.dp, CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerLowest, CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceContainer, CircleShape)
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape),
             contentAlignment = Alignment.Center,
         ) {

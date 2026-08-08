@@ -76,7 +76,7 @@ private fun PhotoArea(
     Box(modifier = Modifier.fillMaxWidth().height(height)) {
         Surface(
             shape = photoShape,
-            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            color = MaterialTheme.colorScheme.surfaceContainer,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shadowElevation = 4.dp,
             modifier = Modifier.fillMaxSize(),

@@ -13,7 +13,7 @@ import Shared
 enum WornColors {
     // Backgrounds
     static let bgPage = Color(light: "F5F0EB", dark: "211D18")
-    static let bgCard = Color(light: "FFFFFF", dark: "1A1713")
+    static let bgCard = Color(light: "FFFFFF", dark: "2B261F")
     static let bgElevated = Color(light: "EDE8E1", dark: "363029")
 
     // Borders

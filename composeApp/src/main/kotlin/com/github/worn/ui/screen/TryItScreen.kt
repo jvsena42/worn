@@ -511,7 +511,7 @@ private fun AiEmptyContent(
     ) {
         Surface(
             shape = CircleShape,
-            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            color = MaterialTheme.colorScheme.surfaceContainer,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shadowElevation = 8.dp,
             modifier = Modifier.size(circleSize),
@@ -793,7 +793,7 @@ private fun UploadZone(
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
         shadowElevation = 1.dp,
         modifier = Modifier.fillMaxWidth().height(height).testTag("try_it_upload_zone"),
@@ -910,7 +910,7 @@ private fun ItemThumbnail(item: ClothingItem, size: Dp, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 2.dp,
         modifier = Modifier.size(size),
@@ -932,7 +932,7 @@ private fun CombinationsCard(count: Int, isCompact: Boolean) {
 
     Surface(
         shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 2.dp,
         modifier = Modifier.fillMaxWidth(),
@@ -1115,7 +1115,7 @@ private fun PersonPhotoZone(personImage: ByteArray?, height: Dp, onClick: () -> 
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline),
         shadowElevation = 1.dp,
         modifier = Modifier.fillMaxWidth().height(height).testTag("try_on_person_zone"),
@@ -1234,7 +1234,7 @@ private fun TryOnResultView(imageBytes: ByteArray, height: Dp) {
         )
         Surface(
             shape = RoundedCornerShape(20.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            color = MaterialTheme.colorScheme.surfaceContainer,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shadowElevation = 2.dp,
             modifier = Modifier.fillMaxWidth().height(height).testTag("try_on_result"),

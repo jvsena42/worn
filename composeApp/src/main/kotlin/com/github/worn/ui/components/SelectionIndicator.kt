@@ -31,7 +31,7 @@ fun SelectionIndicator(
 ) {
     Surface(
         shape = RoundedCornerShape(size / 2),
-        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainer,
         border = if (isSelected) null else BorderStroke(1.5.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = modifier.size(size),
     ) {

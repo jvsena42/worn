@@ -59,10 +59,11 @@ internal val WornLightColorScheme = lightColorScheme(
     surfaceDim = Color(0xFFE4DDD3),
     surfaceBright = Color(0xFFFFFBF7),
     surfaceContainerLowest = Color(0xFFFFFFFF),
-    // ModalBottomSheet reads surfaceContainerLow for its default container; setting it here is
-    // what lets the sheets stop passing containerColor by hand.
-    surfaceContainerLow = Color(0xFFFAF6F1),
-    surfaceContainer = Color(0xFFF2EDE6),
+    surfaceContainerLow = Color(0xFFFFFFFF),
+    // Cards and tiles. White here, one step *above* the beige page — see the dark scheme for why
+    // this role rather than surfaceContainerLowest.
+    surfaceContainer = Color(0xFFFFFFFF),
+    // Chrome that sits behind content: the bottom bar and the filter chips.
     surfaceContainerHigh = Color(0xFFEDE8E1),
     surfaceContainerHighest = Color(0xFFE7E0D7),
 
@@ -135,8 +136,12 @@ internal val WornDarkColorScheme = darkColorScheme(
 
     surfaceDim = Color(0xFF211D18),
     surfaceBright = Color(0xFF4A443C),
-    surfaceContainerLowest = Color(0xFF1A1713),
+    surfaceContainerLowest = Color(0xFF17140F),
     surfaceContainerLow = Color(0xFF262119),
+    // Cards and tiles — one step *above* the page, so they still read as standing forward the way
+    // the white-on-beige light scheme does. Mapping them to surfaceContainerLowest instead (the
+    // darkest step, which is what "card = white = brightest" naively translates to) sinks them
+    // into the background and reads as black holes.
     surfaceContainer = Color(0xFF2B261F),
     surfaceContainerHigh = Color(0xFF363029),
     surfaceContainerHighest = Color(0xFF423B32),

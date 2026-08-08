@@ -67,7 +67,7 @@ fun ErrorContentView(
         Surface(
             onClick = onRetry,
             shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Text(
                 text = stringResource(R.string.common_retry),

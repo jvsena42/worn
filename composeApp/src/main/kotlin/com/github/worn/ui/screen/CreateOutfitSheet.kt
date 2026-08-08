@@ -169,8 +169,8 @@ private fun OutfitNameField(name: String, onNameChange: (String) -> Unit, modifi
             )
         },
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
         ),
@@ -261,7 +261,7 @@ private fun SelectableItemCell(
 private fun ItemThumbnail(item: ClothingItem) {
     Surface(
         shape = cellShape,
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         shadowElevation = 4.dp,
         modifier = Modifier.fillMaxSize(),
     ) {

@@ -232,7 +232,7 @@ private fun OutfitItemCard(
     ) {
         Surface(
             shape = RoundedCornerShape(cornerRadius),
-            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            color = MaterialTheme.colorScheme.surfaceContainer,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             shadowElevation = 8.dp,
             modifier = Modifier.size(size),

@@ -21,6 +21,7 @@ fun WornTheme(
     CompositionLocalProvider(LocalWornExtras provides extras) {
         MaterialTheme(
             colorScheme = colorScheme,
+            typography = WornTypography,
             content = content,
         )
     }

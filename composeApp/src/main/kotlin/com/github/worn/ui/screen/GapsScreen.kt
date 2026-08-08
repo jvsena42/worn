@@ -363,7 +363,7 @@ private fun GapCard(
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -486,7 +486,7 @@ private fun DetailHeader(recommendation: GapRecommendation) {
             .fillMaxWidth()
             .height(140.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerLowest),
+            .background(MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Icon(
             painter = painterResource(recommendation.mappedCategory.iconRes()),
@@ -523,7 +523,7 @@ private fun DetailHeader(recommendation: GapRecommendation) {
 private fun DetailPairingInfo(recommendation: GapRecommendation, isAiMode: Boolean) {
     Surface(
         shape = RoundedCornerShape(8.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
@@ -601,7 +601,7 @@ private fun DetailActions(onAddToWardrobe: () -> Unit, onDismiss: () -> Unit) {
     Surface(
         onClick = onDismiss,
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         modifier = Modifier.fillMaxWidth().testTag("gap_dismiss"),
     ) {
         Box(
