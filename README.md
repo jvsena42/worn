@@ -12,22 +12,18 @@ You photograph a jacket in a store, buy it, get home, and discover it pairs with
 
 Worn's user is a beginner — someone with a closet full of impulse buys that don't combine, who shops two to four times a year and dreads every trip. He doesn't need more options. He needs to know whether *this one* is a mistake, before he pays for it.
 
-## Demo
-
-<video src="screenshots/try_on.mp4" controls width="320"></video>
-
-▶ [Watch the try-on demo](screenshots/try_on.mp4) — garment photo in, rendered on the user, no store dressing room.
-
 ## Screens
 
 | Try It | Wardrobe | Gaps |
 |---|---|---|
-| <img src="screenshots/try_it.png" width="220" alt="Try It screen"> | <img src="screenshots/wardrobe.png" width="220" alt="Wardrobe screen"> | <img src="screenshots/gaps.png" width="220" alt="Gaps screen"> |
+| <img src="screenshots/try_it.png" width="220" alt="Try It screen, light theme"> | <img src="screenshots/wardrobe.png" width="220" alt="Wardrobe screen, light theme"> | <img src="screenshots/gaps.png" width="220" alt="Gaps screen, light theme"> |
+| <img src="screenshots/try_it_dark.png" width="220" alt="Try It screen, dark theme"> | <img src="screenshots/wardrobe_dark.png" width="220" alt="Wardrobe screen, dark theme"> | <img src="screenshots/gaps_dark.png" width="220" alt="Gaps screen, dark theme"> |
 | See a garment on yourself and get a buy/skip verdict | Your catalogued items, auto-tagged from photos | Ranked list of what's missing from your closet |
 
 | Outfits | Settings |
 |---|---|
-| <img src="screenshots/outfits.png" width="220" alt="Outfits screen"> | <img src="screenshots/settings.png" width="220" alt="Settings screen"> |
+| <img src="screenshots/outfits.png" width="220" alt="Outfits screen, light theme"> | <img src="screenshots/settings.png" width="220" alt="Settings screen, light theme"> |
+| <img src="screenshots/outfits_dark.png" width="220" alt="Outfits screen, dark theme"> | <img src="screenshots/settings_dark.png" width="220" alt="Settings screen, dark theme"> |
 | Saved combinations built from items you own | Profile, on-device AI, and your own API credentials |
 
 ---
