@@ -20,8 +20,9 @@ disambiguate.
 
 ## Preconditions
 
-These journeys assume a **fresh install**: an empty wardrobe, no saved outfits, and no credentials
-configured (neither the Claude API key nor YouCam try-on credentials, and no saved model photo).
+Except where a journey's own `<description>` says otherwise — `outfit-item-grid.xml` needs a
+populated wardrobe — these journeys assume a **fresh install**: an empty wardrobe, no saved outfits,
+and no credentials configured (neither the Claude API key nor YouCam try-on credentials, and no saved model photo).
 That state exercises the empty-state and locked flows without needing a real photo, network access,
 or credentials. Journeys that would require capturing a photo or calling an external API stop at the
 point where that external input is needed and verify the UI is in the expected state.
@@ -72,6 +73,7 @@ described above are unavailable on this path, so fall back to the visible text a
 | `remove-background.xml` | Verify the Add-item "Remove background" toggle is gated on a photo being present (absent until one is chosen). |
 | `crop-photo.xml` | Verify the Add-item "Crop" button is gated on a photo being present (absent until one is chosen). |
 | `create-first-outfit.xml` | From the empty Outfits tab, open the Create-outfit sheet. |
+| `outfit-item-grid.xml` | Verify the Create-outfit item grid shows photo-only cells and selects on tap. Needs a populated wardrobe. |
 | `connect-api-key.xml` | Open Settings and reach the Claude API key entry sheet. |
 | `connect-youcam.xml` | Open Settings and reach the YouCam try-on credentials sheet. |
 | `edit-profile.xml` | Open Settings and reach the Your-Profile sheet with its chip groups. |

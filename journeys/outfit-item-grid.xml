@@ -1,0 +1,30 @@
+<journey name="Outfit item grid">
+    <description>
+        Opens the Create-outfit sheet over a populated wardrobe and verifies the item selection grid
+        shows photo-only cells with no name text over the garment, and that tapping a cell selects
+        it. Start state: the wardrobe contains at least two items, one with a long name.
+    </description>
+    <actions>
+        <action>
+            Tap the "OUTFITS" tab in the bottom navigation bar.
+        </action>
+        <action>
+            Tap the "Create" button in the Outfits screen header.
+        </action>
+        <action>
+            Verify the "Create outfit" sheet is shown with an "Outfit name (optional)" field and a
+            "Select items" section.
+        </action>
+        <action>
+            Verify each item in the selection grid shows only its photo and a selection indicator,
+            with no item name text drawn over the photo.
+        </action>
+        <action>
+            Tap the first item in the selection grid.
+        </action>
+        <action>
+            Verify the "Select items" header shows "1 selected" and the tapped item shows a filled
+            selection indicator.
+        </action>
+    </actions>
+</journey>
