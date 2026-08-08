@@ -413,7 +413,7 @@ internal fun Category.iconRes(): Int = when (this) {
     Category.TOP -> R.drawable.ic_shirt
     Category.BOTTOM -> R.drawable.ic_rectangle_horizontal
     Category.OUTERWEAR -> R.drawable.ic_wind
-    Category.SHOES -> R.drawable.ic_footprints
+    Category.SHOES -> R.drawable.ic_sneaker
     Category.ACCESSORY -> R.drawable.ic_glasses
 }
 
