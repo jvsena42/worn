@@ -3,8 +3,8 @@ TEAM_ID=
 PRODUCT_NAME=Worn
 PRODUCT_BUNDLE_IDENTIFIER=com.github.worn.Worn$(TEAM_ID)
 
-CURRENT_PROJECT_VERSION=5
-MARKETING_VERSION=0.2.3
+CURRENT_PROJECT_VERSION=6
+MARKETING_VERSION=0.2.4
 
 // FoundationModels (Apple Intelligence) only exists from iOS 26, but the app deploys back to
 // 18.2. Weak linking lets it launch on older systems, where OnDeviceAiService reports the
